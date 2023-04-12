@@ -1,0 +1,61 @@
+Type: Package
+Package: saros
+Title: Semi-Automatic Reporting of Ordinary Surveys Using Tidyverse Syntax
+Version: 0.1.2
+Authors@R: 
+    person(given = "Stephan", 
+           family = "Daus", 
+           role = c("aut", "cre"),
+           email = "stephus.daus@gmail.com", 
+           comment = c(ORCID = "0000-0003-0230-6997"))
+Maintainer: Stephan Daus <stephus.daus@gmail.com>
+Description: Produces highly customizable figures, text, analyses and
+    reports for a batch of possible dependent-independent relations of
+    possible interest.
+License: MIT + file LICENSE
+URL: https://github.com/sda030/saros,
+    https://nifu-no.github.io/saros/
+BugReports: https://github.com/nifu-no/saros/issues
+Depends:
+    R (>= 4.2.0)
+Imports: 
+    cli,
+    clipr,
+    crosstable,
+    dplyr,
+    flextable,
+    forcats,
+    glue,
+    ggplot2,
+    ggiraph,
+    fs,
+    labelled,
+    infer,
+    mschart,
+    officer,
+    openai,
+    purrr,
+    quarto,
+    reactable,
+    rlang,
+    scales,
+    srvyr,
+    stringr,
+    tibble,
+    tidyr,
+    tidyselect,
+    utils,
+    vctrs,
+    RColorBrewer,
+    viridisLite,
+    ymlthis
+Suggests:
+    covr,
+    ggfittext,
+    testthat (>= 3.0.0),
+    readxl,
+    withr
+Config/testthat/edition: 3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3

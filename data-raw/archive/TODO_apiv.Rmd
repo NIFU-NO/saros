@@ -1,0 +1,32 @@
+---
+title: 'TODO: apiv - Automated Psychometric Instrument Validation'
+author: "Stephan Daus"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## apiv: Automated Psychometric Instrument Validation (new package)
+- Takes a dataset with a set of somewhat related items, with an argument specifying which items belong to the core instrument. Runs EFA on everything, CFA on the instrument, selectively dropping items, obtains " pseudo-summary measure" consisting of fit measures, scale reliability, MI, etc. No dependency on Mplus or other commercial software. So basically just a wrapper around lavaan and psych?
+- psychometrics_summary(data) # takes only one battery
+- Output is always tibble
+- Convenience functions for running CFA and extracting CFA/MI
+		- Mcdonald_omega
+- data frame with items (rows) and diagnostics (columns)
+--	Improvement over time (p1-p0)
+--	IRT parameters (a, b, c), with low discriminators, and extremely hard/easy items flagged
+--	Items with responses above/below 95/5 percentage flagged
+--	Low CFA loadings
+--	Loadings improved if item removed
+-- -   Standard set with functions to conduct psychometric analysis. Summarizes models from various packages, and presents according to common objectives:
+-   TODO: Should split into functions fitting into the tidymodelverse. This requires brooming TAM, mirt, CDM, sirt, lavaan, MplusAutomation, etc.
+-   Aims:
+-   single function to retrieve information on item-specific descriptives
+-   single function to retrieve information on which items are likely worst fitting for unidimensional scale
+-   single function to retrieve information comparing various models (uni, bi/multidimensional, correlated, second order, etc)
+- Providing argument with scoring key to test items provides descriptives for answer choices, and then later scores before analyses
+-	Make generalisert TIC, theta, item thresholds-grafmaker som tar mirt, MplusAutomation, lavaan, TAM, etc)

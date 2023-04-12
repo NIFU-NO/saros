@@ -1,0 +1,199 @@
+---
+title: "saros TODO"
+author: "Stephan Daus"
+output: 
+  html_document: 
+    toc: yes
+    number_sections: yes
+    df_print: tibble
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# All tools needed for effective NIFU-work
+## readSX
+- Push SX to export proper formats? Json?
+
+## MplusAutomation/tidySEM
+- Graph functions (priority?)
+
+
+## gtsummary
+- something similar to Hmisc::dataOverview: Rarest Value	Frequency of Rarest Value	Mode	Frequency of Mode, Distinct, Symmetry, percentiles
+
+## ggstatsplot/see/ggpubr 
+- Preferably takes the output from gtsummary, or special function to create nice likert plots
+
+## labelled (or integrated in dplyr functions such as mutate, filter)
+- an option to store all manipulations for creating a variable that does not already exist, as an attribute for the variable. Helps in documentation (ref: Hmisc::upData())
+
+
+
+# Overall design
+
+
+
+## rename_vars_by_label()
+-   Rename variable names in df_data to match labels? Then original var names don't matter.
+
+# step_auto_tick_recode
+-   Some form of automatic recode of multiple tick-box items where no cross is missing? Or perhaps strongly advice people not to use them?
+
+
+# omitted_recoder_df
+-	return tibble if input tibble
+-	keep labels
+
+### Version 2.0
+
+-   Scatter+trend line plots for linear/binary logistic regression models where x_focus is specified
+-   Forest plot for regression model results
+-   Same plots for ggplot2 as for mschart
+-   Also export Rmarkdown/html-file?
+
+### Modify xml-files:
+
+-   Hide axis titles.
+
+-   Right-align axis text by modifying xml-raw data
+
+-   Drop data labels if smaller than 5%
+
+-   Insert this: dLbl\><c:idx val=X_value/><c:delete val="1"/><c:extLst><c:ext uri="{CE6537A1-D6FC-4f65-9D91-7224C49458BB}" xmlns:c15="http://schemas.microsoft.com/office/drawing/2012/chart"/><c:ext uri="{C3380CC4-5D6E-409C-BE32-E72D297353CC}" xmlns:c16="http://schemas.microsoft.com/office/drawing/2014/chart"><c16:uniqueId val="{00000000-BC21-437A-B275-29C6E34D2EC4}"/></c:ext></c:extLst></c:dLbl>\<c:
+
+-   After this: </a:srgbClr></a:solidFill></a:ln><a:effectLst/></c:spPr><c:invertIfNegative val="0"/><c:dLbls>\<c:
+
+-   Strip off all unnecessary dependencies
+
+-   Documentation
+
+-   Excel template
+
+### out of my control:
+
+-   Excel output, table and chart into Excel
+-   Crashes if file is open (<https://github.com/davidgohel/officer/issues/349>)
+-   Also file doesn't open if a crashed Word app is open...
+-   Non-ASCII letters (<https://github.com/ardata-fr/mschart/issues/57>), but workaround works.
+
+# create_report_grouped
+
+-   group-specific reports with automatic email sending
+
+# utils
+
+## assert_options
+- Takes obj, not design_frame?
+
+# print2.rdocx
+-   replace utils::zip with officer::unpack_file
+
+## add_element
+
+## loop across (basically just a wrapper to purrr::pmap)
+
+# create_psychometrics_report
+
+-   Standard set with functions to conduct psychometric analysis. Summarizes models from various packages, and presents according to common objectives:
+-   TODO: Should split into functions fitting into the tidymodelverse. This requires brooming TAM, mirt, CDM, sirt, lavaan, MplusAutomation, etc.
+-   Aims:
+-   single function to retrieve information on item-specific descriptives
+-   single function to retrieve information on which items are likely worst fitting for unidimensional scale
+-   single function to retrieve information comparing various models (uni, bi/multidimensional, correlated, second order, etc)
+
+\*\* Versjon 0.3 \* Endre filnavnet \* argument: Velge hvilke funksjoner som skal kjøres \* argument: Velge hvilke IRT-modeller som skal kjøres (1PL, 2PL, etc) \* funksjon: Trekke ut Wright-map plot som egen funksjon (plot_1a) \* funksjon: Trekke ut ICC plots-loopen for TAM-data, som eegen funksjon \* funksjon: Trekke ut Mplus-modeller som egne funksjoner \* Generalisere mer (særlig grafer) og unngå hardkodede variabelnavn/labels \* Be Alexander Rorbitzh om å kunne endre navn på Plots-mappe \* argument: Endre argument defaults til engelsk/tom \* funksjon: Legge inn fortolkninger som tekst i fit (høy infit, etc). \* funksjon: Item information curves (all in one graph)
+
+-   Bedre struktur på returnert objekt: alle rå-objekter i egen liste (raw). Input i egen liste (input), Alt nyttig i egen liste (\$summary)
+
+-   summary\$mod: tibble, rader=modell, kolonner= person abilities mean, item spread, C alpha, CFA, TLI, RMSEA, SRMR, faktorladningsspredning,
+
+-   summary\$tam_1pl: tibble, rader=item, kolonner=item difficulty, discrimination, outfit, infit, item information curve summary?,
+
+-   funksjon: Excel-output av alt i \$summary-listen, inkl Chart-grafer?.
+
+-   Lage/finne en oppskrift på hele valideringsprosessen, basere output rundt dette.
+
+-   Legge inn flere pakker?
+
+-   Mer om DIF/MI, local independence, Q3, etc
+
+-   Bifaktor/second order-struktur?
+
+-   Når andre pakker er oppdatert (ASCII), fjerne noen endringer av tittel, etc.?
+
+-   Tidyselect?
+
+-   Kontroller og Feilmeldinger (rlang)
+
+# Examples and documentation
+
+# Other
+
+parsnip, broom, yardstick extensions for SEM models: <https://www.tidymodels.org/learn/develop/models/> and <https://www.tidymodels.org/learn/develop/broom/> and <https://www.tidymodels.org/learn/develop/metrics/> 
+easystats extensions (or not, as they don't yet support tidymodels) 
+workflow-package extensions parsnip, and returns broom, yardstick)
+
+
+
+# Gamle notater, kan være noen ideer verdt å beholde her
+#############################################################################
+#### Sett med funksjoner for rask høykvalitetsanalyse av spørreskjemadata ####
+
+# NIFUstolper: Produksjon (direkte lagring til disk) av stolpediagrammer for spørsmålsbatterier gruppert etter supergrupper, grupper, osv og brutt ned på liste med brytningsvariabler
+1	Unngå overskriving: Legg til siffer, sjekk på nytt, etc.
+1	Algoritme for høyden (minste størrelse når strip-tekst går over flere linjer)
+2	SVG eller vektorgrafikk i Word
+2	facet-tekst justeres slik at den aldri forsvinner om den blir for mange linjer
+2	Sjekk at det er færre verdier enn farger
+
+# Produksjon av alle mulige tabeller for sett med variabler brutt ned på liste med brytningsvariabler, fordelt på batteri
+1	function(. data, .outcome_vars=TIDY SELECT list.vars_break=NULL, .vars_break2=null, brytning_ved_rader=T,  batteri_var="")
+
+# Tekstgenerering av signifikanstester for sett med ordinale variabler brutt ned på liste med brytningsvariabler.
+1	Fikse feil når det er flere grupper som sammenlignes (N og m= synes å være samme for 1. og 3. oppføring?
+1	Lagre analysen per variableGroup - altså en ytterloop - kontinuerlig
+1	Raskere, går tregt
+2	Sortere gruppene etter faktor-levels, eller etter hva som er høyest.
+1	Lagre krysstabeller i samme slengen. Setningen kan legges umiddelbart under tabellen.
+2	Legge til totalen for å sammenligne gruppene med totalen, men er dette fortsatt uavhengige grupper? (add_total=T)
+1	ta sjekk på om ordinalvariabel er ordered factor, gi informativ feilmelding
+1	Sjekk om variabler inneholder NA, fjerne med advarsel
+2	unngå coin-pakken, finne referanser til metoden (Agresti, 2007)
+3	Hvilke grupper har høyest/lavest verdi, på hver variabel?
+2	Andre ikke-parametriske distribusjoner (nominal-nominal, binær, interval, etc)
+3	Omnibus-tester?
+3	Ulike type fraser for ulike batterier (enten character vector of length 1 or character vector =length(unique(variableGroup)
+3	Randomisere mellom fraser
+	compareGroups-pakken?
+	Bør også eksportere som CSV-fil resultatene da det kan være letter eå lese. "mer enig enn" kan da bli > eller <.
+
+# NIFU_efa: EFA av alle utfallsvariabler
+	Finner selv ut hvor mange faktorer er teoretisk mulige
+	Fjerner iterativt variabler med missing over 20%, forenkler variabler med mindre enn 10% per kategori 
+	en egen variabel i Structure forteller hvilke som skal snus i faktoranalyser
+	om ikke MplusAutomation oppdateres: kjører ESEM for å hente ut faktorladningene
+	Kobler på variableQuestion og variableGroup
+	Sorterer slik at sterkeste faktorladningene kommer først
+	Fjerner alt mellom -.4-.4 og omrokkerer faktorene
+	Printer ut i Excel, fargelegger
+	Legger ved rå (Spearman) korrelasjoner i eget regneark
+
+# analyze_psych: Psykometriske analyser av konstrukter
+	CFA for hvert spørsmålsbatteri og spørsmålsoverbatteri, m/alpha, CFA, TLI, RMSEA, SRMR, faktorladningsspredning, osv
+	Measurement invariance for hver av brytningsvariablene
+	Lager en samletabell for alle variableGroup
+	Optional item-nivå info, DIF, etc
+
+Rapportere bug til Mplus om at $1 blir kuttet vekk fra CI-output.
+Rapportere bug til MplusAutomation: LOGISTIC REGRESSION ODDS RATIO RESULTS kommer ikke med 
+
+# Tekstgenerering av Mplusmodeller
+	Total, så hver spesifikk indirekte, innenfor disse vise deleffektene, så total indirekte, så direkte.
+	Benytter STDYX og STDY avhengig av type variabel
+
+# Automatisk generering av hvert av det ovenstående for hvert batteri (samlefunksjon) i et Word-dokument med NIFU-template, gruppert etter headings, 
+3	Legger inn grafene, tabellene, signifikanstester, m.m. under korrekt overskrift.
+	Må sortere riktig. Hm
+	Må ha et register i CSV-fil eller lignende med fraser man kan benytte til variasjon, for introduksjon av grafer, tabeller, osv.
+	

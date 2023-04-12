@@ -1,0 +1,16 @@
+^.Rproj$
+^\.Rproj\.user$
+TODO.Rmd$
+^README\.Rmd$
+^README\.md$
+^data-raw$
+^tmp\.docx
+^LICENSE\.md$
+^codecov\.yml$
+^\.github$
+^cran-comments\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^Oversikt.xlsx
+^.*\.Rproj$
