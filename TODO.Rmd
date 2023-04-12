@@ -52,6 +52,7 @@ knitr::opts_chunk$set(echo = TRUE)
 -   Replace separators with patterns? Or character vector patterns? First letters before numbers? Similar to the new splitters in {tidyr}
 - Convenience argument: drop_if_single_item (to ease automated psychometric analyses)
 
+
 # General improvements
 - speed performance
 	- vectorization, avoid looping (can be parallellized in outer loop)
@@ -82,7 +83,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - saros.modelsig: pkgs: infer,  
 - saros.text: pkgs: openai, qualitative?, 
 - saros.psych: psych, tidySEM, lavaan, tidySEM,
-- SAROS: Move handpick there, reducing the clipr dependency.
+- saros: Move handpick there, reducing the clipr dependency.
 
 
 ##############################################################
