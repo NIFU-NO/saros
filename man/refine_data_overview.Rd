@@ -35,5 +35,9 @@ Processes A 'data_overview' Data Frame
 Take Kapitteloversikt.xlsx, read it in, and send it to here.
 }
 \examples{
-saros::refine_data_overview(ex_survey_ch_overview)
+refine_data_overview(ex_survey_ch_overview)
+refine_data_overview(ex_survey_ch_overview,
+                     data = ex_survey1,
+                     label_separator = " - ",
+                     name_separator = "_")
 }

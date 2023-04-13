@@ -125,7 +125,11 @@ look_for_extended <- function(data,
 #' @export
 #'
 #' @examples
-#' saros::refine_data_overview(ex_survey_ch_overview)
+#' refine_data_overview(ex_survey_ch_overview)
+#' refine_data_overview(ex_survey_ch_overview,
+#'                      data = ex_survey1,
+#'                      label_separator = " - ",
+#'                      name_separator = "_")
 refine_data_overview <- function(data_overview,
                                  data = NULL,
                                  group_by = c("chapter", "col_group", "label_prefix"),
@@ -162,6 +166,7 @@ refine_data_overview <- function(data_overview,
     dplyr::arrange(.data$designated_role, .data$designated_type) %>%
     dplyr::relocate(tidyselect::all_of(c("designated_role", "designated_type", "col_spec")))
   if(data_present) {
+    out <-
     out %>%
     dplyr::mutate(cols = eval_cols(x = .data$col_spec,
                                  data = .env$data,
@@ -173,5 +178,25 @@ refine_data_overview <- function(data_overview,
                       by = dplyr::join_by("col_pos", "col_name")) %>%
       dplyr::group_by(dplyr::pick(tidyselect::all_of(group_by))) %>%
       dplyr::arrange(dplyr::pick(tidyselect::all_of(names(sort_by))))
-  } else out
+  }
+  out %>%
+    attach_indep()
+}
+
+
+attach_indep <- function(refined_data_overview) {
+  group_variables <- dplyr::group_vars(refined_data_overview)
+  if(!rlang::is_null(refined_data_overview$designated_role)) {
+  refined_data_overview %>%
+    dplyr::left_join(y=
+                refined_data_overview %>%
+                dplyr::ungroup() %>%
+                dplyr::filter(.data$designated_role == "indep") %>%
+                tidyr::nest(.by = tidyselect::all_of(c("chapter")), .key = "by_cols_df"),
+              by = dplyr::join_by("chapter"))
+
+  } else {
+    cli::cli_warn("No column {.var designated_role} found, no bivariates possible.")
+    refined_data_overview %>% dplyr::mutate(by_cols_df = list(NULL))
+  }
 }

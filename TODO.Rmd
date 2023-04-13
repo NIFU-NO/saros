@@ -15,13 +15,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Main priorities for version 1.0 (Spørringene)
 - bi/by
-    1) nest i refine_data_overview() som til hver rad hvor designated_role == "dep" får en by_cols-kolonne (om include_bi=TRUE). I lst_saros_elements() så hentes disse dersom de finnes, for by= argumentet. Navnet lages da på bakgrunn av den opprinnelige dep-cols-raden og indep-variabelen.
     2) I gen_qmd_report() så gjøres ingenting inntil get_element_path()?
-    
 - tables: by i tabeller: Same vertical argument as in plots?
 - a wrapper for lst_saros_elements
+
 - Save not only Rds-files but also png/docx copies of tables/plots for manual inspection.
-- check .count is displayed in html plots (bug in ggiraph?)
 -	chart_categorical_ggiraph: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
 - Taking the mean of f_uni doesn't make much sense and results in warnings during build, avoid in example?
 - Add full _quarto.yml file for project.
@@ -33,6 +31,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Version 1.5
+- check .count is displayed in html plots (bug in ggiraph?)
 - Generalize the element creator switch function and helper function so that user could create own element types. A function factory.
 - Allow a autonumberer for sections (inside gen_qmd_structure).
 - Tests for graphs using snapshots and data in ggplot object
@@ -59,6 +58,7 @@ knitr::opts_chunk$set(echo = TRUE)
 	- profiling
 	- avoid copying
 - refactoring
+- more memorable and logical naming of functions, arguments, etc.
 - documentation and examples
     - inheritParams
     - exemplify all non-trivial argument inputs (lists, vectors, objects)
