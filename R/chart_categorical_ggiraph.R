@@ -158,9 +158,9 @@ chart_categorical_plot <-
 #' }
 embed_chart_categorical_ggplot <-
   function(data,
+         ...,
          cols = tidyselect::everything(),
          by = NULL,
-         ...,
          showNA = c("ifany", "always", "no"),
          label_font_size = 8,
          main_font_size = 9,
@@ -180,25 +180,30 @@ embed_chart_categorical_ggplot <-
          label_separator = NULL,
          x_axis_label_width = 20,
          seed = 1,
-         return_raw = FALSE) {
+         return_raw = FALSE,
+         call = rlang::caller_env()) {
 
     showNA <- rlang::arg_match(showNA, multiple = FALSE)
-    check_data_frame(data)
-    check_multiple_by(data, by = {{by}})
-    check_string(label_separator, null.ok=TRUE)
-    check_bool(return_raw)
-    check_double(height_per_col, min = 0)
-    check_double(height_fixed, min = 0)
-    rlang::check_dots_used()
+    check_data_frame(data, call = call)
+    check_multiple_by(data, by = {{by}}, call = call)
+    check_string(label_separator, null.ok=TRUE, call = call)
+    check_bool(return_raw, call = call)
+    check_double(height_per_col, min = 0, call = call)
+    check_double(height_fixed, min = 0, call = call)
+    dots <- rlang::list2(...)
+    rlang::check_dots_used(call = call,
+                           error = function(cnd) {
+                             cli::cli_warn("Arguments provided ({names(dots)}) are not matching function arguments.")
+                             })
 
 
   data <- dplyr::select(data, {{cols}}, {{by}})
 
 
   cols_enq <- rlang::enquo(arg = cols)
-  cols_pos <- tidyselect::eval_select(cols_enq, data = data)
+  cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
   by_enq <- rlang::enquo(arg = by)
-  by_pos <- tidyselect::eval_select(by_enq, data = data)
+  by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
 
   check_category_pairs(data = data, cols_pos = c(cols_pos))
 
@@ -215,7 +220,7 @@ embed_chart_categorical_ggplot <-
                    desc = desc,
                    ignore_if_below = ignore_if_below,
                    label_separator = label_separator,
-                   call = rlang::caller_env())
+                   call = call)
 
 
   chart <-
@@ -231,7 +236,7 @@ embed_chart_categorical_ggplot <-
                            digits = digits,
                            x_axis_label_width = x_axis_label_width,
                            seed = seed,
-                           call = rlang::caller_env())
+                           call = call)
 
 
   if(!is.null(label_separator)) {

@@ -25,16 +25,10 @@ render_saros_report <-
 
 
     elements_list <-
-      yml$elements_vector %>%
-      rlang::set_names() %>%
-      purrr::imap(.f = ~{
-
-        lst_saros_elements(data_overview = data_overview,
-                           element_name = rlang::set_names(.x, .y),
-                           data = data,
-                           label_separator = yml$label_separator,
-                           !!!yml_element_args)
-      })
+      mass_lst_saros_elements(vec = yml$elements_vector,
+                              data_overview = data_overview,
+                              data = data,
+                              !!!yml_element_args)
     report_filepath <-
       gen_qmd_report(data_overview = data_overview,
                    elements = elements_list,

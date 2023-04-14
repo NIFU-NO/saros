@@ -12,6 +12,7 @@
 #' @param ... <[`dynamic-dots`][rlang::dyn-dots]> arguments forwarded to the corresponding functions that create the elements.
 #'
 #' @return Named list of elements, where each element can .
+#' @importFrom rlang !!!
 #' @export
 #'
 #' @examples
@@ -145,4 +146,37 @@ lst_saros_elements <-
   }
 
 
-
+#' Title
+#'
+#' @param element_names Character vector of element names. Defaults to all available.
+#' @inheritParams lst_saros_elements
+#'
+#' @return List of elements that can be directly used in gen_qmd_report()
+#' @export
+#'
+#' @examples
+# #' library(dplyr)
+# #' ex_survey_elements_list <-
+# #' mass_lst_saros_elements(element_names = saros::list_available_element_types(),
+# #'                         data_overview =
+# #'                           saros::ex_survey_ch_overview %>%
+# #'                           saros::refine_data_overview(data = saros::ex_survey1,
+# #'                                                       label_separator = " - ",
+# #'                                                       name_separator = "_"),
+# #'                         data = saros::ex_survey1,
+# #'                         label_separator = " - ")
+# mass_lst_saros_elements <-
+#   function(element_names = list_available_element_types(),
+#            data_overview,
+#            data,
+#            ...) {
+#     element_names %>%
+#     rlang::set_names() %>%
+#       purrr::imap(.f = ~{
+#
+#         lst_saros_elements(data_overview = data_overview,
+#                            element_name = rlang::set_names(.x, .y),
+#                            data = data,
+#                            ...)
+#       })
+#   }

@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Main priorities for version 1.0 (Spørringene)
 - bi fungerer ikke
 - tables: by i tabeller: Same vertical argument as in plots?
+-showNA not workingin bi
 
 - Save not only Rds-files but also png/docx copies of tables/plots for manual inspection.
 -	chart_categorical_ggiraph: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"

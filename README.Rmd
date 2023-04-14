@@ -75,7 +75,7 @@ index_filepath <-
 
 if(interactive()) {
   browseURL(fs::path(temp_folder, "index.qmd"))
-  quarto::quarto_render(fs::path(temp_folder, "index.qmd"))
+  quarto::quarto_render(fs::path(temp_folder, "index.qmd"), use_freezer = TRUE, cache = TRUE)
   browseURL(fs::path(temp_folder, "index.html"))
 }
 unlink(temp_folder)
