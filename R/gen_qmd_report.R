@@ -86,14 +86,12 @@ gen_qmd_report <-
 
     if(is.null(report_ymlthis_config)) {
       report_yml <-
-        ymlthis::yml(author = FALSE,
-                     date = FALSE)
+        ymlthis::yml_empty()
     } else report_yml <- report_ymlthis_config
 
     if(is.null(chapter_ymlthis_config)) {
        chapter_yml <-
-         ymlthis::yml(author = FALSE,
-                      date = FALSE)
+         ymlthis::yml_empty()
     } else chapter_yml <- chapter_ymlthis_config
 
     grouping_structure <-

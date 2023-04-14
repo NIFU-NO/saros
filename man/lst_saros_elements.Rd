@@ -23,7 +23,7 @@ lst_saros_elements(
 
 \item{data}{Survey data.}
 
-\item{...}{arguments forwarded to the corresponding functions that create the elements.}
+\item{...}{<[`dynamic-dots`][rlang::dyn-dots]> arguments forwarded to the corresponding functions that create the elements.}
 }
 \value{
 Named list of elements, where each element can .

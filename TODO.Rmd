@@ -14,10 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Main priorities for version 1.0 (Spørringene)
-- bi/by
-    2) I gen_qmd_report() så gjøres ingenting inntil get_element_path()?
+- bi fungerer ikke
 - tables: by i tabeller: Same vertical argument as in plots?
-- a wrapper for lst_saros_elements
 
 - Save not only Rds-files but also png/docx copies of tables/plots for manual inspection.
 -	chart_categorical_ggiraph: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
@@ -31,6 +29,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Version 1.5
+- Replace ymlthis with yaml-package.
 - check .count is displayed in html plots (bug in ggiraph?)
 - Generalize the element creator switch function and helper function so that user could create own element types. A function factory.
 - Allow a autonumberer for sections (inside gen_qmd_structure).

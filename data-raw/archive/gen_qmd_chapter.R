@@ -76,8 +76,7 @@ gen_qmd_chapter <-
                           i="Ignoring {.arg chapter_yml} argument."), call = call)
         }
         chapter_yml <-
-          ymlthis::yml(author = FALSE,
-                       date = FALSE)
+          ymlthis::yml_empty()
       }
     chapter_yml <-
       chapter_yml %>%
