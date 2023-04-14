@@ -70,6 +70,7 @@ index_filepath <-
   gen_qmd_report(
     data_overview = data_overview,
     elements = ex_survey_elements_list,
+    captions = "pretty",
     path = temp_folder)
 
 if(interactive()) {

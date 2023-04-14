@@ -13,6 +13,7 @@
 #' @param vertical [\code{logical(1)}] Logical. If FALSE (default), then horizontal.
 #' @param percentage [\code{logical(1)}] If TRUE, will compute percentage and add percentage sign to data label.
 #' @param digits [\code{integer(1)}]\cr Number of digits in percentages.
+#' @param x_axis_label_width [\code{integer(1)}] Width of the labels used for the categorical column names.
 #' @param seed [\code{integer(1)}] Optional random seed for selection of colours in blender.
 #' @param call For internal use
 #'
@@ -117,7 +118,8 @@ chart_categorical_plot <-
           ggiraph::facet_grid_interactive(
             rows = ggplot2::vars(.data$.variable_label),
             labeller = ggiraph::labeller_interactive(
-              .mapping = ggplot2::aes(tooltip = "Tooltip")),
+              .mapping = ggplot2::aes(tooltip = "Tooltip",
+                                      label = stringr::str_wrap(.data$.label, width = x_axis_label_width, indent = 0, exdent = 0))),
             interactive_on = "text",
             switch = "y", scales = "free_y", space = "free_y"
           )

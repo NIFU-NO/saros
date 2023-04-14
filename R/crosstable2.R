@@ -20,6 +20,7 @@ crosstable2.data.frame <-
           dplyr::rename(.category = tidyselect::all_of(.x))
         col <- dplyr::pull(out, .data$.category)
 
+
         if(!rlang::is_character(col) &&
            !is.factor(col) &&
            dplyr::n_distinct(col, na.rm = FALSE) <= 10) {
@@ -35,8 +36,30 @@ crosstable2.data.frame <-
                           .category = forcats::fct_na_value_to_level(f = col, level = "NA"))
 
         } else {
-          out <- out[!is.na(out$.category), ]
+          out <- out %>% dplyr::filter(!is.na(.data$.category))
         }
+        by_vars <-
+          dplyr::select(data, {{by}}) %>%
+          colnames()
+
+        for(by_var in by_vars) {
+
+          by_col <- dplyr::pull(out, .data[[by_var]])
+
+          if(showNA == "always" ||
+             (showNA == "ifany" && any(is.na(by_col)))) {
+
+            out <-
+              dplyr::mutate(out, dplyr::across(.cols = tidyselect::all_of(by_var),
+                                               ~forcats::fct_na_value_to_level(f = .x, level = "NA")))
+
+          } else {
+            out <-
+              out %>%
+              dplyr::filter(dplyr::if_all(.cols = tidyselect::all_of(by_var), .fns = ~!is.na(.x)))
+          }
+        }
+
         col <- dplyr::pull(out, .data$.category)
 
         fct_lvls <-

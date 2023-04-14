@@ -15,6 +15,7 @@ chart_categorical_plot(
   vertical = FALSE,
   percentage = TRUE,
   digits = 1,
+  x_axis_label_width = 20,
   seed = 1,
   call = rlang::caller_env()
 )
@@ -41,6 +42,8 @@ Must contain at least the number of unique values (incl. missing) in the data se
 \item{percentage}{[\code{logical(1)}] If TRUE, will compute percentage and add percentage sign to data label.}
 
 \item{digits}{[\code{integer(1)}]\cr Number of digits in percentages.}
+
+\item{x_axis_label_width}{[\code{integer(1)}] Width of the labels used for the categorical column names.}
 
 \item{seed}{[\code{integer(1)}] Optional random seed for selection of colours in blender.}
 

@@ -48,10 +48,25 @@ get_element_path <-
         glue::glue_data(glue_index_string) %>%
         conv_to_valid_obj_name()
     } else {
-      index <-
-        index %>%
-        dplyr::distinct(dplyr::pick(tidyselect::all_of(dplyr::group_vars(.)))) %>%
-        list_valid_obj_name()
+      if(!stringr::str_detect(string = element_name, pattern = "^bi_.*")) {
+        index <-
+          index %>%
+          dplyr::distinct(dplyr::pick(tidyselect::all_of(dplyr::group_vars(.)))) %>%
+          list_valid_obj_name()
+      } else {
+        by_index <-
+          index %>%
+          dplyr::pull(.data$by_cols_df) %>%
+          .[[1]]
+        if(!rlang::is_null(by_index)) {
+          by_index <- by_index$col_name
+        }
+        index <-
+          index %>%
+          dplyr::distinct(dplyr::pick(tidyselect::all_of(dplyr::group_vars(.)))) %>%
+          list_valid_obj_name() %>%
+          stringr::str_c(., "_BY_", by_index)
+      }
     }
 
     if(length(index) > 1) cli::cli_abort("{.arg data_overview} contains multiple grouping variables: {.var {index}}.")

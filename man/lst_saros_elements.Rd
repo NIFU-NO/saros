@@ -31,3 +31,11 @@ Named list of elements, where each element can .
 \description{
 Mass Create Elements of A Certain Type
 }
+\examples{
+library(dplyr)
+ ex_survey_ch_overview \%>\%
+ refine_data_overview(label_separator = " - ",
+                       name_separator = "_") \%>\%
+lst_saros_elements(data_overview=.,
+                   data= ex_survey1)
+}

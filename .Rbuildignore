@@ -1,8 +1,10 @@
 ^.Rproj$
 ^\.Rproj\.user$
-TODO.Rmd$
+^TODO\.Rmd$
+^TODO\.html$
 ^README\.Rmd$
 ^README\.md$
+^README\.html$
 ^data-raw$
 ^tmp\.docx
 ^LICENSE\.md$

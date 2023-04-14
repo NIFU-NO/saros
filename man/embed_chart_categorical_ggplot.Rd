@@ -26,6 +26,7 @@ embed_chart_categorical_ggplot(
   desc = FALSE,
   ignore_if_below = 1,
   label_separator = NULL,
+  x_axis_label_width = 20,
   seed = 1,
   return_raw = FALSE
 )
@@ -86,6 +87,8 @@ Must contain at least the number of unique values (incl. missing) in the data se
 \item{ignore_if_below}{[\code{numeric(1)}] Whether to hide label if below this value.}
 
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+
+\item{x_axis_label_width}{[\code{integer(1)}] Width of the labels used for the categorical column names.}
 
 \item{seed}{[\code{integer(1)}] Optional random seed for selection of colours in blender.}
 

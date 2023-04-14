@@ -9,34 +9,33 @@
 #' }
 #' @param element_name See \code{element_list()} for options.
 #' @param data Survey data.
-#' @param ... arguments forwarded to the corresponding functions that create the elements.
+#' @param ... <[`dynamic-dots`][rlang::dyn-dots]> arguments forwarded to the corresponding functions that create the elements.
 #'
 #' @return Named list of elements, where each element can .
 #' @export
 #'
 #' @examples
+#' library(dplyr)
+#'  ex_survey_ch_overview %>%
+#'  refine_data_overview(label_separator = " - ",
+#'                        name_separator = "_") %>%
+#' lst_saros_elements(data_overview=.,
+#'                    data= ex_survey1)
 lst_saros_elements <-
   function(data_overview,
            element_name = "uni_cat_plot_html",
            data = NULL,
            ...) {
 
-    # args <- rlang::list2(...)
+    dots <- rlang::list2(...)
+
 
     check_element_name(x = element_name, n = 1, null.ok = FALSE)
 
-    ## Save some memory by reducing data set to those variables which have been specified in data_overview
-    if(!is.null(data)) {
-      data <- dplyr::select(.data = data,
-                          tidyselect::all_of(unique(data_overview$col_name)))
-      data_overview <- dplyr::select(.data = data_overview,
-                                     !tidyselect::all_of("col_pos")) # These will be invalid and thus removed.
+    compare_many <- function(x) {
+      all(purrr::map_lgl(as.list(x[-1]),
+                         .f = ~identical(.x, x[[1]])))
     }
-
-
-    list_names <-
-      data_overview %>%
-      list_valid_obj_name() # Currently ignores the fact that some might return NULL...
 
     data_overview %>%
       dplyr::group_map(
@@ -45,17 +44,20 @@ lst_saros_elements <-
 
           name <- list_valid_obj_name(section_key)
 
+          y_col_names <- unique(section_df$col_name)
+
           if(element_name == "uni_cat_plot_html" &&
              all(section_df$designated_type == "cat")) {
             out <-
               embed_chart_categorical_ggplot(
                 data = data,
-                cols = tidyselect::all_of(unique(section_df$col_name)),
+                cols = tidyselect::all_of(y_col_names),
                 ...
               )
 
             return(rlang::set_names(list(out), nm = name))
           }
+          ######################################################################
 
 
           if(element_name == "uni_cat_plot_docx" &&
@@ -63,11 +65,12 @@ lst_saros_elements <-
             out <-
               embed_chart_categorical_office(
                 data = data,
-                cols = tidyselect::all_of(unique(section_df$col_name)),
+                cols = tidyselect::all_of(y_col_names),
                 ...
               )
             return(rlang::set_names(list(out), nm = name))
           }
+          ######################################################################
 
 
           if(element_name == "uni_cat_plot_docx" &&
@@ -75,11 +78,67 @@ lst_saros_elements <-
             out <-
               embed_chart_categorical_office(
                 data = data,
-                cols = tidyselect::all_of(unique(section_df$col_name)),
+                cols = tidyselect::all_of(y_col_names),
                 ...
               )
             return(rlang::set_names(list(out), nm = name))
           }
+          ######################################################################
+
+
+          if(all(section_df$designated_role != "indep") &&
+             stringr::str_detect(element_name, "^bi_.*") &&
+             !rlang::is_null(section_df$by_cols_df) &&
+             compare_many(section_df$by_cols_df)) {
+
+            by_df <- dplyr::pull(section_df, .data$by_cols_df)[[1]]
+
+            if(inherits(by_df, what = "data.frame")) {
+
+              by_df %>%
+                dplyr::pull(.data$col_name) %>%
+                stringr::str_unique() %>%
+                rlang::set_names(nm = stringr::str_c(name, "_BY_", .)) %>%
+                purrr::map(.f = ~{
+
+                  by_type <-
+                    by_df %>%
+                    dplyr::filter(.data$col_name == .x) %>%
+                    dplyr::pull(.data$designated_type)
+
+
+                  if(element_name == "bi_catcat_plot_html" &&
+                     all(section_df$designated_type == "cat") &&
+                     all(by_type == "cat")) {
+
+
+                    return(
+                      embed_chart_categorical_ggplot(
+                        data = data,
+                        cols = tidyselect::all_of(y_col_names),
+                        by = tidyselect::all_of(.x),
+                        ...
+                      )
+                    )
+                  }
+
+                  if(element_name == "bi_catcat_plot_docx" &&
+                     all(section_df$designated_type == "cat") &&
+                     all(by_type == "cat")) {
+                    return(
+                      embed_chart_categorical_office(
+                        data = data,
+                        cols = tidyselect::all_of(y_col_names),
+                        by = tidyselect::all_of(.x),
+                        ...
+                      )
+                    )
+                  }
+                })
+            }
+          }
+
+
 
     }) %>%
       unlist(recursive = FALSE)
