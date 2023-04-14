@@ -8,7 +8,7 @@
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Codecov test
-coverage](https://codecov.io/gh/sda030/saros/branch/main/graph/badge.svg)](https://app.codecov.io/gh/sda030/saros?branch=main)
+coverage](https://codecov.io/gh/NIFU-NO/saros/branch/main/graph/badge.svg)](https://app.codecov.io/gh/NIFU-NO/saros?branch=main)
 \#\> [![CRAN
 status](https://www.r-pkg.org/badges/version/saros)](https://CRAN.R-project.org/package=SAROS)
 [![R-CMD-check](https://github.com/NIFU-NO/saros/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/NIFU-NO/saros/actions/workflows/R-CMD-check.yaml)
@@ -95,7 +95,7 @@ index_filepath <-
 
 if(interactive()) {
   browseURL(fs::path(temp_folder, "index.qmd"))
-  quarto::quarto_render(fs::path(temp_folder, "index.qmd"))
+  quarto::quarto_render(fs::path(temp_folder, "index.qmd"), use_freezer = TRUE, cache = TRUE)
   browseURL(fs::path(temp_folder, "index.html"))
 }
 unlink(temp_folder)
@@ -103,7 +103,7 @@ unlink(temp_folder)
 
 ## Documentation
 
-Please see the [documentation](https://sda030.github.io/saros/).
+Please see the [documentation](https://NIFU-NO.github.io/saros/).
 
 ## Code of Conduct
 

@@ -4,7 +4,12 @@
 \alias{list_available_element_types}
 \title{List All Valid Names of The Elements Argument}
 \usage{
-list_available_element_types()
+list_available_element_types(valid_only = TRUE)
+}
+\arguments{
+\item{valid_only}{Only return implemented elements, or all (planned) elements.
+Note that *_docx-elements have limited storage support and
+are hence not included in examples in this package as minor (unimportant) warnings will occur.}
 }
 \description{
 List All Valid Names of The Elements Argument

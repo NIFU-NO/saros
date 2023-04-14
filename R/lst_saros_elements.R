@@ -12,6 +12,7 @@
 #' @param ... <[`dynamic-dots`][rlang::dyn-dots]> arguments forwarded to the corresponding functions that create the elements.
 #'
 #' @return Named list of elements, where each element can .
+#' @importFrom rlang !!!
 #' @export
 #'
 #' @examples
@@ -29,7 +30,6 @@ lst_saros_elements <-
 
     dots <- rlang::list2(...)
 
-
     check_element_name(x = element_name, n = 1, null.ok = FALSE)
 
     compare_many <- function(x) {
@@ -46,14 +46,20 @@ lst_saros_elements <-
 
           y_col_names <- unique(section_df$col_name)
 
+
+
           if(element_name == "uni_cat_plot_html" &&
              all(section_df$designated_type == "cat")) {
             out <-
-              embed_chart_categorical_ggplot(
-                data = data,
-                cols = tidyselect::all_of(y_col_names),
-                ...
-              )
+              rlang::exec(
+                embed_chart_categorical_ggplot,
+
+                  data = data,
+                  cols = tidyselect::all_of(y_col_names),
+                  !!!dots)
+
+
+
 
             return(rlang::set_names(list(out), nm = name))
           }
@@ -63,26 +69,15 @@ lst_saros_elements <-
           if(element_name == "uni_cat_plot_docx" &&
              all(section_df$designated_type == "cat")) {
             out <-
-              embed_chart_categorical_office(
+              rlang::exec(
+                embed_chart_categorical_office,
                 data = data,
                 cols = tidyselect::all_of(y_col_names),
-                ...
-              )
+                !!!dots)
+
             return(rlang::set_names(list(out), nm = name))
           }
-          ######################################################################
 
-
-          if(element_name == "uni_cat_plot_docx" &&
-             all(section_df$designated_type == "cat")) {
-            out <-
-              embed_chart_categorical_office(
-                data = data,
-                cols = tidyselect::all_of(y_col_names),
-                ...
-              )
-            return(rlang::set_names(list(out), nm = name))
-          }
           ######################################################################
 
 
@@ -113,12 +108,12 @@ lst_saros_elements <-
 
 
                     return(
-                      embed_chart_categorical_ggplot(
+                      rlang::exec(
+                        embed_chart_categorical_ggplot,
                         data = data,
                         cols = tidyselect::all_of(y_col_names),
                         by = tidyselect::all_of(.x),
-                        ...
-                      )
+                        !!!dots)
                     )
                   }
 
@@ -126,12 +121,12 @@ lst_saros_elements <-
                      all(section_df$designated_type == "cat") &&
                      all(by_type == "cat")) {
                     return(
-                      embed_chart_categorical_office(
+                      rlang::exec(
+                        embed_chart_categorical_office,
                         data = data,
                         cols = tidyselect::all_of(y_col_names),
                         by = tidyselect::all_of(.x),
-                        ...
-                      )
+                        !!!dots)
                     )
                   }
                 })
@@ -145,4 +140,41 @@ lst_saros_elements <-
   }
 
 
+#' Mass Generate Elements
+#'
+#' @param element_names Character vector of element names. Defaults to all available.
+#' @inheritParams lst_saros_elements
+#'
+#' @return List of elements that can be directly used in gen_qmd_report()
+#' @importFrom rlang !!!
+#' @export
+#'
+#' @examples
+#' library(dplyr)
+#' ex_survey_elements_list <-
+#' mass_lst_saros_elements(data_overview =
+#'                           ex_survey_ch_overview %>%
+#'                           refine_data_overview(data = ex_survey1,
+#'                                                       label_separator = " - ",
+#'                                                       name_separator = "_"),
+#'                         data = ex_survey1,
+#'                         label_separator = " - ")
+mass_lst_saros_elements <-
+  function(element_names = list_available_element_types(),
+           data_overview,
+           data,
+           ...) {
+    dots <- rlang::list2(...)
 
+    element_names %>%
+    rlang::set_names() %>%
+      purrr::imap(.f = ~{
+
+        rlang::exec(
+          lst_saros_elements,
+          data_overview = data_overview,
+          element_name = rlang::set_names(.x, .y),
+          data = data,
+          !!!dots)
+      })
+  }

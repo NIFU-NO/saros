@@ -16,6 +16,7 @@ summarize_data(
   desc = FALSE,
   ignore_if_below = 0,
   label_separator = NULL,
+  ...,
   call = rlang::caller_env()
 )
 }
@@ -53,6 +54,8 @@ summarize_data(
 \item{ignore_if_below}{[\code{numeric(1)}] Whether to hide label if below this value.}
 
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+
+\item{...}{Optional parameters forwarded from above.}
 
 \item{call}{Error call function, usually not needed.}
 }

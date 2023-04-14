@@ -7,8 +7,8 @@
 embed_chart_categorical_ggplot(
   data,
   cols = tidyselect::everything(),
-  by = NULL,
   ...,
+  by = NULL,
   showNA = c("ifany", "always", "no"),
   label_font_size = 8,
   main_font_size = 9,
@@ -28,7 +28,8 @@ embed_chart_categorical_ggplot(
   label_separator = NULL,
   x_axis_label_width = 20,
   seed = 1,
-  return_raw = FALSE
+  return_raw = FALSE,
+  call = rlang::caller_env()
 )
 }
 \arguments{
@@ -36,9 +37,9 @@ embed_chart_categorical_ggplot(
 
 \item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
 
-\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
-
 \item{...}{Optional parameters forwarded from above.}
+
+\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
 \item{showNA}{[\code{logical(1)}]\cr Whether to show NA in categorical variables (one of c("ifany", "always", "no"), like in table()).}
 
@@ -93,6 +94,8 @@ Must contain at least the number of unique values (incl. missing) in the data se
 \item{seed}{[\code{integer(1)}] Optional random seed for selection of colours in blender.}
 
 \item{return_raw}{[\code{logical(1)}] Whether to return the raw static chart. Defaults to FALSE.}
+
+\item{call}{Error call function, usually not needed.}
 }
 \value{
 ggplot

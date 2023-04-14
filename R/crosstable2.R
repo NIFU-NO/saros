@@ -67,15 +67,15 @@ crosstable2.data.frame <-
 
         summary_mean <-
           out %>%
-          dplyr::group_by(dplyr::pick(c({{by}}))) %>%
+          dplyr::group_by(dplyr::pick(tidyselect::all_of(by_vars))) %>%
           dplyr::summarize(.mean = mean(as.numeric(.data$.category), na.rm=TRUE)) %>%
           dplyr::ungroup()
 
         summary_prop <-
           out %>%
-          dplyr::group_by(dplyr::pick(c({{by}}, tidyselect::all_of(".category")))) %>%
+          dplyr::group_by(dplyr::pick(tidyselect::all_of(c(by_vars, ".category")))) %>%
           dplyr::summarize(.count = dplyr::n()) %>%
-          dplyr::group_by(dplyr::pick(c({{by}}))) %>%
+          dplyr::group_by(dplyr::pick(tidyselect::all_of(by_vars))) %>%
           dplyr::mutate(.proportion = .data$.count/sum(.data$.count, na.rm=TRUE)) %>%
           dplyr::ungroup() %>%
           dplyr::mutate(
@@ -88,7 +88,7 @@ crosstable2.data.frame <-
             .proportion_se = NA_real_,
             .mean_se = NA_real_)
 
-        if(ncol(dplyr::select(data, {{by}}))>0) {
+        if(length(by_vars) > 0) {
           dplyr::left_join(summary_prop, summary_mean)
         } else cbind(summary_prop, summary_mean)
 
@@ -150,16 +150,38 @@ crosstable2.tbl_svy <-
         fct_lvls <-
           if(is.factor(col)) levels(col) else sort(unique(col))
 
+        by_vars <-
+          srvyr::select(data, {{by}}) %>%
+          colnames()
+
+        for(by_var in by_vars) {
+
+          by_col <- srvyr::pull(out, .data[[by_var]])
+
+          if(showNA == "always" ||
+             (showNA == "ifany" && any(is.na(by_col)))) {
+
+            # out <-
+            #   srvyr::mutate(out, srvyr::across(.cols = tidyselect::all_of(by_var),
+            #                                    ~forcats::fct_na_value_to_level(f = .x, level = "NA")))
+
+          } else {
+            out <-
+              out %>%
+              srvyr::filter(dplyr::if_all(.cols = tidyselect::all_of(by_var), .fns = ~!is.na(.x)))
+          }
+        }
+
         summary_mean <-
           out %>%
-          srvyr::group_by(dplyr::across(c({{by}}))) %>%
+          srvyr::group_by(dplyr::across(tidyselect::all_of(by_vars))) %>%
           srvyr::summarize(.mean = srvyr::survey_mean(as.numeric(.data$.category))) %>%
           srvyr::ungroup() %>%
           srvyr::as_tibble()
 
         summary_prop <-
           out %>%
-          srvyr::group_by(dplyr::across(c({{by}}, tidyselect::all_of(".category")))) %>%
+          srvyr::group_by(dplyr::across(tidyselect::all_of(c(by_vars, ".category")))) %>%
           srvyr::summarize(.count = srvyr::survey_total(na.rm = TRUE), #na.rm = !show_na
                            .proportion = srvyr::survey_prop(proportion = TRUE)) %>%
           srvyr::ungroup() %>%
@@ -171,7 +193,7 @@ crosstable2.tbl_svy <-
             .variable_label = get_raw_labels(srvyr::as_tibble(.env$data), cols_pos = .env$.x),
             .mean_base = as.integer(.data$.category) * .data$.count)
 
-        if(ncol(srvyr::select(data, {{by}})) > 0) {
+        if(length(by_vars) > 0) {
           dplyr::left_join(summary_prop, summary_mean)
         } else cbind(summary_prop, summary_mean)
 

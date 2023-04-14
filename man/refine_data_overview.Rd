@@ -2,8 +2,7 @@
 % Please edit documentation in R/data_overview.R
 \name{refine_data_overview}
 \alias{refine_data_overview}
-\title{Processes A 'data_overview' Data Frame
-Take Kapitteloversikt.xlsx, read it in, and send it to here.}
+\title{Processes A 'data_overview' Data Frame}
 \usage{
 refine_data_overview(
   data_overview,
@@ -32,7 +31,6 @@ Data frame
 }
 \description{
 Processes A 'data_overview' Data Frame
-Take Kapitteloversikt.xlsx, read it in, and send it to here.
 }
 \examples{
 refine_data_overview(ex_survey_ch_overview)

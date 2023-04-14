@@ -8,7 +8,8 @@ rcode_to_quarto <- function(code, call = rlang::caller_env()) {
 }
 
 fix_path_spaces <- function(path) {
-  if(quarto::quarto_version() < 1.3) {
+  if(!rlang::is_null(quarto::quarto_path()) &&
+     quarto::quarto_version() < 1.3) {
     gsub("[[:space:]]", "_", path)
   } else path
 }

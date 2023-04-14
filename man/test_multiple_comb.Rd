@@ -2,7 +2,7 @@
 % Please edit documentation in R/sigtest.R
 \name{test_multiple_comb}
 \alias{test_multiple_comb}
-\title{Extention to the infer package for multiple testing}
+\title{Extension to the infer package for multiple testing}
 \usage{
 test_multiple_comb(
   x,
@@ -72,7 +72,7 @@ A tibble containing for each response-explanatory row combination
 columns summarizing the test statistic.
 }
 \description{
-Extention to the infer package for multiple testing
+Extension to the infer package for multiple testing
 }
 \examples{
 library(dplyr)

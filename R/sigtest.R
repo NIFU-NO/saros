@@ -1,5 +1,5 @@
 
-#' Extention to the infer package for multiple testing
+#' Extension to the infer package for multiple testing
 #'
 #' @inheritParams infer::t_test
 #' @inheritParams infer::chisq_test

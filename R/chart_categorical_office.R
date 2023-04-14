@@ -14,6 +14,7 @@
 #' #chart_categorical_office(summarize_data(ex_survey1[paste0("b_", 1:3)]))
 chart_categorical_office <-
   function(data,
+           ...,
            label_font_size = 10,
            main_font_size = 8,
            font_family = "Calibri",
@@ -39,7 +40,7 @@ chart_categorical_office <-
     check_colour(colour_2nd_binary_cat, call = call)
     check_colour(colour_na, call = call)
     check_colours(colour_palette, call = call)
-
+    dots <- rlang::list2(...)
 
     colour_palette <-
       get_colour_set(
@@ -53,6 +54,8 @@ chart_categorical_office <-
 
     multi <- length(colour_palette) > 2
 
+    by_vars <- colnames(data)[!colnames(data) %in%
+                                .saros.env$summary_data_sort2]
 
     fp_text_settings <-
       lapply(colour_palette,
@@ -201,6 +204,7 @@ embed_chart_categorical_office <-
            seed = 1,
            return_raw = FALSE) {
 
+    dots <- rlang::list2(...)
     showNA <- rlang::arg_match(showNA, multiple = FALSE)
     check_data_frame(data)
     check_multiple_by(data, by = {{by}})
@@ -222,10 +226,11 @@ embed_chart_categorical_office <-
 
 
     data_out <-
-      summarize_data(
+      rlang::exec(
+        summarize_data,
         data = data,
-        cols = {{cols}},
-        by = {{by}},
+        cols = cols_pos,
+        by = by_pos,
         percentage = percentage,
         showNA = showNA,
         digits = digits,
@@ -234,12 +239,14 @@ embed_chart_categorical_office <-
         desc = desc,
         ignore_if_below = ignore_if_below,
         label_separator = label_separator,
-        call = rlang::caller_env())
+        call = call,
+        !!!dots)
 
 
 
     chart <-
-      chart_categorical_office(
+      rlang::exec(
+      chart_categorical_office,
         data = data_out,
         label_font_size = label_font_size,
         main_font_size = main_font_size,
@@ -251,7 +258,8 @@ embed_chart_categorical_office <-
         percentage = percentage,
         digits = digits,
         seed = seed,
-        call = rlang::caller_env())
+        call = rlang::caller_env(),
+        !!!dots)
 
 
     if(return_raw) {

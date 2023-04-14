@@ -122,9 +122,10 @@ sort_data <- function(data_summary, sort_by = NULL, desc = FALSE,
 #' @param desc [\code{logical(1)}]\cr Reverse sorting of sort_by. Defaults to ascending order (FALSE).
 #' @param ignore_if_below [\code{numeric(1)}] Whether to hide label if below this value.
 #' @param label_separator [\code{character(1)}]\cr Split pattern.
+#' @param ... Optional parameters forwarded from above.
 #' @param call Error call function, usually not needed.
 #'
-#' @importFrom rlang arg_match caller_env is_integerish .env
+#' @importFrom rlang arg_match caller_env is_integerish .env !!!
 #' @importFrom dplyr mutate group_by arrange ungroup if_else desc n_distinct %>%
 #' @importFrom cli cli_abort
 #' @importFrom stringr str_c
@@ -158,9 +159,12 @@ summarize_data <-
            desc = FALSE,
            ignore_if_below = 0,
            label_separator = NULL,
+           ...,
            call = rlang::caller_env()) {
 
     # Argument checks
+    dots <- rlang::list2(...)
+
     showNA <- rlang::arg_match(showNA, multiple = FALSE, error_call = call)
     check_bool(percentage, call = call)
     check_bool(desc, call = call)
@@ -170,24 +174,24 @@ summarize_data <-
     check_integerish(ignore_if_below, min = 0, call = call)
 
 
-
     fmt <- stringr::str_c("%.", digits, "f", if (percent_sign) "%%")
 
     data %>%
       crosstable2(cols = {{cols}}, by = {{by}}, showNA = showNA) %>%
       dplyr::mutate(
         .data_label =
-          (.env$percentage & .data$.proportion * 100 >= .env$ignore_if_below) |
-          (!.env$percentage & .data$.count >= .env$ignore_if_below),
+          (percentage & .data$.proportion * 100 >= ignore_if_below) |
+          (!percentage & .data$.count >= ignore_if_below),
         .data_label =
           dplyr::if_else(.data$.data_label,
-                         true = if(.env$percentage) sprintf(fmt = .env$fmt,
+                         true = if(percentage) sprintf(fmt = .env$fmt,
                                                             .data$.proportion*100) else as.character(.data$.count),
                                      false = "")
       ) %>%
       category_var_as_fct() %>%
       add_collapsed_categories(sort_by = sort_by) %>%
-      dplyr::mutate(.variable_label = keep_subitem(fct = .data$.variable_label, label_separator = .env$label_separator)) %>%
+      dplyr::mutate(.variable_label = keep_subitem(fct = .data$.variable_label,
+                                                   label_separator = label_separator)) %>%
       sort_data(sort_by = sort_by, desc = desc)
   }
 

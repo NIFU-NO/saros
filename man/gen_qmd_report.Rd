@@ -65,18 +65,19 @@ data_overview <-
                               label_separator = " - ",
                               name_separator = "_")
 
+if(is.numeric_version(quarto::quarto_version())) {
+  index_filepath <-
+   gen_qmd_report(
+      data_overview = data_overview,
+      elements = ex_survey_elements_list,
+      captions = "pretty",
+      path = temp_folder)
 
-index_filepath <-
-  gen_qmd_report(
-    data_overview = data_overview,
-    elements = ex_survey_elements_list,
-    captions = "pretty",
-    path = temp_folder)
-
-if(interactive()) {
-  browseURL(fs::path(temp_folder, "index.qmd"))
-  quarto::quarto_render(fs::path(temp_folder, "index.qmd"))
-  browseURL(fs::path(temp_folder, "index.html"))
+  if(interactive()) {
+    browseURL(fs::path(temp_folder, "index.qmd"))
+    quarto::quarto_render(fs::path(temp_folder, "index.qmd"))
+    browseURL(fs::path(temp_folder, "index.html"))
+  }
 }
 unlink(temp_folder)
 }

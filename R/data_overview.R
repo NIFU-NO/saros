@@ -112,7 +112,6 @@ look_for_extended <- function(data,
 
 
 #' Processes A 'data_overview' Data Frame
-#' Take Kapitteloversikt.xlsx, read it in, and send it to here.
 #'
 #' @param data_overview A data frame containing the columns:
 #' @param data Optional full survey data set for which columns can be looked up.

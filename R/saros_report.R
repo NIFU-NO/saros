@@ -25,28 +25,29 @@ render_saros_report <-
 
 
     elements_list <-
-      yml$elements_vector %>%
-      rlang::set_names() %>%
-      purrr::imap(.f = ~{
+      rlang::exec(
+      mass_lst_saros_elements,
+      vec = yml$elements_vector,
+      data_overview = data_overview,
+      data = data,
+      !!!yml_element_args)
 
-        lst_saros_elements(data_overview = data_overview,
-                           element_name = rlang::set_names(.x, .y),
-                           data = data,
-                           label_separator = yml$label_separator,
-                           !!!yml_element_args)
-      })
     report_filepath <-
-      gen_qmd_report(data_overview = data_overview,
-                   elements = elements_list,
-                   glue_index_string = yml$glue_index_string,
-                   show_if_alpha_below = yml$show_if_alpha_below,
-                   captions = yml$captions,
-                   report_ymlthis_config = yml$report_ymlthis_config,
-                   chapter_ymlthis_config = yml$chapter_ymlthis_config,
-                   index_filename = yml$index_filename,
-                   path = path)
+      rlang::exec(
+      gen_qmd_report,
+      data_overview = data_overview,
+      elements = elements_list,
+      glue_index_string = yml$glue_index_string,
+      show_if_alpha_below = yml$show_if_alpha_below,
+      captions = yml$captions,
+      report_ymlthis_config = yml$report_ymlthis_config,
+      chapter_ymlthis_config = yml$chapter_ymlthis_config,
+      index_filename = yml$index_filename,
+      path = path)
+
     if(interactive()) {
       quarto::quarto_render(report_filepath)
+
       utils::browseURL(url = report_filepath)
     }
     report_filepath

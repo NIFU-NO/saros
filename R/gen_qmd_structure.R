@@ -45,7 +45,7 @@ gen_qmd_structure <-
 
         if(nrow(data_overview_section)>0) {
         output <-
-          purrr::map_chr(
+          purrr::map(
             .x = seq_along(elements), .f= ~{
               if(captions %in% c("asis", "pretty")) {
                 caption <-
@@ -76,6 +76,7 @@ gen_qmd_structure <-
               }
 
             }) %>%
+          .[lengths(.)>0] %>%
           stringr::str_c(collapse = "\n\n") %>% # Space between elements
           stringr::str_c(output, ., sep = "\n") # Space between heading and first element
         }

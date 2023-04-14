@@ -6,6 +6,7 @@
 \usage{
 chart_categorical_office(
   data,
+  ...,
   label_font_size = 10,
   main_font_size = 8,
   font_family = "Calibri",
@@ -21,6 +22,8 @@ chart_categorical_office(
 }
 \arguments{
 \item{data}{Data frame or tibble.}
+
+\item{...}{Optional parameters forwarded from above.}
 
 \item{label_font_size}{[\code{integer(1)}]\cr Font size for data labels}
 

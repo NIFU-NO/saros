@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys Using Tidyverse Syntax
-Version: 0.1.2
+Version: 0.0.7
 Authors@R: 
     person(given = "Stephan", 
            family = "Daus", 
@@ -13,9 +13,9 @@ Description: Produces highly customizable figures, text, analyses and
     reports for a batch of possible dependent-independent relations of
     possible interest.
 License: MIT + file LICENSE
-URL: https://github.com/sda030/saros,
-    https://nifu-no.github.io/saros/
-BugReports: https://github.com/nifu-no/saros/issues
+URL: https://github.com/NIFU-NO/saros,
+    https://expert-adventure-7vzn177.pages.github.io/
+BugReports: https://github.com/NIFU-NO/saros/issues
 Depends:
     R (>= 4.2.0)
 Imports: 
@@ -55,8 +55,10 @@ Suggests:
     ggfittext,
     testthat (>= 3.0.0),
     readxl,
-    withr
+    withr,
+    spelling
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
+Language: en-US

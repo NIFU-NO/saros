@@ -151,7 +151,7 @@ check_multiple_by <-
 
     by_call <- rlang::expr_deparse(rlang::enquo(by))
 
-    if (ncol(dplyr::select(.data = data, {{by}})) > 1L) {
+    if(ncol(dplyr::select(.data = data, {{by}})) > 1L) {
       cli::cli_abort(c("Too many columns provided for {.arg by}.",
                        x = "Only 1 by-column is currently allowed.",
                        i = "You provided by = {by_call}"), call = call)
@@ -200,7 +200,7 @@ check_element_name <-
   function(x, n = 1, null.ok = FALSE, call = rlang::caller_env(), arg = rlang::caller_arg(x)) {
 
     check_string(x = x, n = n, null.ok = null.ok, call = call, arg = arg)
-    all(x %in% .saros.env$element_type)
+    all(x %in% list_available_element_types())
     }
 
 check_elements <-
@@ -208,8 +208,8 @@ check_elements <-
 
     check_list(x=x, null.ok = TRUE, call = call)
     if(!rlang::is_named(x=x)) cli::cli_abort("{.arg {x}} must be named.")
-    if(!all(names(x) %in% .saros.env$element_type)) {
-      cli::cli_abort("{.arg {x}} must only contain the following names: {.var {(.saros.env$element_type)}}.")
+    if(!all(names(x) %in% list_available_element_types())) {
+      cli::cli_abort("{.arg {x}} must only contain the following names: {.var {list_available_element_types()}}.")
     }
     purrr::walk(x, ~{
       if(!rlang::is_null(x) &&

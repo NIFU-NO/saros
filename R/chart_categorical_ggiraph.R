@@ -15,17 +15,19 @@
 #' @param digits [\code{integer(1)}]\cr Number of digits in percentages.
 #' @param x_axis_label_width [\code{integer(1)}] Width of the labels used for the categorical column names.
 #' @param seed [\code{integer(1)}] Optional random seed for selection of colours in blender.
+#' @param ... Optional parameters forwarded from above.
 #' @param call For internal use
 #'
 #' @importFrom ggplot2 ggplot aes position_fill coord_flip theme_classic guides theme labs scale_y_continuous
 #' @importFrom scales percent_format
 #' @importFrom ggiraph girafe geom_col_interactive scale_fill_manual_interactive guide_legend_interactive element_text_interactive element_rect_interactive geom_text_interactive
 #' @importFrom cli cli_warn
-#' @importFrom rlang caller_env is_bool is_integer is_string
+#' @importFrom rlang caller_env is_bool is_integer is_string !!!
 #'
 #' @return ggiraph object, plottable with plot()
 chart_categorical_plot <-
   function(data,
+           ...,
            label_font_size = 10,
            main_font_size = 8,
            font_family = "Calibri",
@@ -51,16 +53,18 @@ chart_categorical_plot <-
     check_colour(colour_2nd_binary_cat, call = call)
     check_colour(colour_na, call = call)
     check_colours(colour_palette, call = call)
+    dots <- rlang::list2(...)
 
 
     colour_palette <-
-      get_colour_set(n_colours_needed = length(levels(data[[".category"]])),
-                     user_colour_set = colour_palette,
-                     names = levels(data[[".category"]]),
-                     colour_na = colour_na,
-                     colour_2nd_binary_cat = colour_2nd_binary_cat,
-                     seed = seed,
-                     call = call)
+      get_colour_set(
+        n_colours_needed = length(levels(data[[".category"]])),
+        user_colour_set = colour_palette,
+        names = levels(data[[".category"]]),
+        colour_na = colour_na,
+        colour_2nd_binary_cat = colour_2nd_binary_cat,
+        seed = seed,
+        call = call)
 
     multi <- length(colour_palette) > 2
 
@@ -116,7 +120,7 @@ chart_categorical_plot <-
       if(length(by_vars) == 1L) {
         p <- p +
           ggiraph::facet_grid_interactive(
-            rows = ggplot2::vars(.data$.variable_label),
+            rows = ggplot2::vars(.data[[".variable_label"]]),
             labeller = ggiraph::labeller_interactive(
               .mapping = ggplot2::aes(tooltip = "Tooltip",
                                       label = stringr::str_wrap(.data$.label, width = x_axis_label_width, indent = 0, exdent = 0))),
@@ -150,6 +154,7 @@ chart_categorical_plot <-
 #' @param return_raw [\code{logical(1)}] Whether to return the raw static chart. Defaults to FALSE.
 #' @param ... Optional parameters forwarded from above.
 #' @return ggplot
+#' @importFrom rlang !!!
 #' @export
 #'
 #' @examples
@@ -158,100 +163,104 @@ chart_categorical_plot <-
 #' }
 embed_chart_categorical_ggplot <-
   function(data,
-         cols = tidyselect::everything(),
-         by = NULL,
-         ...,
-         showNA = c("ifany", "always", "no"),
-         label_font_size = 8,
-         main_font_size = 9,
-         font_family = "Calibri",
-         colour_palette = NULL,
-         colour_na = "gray90",
-         colour_2nd_binary_cat = "#ffffff",
-         height_per_col = .3,
-         height_fixed = 1,
-         percentage = TRUE,
-         digits = 1,
-         percent_sign = TRUE,
-         sort_by = NULL,
-         vertical = FALSE,
-         desc = FALSE,
-         ignore_if_below = 1,
-         label_separator = NULL,
-         x_axis_label_width = 20,
-         seed = 1,
-         return_raw = FALSE) {
+           cols = tidyselect::everything(),
+           ...,
+           by = NULL,
+           showNA = c("ifany", "always", "no"),
+           label_font_size = 8,
+           main_font_size = 9,
+           font_family = "Calibri",
+           colour_palette = NULL,
+           colour_na = "gray90",
+           colour_2nd_binary_cat = "#ffffff",
+           height_per_col = .3,
+           height_fixed = 1,
+           percentage = TRUE,
+           digits = 1,
+           percent_sign = TRUE,
+           sort_by = NULL,
+           vertical = FALSE,
+           desc = FALSE,
+           ignore_if_below = 1,
+           label_separator = NULL,
+           x_axis_label_width = 20,
+           seed = 1,
+           return_raw = FALSE,
+           call = rlang::caller_env()) {
 
+    dots <- rlang::list2(...)
     showNA <- rlang::arg_match(showNA, multiple = FALSE)
-    check_data_frame(data)
-    check_multiple_by(data, by = {{by}})
-    check_string(label_separator, null.ok=TRUE)
-    check_bool(return_raw)
-    check_double(height_per_col, min = 0)
-    check_double(height_fixed, min = 0)
-    rlang::check_dots_used()
+    check_data_frame(data, call = call)
+    check_multiple_by(data, by = {{by}}, call = call)
+    check_string(label_separator, null.ok=TRUE, call = call)
+    check_bool(return_raw, call = call)
+    check_double(height_per_col, min = 0, call = call)
+    check_double(height_fixed, min = 0, call = call)
+
+    data <- dplyr::select(data, {{cols}}, {{by}})
 
 
-  data <- dplyr::select(data, {{cols}}, {{by}})
+    cols_enq <- rlang::enquo(arg = cols)
+    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
+    by_enq <- rlang::enquo(arg = by)
+    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
+
+    check_category_pairs(data = data, cols_pos = c(cols_pos))
 
 
-  cols_enq <- rlang::enquo(arg = cols)
-  cols_pos <- tidyselect::eval_select(cols_enq, data = data)
-  by_enq <- rlang::enquo(arg = by)
-  by_pos <- tidyselect::eval_select(by_enq, data = data)
+    data_out <-
+      rlang::exec(
+        summarize_data,
+        data = data,
+        cols = cols_pos,
+        by = by_pos,
+        percentage = percentage,
+        showNA = showNA,
+        digits = digits,
+        percent_sign = percent_sign,
+        sort_by = sort_by,
+        desc = desc,
+        ignore_if_below = ignore_if_below,
+        label_separator = label_separator,
+        call = call,
+        !!!dots)
 
-  check_category_pairs(data = data, cols_pos = c(cols_pos))
-
-
-  data_out <-
-    summarize_data(data = data,
-                   cols = {{cols}},
-                   by = {{by}},
-                   percentage = percentage,
-                   showNA = showNA,
-                   digits = digits,
-                   percent_sign = percent_sign,
-                   sort_by = sort_by,
-                   desc = desc,
-                   ignore_if_below = ignore_if_below,
-                   label_separator = label_separator,
-                   call = rlang::caller_env())
-
-
-  chart <-
-    chart_categorical_plot(data = data_out,
-                           label_font_size = label_font_size,
-                           main_font_size = main_font_size,
-                           font_family = font_family,
-                           colour_palette = colour_palette,
-                           colour_na = colour_na,
-                           colour_2nd_binary_cat = colour_2nd_binary_cat,
-                           vertical = vertical,
-                           percentage = percentage,
-                           digits = digits,
-                           x_axis_label_width = x_axis_label_width,
-                           seed = seed,
-                           call = rlang::caller_env())
+    chart <-
+      rlang::exec(chart_categorical_plot,
+                  data = data_out,
+                  label_font_size = label_font_size,
+                  main_font_size = main_font_size,
+                  font_family = font_family,
+                  colour_palette = colour_palette,
+                  colour_na = colour_na,
+                  colour_2nd_binary_cat = colour_2nd_binary_cat,
+                  vertical = vertical,
+                  percentage = percentage,
+                  digits = digits,
+                  x_axis_label_width = x_axis_label_width,
+                  seed = seed,
+                  call = call,
+                  !!!dots)
 
 
-  if(!is.null(label_separator)) {
+    if(!is.null(label_separator)) {
 
 
-    main_question <-
-      get_raw_labels(data = data, cols_pos = cols_pos) %>%
-      get_main_question2(label_separator = label_separator)
-  }
+      main_question <-
+        get_raw_labels(data = data, cols_pos = cols_pos) %>%
+        get_main_question2(label_separator = label_separator)
+    }
 
-  if(return_raw) {
-    chart
-  } else {
-    ggiraph::girafe(ggobj = chart,
-                    options = ggiraph::opts_toolbar(
-                      position = "topright",
-                      saveaspng = TRUE,
-                      pngname = "figure_.png"
-                    ))
-  }
+    if(return_raw) {
+      chart
+    } else {
+      ggiraph::girafe(ggobj = chart,
+                      options = ggiraph::opts_toolbar(
+                        position = "topright",
+                        saveaspng = TRUE,
+                        pngname = "figure_.png"
+                      ))
+    }
 
   }
 

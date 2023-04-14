@@ -14,10 +14,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Main priorities for version 1.0 (Spørringene)
-- bi fungerer ikke
 - tables: by i tabeller: Same vertical argument as in plots?
-
 - Save not only Rds-files but also png/docx copies of tables/plots for manual inspection.
+
 -	chart_categorical_ggiraph: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
 - Taking the mean of f_uni doesn't make much sense and results in warnings during build, avoid in example?
 - Add full _quarto.yml file for project.
@@ -25,7 +24,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## DOCX
 - https://community.rstudio.com/t/creating-a-officer-ms-word-chart-object-within-a-rmd-code-block/157592
+- Might be hard to store in memory/Rds the docx-stuff.
+    - https://github.com/tidyverse/rvest/issues/181
 - Test full rendering of DOCX
+
 
 
 # Version 1.5
@@ -37,7 +39,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - Support guess_glue_pattern(elements, data_overview) which return(guessed_glue_index_pattern).
 - show_if_alpha_below
 - by i text
-- target and renv initialization with menu selection.
+- target and renv initialization with menu selection. => {saros.template}
 - Split off rename_variables into either janitor or a vctrs::vec_as_names() extension
 - chart_categorical_ggiraph: Implement n_right_side. Easy in ggplot, but yet unavailable in mschart. Not really needed with tooltips.
 
