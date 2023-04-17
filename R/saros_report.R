@@ -16,12 +16,10 @@ render_saros_report <-
     # Must add all missing entries by using defaults?
 
     data_overview <-
-      refine_data_overview(data_overview = chapter_overview,
-                           data = data,
-                           group_by = yml$group_by,
-                           label_separator = yml$label_separator,
-                           name_separator = yml$name_separator,
-                           sort_by = yml$sort_by)
+      refine_data_overview(
+        data_overview = chapter_overview,
+        data = data,
+        !!!yml_element_args)
 
 
     elements_list <-

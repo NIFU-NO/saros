@@ -163,30 +163,30 @@ chart_categorical_plot <-
 #' }
 embed_chart_categorical_ggplot <-
   function(data,
-           cols = tidyselect::everything(),
-           ...,
-           by = NULL,
-           showNA = c("ifany", "always", "no"),
-           label_font_size = 8,
-           main_font_size = 9,
-           font_family = "Calibri",
-           colour_palette = NULL,
-           colour_na = "gray90",
-           colour_2nd_binary_cat = "#ffffff",
-           height_per_col = .3,
-           height_fixed = 1,
-           percentage = TRUE,
-           digits = 1,
-           percent_sign = TRUE,
-           sort_by = NULL,
-           vertical = FALSE,
-           desc = FALSE,
-           ignore_if_below = 1,
-           label_separator = NULL,
-           x_axis_label_width = 20,
-           seed = 1,
-           return_raw = FALSE,
-           call = rlang::caller_env()) {
+         ...,
+         cols = tidyselect::everything(),
+         by = NULL,
+         showNA = c("ifany", "always", "no"),
+         label_font_size = 8,
+         main_font_size = 9,
+         font_family = "Calibri",
+         colour_palette = NULL,
+         colour_na = "gray90",
+         colour_2nd_binary_cat = "#ffffff",
+         height_per_col = .3,
+         height_fixed = 1,
+         percentage = TRUE,
+         digits = 1,
+         percent_sign = TRUE,
+         sort_by = NULL,
+         vertical = FALSE,
+         desc = FALSE,
+         ignore_if_below = 1,
+         label_separator = NULL,
+         x_axis_label_width = 20,
+         seed = 1,
+         return_raw = FALSE,
+         call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
     showNA <- rlang::arg_match(showNA, multiple = FALSE)
@@ -197,8 +197,8 @@ embed_chart_categorical_ggplot <-
     check_double(height_per_col, min = 0, call = call)
     check_double(height_fixed, min = 0, call = call)
 
-    data <- dplyr::select(data, {{cols}}, {{by}})
 
+    data <- dplyr::select(data, {{cols}}, {{by}})
 
     cols_enq <- rlang::enquo(arg = cols)
     cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
@@ -242,7 +242,6 @@ embed_chart_categorical_ggplot <-
                   call = call,
                   !!!dots)
 
-
     if(!is.null(label_separator)) {
 
 
@@ -250,6 +249,7 @@ embed_chart_categorical_ggplot <-
         get_raw_labels(data = data, cols_pos = cols_pos) %>%
         get_main_question2(label_separator = label_separator)
     }
+
 
     if(return_raw) {
       chart

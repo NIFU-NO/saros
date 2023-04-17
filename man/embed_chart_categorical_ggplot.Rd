@@ -6,8 +6,12 @@
 \usage{
 embed_chart_categorical_ggplot(
   data,
-  cols = tidyselect::everything(),
   ...,
+  cols = tidyselect::everything(),
+<<<<<<< HEAD
+  ...,
+=======
+>>>>>>> a8ff98e69e3d442bd54545f7a2cacd5c6c4df66a
   by = NULL,
   showNA = c("ifany", "always", "no"),
   label_font_size = 8,
@@ -35,10 +39,15 @@ embed_chart_categorical_ggplot(
 \arguments{
 \item{data}{Data frame or tibble.}
 
-\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
-
 \item{...}{Optional parameters forwarded from above.}
 
+\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
+
+<<<<<<< HEAD
+\item{...}{Optional parameters forwarded from above.}
+
+=======
+>>>>>>> a8ff98e69e3d442bd54545f7a2cacd5c6c4df66a
 \item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
 \item{showNA}{[\code{logical(1)}]\cr Whether to show NA in categorical variables (one of c("ifany", "always", "no"), like in table()).}
