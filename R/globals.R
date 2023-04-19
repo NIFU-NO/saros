@@ -10,6 +10,8 @@ utils::globalVariables(names = c("."))
     ".mean", ".mean_se", ".mean_base",
     ".variable_label",  ".data_label", ".comb_categories",
      ".sum_value")
+.saros.env$data_label_opts <-
+c("proportion", "percentage", "percentage_bare", "count", "mean", "median")
 .saros.env$element_type <-
   c("opening_text" = FALSE,
     "uni_opening_text" = FALSE,

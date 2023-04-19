@@ -6,7 +6,7 @@ testthat::test_that("crosstable_to_apa", {
     test <-
       crosstable::crosstable(ex_survey1, b_1:b_3, percent_pattern = "{p_col}", percent_digits = 0) %>%
         # crosstable::pivot_crosstable() %>%
-      crosstable_to_apa(label_separator=" - ",
+      embed_table_cat_docx(label_separator=" - ",
                         caption_style = "Table Caption",
                         body_style = "Normal Table",
                         footer_style = "Normal",
@@ -25,7 +25,7 @@ testthat::test_that("crosstable_to_apa", {
     test <-
       crosstable::crosstable(ex_survey1, b_1:b_3, percent_pattern = "{p_col}", percent_digits = 0) %>%
       # crosstable::pivot_crosstable() %>%
-      crosstable_to_apa(label_separator=" - ",
+      embed_table_cat_docx(label_separator=" - ",
                         caption_style = "Table Caption",
                         body_style = "Normal Table",
                         footer_style = "Normal",

@@ -22,7 +22,7 @@ chart_categorical_office <-
            colour_na = "gray90",
            colour_2nd_binary_cat = "#ffffff",
            vertical = FALSE,
-           percentage = TRUE,
+           data_label = "percentage",
            digits = 1,
            seed = 1,
            call = rlang::caller_env()) {
@@ -31,7 +31,6 @@ chart_categorical_office <-
     check_data_frame(data, call = call)
     check_summary_data_cols(data, call = call)
     check_bool(vertical, call = call)
-    check_bool(percentage, call = call)
     check_integerish(label_font_size, min=0, max=72, call = call)
     check_integerish(main_font_size, min=0, max=72, call = call)
     check_integerish(digits, min=0, call = call)
@@ -75,7 +74,7 @@ chart_categorical_office <-
                               y = ".count", x = ".variable_label",
                               group = ".category", labels = ".data_label")
 
-    if(percentage) {
+    if(data_label %in% c("percentage", "percentage_bare")) {
       m <- mschart::as_bar_stack(x = m, percent = TRUE)
     }
     # overlap <- if(!percentage) { # Silly way due to poor programming in mschart
@@ -87,8 +86,8 @@ chart_categorical_office <-
     # }
 
     # if(!percentage) { # Silly way due to poor programming in mschart
-      overlap <- if(!percentage) -40 else 100
-      gap_width <- if(!percentage) 150 else 50
+      overlap <- if(!data_label %in% c("percentage", "percentage_bare")) -40 else 100
+      gap_width <- if(!data_label %in% c("percentage", "percentage_bare")) 150 else 50
 
       m <- mschart::chart_settings(x = m,
                                    dir = if(vertical) "vertical" else "horizontal",
@@ -103,7 +102,9 @@ chart_categorical_office <-
     m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
     m <- mschart::chart_labels(x = m, ylab = NULL, xlab = NULL, title = NULL)
     m <- mschart::chart_ax_x(x = m, major_tick_mark = "none")
-    if(percentage) m <- mschart::chart_ax_y(x = m, num_fmt = "0%")
+    if(data_label %in% c("percentage", "percentage_bare")) {
+      m <- mschart::chart_ax_y(x = m, num_fmt = "0%")
+    }
     m <- mschart::chart_theme(x = m,
                               legend_text = main_text,
                               axis_text_x = main_text,
@@ -122,7 +123,7 @@ chart_categorical_office <-
 #'
 #' @inheritParams summarize_data
 #' @inheritParams chart_categorical_plot
-#' @inheritParams embed_chart_categorical_ggplot
+#' @inheritParams embed_plot_cat_html
 #' @param docx_template  [\code{character(1) || officer::read_docx()}]\cr
 #' Either a filepath to a template file, or a rdocx-object from \link[officer]{read_docx}.
 #' @param chart_formatting [\code{character(1)}]\cr Template style to be used for formatting chart
@@ -144,7 +145,7 @@ chart_categorical_office <-
 #' library(officer) # To save the rdocx object to disk
 #' filepath <-
 #'  ex_survey1 |>
-#'  embed_chart_categorical_office(cols = a_1:a_9) |>
+#'  embed_plot_cat_docx(cols = a_1:a_9) |>
 #'  print(target = "test_docx_a19.docx")
 #' file.remove(filepath)
 #'
@@ -166,7 +167,7 @@ chart_categorical_office <-
 #'
 #'  test_docx_b13 <-
 #'    ex_survey1 |>
-#'    embed_chart_categorical_office(cols = b_1:b_3,
+#'    embed_plot_cat_docx(cols = b_1:b_3,
 #'                        docx_template = docx_template,
 #'                        colour_palette = colour_palette,
 #'                        chart_formatting = chart_format,
@@ -175,7 +176,7 @@ chart_categorical_office <-
 #' #print(test_docx_b13, target = "test_docx_b13.docx")
 #' #file.remove("test_docx_b13.docx")
 
-embed_chart_categorical_office <-
+embed_plot_cat_docx <-
   function(data,
            cols = tidyselect::everything(),
            by = NULL,
@@ -193,19 +194,19 @@ embed_chart_categorical_office <-
            chart_formatting = NULL,
            caption_style = NULL,
            caption_autonum = NULL,
-           percentage = TRUE,
+           data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
            digits = 1,
-           percent_sign = TRUE,
            sort_by = NULL,
            vertical = FALSE,
-           desc = FALSE,
+           descend = FALSE,
            ignore_if_below = 1,
            label_separator = NULL,
            seed = 1,
            return_raw = FALSE) {
 
     dots <- rlang::list2(...)
-    showNA <- rlang::arg_match(showNA, multiple = FALSE)
+    showNA <- rlang::arg_match(showNA)
+    data_label <- rlang::arg_match(data_label, error_call = call)
     check_data_frame(data)
     check_multiple_by(data, by = {{by}})
     check_string(label_separator, null.ok=TRUE)
@@ -214,7 +215,7 @@ embed_chart_categorical_office <-
     check_double(height_fixed, min = 0)
     check_autonum(caption_autonum)
 
-    data <- dplyr::select(data, {{cols}}, {{by}})
+    # data <- dplyr::select(data, {{cols}}, {{by}})
 
 
     cols_enq <- rlang::enquo(arg = cols)
@@ -231,12 +232,11 @@ embed_chart_categorical_office <-
         data = data,
         cols = cols_pos,
         by = by_pos,
-        percentage = percentage,
+        data_label = data_label,
         showNA = showNA,
         digits = digits,
-        percent_sign = percent_sign,
         sort_by = sort_by,
-        desc = desc,
+        descend = descend,
         ignore_if_below = ignore_if_below,
         label_separator = label_separator,
         call = call,
@@ -255,7 +255,7 @@ embed_chart_categorical_office <-
         colour_na = colour_na,
         colour_2nd_binary_cat = colour_2nd_binary_cat,
         vertical = vertical,
-        percentage = percentage,
+        data_label = data_label,
         digits = digits,
         seed = seed,
         call = rlang::caller_env(),

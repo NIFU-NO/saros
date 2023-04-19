@@ -6,33 +6,37 @@
 \usage{
 create_static_text_ordinal(
   data,
+  ...,
   cols = NULL,
   by = NULL,
-  percentage = FALSE,
+  data_label = c("proportion", "percentage", "percentage_bare", "count", "mean",
+    "median"),
   contents = c("intro", "not_used_category", "mode_max", "value_max", "value_min",
     "value_diff", "mean_max", "mean_min", "mean_diff", "median_max", "median_min",
     "median_diff", "variance_max", "variance_min"),
   include_numbers = TRUE,
   sort_by = NULL,
-  desc = FALSE,
+  descend = FALSE,
   ignore_if_below = 0,
   n_top_bottom = 1,
   showNA = c("ifany", "always", "no"),
   label_separator = NULL,
   translations = getOption("saros")$translations,
-  percent_sign = TRUE,
   digits = 1,
-  require_common_categories = TRUE
+  require_common_categories = TRUE,
+  call = rlang::caller_env()
 )
 }
 \arguments{
 \item{data}{Data frame or tibble.}
 
+\item{...}{Optional parameters forwarded from above.}
+
 \item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
 
 \item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
-\item{percentage}{[\code{logical(1)}]\cr Whether to compute percentage or frequency (default).}
+\item{data_label}{[\code{character(1)}] What to display, one of "proportion", "percentage", "percentage_bare" (which is without the percentage symbol), "count", "mean", or "median". Defaults to "proportion".}
 
 \item{contents}{The type of text interpretations to return, multiple allowed. Defaults to all.}
 
@@ -40,19 +44,19 @@ create_static_text_ordinal(
 
 \item{sort_by}{[\code{character(1)}] Sort output (and collapse if requested). Defaults to none (NULL).
 \itemize{
-\item{".top"}{The percentage for the highest category available in the variable.}
-\item{".upper"}{The sum of the percentages for the categories above the middle category.}
-\item{".mid_upper"}{The sum of the percentages for the categories including and above the middle category.}
-\item{".mid_lower"}{The sum of the percentages for the categories including and below the middle category.}
-\item{".lower"}{The sum of the percentages for the categories below the middle category.}
-\item{".bottom"}{The percentage for the lowest category available in the variable.}
+\item{".top"}{The proportion for the highest category available in the variable.}
+\item{".upper"}{The sum of the proportions for the categories above the middle category.}
+\item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
+\item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
+\item{".lower"}{The sum of the proportions for the categories below the middle category.}
+\item{".bottom"}{The proportions for the lowest category available in the variable.}
 \item{".variable_label"}{Sort by the variable labels.}
 \item{".id"}{Sort by the variable names.}
 \item{".by_group"}{The groups of the by argument.}
 \item{[\code{character(1)}]}{Character vector of category labels to sum together.}
 }}
 
-\item{desc}{[\code{logical(1)}]\cr Reverse sorting of sort_by. Defaults to ascending order (FALSE).}
+\item{descend}{[\code{logical(1)}]\cr Reverse sorting of sort_by. Defaults to ascending order (FALSE).}
 
 \item{ignore_if_below}{[\code{numeric(1)}] Whether to hide label if below this value.}
 
@@ -64,11 +68,11 @@ create_static_text_ordinal(
 
 \item{translations}{A list of translations for the template text. See getOption("saros").}
 
-\item{percent_sign}{[\code{logical(1)}]\cr Whether to include percentage symbol on chart.}
-
 \item{digits}{[\code{integer(1)}]\cr Number of decimal places as integer.}
 
 \item{require_common_categories}{Whether to check if all questions share common categories.}
+
+\item{call}{Error call function, usually not needed.}
 }
 \value{
 List

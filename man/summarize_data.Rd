@@ -6,56 +6,57 @@
 \usage{
 summarize_data(
   data,
+  ...,
   cols = tidyselect::everything(),
   by = NULL,
-  percentage = FALSE,
+  data_label = c("proportion", "percentage", "percentage_bare", "count", "mean",
+    "median"),
   showNA = c("ifany", "always", "no"),
   digits = 1,
-  percent_sign = TRUE,
   sort_by = NULL,
-  desc = FALSE,
+  descend = FALSE,
   ignore_if_below = 0,
   label_separator = NULL,
-  ...,
+  data_label_decimal_symbol = ".",
   call = rlang::caller_env()
 )
 }
 \arguments{
 \item{data}{Data frame or tibble.}
 
+\item{...}{Optional parameters forwarded from above.}
+
 \item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
 
 \item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
-\item{percentage}{[\code{logical(1)}]\cr Whether to compute percentage or frequency (default).}
+\item{data_label}{[\code{character(1)}] What to display, one of "proportion", "percentage", "percentage_bare" (which is without the percentage symbol), "count", "mean", or "median". Defaults to "proportion".}
 
 \item{showNA}{[\code{logical(1)}]\cr Whether to show NA in categorical variables (one of c("ifany", "always", "no"), like in table()).}
 
 \item{digits}{[\code{integer(1)}]\cr Number of decimal places as integer.}
 
-\item{percent_sign}{[\code{logical(1)}]\cr Whether to include percentage symbol on chart.}
-
 \item{sort_by}{[\code{character(1)}] Sort output (and collapse if requested). Defaults to none (NULL).
 \itemize{
-\item{".top"}{The percentage for the highest category available in the variable.}
-\item{".upper"}{The sum of the percentages for the categories above the middle category.}
-\item{".mid_upper"}{The sum of the percentages for the categories including and above the middle category.}
-\item{".mid_lower"}{The sum of the percentages for the categories including and below the middle category.}
-\item{".lower"}{The sum of the percentages for the categories below the middle category.}
-\item{".bottom"}{The percentage for the lowest category available in the variable.}
+\item{".top"}{The proportion for the highest category available in the variable.}
+\item{".upper"}{The sum of the proportions for the categories above the middle category.}
+\item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
+\item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
+\item{".lower"}{The sum of the proportions for the categories below the middle category.}
+\item{".bottom"}{The proportions for the lowest category available in the variable.}
 \item{".variable_label"}{Sort by the variable labels.}
 \item{".id"}{Sort by the variable names.}
 \item{".by_group"}{The groups of the by argument.}
 \item{[\code{character(1)}]}{Character vector of category labels to sum together.}
 }}
 
-\item{desc}{[\code{logical(1)}]\cr Reverse sorting of sort_by. Defaults to ascending order (FALSE).}
+\item{descend}{[\code{logical(1)}]\cr Reverse sorting of sort_by. Defaults to ascending order (FALSE).}
 
 \item{ignore_if_below}{[\code{numeric(1)}] Whether to hide label if below this value.}
 
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
 
-\item{...}{Optional parameters forwarded from above.}
+\item{data_label_decimal_symbol}{[\code{character(1)}] Although the English speaking world uses the dot '.' as decimal marker, some might prefer a comma ',' or something else entirely.}
 
 \item{call}{Error call function, usually not needed.}
 }
@@ -71,12 +72,14 @@ x <-
 ex_survey1 \%>\%
 saros:::summarize_data(cols = matches("^b_"),
                  sort_by = c("A lot", "A bit"),
-                 label_separator = " - ", percentage = TRUE)
+                 label_separator = " - ",
+                 data_label = "percentage")
 library(srvyr)
 x <-
 ex_survey1 \%>\%
   as_survey(strata = f_uni) \%>\%
   saros:::summarize_data(cols = matches("^b_"),
                                 sort_by = c("A lot", "A bit"),
-                                label_separator = " - ", percentage = TRUE)
+                                label_separator = " - ",
+                                data_label = "percentage")
 }

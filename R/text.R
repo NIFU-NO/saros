@@ -24,9 +24,10 @@
 #'
 create_static_text_ordinal <-
   function(data,
+           ...,
            cols = NULL,
            by = NULL, # Not implemented
-           percentage = FALSE,
+           data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
            contents = c("intro", "not_used_category",
                         "mode_max",
                         "value_max", "value_min", "value_diff", # Diff not implemented
@@ -35,36 +36,33 @@ create_static_text_ordinal <-
                         "variance_max", "variance_min"), # Not implemented
            include_numbers = TRUE, # not implemented
            sort_by = NULL, # Lacks providing a single integer for the top or bottom categories
-           desc = FALSE, # not implemented
+           descend = FALSE, # not implemented
            ignore_if_below = 0,
            n_top_bottom = 1,
            showNA = c("ifany", "always", "no"),
            label_separator = NULL,
            translations = getOption("saros")$translations,
-           percent_sign = TRUE,# not implemented
            digits = 1,
-           require_common_categories = TRUE) {
+           require_common_categories = TRUE,
+           call = rlang::caller_env()) {
+
+    dots <- rlang::list2(...)
+    data_label <- rlang::arg_match(data_label, call = call)
+    contents <- rlang::arg_match(arg = contents, multiple = TRUE, call = call)
+    showNA <- rlang::arg_match(arg = showNA, call = call)
 
 
-    contents <- rlang::arg_match(arg = contents,
-                     multiple = TRUE, error_call = rlang::caller_env())
-    showNA <- rlang::arg_match(arg = showNA,
-                               multiple = FALSE, error_call = rlang::caller_env())
+    check_data_frame(data, call = call)
+    check_string(label_separator, null.ok = TRUE, call = call)
+    check_bool(include_numbers, call = call)
+    check_bool(descend, call = call)
+    check_bool(require_common_categories, call = call)
+    check_integerish(ignore_if_below, min = 0, call = call)
+    check_integerish(n_top_bottom, min = 0, call = call)
+    check_integerish(digits, min = 0, call = call)
+    check_list(translations, null.ok = FALSE, call = call)
 
-
-    check_data_frame(data)
-    check_string(label_separator, null.ok = TRUE)
-    check_bool(percentage)
-    check_bool(include_numbers)
-    check_bool(desc)
-    check_bool(percent_sign)
-    check_bool(require_common_categories)
-    check_integerish(ignore_if_below, min = 0)
-    check_integerish(n_top_bottom, min = 0)
-    check_integerish(digits, min = 0)
-    check_list(translations, null.ok = FALSE)
-
-    data <- dplyr::select(data, {{cols}}, {{by}})
+    # data <- dplyr::select(data, {{cols}}, {{by}})
     cols_pos <-
       rlang::enquo(arg = cols) %>%
       tidyselect::eval_select(data = data)
@@ -75,26 +73,25 @@ create_static_text_ordinal <-
     if(require_common_categories) {
       check_category_pairs(data = data,
                            cols_pos = cols_pos,
-                           call = rlang::caller_env())
+                           call = call)
     }
 
     data_out <-
-      summarize_data(
+      rlang::exec(
+        summarize_data,
         data = data,
-        cols = {{cols}},
-        by = {{by}},
-        percentage = percentage,
+        cols = cols_pos,
+        by = by_pos,
+        data_label = data_label,
         showNA = showNA,
+        digits = digits,
         sort_by = sort_by,
-        desc = desc,
+        descend = descend,
         ignore_if_below = ignore_if_below,
         label_separator = label_separator,
-        percent_sign = percent_sign,
-        digits = digits,
-        call = rlang::caller_env()
-      )
+        call = call,
+        !!!dots)
 
-    length(by_pos)
 
 
     generate_intro <- function() {
@@ -120,7 +117,7 @@ create_static_text_ordinal <-
     generate_mode_max <- function() {
       data_out %>%
         dplyr::slice_max(order_by = .data$.count, by = ".variable_label", n = 1) %>%
-        dplyr::mutate(text = glue::glue("({.count}", if(.env$percentage) "%" else "", ")",
+        dplyr::mutate(text = glue::glue("({.count}", if(.env$data_label == "percentage") "%" else "", ")",
                                         translations$mode_max_onfix, "{.variable_label}")) %>%
         dplyr::arrange(".category") %>%
         dplyr::summarize(text = create_text_collapse(.data$text),
@@ -174,7 +171,7 @@ create_static_text_ordinal <-
         dplyr::filter(.data$.count >= .env$ignore_if_below, !is.na(.data$.count)) %>%
         slice_function(order_by = dplyr::pick(".count"), n = n_top_bottom, na_rm = TRUE, with_ties = FALSE) %>%
         dplyr::distinct(dplyr::pick(tidyselect::all_of(c(".variable_label", ".count"))), .keep_all = TRUE) %>%
-        dplyr::mutate(text = glue::glue("{.variable_label} ({.count}", if(.env$percentage) "%" else "", ")")) %>%
+        dplyr::mutate(text = glue::glue("{.variable_label} ({.count}", if(.env$data_label == "percentage") "%" else "", ")")) %>%
         dplyr::pull(.data$text) %>%
         create_text_collapse() %>%
         stringr::str_c(translations[[prefix_key]], .,

@@ -98,12 +98,18 @@ get_element_path <-
     fs::dir_create(path = read_element_type_path, recurse = TRUE)
     fs::dir_create(path = save_element_type_path_absolute, recurse = TRUE)
 
-    base_filename <- stringr::str_c(index, ".rds")
+    base_filename_rds <- stringr::str_c(index, ".rds")
+    base_filename_png <- stringr::str_c(index, ".png")
     read_filepath <- fs::path(read_element_type_path,
-                              base_filename)
+                              base_filename_rds)
     save_filepath_relative <- fs::path(save_element_type_path_relative,
-                                       base_filename)
+                                       base_filename_rds)
     save_filepath_absolute <- fs::path(path, save_filepath_relative)
+    save_filepath_relative_png <- fs::path(save_element_type_path_relative,
+                                       base_filename_png)
+    save_filepath_absolute_png <- fs::path(path, save_filepath_relative_png)
+
+
 
 
     ### element_contents
@@ -114,6 +120,15 @@ get_element_path <-
       obj <- element_contents[[index]]
       if(!is.null(obj)) {
         saveRDS(object = obj, file = save_filepath_absolute)
+        if(ggplot2::is.ggplot(obj)) {
+          ggplot2::ggsave(plot = obj, filename = save_filepath_absolute_png, scale = 2, width = 20, height = 20, units = "cm", dpi = "retina")
+        }
+        if(inherits(x = obj, "girafe")) {
+          # ggiraph::dsvg(standalone = TRUE, file = save_filepath_absolute_png, width = 20, height = 20)
+          # plot(obj)
+          # dev.off()
+        }
+
         out <-
           insert_obj_in_qmd(element_name = element_name,
                             index = index,

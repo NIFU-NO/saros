@@ -1,4 +1,4 @@
-testthat::test_that("gen_element produces embed_chart_categorical_ggplot", {
+testthat::test_that("gen_element produces elements", {
   library(dplyr)
 
   testthat::expect_no_error(

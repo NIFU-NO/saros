@@ -32,29 +32,29 @@ test_that("create_static_text_ordinal", {
     testthat::expect_true("mean_min" %in% names(result))
 
 # Test 9: Test when sort_by is NULL (default value)
-  result <- create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), percentage = TRUE, contents = "value_max")
+  result <- create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), data_label = "percentage", contents = "value_max")
   testthat::expect_true(!is.null(result))
 
 # Test 10: Test when sort_by is a character vector
-  result <- create_static_text_ordinal(data = ex_survey1, cols = matches("a_"), percentage = TRUE, contents = "value_max", sort_by = c("Yes", "No"))
+  result <- create_static_text_ordinal(data = ex_survey1, cols = matches("a_"), data_label = "percentage", contents = "value_max", sort_by = c("Yes", "No"))
   testthat::expect_true(!is.null(result))
 
 # Test 11: Test when sort_by is a character vector in a different order
-  result <- create_static_text_ordinal(data = ex_survey1, cols = matches("a_"), percentage = TRUE, contents = "value_max", sort_by = c("No", "Yes"))
+  result <- create_static_text_ordinal(data = ex_survey1, cols = matches("a_"), data_label = "percentage", contents = "value_max", sort_by = c("No", "Yes"))
   testthat::expect_true(!is.null(result))
 
 # Test 12: Test when sort_by is a character vector with invalid values
-  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), percentage = TRUE, contents = "value_max", sort_by = c("Invalid1", "Invalid2")))
+  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), data_label = "percentage", contents = "value_max", sort_by = c("Invalid1", "Invalid2")))
 
 # Test 13: Test when sort_by is an integer
-  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), percentage = TRUE, contents = "value_max", sort_by = 1))
+  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), data_label = "percentage", contents = "value_max", sort_by = 1))
 
 # Test 14: Test when sort_by is a negative integer
-  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), percentage = TRUE, contents = "value_max", sort_by = -1))
+  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), data_label = "percentage", contents = "value_max", sort_by = -1))
 
 # Test 15: Test when sort_by is an integer larger than the number of unique categories
-  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), percentage = TRUE, contents = "value_max", sort_by = 5))
+  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), data_label = "percentage", contents = "value_max", sort_by = 5))
 
 # Test 16: Test when sort_by is a numeric value (not an integer)
-  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), percentage = TRUE, contents = "value_max", sort_by = 1.5))
+  testthat::expect_error(create_static_text_ordinal(data = ex_survey1, cols = matches("e_"), data_label = "percentage", contents = "value_max", sort_by = 1.5))
 })

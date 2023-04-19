@@ -15,8 +15,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Main priorities for version 1.0 (Spørringene)
 - tables: by i tabeller: Same vertical argument as in plots?
-- Save not only Rds-files but also png/docx copies of tables/plots for manual inspection.
-
 -	chart_categorical_ggiraph: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
 - Taking the mean of f_uni doesn't make much sense and results in warnings during build, avoid in example?
 - Add full _quarto.yml file for project.
@@ -34,6 +32,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - Replace ymlthis with yaml-package.
 - check .count is displayed in html plots (bug in ggiraph?)
 - Generalize the element creator switch function and helper function so that user could create own element types. A function factory.
+- descend is currently global across all variables...
 - Allow a autonumberer for sections (inside gen_qmd_structure).
 - Tests for graphs using snapshots and data in ggplot object
 - Support guess_glue_pattern(elements, data_overview) which return(guessed_glue_index_pattern).
@@ -42,6 +41,8 @@ knitr::opts_chunk$set(echo = TRUE)
 - target and renv initialization with menu selection. => {saros.template}
 - Split off rename_variables into either janitor or a vctrs::vec_as_names() extension
 - chart_categorical_ggiraph: Implement n_right_side. Easy in ggplot, but yet unavailable in mschart. Not really needed with tooltips.
+- Save not only Rds-files but also png/docx copies of tables/plots for manual inspection. Requires figuring out plot() within package
+
 
 # Version 3.0
 - by in mschart (not yet implemented in mschart?)
@@ -64,7 +65,9 @@ knitr::opts_chunk$set(echo = TRUE)
     - inheritParams
     - exemplify all non-trivial argument inputs (lists, vectors, objects)
     - better hints in error/warning messages
+    - progress bars
 - increase test coverage
+- more robustness (moduling)
 - flexible arguments
 - reduce dependencies
 	- find upstream packages

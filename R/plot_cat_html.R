@@ -1,7 +1,7 @@
 #'
 #' Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories
 #'
-#' @param data Data frame or tibble.
+#' @inheritParams summarize_data
 #' @param label_font_size [\code{integer(1)}]\cr Font size for data labels
 #' @param main_font_size [\code{integer(1)}]\cr Font size for all other text
 #' Must contain at least the number of unique values (excl. missing) in the data set.
@@ -11,8 +11,6 @@
 #' @param colour_2nd_binary_cat [\code{character(1)}]\cr Colour for second category in binary variables. Often useful to hide this.
 #' @param font_family Word font family. See officer::fp_text
 #' @param vertical [\code{logical(1)}] Logical. If FALSE (default), then horizontal.
-#' @param percentage [\code{logical(1)}] If TRUE, will compute percentage and add percentage sign to data label.
-#' @param digits [\code{integer(1)}]\cr Number of digits in percentages.
 #' @param x_axis_label_width [\code{integer(1)}] Width of the labels used for the categorical column names.
 #' @param seed [\code{integer(1)}] Optional random seed for selection of colours in blender.
 #' @param ... Optional parameters forwarded from above.
@@ -35,16 +33,17 @@ chart_categorical_plot <-
            colour_na = "gray90",
            colour_2nd_binary_cat = "#ffffff",
            vertical = FALSE,
-           percentage = TRUE,
+           data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
            digits = 1,
            x_axis_label_width = 20,
            seed = 1,
            call = rlang::caller_env()) {
 
+    dots <- rlang::list2(...)
+    data_label <- rlang::arg_match(data_label, error_call = call)
     check_data_frame(data, call = call)
     check_summary_data_cols(data, call = call)
     check_bool(vertical, call = call)
-    check_bool(percentage, call = call)
     check_integerish(label_font_size, min=0, max=72, call = call)
     check_integerish(main_font_size, min=0, max=72, call = call)
     check_integerish(digits, min=0, call = call)
@@ -53,7 +52,6 @@ chart_categorical_plot <-
     check_colour(colour_2nd_binary_cat, call = call)
     check_colour(colour_na, call = call)
     check_colours(colour_palette, call = call)
-    dots <- rlang::list2(...)
 
 
     colour_palette <-
@@ -70,6 +68,8 @@ chart_categorical_plot <-
 
     by_vars <- colnames(data)[!colnames(data) %in%
                                 .saros.env$summary_data_sort2]
+
+    percentage <- data_label %in% c("percentage", "percentage_bare")
 
     p <-
       data %>%
@@ -159,9 +159,9 @@ chart_categorical_plot <-
 #'
 #' @examples
 #' \dontrun{
-#' embed_chart_categorical_ggplot(data = ex_survey1, cols = tidyselect::matches("b_"))
+#' embed_plot_cat_html(data = ex_survey1, cols = tidyselect::matches("b_"))
 #' }
-embed_chart_categorical_ggplot <-
+embed_plot_cat_html <-
   function(data,
          ...,
          cols = tidyselect::everything(),
@@ -175,12 +175,11 @@ embed_chart_categorical_ggplot <-
          colour_2nd_binary_cat = "#ffffff",
          height_per_col = .3,
          height_fixed = 1,
-         percentage = TRUE,
+         data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
          digits = 1,
-         percent_sign = TRUE,
          sort_by = NULL,
          vertical = FALSE,
-         desc = FALSE,
+         descend = FALSE,
          ignore_if_below = 1,
          label_separator = NULL,
          x_axis_label_width = 20,
@@ -189,7 +188,8 @@ embed_chart_categorical_ggplot <-
          call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
-    showNA <- rlang::arg_match(showNA, multiple = FALSE)
+    showNA <- rlang::arg_match(showNA, call = call)
+    data_label <- rlang::arg_match(data_label, call = call)
     check_data_frame(data, call = call)
     check_multiple_by(data, by = {{by}}, call = call)
     check_string(label_separator, null.ok=TRUE, call = call)
@@ -198,12 +198,13 @@ embed_chart_categorical_ggplot <-
     check_double(height_fixed, min = 0, call = call)
 
 
-    data <- dplyr::select(data, {{cols}}, {{by}})
+    # data <- dplyr::select(data, {{cols}}, {{by}})
 
     cols_enq <- rlang::enquo(arg = cols)
     cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
     by_enq <- rlang::enquo(arg = by)
     by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
+
 
     check_category_pairs(data = data, cols_pos = c(cols_pos))
 
@@ -214,33 +215,33 @@ embed_chart_categorical_ggplot <-
         data = data,
         cols = cols_pos,
         by = by_pos,
-        percentage = percentage,
+        data_label = data_label,
         showNA = showNA,
         digits = digits,
-        percent_sign = percent_sign,
         sort_by = sort_by,
-        desc = desc,
+        descend = descend,
         ignore_if_below = ignore_if_below,
         label_separator = label_separator,
         call = call,
         !!!dots)
 
     chart <-
-      rlang::exec(chart_categorical_plot,
-                  data = data_out,
-                  label_font_size = label_font_size,
-                  main_font_size = main_font_size,
-                  font_family = font_family,
-                  colour_palette = colour_palette,
-                  colour_na = colour_na,
-                  colour_2nd_binary_cat = colour_2nd_binary_cat,
-                  vertical = vertical,
-                  percentage = percentage,
-                  digits = digits,
-                  x_axis_label_width = x_axis_label_width,
-                  seed = seed,
-                  call = call,
-                  !!!dots)
+      rlang::exec(
+        chart_categorical_plot,
+        data = data_out,
+        label_font_size = label_font_size,
+        main_font_size = main_font_size,
+        font_family = font_family,
+        colour_palette = colour_palette,
+        colour_na = colour_na,
+        colour_2nd_binary_cat = colour_2nd_binary_cat,
+        vertical = vertical,
+        data_label = data_label,
+        digits = digits,
+        x_axis_label_width = x_axis_label_width,
+        seed = seed,
+        call = call,
+        !!!dots)
 
     if(!is.null(label_separator)) {
 

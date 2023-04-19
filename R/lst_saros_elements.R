@@ -44,22 +44,26 @@ lst_saros_elements <-
 
           name <- list_valid_obj_name(section_key)
 
-          y_col_names <- unique(section_df$col_name)
+          data_cols <-
+            data %>%
+            {if(inherits(., what="srvyr")) srvyr::as_tibble(.) else .} %>%
+            colnames()
 
+          y_col_pos <- unique(section_df$col_name)
+          y_col_pos <- match(y_col_pos, data_cols)
+
+          ######################################################################
 
 
           if(element_name == "uni_cat_plot_html" &&
              all(section_df$designated_type == "cat")) {
             out <-
               rlang::exec(
-                embed_chart_categorical_ggplot,
+                embed_plot_cat_html,
 
                   data = data,
-                  cols = tidyselect::all_of(y_col_names),
+                  cols = y_col_pos,
                   !!!dots)
-
-
-
 
             return(rlang::set_names(list(out), nm = name))
           }
@@ -70,9 +74,9 @@ lst_saros_elements <-
              all(section_df$designated_type == "cat")) {
             out <-
               rlang::exec(
-                embed_chart_categorical_office,
+                embed_plot_cat_docx,
                 data = data,
-                cols = tidyselect::all_of(y_col_names),
+                cols = y_col_pos,
                 !!!dots)
 
             return(rlang::set_names(list(out), nm = name))
@@ -80,6 +84,34 @@ lst_saros_elements <-
 
           ######################################################################
 
+
+          if(element_name == "uni_cat_table_html" &&
+             all(section_df$designated_type == "cat")) {
+            out <-
+              rlang::exec(
+                embed_table_cat_html,
+                data = data,
+                cols = y_col_pos,
+                !!!dots)
+
+            return(rlang::set_names(list(out), nm = name))
+          }
+
+          ######################################################################
+
+          if(element_name == "uni_cat_table_docx" &&
+             all(section_df$designated_type == "cat")) {
+            # out <-
+            #   rlang::exec(
+            #     embed_table_cat_docx,
+            #     data = data,
+            #     cols = y_col_pos,
+            #     !!!dots)
+            #
+            # return(rlang::set_names(list(out), nm = name))
+          }
+
+          ######################################################################
 
           if(all(section_df$designated_role != "indep") &&
              stringr::str_detect(element_name, "^bi_.*") &&
@@ -96,6 +128,9 @@ lst_saros_elements <-
                 rlang::set_names(nm = stringr::str_c(name, "_BY_", .)) %>%
                 purrr::map(.f = ~{
 
+                  by_pos <-
+                    match(.x, data_cols)
+
                   by_type <-
                     by_df %>%
                     dplyr::filter(.data$col_name == .x) %>%
@@ -109,10 +144,10 @@ lst_saros_elements <-
 
                     return(
                       rlang::exec(
-                        embed_chart_categorical_ggplot,
+                        embed_plot_cat_html,
                         data = data,
-                        cols = tidyselect::all_of(y_col_names),
-                        by = tidyselect::all_of(.x),
+                        cols = y_col_pos,
+                        by = by_pos,
                         !!!dots)
                     )
                   }
@@ -122,10 +157,10 @@ lst_saros_elements <-
                      all(by_type == "cat")) {
                     return(
                       rlang::exec(
-                        embed_chart_categorical_office,
+                        embed_plot_cat_docx,
                         data = data,
-                        cols = tidyselect::all_of(y_col_names),
-                        by = tidyselect::all_of(.x),
+                        cols = y_col_pos,
+                        by = by_pos,
                         !!!dots)
                     )
                   }
@@ -167,15 +202,26 @@ mass_lst_saros_elements <-
            ...) {
     dots <- rlang::list2(...)
 
-    element_names %>%
-    rlang::set_names() %>%
-      purrr::imap(.f = ~{
+    cli::cli_progress_bar(name = "Producing elements", total = length(element_names))
+    element_names <-
+      element_names %>%
+      rlang::set_names()
+    out <- element_names %>% as.list()
 
+    for(i in element_names) {
+
+        cli::cli_progress_update()
+      out[[i]] <-
         rlang::exec(
           lst_saros_elements,
           data_overview = data_overview,
-          element_name = rlang::set_names(.x, .y),
+          element_name = element_names[i],
           data = data,
           !!!dots)
-      })
+
+      }
+    cli::cli_progress_done()
+
+
+    out
   }

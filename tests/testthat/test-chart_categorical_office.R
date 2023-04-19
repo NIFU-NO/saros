@@ -17,7 +17,7 @@ testthat::test_that("chart_categorical_office", {
   testthat::expect_s3_class(object = {
   test <-
     ex_survey1 |>
-    embed_chart_categorical_office(cols = b_1:b_3,
+    embed_plot_cat_docx(cols = b_1:b_3,
                         docx_template = docx_template,
                         colour_palette = colour_palette,
                         chart_formatting = chart_format,
@@ -25,11 +25,10 @@ testthat::test_that("chart_categorical_office", {
                         label_font_size = 9,
                         main_font_size = 9,
                         showNA = "no",
-                        percentage = TRUE,
+                        data_label = "percentage_bare",
                         digits = 0,
-                        percent_sign = FALSE,
                         sort_by = c("A bit", "A lot"),
-                        desc = TRUE,
+                        descend = TRUE,
                         height_per_col = .3,
                         height_fixed = 1
                         )
@@ -40,15 +39,15 @@ testthat::test_that("chart_categorical_office", {
 
 
 
-  testthat::expect_error(object = embed_chart_categorical_office(mtcars, cols = c(cyl, vs, gear, carb)),
+  testthat::expect_error(object = embed_plot_cat_docx(mtcars, cols = c(cyl, vs, gear, carb)),
                          regexp = "Column `cyl` and column `vs` lack common categories")
-  testthat::expect_error(object = embed_chart_categorical_office(ex_survey1, cols = tidyselect::matches("^[ab]")),
+  testthat::expect_error(object = embed_plot_cat_docx(ex_survey1, cols = tidyselect::matches("^[ab]")),
                          regexp = "Column `a_1` and column `b_1` lack common categories")
 
   testthat::expect_s3_class(object = {
   test <-
     ex_survey1 |>
-    embed_chart_categorical_office(cols = a_1:a_9)
+    embed_plot_cat_docx(cols = a_1:a_9)
   }, class = "rdocx", exact = TRUE)
   x <- withr::with_tempfile(new = "test", code = {
     filepath <- print(test, target = "test.docx")
@@ -59,7 +58,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_chart_categorical_office(cols = a_1:a_9, showNA = "no")
+      embed_plot_cat_docx(cols = a_1:a_9, showNA = "no")
 }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -73,7 +72,7 @@ testthat::test_that("chart_categorical_office", {
       ex_survey1 |>
       mutate(across(p_4, ~forcats::fct_recode(.x, NULL = "Strongly disagree"))) |>
       labelled::copy_labels_from(from = ex_survey1) |>
-      embed_chart_categorical_office(cols = p_1:p_4)
+      embed_plot_cat_docx(cols = p_1:p_4)
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -88,7 +87,7 @@ testthat::test_that("chart_categorical_office", {
       ex_survey1 |>
       mutate(across(p_1, ~forcats::fct_recode(.x, NULL = "Somewhat disagree"))) |>
       labelled::copy_labels_from(from = ex_survey1) |>
-      embed_chart_categorical_office(cols = p_1:p_4,
+      embed_plot_cat_docx(cols = p_1:p_4,
                           docx_template = docx_template,
                           colour_palette = colour_palette,
                           chart_formatting = chart_format,
@@ -108,7 +107,7 @@ testthat::test_that("chart_categorical_office", {
       ex_survey1 |>
       mutate(across(p_4, ~forcats::fct_recode(.x, NULL = "Strongly agree"))) |>
       labelled::copy_labels_from(from = ex_survey1) |>
-      embed_chart_categorical_office(cols = p_1:p_4)
+      embed_plot_cat_docx(cols = p_1:p_4)
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -123,7 +122,7 @@ testthat::test_that("chart_categorical_office", {
       ex_survey1 |>
       mutate(across(p_1, ~forcats::fct_recode(.x, NULL = "Strongly agree"))) |>
       labelled::copy_labels_from(from = ex_survey1) |>
-      embed_chart_categorical_office(cols = p_1:p_4)
+      embed_plot_cat_docx(cols = p_1:p_4)
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -136,7 +135,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_chart_categorical_office(cols = a_1:a_9, digits = 0L, percent_sign = FALSE, font_family = "Calibri")
+      embed_plot_cat_docx(cols = a_1:a_9, digits = 0L, data_label = "percentage_bare", font_family = "Calibri")
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -149,7 +148,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_chart_categorical_office(cols = a_1:a_9, sort_by = ".count", desc=FALSE, vertical=FALSE, showNA = "no")
+      embed_plot_cat_docx(cols = a_1:a_9, sort_by = ".count", descend = FALSE, vertical=FALSE, showNA = "no")
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -163,8 +162,8 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_chart_categorical_office(cols = a_1:a_9, sort_by = ".count",
-                        desc=T, vertical=FALSE, showNA = "no",
+      embed_plot_cat_docx(cols = a_1:a_9, sort_by = ".count",
+                          descend = TRUE, vertical=FALSE, showNA = "no",
                         percentage = FALSE)
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
@@ -178,8 +177,8 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_chart_categorical_office(cols = b_1:b_3, sort_by = ".count",
-                        desc=TRUE, vertical=FALSE, showNA = "no",
+      embed_plot_cat_docx(cols = b_1:b_3, sort_by = ".count",
+                          descend = TRUE, vertical=FALSE, showNA = "no",
                           percentage = FALSE)
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
@@ -192,7 +191,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_chart_categorical_office(cols = b_1:b_3, sort_by = "A bit", desc=FALSE, vertical=FALSE, showNA = "no")
+      embed_plot_cat_docx(cols = b_1:b_3, sort_by = "A bit", descend = FALSE, vertical=FALSE, showNA = "no")
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -204,7 +203,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_chart_categorical_office(cols = b_1:b_3, sort_by = c("A bit", "A lot"), desc=FALSE, vertical=FALSE, showNA = "no")
+      embed_plot_cat_docx(cols = b_1:b_3, sort_by = c("A bit", "A lot"), descend = FALSE, vertical=FALSE, showNA = "no")
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -216,8 +215,8 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
       test <-
         ex_survey1 |>
-        embed_chart_categorical_office(cols = b_1:b_3, sort_by = c("A bit", "A lot"),
-                          desc=FALSE, vertical=FALSE, showNA = "no")
+        embed_plot_cat_docx(cols = b_1:b_3, sort_by = c("A bit", "A lot"),
+                            descend = FALSE, vertical=FALSE, showNA = "no")
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -229,7 +228,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
       test <-
         ex_survey1 |>
-        embed_chart_categorical_office(cols = b_1:b_3, ignore_if_below = 10)
+        embed_plot_cat_docx(cols = b_1:b_3, ignore_if_below = 10)
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -240,7 +239,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
       test <-
         ex_survey1 |>
-        embed_chart_categorical_office(cols = b_1:b_3, label_separator = " - ")
+        embed_plot_cat_docx(cols = b_1:b_3, label_separator = " - ")
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -251,7 +250,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
       test <-
         ex_survey1 |>
-        embed_chart_categorical_office(cols = b_1, by = x1_sex)
+        embed_plot_cat_docx(cols = b_1, by = x1_sex)
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -262,7 +261,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_s3_class(object = {
       test <-
         ex_survey1 |>
-        embed_chart_categorical_office(cols = b_1, by = x1_sex, sort_by = "A lot", desc=TRUE)
+        embed_plot_cat_docx(cols = b_1, by = x1_sex, sort_by = "A lot", descend = TRUE)
     }, class = "rdocx", exact = TRUE)
     x <- withr::with_tempfile(new = "test", code = {
       filepath <- print(test, target = "test.docx")
@@ -272,7 +271,7 @@ testthat::test_that("chart_categorical_office", {
     testthat::expect_error(object = {
       test <-
         ex_survey1 |>
-        embed_chart_categorical_office(cols = b_1, by = x1_sex:x2_human)
+        embed_plot_cat_docx(cols = b_1, by = x1_sex:x2_human)
     }, regexp = "Too many columns provided for `by`")
 
 

@@ -2,68 +2,69 @@ testthat::test_that("summarize_data", {
 
   testthat::expect_equal(
     saros:::summarize_data(
-      data = ex_survey1,
+      data = saros::ex_survey1,
       cols = a_1:a_9,
-      percentage = TRUE,
-      digits = 0, percent_sign = FALSE) |>
+      data_label = "percentage_bare",
+      digits = 0) |>
       dplyr::slice(1) |>
       dplyr::pull(.data_label),
     expected = "49")
 
   testthat::expect_equal(
     saros:::summarize_data(
-      data = ex_survey1,
+      data = saros::ex_survey1,
       cols = a_1:a_9,
-      percentage = TRUE,
-      sort_by = ".count", desc = T) |>
+      data_label = "percentage",
+      sort_by = ".count", descend = TRUE) |>
       dplyr::slice(1) |>
       dplyr::pull(.count),
     expected = 60)
 
   testthat::expect_equal(
     saros:::summarize_data(
-      data = ex_survey1,
+      data = saros::ex_survey1,
       cols = b_1:b_3,
-      percentage = TRUE,
-      sort_by = "A bit", desc = FALSE) |>
+      data_label = "percentage",
+      sort_by = "A bit", descend = FALSE) |>
       dplyr::slice(1) |>
       dplyr::pull(.count),
     expected = 55)
 
   testthat::expect_equal(
     saros:::summarize_data(
-      data = ex_survey1,
+      data = saros::ex_survey1,
       cols = b_1:b_3,
-      percentage = TRUE,
-      sort_by = c("A bit", "A lot"), desc = FALSE) |>
+      data_label = "percentage",
+      sort_by = c("A bit", "A lot"), descend = FALSE) |>
       dplyr::slice(9) |>
       dplyr::pull(.sum_value),
     expected = 60)
 
   testthat::expect_equal(
     saros:::summarize_data(
-      data = ex_survey1,
+      data = saros::ex_survey1,
       cols = b_1:b_3,
-      percentage = TRUE,
+      data_label = "percentage",
       ignore_if_below = 10) |>
       dplyr::slice(3) |>
       dplyr::pull(.data_label),
     expected = "")
 
   testthat::expect_equal(saros:::summarize_data(
-    data = ex_survey1,
+    data = saros::ex_survey1,
     cols = a_1:a_9,
-    percentage = FALSE, showNA = "no") |>
+    data_label = "percentage",
+    showNA = "no") |>
       dplyr::slice(1) |>
       dplyr::pull(.data_label),
-    "49")
+    "55.7%")
 
   testthat::expect_equal(
     saros:::summarize_data(
-      data = ex_survey1,
+      data = saros::ex_survey1,
       cols = a_1:a_9,
-      percentage = FALSE,
-      sort_by = ".count", desc = T) |>
+      data_label = "proportion",
+      sort_by = ".count", descend = TRUE) |>
       dplyr::slice(1) |>
       dplyr::pull(.count),
     expected = 60)
@@ -71,7 +72,7 @@ testthat::test_that("summarize_data", {
 
   testthat::expect_equal(
     saros:::summarize_data(
-      data = ex_survey1,
+      data = saros::ex_survey1,
       cols = a_1:a_9,
       by = x1_sex) |>
       dplyr::slice(20) |>
@@ -80,13 +81,14 @@ testthat::test_that("summarize_data", {
 
   testthat::expect_equal(
     saros:::summarize_data(
-      data = ex_survey1,
+      data = saros::ex_survey1,
       cols = a_1:a_9,
       by = c(x1_sex:x2_human, f_uni)) |>
       dplyr::filter(.variable_name == "a_1",
                     x1_sex == "Males",
                     x2_human == "Robot?",
-                    f_uni == "University of A", .category == "No") |>
+                    f_uni == "University of A",
+                    .category == "No") |>
       dplyr::pull(.proportion),
     expected = 0.25)
 
@@ -98,15 +100,15 @@ testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 0 b
   suppressMessages(library(dplyr))
   suppressMessages(library(srvyr))
   x <-
-    ex_survey1 %>%
+    saros::ex_survey1 %>%
     saros:::summarize_data(cols = matches("^b_"),
-                                  sort_by = c("A lot", "A bit"),
+                                  sort_by = c("A lot", "A bit"), digits = 2,
                                   label_separator = " - ", percentage = TRUE)
   x_srv <-
-    ex_survey1 %>%
+    saros::ex_survey1 %>%
     srvyr::as_survey(strata = f_uni) %>%
     saros:::summarize_data(cols = matches("^b_"),
-                                  sort_by = c("A lot", "A bit"),
+                                  sort_by = c("A lot", "A bit"), digits = 2,
                                   label_separator = " - ", percentage = TRUE)
 
 
@@ -158,12 +160,12 @@ testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 1 b
   suppressMessages(library(dplyr))
   suppressMessages(library(srvyr))
   x <-
-    ex_survey1 %>%
+    saros::ex_survey1 %>%
     saros:::summarize_data(cols = matches("^b_"), by = x1_sex,
                                   sort_by = c("A lot", "A bit"),
                                   label_separator = " - ", percentage = TRUE)
   x_srv <-
-    ex_survey1 %>%
+    saros::ex_survey1 %>%
     srvyr::as_survey(strata = f_uni) %>%
     saros:::summarize_data(cols = matches("^b_"), by = x1_sex,
                                   sort_by = c("A lot", "A bit"),
@@ -214,12 +216,12 @@ testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 2 b
   suppressMessages(library(dplyr))
   suppressMessages(library(srvyr))
   x <-
-    ex_survey1 %>%
+    saros::ex_survey1 %>%
     saros:::summarize_data(cols = matches("^b_"), by = c(x1_sex, x2_human),
                                   sort_by = c("A lot", "A bit"),
                                   label_separator = " - ", percentage = TRUE)
   x_srv <-
-    ex_survey1 %>%
+    saros::ex_survey1 %>%
     srvyr::as_survey(strata = f_uni) %>%
     saros:::summarize_data(cols = matches("^b_"), by = c(x1_sex, x2_human),
                                   sort_by = c("A lot", "A bit"),
