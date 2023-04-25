@@ -371,7 +371,7 @@ report_chart_likert <-
            sort_by = NULL,
            vertical = FALSE,
            desc = FALSE,
-           ignore_if_below = 1,
+           ignore_if_below = 0,
            label_separator = NULL,
            caption_autonum = NULL,
            seed = 1) {

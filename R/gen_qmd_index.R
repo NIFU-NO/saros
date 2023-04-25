@@ -48,18 +48,23 @@ gen_qmd_index <-
       yml_section <-  ymlthis_config
     }
 
+    add_freeze <- "execute:\n  freeze: auto\n---\n\n"
+
     yml_section <-
       yml_section %>%
       ymlthis::yml_author(name = if(!is.null(authors)) authors else ymlthis::yml_empty()) %>%
       ymlthis::yml_toplevel(format = "html",
                             echo = FALSE,
-                            editor = "visual") %>%
+                            editor = "visual"
+                            ) %>%
       ymlthis::asis_yaml_output(fences = TRUE) %>%
       stringr::str_replace_all(pattern = "```|yaml|\\[\\]", replacement = "\n") %>%
       stringr::str_replace_all(pattern = "\\'FALSE\\'", replacement = "false") %>%
       stringr::str_replace_all(pattern = "\\'TRUE\\'", replacement = "true") %>%
       stringr::str_replace_all(pattern = "^\n\n\n", replacement = "") %>%
-      as.character()
+      as.character() #%>%
+      # stringr::str_replace_all(pattern = "---\n\n", replacement = add_freeze) %>%
+
 
     main_section <-
       purrr::map_chr(chapter_filepaths,

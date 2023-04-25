@@ -2,28 +2,29 @@
 #' Embed Reactable Table
 #'
 #' @inheritParams summarize_data
-#' @param vertical [\code{logical(1)}] Logical. If FALSE (default), then horizontal.
+#' @inheritParams embed_cat_plot_html
 #' @param information Which pre-computed information for each variable-category to display.
-#' @param ... Further arguments passed to reactable()
+#' @param ... Further arguments passed down.
 #' @importFrom rlang !!! exec
 #'
-#' @return
+#' @return A reactable object. If return_raw=FALSE, then just the table.
 #' @export
 #'
 #' @examples
-#' embed_table_cat_html(data=ex_survey1, cols = a_1:a_9)
-embed_table_cat_html <-
+#' embed_cat_table_html(data=ex_survey1, cols = a_1:a_9)
+#' embed_cat_table_html(data=ex_survey1, cols = a_1:a_9, by = x1_sex)
+embed_cat_table_html <-
   function(data,
            ...,
            cols = tidyselect::everything(),
            by = NULL,
-           showNA = c("ifany", "always", "no"),
+           showNA = c("ifany", "always", "never"),
            data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
            digits = 1,
-           sort_by = c(".variable_name"), #, ".variable_label", ".category"
+           sort_by = NULL, #c(".variable_name"), #, ".variable_label", ".category"
            vertical = FALSE,
            descend = FALSE,
-           ignore_if_below = 1,
+           ignore_if_below = 0,
            information =
              c(".variable_label", #".variable_name",
                ".category",
@@ -32,21 +33,29 @@ embed_table_cat_html <-
                ".mean", ".mean_se", ".mean_base",
                ".data_label", ".comb_categories", ".sum_value"),
            label_separator = NULL,
+           return_raw = TRUE,
            call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
     showNA <- rlang::arg_match(showNA, error_call = call)
     data_label <- rlang::arg_match(data_label, error_call = call)
-    check_data_frame(data)
-    check_string(label_separator, null.ok=TRUE)
+    if(data_label %in% c("percentage", "percentage_bare", "proportion")) {
+      data_label2 <- "count"
+    } else {
+      data_label2 <- "percentage"
+    }
+    check_data_frame(data, call = call)
+    check_string(label_separator, null.ok=TRUE, call = c)
 
     cols_enq <- rlang::enquo(arg = cols)
-    cols_pos <- tidyselect::eval_select(cols_enq, data = data)
+    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
     by_enq <- rlang::enquo(arg = by)
-    by_pos <- tidyselect::eval_select(by_enq, data = data)
+    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
 
-    check_category_pairs(data = data, cols_pos = c(cols_pos))
+    check_category_pairs(data = data, cols_pos = c(cols_pos), call = call)
 
+    main_question <-
+      get_main_question2(names(data)[cols_pos], label_separator = label_separator, warn_multiple = TRUE, call = call)
 
     data_out <-
       rlang::exec(
@@ -63,13 +72,13 @@ embed_table_cat_html <-
         label_separator = label_separator,
         call = call,
         !!!dots) %>%
-      tidyr::pivot_wider(id_cols = c(".variable_name", ".variable_label"), names_from = ".category", values_from = ".data_label")
-
-    if(data_label %in% c("percentage", "percentage_bare", "proportion")) {
-      data_label2 <- "count"
-    } else {
-      data_label2 <- "percentage"
+      tidyr::pivot_wider(id_cols = tidyselect::all_of(c(".variable_label", names(by_pos))),
+                         names_from = ".category", values_from = ".data_label")
+    if(nchar(main_question)>0) {
+      names(data_out)[names(data_out)==".variable_label"] <- main_question
     }
+
+
 
     data_out2 <-
       rlang::exec(
@@ -86,16 +95,25 @@ embed_table_cat_html <-
         label_separator = label_separator,
         call = call,
         !!!dots) %>%
-      tidyr::pivot_wider(id_cols = c(".variable_name", ".variable_label"), names_from = ".category", values_from = ".data_label")
+      tidyr::pivot_wider(id_cols = tidyselect::all_of(c(".variable_label", names(by_pos))),
+                         names_from = ".category", values_from = ".data_label")
+    if(nchar(main_question)>0) {
+      names(data_out2)[names(data_out)==".variable_label"] <- main_question
+    }
 
+    ## MOVE THIS AND THE pivot_wider ABOVE TO prep_cat_table_html()
     table_html_detailer <-
       function(index) {
       htmltools::div(
         "Details for row: ", index,
         htmltools::tags$pre(paste(utils::capture.output(data_out2[index, ]), collapse = "\n"))
       )
+      }
+    if(return_raw) {
+      data_out
+    } else {
+      data_out %>%
+        reactable::reactable(sortable = TRUE)
     }
-    data_out %>%
-      reactable::reactable(sortable = TRUE)
   }
 

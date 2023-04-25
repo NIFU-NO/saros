@@ -19,7 +19,7 @@
 #' \item{\code{character()}}{A character vector of paths to Rds-files containing the objects. These will be read in as needed, saving memory.}
 #' }
 #' @param glue_index_string String used to glue together columns in the data_overview for creating an identifier to look up objects in elements-lists and character vectors. Defaults to "{designated_role}_{col_group}_{name_prefix}".
-#' @param show_if_alpha_below A double between 0 and 1 to control which elements are shown based on their significance level. Defaults to 0 (show all).
+#' @param ignore_if_below A double between 0 and 1 to control which elements are hidden based on their significance level. Defaults to 0 (show all).
 #' @param captions A string indicating whether the caption for each plot/table is displayed. One of
 #' \describe{
 #' \item{\code{"asis"}}{A technical ID, which is useful for troubleshooting or quick search and replace at the end.}
@@ -43,7 +43,7 @@
 #'                               label_separator = " - ",
 #'                               name_separator = "_")
 #'
-#' if(is.numeric_version(quarto::quarto_version())) {
+#' if(!is.null(quarto::quarto_path())) {
 #'   index_filepath <-
 #'    gen_qmd_report(
 #'       data_overview = data_overview,
@@ -61,10 +61,8 @@
 gen_qmd_report <-
   function(data_overview,
            elements = NULL,
-
            glue_index_string = NULL,
-
-           show_if_alpha_below = 1,
+           ignore_if_below = 0,
            captions = c("asis", "pretty", "none"),
            report_ymlthis_config = NULL,
            chapter_ymlthis_config = NULL,
@@ -75,8 +73,8 @@ gen_qmd_report <-
     check_data_frame(data_overview, call = call)
     check_elements(elements, call = call)
     check_string(glue_index_string, null.ok = TRUE, call = call)
-    check_pval(show_if_alpha_below, call = call)
-    captions <- rlang::arg_match(captions, multiple = FALSE)
+    check_pval(ignore_if_below, call = call)
+    captions <- rlang::arg_match(captions, multiple = FALSE, error_call = call)
     check_yml(report_ymlthis_config, call = call)
     check_yml(chapter_ymlthis_config, call = call)
     check_string(index_filename, null.ok = FALSE, call = call)
@@ -112,16 +110,22 @@ gen_qmd_report <-
       data_overview %>%
       dplyr::group_vars()
 
+    data_overview_chapter_groups <-
+    data_overview %>%
+      dplyr::group_by(.data[[grouping_structure[1]]])
+    cli::cli_progress_bar(name = "Creating chapter files...", type = "iterator",
+                          format_done = "Chapter files completed!",
+                          total = dplyr::n_distinct(data_overview_chapter_groups[[grouping_structure[1]]]))
 
 
     ## Generate each chapter. Returns paths to files, which are then used for index.qmd
     chapter_filepaths <-
-      data_overview %>%
-      dplyr::group_by(.data[[grouping_structure[1]]]) %>%
+      data_overview_chapter_groups %>%
       dplyr::group_map(
         .keep = TRUE,
         .f = function(data_overview_chapter,
                       key_chapter) {
+
 
 
           data_overview_chapter <-
@@ -140,7 +144,6 @@ gen_qmd_report <-
               stringr::str_unique() %>%
               fix_path_spaces()
 
-            cat(paste0("Creating file for chapter... '", chapter_folderpath, "'\n"))
 
           fs::dir_create(path = fs::path(path, chapter_folderpath), recurse = TRUE)
 
@@ -171,16 +174,28 @@ gen_qmd_report <-
           gen_qmd_structure(data_overview = data_overview_chapter,
                             elements = elements,
                             glue_index_string = glue_index_string,
-                            show_if_alpha_below = show_if_alpha_below,
+                            ignore_if_below = ignore_if_below,
                             captions = captions,
                             path = path) %>%
-          stringr::str_c(chapter_yml, .) %>%
+          stringr::str_c(chapter_yml,
+                         "```{r}",
+                         "###  experimental docx-production",
+                         "library(officer)",
+                         "docx <- officer::read_docx()",
+                         "```",
+                         .,
+                         "```{r}",
+                         "###  experimental docx-production",
+                         paste0("print(docx, target='", chapter_folderpath, ".docx')"),
+                         "```",
+                         sep = "\n") %>%
             cat(file = chapter_filepath_absolute)
 
           chapter_filepath_relative
 
         })
 
+    cli::cli_process_done()
 
     gen_qmd_index(ymlthis_config = report_ymlthis_config,
                   authors = unique(data_overview[["author"]]),

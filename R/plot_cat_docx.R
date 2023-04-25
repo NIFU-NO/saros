@@ -2,7 +2,7 @@
 
 #' Create Categorical Data Chart from Summarized Data
 #'
-#' @inheritParams chart_categorical_plot
+#' @inheritParams prep_cat_plot_html
 #'
 #' @importFrom officer fp_text fp_border
 #' @importFrom mschart ms_barchart as_bar_stack chart_settings chart_data_fill chart_data_stroke chart_labels_text chart_labels chart_theme chart_ax_x chart_ax_y
@@ -11,8 +11,8 @@
 #' @return mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
 #'
 #' @examples
-#' #chart_categorical_office(summarize_data(ex_survey1[paste0("b_", 1:3)]))
-chart_categorical_office <-
+#' saros:::prep_cat_plot_docx(saros:::summarize_data(ex_survey1[paste0("b_", 1:3)]))
+prep_cat_plot_docx <-
   function(data,
            ...,
            label_font_size = 10,
@@ -23,7 +23,7 @@ chart_categorical_office <-
            colour_2nd_binary_cat = "#ffffff",
            vertical = FALSE,
            data_label = "percentage",
-           digits = 1,
+           digits = if(data_label == "proportion") 2 else 1,
            seed = 1,
            call = rlang::caller_env()) {
 
@@ -43,9 +43,8 @@ chart_categorical_office <-
 
     colour_palette <-
       get_colour_set(
-        n_colours_needed = length(levels(data[[".category"]])),
+        x = levels(data[[".category"]]),
         user_colour_set = colour_palette,
-        names = levels(data[[".category"]]),
         colour_na = colour_na,
         colour_2nd_binary_cat = colour_2nd_binary_cat,
         seed = seed,
@@ -122,8 +121,8 @@ chart_categorical_office <-
 #' Create Word Report with Univariates for Categorical Columns Sharing Same Categories
 #'
 #' @inheritParams summarize_data
-#' @inheritParams chart_categorical_plot
-#' @inheritParams embed_plot_cat_html
+#' @inheritParams prep_cat_plot_docx
+#' @inheritParams embed_cat_plot_html
 #' @param docx_template  [\code{character(1) || officer::read_docx()}]\cr
 #' Either a filepath to a template file, or a rdocx-object from \link[officer]{read_docx}.
 #' @param chart_formatting [\code{character(1)}]\cr Template style to be used for formatting chart
@@ -145,7 +144,7 @@ chart_categorical_office <-
 #' library(officer) # To save the rdocx object to disk
 #' filepath <-
 #'  ex_survey1 |>
-#'  embed_plot_cat_docx(cols = a_1:a_9) |>
+#'  embed_cat_plot_docx(cols = a_1:a_9, return_raw = FALSE) |>
 #'  print(target = "test_docx_a19.docx")
 #' file.remove(filepath)
 #'
@@ -167,21 +166,24 @@ chart_categorical_office <-
 #'
 #'  test_docx_b13 <-
 #'    ex_survey1 |>
-#'    embed_plot_cat_docx(cols = b_1:b_3,
+#'    embed_cat_plot_docx(cols = b_1:b_3,
 #'                        docx_template = docx_template,
 #'                        colour_palette = colour_palette,
 #'                        chart_formatting = chart_format,
 #'                        height_per_col = .3,
-#'                        height_fixed = 1)
-#' #print(test_docx_b13, target = "test_docx_b13.docx")
-#' #file.remove("test_docx_b13.docx")
+#'                        height_fixed = 1,
+#'                        return_raw = FALSE)
+#' \dontrun{
+#' print(test_docx_b13, target = "test_docx_b13.docx")
+#' file.remove("test_docx_b13.docx")
+#' }
 
-embed_plot_cat_docx <-
+embed_cat_plot_docx <-
   function(data,
+           ...,
            cols = tidyselect::everything(),
            by = NULL,
-           ...,
-           showNA = c("ifany", "always", "no"),
+           showNA = c("ifany", "always", "never"),
            label_font_size = 8,
            main_font_size = 9,
            font_family = "Calibri",
@@ -195,14 +197,14 @@ embed_plot_cat_docx <-
            caption_style = NULL,
            caption_autonum = NULL,
            data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
-           digits = 1,
+           digits = if(data_label == "proportion") 2 else 1,
            sort_by = NULL,
            vertical = FALSE,
            descend = FALSE,
-           ignore_if_below = 1,
+           ignore_if_below = 0,
            label_separator = NULL,
            seed = 1,
-           return_raw = FALSE) {
+           return_raw = TRUE) {
 
     dots <- rlang::list2(...)
     showNA <- rlang::arg_match(showNA)
@@ -214,9 +216,6 @@ embed_plot_cat_docx <-
     check_double(height_per_col, min = 0)
     check_double(height_fixed, min = 0)
     check_autonum(caption_autonum)
-
-    # data <- dplyr::select(data, {{cols}}, {{by}})
-
 
     cols_enq <- rlang::enquo(arg = cols)
     cols_pos <- tidyselect::eval_select(cols_enq, data = data)
@@ -246,7 +245,7 @@ embed_plot_cat_docx <-
 
     chart <-
       rlang::exec(
-      chart_categorical_office,
+      prep_cat_plot_docx,
         data = data_out,
         label_font_size = label_font_size,
         main_font_size = main_font_size,
@@ -267,7 +266,7 @@ embed_plot_cat_docx <-
     } else {
 
 
-    ## Consider moving all the below into chart_categorical_office
+    ## Consider moving all the below into prep_cat_plot_docx
     ## so that embed_chart becomes one function
     docx_file <- use_docx(docx_template = docx_template)
 

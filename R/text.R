@@ -1,6 +1,7 @@
 #' Creates a structured list with text interpretations for a set of variables.
 #'
 #' @inheritParams summarize_data
+#' @inheritParams embed_cat_plot_html
 #' @param contents The type of text interpretations to return, multiple allowed. Defaults to all.
 #' @param include_numbers Whether or not to include the actual numbers (percentages, means) in parentheses.
 #' @param require_common_categories Whether to check if all questions share common categories.
@@ -18,16 +19,19 @@
 #' @export
 #'
 #' @examples
-#' create_static_text_ordinal(ex_survey1,
-#'                            cols = tidyselect::matches("e_"),
-#'                            label_separator = " - ")
+#' embed_cat_text_html(ex_survey1,
+#'                   cols = tidyselect::matches("e_"),
+#'                   label_separator = " - ")
 #'
-create_static_text_ordinal <-
+embed_cat_text_html <-
   function(data,
            ...,
            cols = NULL,
            by = NULL, # Not implemented
            data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
+           showNA = c("ifany", "always", "never"),
+           label_separator = NULL,
+
            contents = c("intro", "not_used_category",
                         "mode_max",
                         "value_max", "value_min", "value_diff", # Diff not implemented
@@ -39,11 +43,10 @@ create_static_text_ordinal <-
            descend = FALSE, # not implemented
            ignore_if_below = 0,
            n_top_bottom = 1,
-           showNA = c("ifany", "always", "no"),
-           label_separator = NULL,
+           require_common_categories = TRUE,
            translations = getOption("saros")$translations,
            digits = 1,
-           require_common_categories = TRUE,
+           return_raw = TRUE,
            call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
@@ -283,10 +286,12 @@ create_static_text_ordinal <-
         output
       }
 
+    out <-
     generate_output_text(contents = contents) %>%
       purrr::map(.f = ~{
         stringr::str_replace(string = .x, pattern = "([[:alpha:]\\)])$", "\\1.")
       })
+    if(return_raw) stringr::str_c(collapse=" ") else out
   }
 
 

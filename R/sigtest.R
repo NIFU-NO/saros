@@ -1,173 +1,174 @@
-
-#' Extension to the infer package for multiple testing
+#' Test Significance Based on Randomization Theory
 #'
-#' @inheritParams infer::t_test
-#' @inheritParams infer::chisq_test
-#' @inheritParams infer::prop_test
-#' @param test String indicating type of test done for all combinations.
+#' @inheritParams summarize_data
+#' @param col_type,by_type Optional string specifying data type ("int", "cat", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.
+#' @param reps Integer, number of permutations.
 #'
-#' @importFrom dplyr mutate across bind_cols summarize group_by n
-#' @importFrom tidyselect eval_select
-#' @importFrom labelled remove_val_labels
-#' @importFrom purrr map_dfr
-#' @importFrom tidyr pivot_wider
-#' @importFrom rlang set_names enquo arg_match sym :=
-#' @importFrom infer t_test chisq_test prop_test
-#' @return A tibble containing for each response-explanatory row combination
-#' columns summarizing the test statistic.
+#' @return Data frame
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' set.seed(1)
 #' library(dplyr)
-#' x <- test_multiple_comb(x = mtcars,
-#'                      response = matches("mpg|disp|drat|hp|qsec"),
-#'                      explanatory = matches("vs|am"),
-#'                      test = "t")
-test_multiple_comb <-
-  function(x,
-           formula = NULL,
-           response = NULL,
-           explanatory = NULL,
-           order = NULL,
-           alternative = "two-sided",
-           mu = 0,
-           correct = TRUE,
-           p = NULL,
-           conf_int = TRUE,
-           conf_level = 0.95,
-           test = c("t", "chisq", "prop"),
-           success = NULL,
-           z = FALSE
-  ) {
+#' bind_rows(
+#' sigtest(data=ex_survey1, cols = a_1) # t-test of proportions (.5): p=.98
+#' sigtest(data=ex_survey1, cols = b_1), # Chi-square (all=.333): p=<.001
+#' sigtest(data=ex_survey1, cols = c_1), # one-sample t-test p<.001
+#' sigtest(data=ex_survey1, cols = b_1, by = x1_sex), # Chi-square: p = .548
+#' sigtest(data=ex_survey1, cols = b_1, by = f_uni), # Chi-square: p = .102
+#' sigtest(data=ex_survey1, cols = c_1, by = x1_sex), # two-sample t-test: p = .97
+#' sigtest(data=ex_survey1, cols = c_1, by = f_uni), # ANOVA/F-test: p = .22
+#' sigtest(data=ex_survey1, cols = c_1, by = c_2)) # correlation: p = .976
+#'
+#' sigtest(data=ex_survey1, cols = a_1, by = c_1) # NA
+#' sigtest(data=ex_survey1, cols = b_1, by = c_1) # NA
+#'}
+#'
+sigtest <-
+  function(data,
+           cols,
+           ...,
+           by = NULL,
+           col_type = NULL,
+           by_type = NULL,
+           reps = 1000,
+           digits = 1,
+           call = rlang::caller_env()) {
 
-    test <- rlang::arg_match(test, multiple = FALSE)
-    response_cols <- tidyselect::eval_select(rlang::enquo(response), x)
+    dots <- rlang::list2(...)
+    cols_enq <- rlang::enquo(arg = cols)
+    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
+    if(length(cols_pos) != 1L) cli::cli_abort("{.arg {cols_pos}} must be a single column.")
+    by_enq <- rlang::enquo(arg = by)
+    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
+    if(length(by_pos) > 1L) cli::cli_abort("{.arg by} must be at most a single column.")
 
-    explanatory_cols <- tidyselect::eval_select(rlang::enquo(explanatory), x)
+    data <-
+      data %>%
+      dplyr::filter(dplyr::if_all(.cols=c(cols_pos, by_pos), ~!is.na(.x)))
 
 
+    if(is.null(col_type)) col_type <- class(data[[cols_pos]])
+    col_n <- dplyr::n_distinct(data[[cols_pos]], na.rm = TRUE)
 
-    x <-
-      dplyr::mutate(x,
-                    across(c({{response}}, {{explanatory}}),
-                           ~labelled::remove_val_labels(.x)),
-                    across(c({{response}}, {{explanatory}}),
-                           ~{if(is.factor(.x)) droplevels(.x) else .x}))
+    if(length(by_pos) > 0) {
+      if(is.null(by_type)) {
+        by_type <- class(data[[by_pos]])
+      }
+      by_n <- dplyr::n_distinct(data[[by_pos]], na.rm = TRUE)
+    }
 
-    resp_cols <- names(response_cols)
-    resp_cols <- rlang::set_names(resp_cols)
-    expl_cols <- names(explanatory_cols)
-    expl_cols <- rlang::set_names(expl_cols)
 
-    cli::cli_progress_bar("Computing tests", total = length(resp_cols))
+    stat_test <-
+      dplyr::case_when(
+        col_type %in% c("numeric", "integer", "int") && col_n > 2 && length(by_pos)==0 ~ "mean",
+        col_n == 2 && length(by_pos) == 0 ~ "prop",
+        col_type %in% c("cat", "factor", "character") && col_n > 2 && length(by_pos)==0 ~ "chisq",
+
+        col_type %in% c("numeric", "integer", "int") &&  length(by_pos) > 0 &&
+          by_type %in% c("numeric", "integer", "int") ~ "correlation",
+
+        col_type %in% c("numeric", "integer", "int") && length(by_pos) > 0 &&
+          by_type %in% c("cat", "factor", "character") && by_n > 2 ~ "F",
+
+        col_type %in% c("numeric", "integer", "int") && length(by_pos) > 0 &&
+          by_type %in% c("cat", "factor", "character") && by_n == 2 ~ "t",
+
+        col_type %in% c("cat", "factor", "character") && length(by_pos) > 0 &&
+          by_type %in% c("cat", "factor", "character") ~ "chisq",
+        .default = "NA"
+      )
+    if(stat_test == "NA") {
+      cli::cli_abort("Statistical test not found for {.arg {col_type}} (n_unique={.var {col_n}}) and {.arg {by_type}}.")
+    }
+
+    lvls <- unique(data[[cols_pos]]) %>% as.character()
+    success <- if(stat_test %in% c("prop", "chisq") && col_n == 2) lvls[length(lvls)]
+    p_lvls <- if(stat_test %in% c("prop", "chisq") && length(by_pos) == 0) rlang::set_names(rep(1/length(lvls), length(lvls)), nm=lvls)
+    m_lvls <- if(stat_test %in% c("mean")) 0
+    order_lvls <- if(stat_test %in% c("prop", "chisq", "t") &&
+                     # col_type %in% c("numeric", "integer", "int") &&
+                     length(by_pos) == 1 &&
+                     by_n == 2) unique(data[[by_pos]]) %>% as.character()
+    generate_type <- if(length(by_pos) == 0 && stat_test %in% c("chisq", "prop")) "draw" else "bootstrap"
+
+    estimate <-
+      data %>%
+      infer::specify(response = {{cols}},
+                     explanatory = {{by}},
+                     success = success) %>%
+      infer::calculate(stat = stat_test, order = order_lvls)
+
+    null_dist <-
+      data %>%
+      infer::specify(response = {{cols}},
+                     explanatory = {{by}},
+                     success = success) %>%
+      infer::hypothesize(null = if(length(by_pos)==0) "point" else "independence",
+                         p = p_lvls,
+                         mu = m_lvls) %>%
+      infer::generate(reps = reps, type = generate_type) %>%
+      infer::calculate(stat = stat_test, order = order_lvls)
+
+    pval <-
+      null_dist %>%
+      infer::get_p_value(obs_stat = estimate, direction = "two-sided") %>%
+      suppressWarnings()
+    pval <- pval$p_value
+    tibble::tibble(.variable_name = names(cols_pos),
+                   by_name = if(length(by_pos)>0) names(by_pos),
+                   test = stat_test,
+                   stat = round(estimate[["stat"]], digits = digits),
+                   p_value = ifelse(pval > 0, pval, 3/reps))
+  }
+
+
+#' Title
+#'
+#' @inheritParams sigtest
+#' @inheritParams embed_cat_plot_html
+#'
+#' @return Data frame
+#' @export
+#'
+#' @examples
+embed_sigtest <-
+  function(data,
+           cols,
+           ...,
+           by = NULL,
+           col_type = NULL,
+           by_type = NULL,
+           reps = 1000,
+           digits = 1,
+           return_raw = TRUE,
+           call = rlang::caller_env()) {
+
+    dots <- rlang::list2(...)
+    check_data_frame(data)
+
+    cols_enq <- rlang::enquo(arg = cols)
+    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
+    by_enq <- rlang::enquo(arg = by)
+    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
+    if(length(by_pos) > 1L) cli::cli_abort("{.arg by} must be at most a single column.")
+
+    data <-
+      data %>%
+      dplyr::filter(dplyr::if_all(.cols=c(cols_pos, by_pos), ~!is.na(.x)))
 
     out <-
-      purrr::map_dfr(.x = resp_cols,
-                     .id = "response",
-                     .f = function(response) {
-                       cli::cli_progress_update(.envir = rlang::env_parent())
+    cols_pos %>%
+      names() %>%
+    purrr::map(.f = ~{
+      col <- rlang::sym(.x)
+      sigtest(
+        data = data,
+        cols = !!col,
+        !!!dots)
+    }) %>%
+      dplyr::bind_rows()
+    if(return_raw) out else reactable::reactable(out, sortable = TRUE)
 
-
-                       resp_col <- rlang::sym(response)
-
-                       if(length(expl_cols) == 0L) {
-
-                         if(test == "t") {
-
-                           means <- dplyr::summarize(x,
-                                                     mean = mean(!!resp_col, na.rm=TRUE),
-                                                     mu = mu)
-                           res_test <-
-                             infer::t_test(x = x,
-                                           response = !!resp_col,
-                                           order = order,
-                                           alternative = alternative,
-                                           mu = mu,
-                                           conf_int = conf_int,
-                                           conf_level = conf_level)
-                           dplyr::bind_cols(res_test, means)
-
-
-                         } else if(test == "chisq") {
-                           infer::chisq_test(x = x,
-                                             response = !!resp_col,
-                                             correct = correct,
-                                             p = p)
-                         }
-                       } else {
-                         purrr::map_dfr(.x = expl_cols,
-                                        .id = "explanatory",
-                                        .f = function(explanatory) {
-
-                                          # cli::cli_progress_update(.envir = rlang::env_parent(env = n = 1))
-
-                                          expl_col <- rlang::sym(explanatory)
-
-                                          if(test == "t") {
-
-
-
-                                            means <- dplyr::group_by(x, !!expl_col)
-                                            means <- dplyr::summarize(means,
-                                                                      mean = mean(!!resp_col, na.rm=TRUE),
-                                                                      n = dplyr::n())
-                                            means <- tidyr::pivot_wider(means,
-                                                                        names_from = !!expl_col,
-                                                                        values_from = c(mean, n))
-
-                                            res_test <-
-                                              infer::t_test(x = x,
-                                                            response = !!resp_col,
-                                                            explanatory = !!expl_col,
-                                                            order = order,
-                                                            alternative = alternative,
-                                                            mu = mu,
-                                                            conf_int = conf_int,
-                                                            conf_level = conf_level)
-                                            dplyr::bind_cols(res_test, means)
-
-
-
-
-                                          } else if(test == "chisq") {
-
-                                            miss <- dplyr::filter(x, !is.na(!!resp_col), !is.na(!!expl_col))
-                                            if(nrow(miss)>3 &&
-                                               dplyr::n_distinct(x[[response]]) >= 2 &&
-                                               dplyr::n_distinct(x[[explanatory]]) >= 2) {
-                                              tryCatch(
-                                                infer::chisq_test(x = x,
-                                                                  response = !!resp_col,
-                                                                  explanatory = !!expl_col,
-                                                                  correct = correct,
-                                                                  p = p),
-                                                error = function(e) {
-
-                                                  cli::cli_warn("Bivariate cells are all zero: {{response}} by {{explanatory}}. Dropping chisq-test.")
-                                                  return(NULL)
-                                                })
-                                            } else {
-                                              cli::cli_warn("Bivariate cells are all zero: {{response}} by {{explanatory}}. Dropping chisq-test.")
-                                              NULL
-                                            }
-
-
-                                          } else if(test == "prop") {
-                                            infer::prop_test(x = x,
-                                                             response = !!resp_col,
-                                                             explanatory = !!expl_col,
-                                                             order = order,
-                                                             alternative = alternative,
-                                                             p = p,
-                                                             success = success,
-                                                             correct = correct,
-                                                             z = z,
-                                                             conf_int = conf_int,
-                                                             conf_level = conf_level)
-                                          }
-                                        })
-                       }
-                     })
-    cli::cli_progress_done()
-    out
   }

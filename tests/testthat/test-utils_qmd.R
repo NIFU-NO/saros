@@ -1,7 +1,7 @@
 # Test 1: Test that the function correctly wraps a simple R code string
 testthat::test_that("rcode_to_quarto wraps a simple R code string", {
   input_code <- "print('Hello, world!')"
-  expected_output <- paste0("```{r}\nprint('Hello, world!')\n``` \n")
+  expected_output <- paste0("```{r}\nprint('Hello, world!')\n``` \n\n")
   result <- saros:::rcode_to_quarto(input_code)
   testthat::expect_equal(result, expected_output)
 })

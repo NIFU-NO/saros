@@ -3,7 +3,7 @@ rcode_to_quarto <- function(code, call = rlang::caller_env()) {
   check_string(code, n=1, null.ok=FALSE, call = call)
   paste("```{r}",
          code,
-         "``` \n",
+         "``` \n\n",
          sep = "\n")
 }
 
@@ -40,40 +40,4 @@ create_heading <- function(x, level = NULL,
     x[level])
 }
 
-insert_obj_in_qmd <- function(element_name, index, filepath) {
-
-  if(!is.null(filepath)) {
-
-    obj_name <-
-      stringr::str_c(element_name, "_", index) %>%
-      conv_to_valid_obj_name()
-
-    qmd_format <-
-      if(stringr::str_detect(element_name, "html")) {
-        "html"
-      } else if(stringr::str_detect(element_name, "docx")) {
-        "docx"
-      } else ""
-
-    conditional_start <-
-      stringr::str_c('::: {.content-visible when-format="', qmd_format, '"}\n')
-
-    conditional_end <- ":::\n"
-
-    dplyr::case_when(stringr::str_detect(element_name, "plot_html") ~ '',
-                     stringr::str_detect(element_name, "plot_docx") ~ 'print',
-                     stringr::str_detect(element_name, "table_html") ~ 'reactable',
-                     stringr::str_detect(element_name, "table_docx") ~ 'print',
-                     stringr::str_detect(element_name, "text") ~ 'cat',
-                     .default = 'cat') %>%
-      stringr::str_c(
-        obj_name,
-        ' <- \n  readRDS("', filepath, '")\n',
-        ., '(', obj_name, ')') %>%
-      rcode_to_quarto(code = ., call = call) %>%
-      stringr::str_c(if(nchar(qmd_format) > 0) conditional_start,
-                     .,
-                     if(nchar(qmd_format) > 0) conditional_end)
-  } else ""
-}
 

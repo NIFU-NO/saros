@@ -3,7 +3,7 @@ gen_qmd_structure <-
            # grouping_structure = NULL,
            elements,
            glue_index_string = NULL,
-           show_if_alpha_below = 1,
+           ignore_if_below = 0,
            path,
            captions = "asis",
            call = rlang::caller_env()) {
@@ -47,30 +47,35 @@ gen_qmd_structure <-
         output <-
           purrr::map(
             .x = seq_along(elements), .f= ~{
+
               if(captions %in% c("asis", "pretty")) {
                 caption <-
                   names(elements)[.x]
               } else caption <- ""
+
               if(captions == "pretty") {
                 caption <-
                   caption %>%
-                stringr::str_replace_all(pattern = "_", replacement = " ") %>%
-                stringr::str_replace_all(pattern = "cat", replacement = "Categorical") %>%
-                stringr::str_replace_all(pattern = "int", replacement = "Interval/Continous") %>%
-                stringr::str_replace_all(pattern = "uni", replacement = "Univariate") %>%
+                  stringr::str_replace_all(pattern = "_", replacement = " ") %>%
+                  stringr::str_replace_all(pattern = "([(cat)|(int)]{3})([(cat)|(int)]{3})", replacement = "\\1-\\2") %>%
+                  stringr::str_replace_all(pattern = "cat", replacement = "Categorical") %>%
+                  stringr::str_replace_all(pattern = "int", replacement = "Interval/Continous") %>%
+                  stringr::str_replace_all(pattern = "txt", replacement = "Text") %>%
+                  stringr::str_replace_all(pattern = "uni", replacement = "Univariate") %>%
                   stringr::str_replace_all(pattern = "bi", replacement = "Bivariate") %>%
-                stringr::str_replace_all(pattern = "plot", replacement = "Plot") %>%
+                  stringr::str_replace_all(pattern = "plot", replacement = "Plot") %>%
                   stringr::str_replace_all(pattern = "table", replacement = "Table") %>%
-                stringr::str_replace_all(pattern = "html|docx", replacement = "")
+                  stringr::str_replace_all(pattern = "html|docx", replacement = "")
               }
               content <-
                 get_element_path(
                   data_overview = data_overview_section,
                   elements = elements[.x],
                   glue_index_string = glue_index_string,
-                  show_if_alpha_below = show_if_alpha_below,
+                  ignore_if_below = ignore_if_below,
                   path = path,
                   call = call)
+
               if(!rlang::is_null(content)) {
                 stringr::str_c(caption, "\n\n", content)
               }

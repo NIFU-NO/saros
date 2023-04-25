@@ -59,7 +59,7 @@ lst_saros_elements <-
              all(section_df$designated_type == "cat")) {
             out <-
               rlang::exec(
-                embed_plot_cat_html,
+                embed_cat_plot_html,
 
                   data = data,
                   cols = y_col_pos,
@@ -74,7 +74,22 @@ lst_saros_elements <-
              all(section_df$designated_type == "cat")) {
             out <-
               rlang::exec(
-                embed_plot_cat_docx,
+                embed_cat_plot_docx,
+                data = data,
+                cols = y_col_pos,
+                !!!dots)
+
+            return(rlang::set_names(list(out), nm = name))
+          }
+
+          ######################################################################
+
+
+          if(element_name == "uni_cat_plot_pdf" &&
+             all(section_df$designated_type == "cat")) {
+            out <-
+              rlang::exec(
+                embed_cat_plot_pdf,
                 data = data,
                 cols = y_col_pos,
                 !!!dots)
@@ -89,7 +104,7 @@ lst_saros_elements <-
              all(section_df$designated_type == "cat")) {
             out <-
               rlang::exec(
-                embed_table_cat_html,
+                embed_cat_table_html,
                 data = data,
                 cols = y_col_pos,
                 !!!dots)
@@ -101,14 +116,57 @@ lst_saros_elements <-
 
           if(element_name == "uni_cat_table_docx" &&
              all(section_df$designated_type == "cat")) {
-            # out <-
-            #   rlang::exec(
-            #     embed_table_cat_docx,
-            #     data = data,
-            #     cols = y_col_pos,
-            #     !!!dots)
-            #
-            # return(rlang::set_names(list(out), nm = name))
+            out <-
+              rlang::exec(
+                embed_cat_table_docx,
+                data = data,
+                cols = y_col_pos,
+                !!!dots)
+
+            return(rlang::set_names(list(out), nm = name))
+          }
+
+          ######################################################################
+
+          if(element_name == "uni_cat_sigtest" &&
+             all(section_df$designated_type == "cat")) {
+            out <-
+              rlang::exec(
+                embed_sigtest,
+                data = data,
+                cols = y_col_pos,
+                !!!dots)
+
+            return(rlang::set_names(list(out), nm = name))
+          }
+
+          ######################################################################
+
+          if(element_name == "uni_int_sigtest" &&
+             all(section_df$designated_type == "int")) {
+            out <-
+              rlang::exec(
+                embed_sigtest,
+                data = data,
+                cols = y_col_pos,
+                !!!dots)
+
+            return(rlang::set_names(list(out), nm = name))
+          }
+
+
+          ######################################################################
+
+          if(element_name == "uni_int_sigtest" &&
+             all(section_df$designated_type == "int")) {
+            out <-
+              rlang::exec(
+                embed_cat_text_html,
+                data = data,
+                cols = y_col_pos,
+                !!!dots)
+
+            return(rlang::set_names(list(out), nm = name))
           }
 
           ######################################################################
@@ -144,7 +202,7 @@ lst_saros_elements <-
 
                     return(
                       rlang::exec(
-                        embed_plot_cat_html,
+                        embed_cat_plot_html,
                         data = data,
                         cols = y_col_pos,
                         by = by_pos,
@@ -157,13 +215,99 @@ lst_saros_elements <-
                      all(by_type == "cat")) {
                     return(
                       rlang::exec(
-                        embed_plot_cat_docx,
+                        embed_cat_plot_docx,
                         data = data,
                         cols = y_col_pos,
                         by = by_pos,
                         !!!dots)
                     )
                   }
+
+
+                  if(element_name == "bi_catcat_plot_pdf" &&
+                     all(section_df$designated_type == "cat") &&
+                     all(by_type == "cat")) {
+                    return(
+                      rlang::exec(
+                        embed_cat_plot_pdf,
+                        data = data,
+                        cols = y_col_pos,
+                        by = by_pos,
+                        !!!dots)
+                    )
+                  }
+
+                  if(element_name == "bi_catcat_table_html" &&
+                     all(section_df$designated_type == "cat") &&
+                     all(by_type == "cat")) {
+
+
+                    return(
+                      rlang::exec(
+                        embed_cat_table_html,
+                        data = data,
+                        cols = y_col_pos,
+                        by = by_pos,
+                        !!!dots)
+                    )
+                  }
+
+                  if(element_name == "bi_catcat_table_docx" &&
+                     all(section_df$designated_type == "cat") &&
+                     all(by_type == "cat")) {
+                    return(
+                      rlang::exec(
+                        embed_cat_table_docx,
+                        data = data,
+                        cols = y_col_pos,
+                        by = by_pos,
+                        !!!dots)
+                    )
+                  }
+
+                  ##############################################################
+                  if(element_name == "bi_catcat_sigtest" &&
+                     all(section_df$designated_type == "cat") &&
+                     all(by_type == "cat")) {
+                    return(
+                      rlang::exec(
+                        embed_sigtest,
+                        data = data,
+                        cols = y_col_pos,
+                        by = by_pos,
+                        !!!dots)
+                    )
+                  }
+
+                  ##############################################################
+                  if(element_name == "bi_intcat_sigtest" &&
+                     all(section_df$designated_type == "int") &&
+                     all(by_type == "cat")) {
+                    return(
+                      rlang::exec(
+                        embed_sigtest,
+                        data = data,
+                        cols = y_col_pos,
+                        by = by_pos,
+                        !!!dots)
+                    )
+                  }
+
+
+                  ##############################################################
+                  if(element_name == "bi_intint_sigtest" &&
+                     all(section_df$designated_type == "int") &&
+                     all(by_type == "int")) {
+                    return(
+                      rlang::exec(
+                        embed_sigtest,
+                        data = data,
+                        cols = y_col_pos,
+                        by = by_pos,
+                        !!!dots)
+                    )
+                  }
+
                 })
             }
           }
@@ -188,7 +332,9 @@ lst_saros_elements <-
 #' @examples
 #' library(dplyr)
 #' ex_survey_elements_list <-
-#' mass_lst_saros_elements(data_overview =
+#' mass_lst_saros_elements(
+#'                element_names = c("uni_cat_plot_html", "bi_catcat_plot_html"),
+#'                data_overview =
 #'                           ex_survey_ch_overview %>%
 #'                           refine_data_overview(data = ex_survey1,
 #'                                                       label_separator = " - ",
@@ -202,7 +348,8 @@ mass_lst_saros_elements <-
            ...) {
     dots <- rlang::list2(...)
 
-    cli::cli_progress_bar(name = "Producing elements", total = length(element_names))
+    cli::cli_progress_bar(name = "Producing contents...",
+                          total = length(element_names))
     element_names <-
       element_names %>%
       rlang::set_names()

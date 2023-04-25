@@ -13,7 +13,7 @@ testthat::test_that("gen_element produces elements", {
 
                                element_name = "uni_cat_plot_docx",
                                label_separator = " - ",
-                       showNA = "no")
+                       showNA = "never")
   )
 
 

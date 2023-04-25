@@ -23,10 +23,10 @@
 #' @importFrom rlang caller_env is_bool is_integer is_string !!!
 #'
 #' @return ggiraph object, plottable with plot()
-chart_categorical_plot <-
+prep_cat_plot_html <-
   function(data,
            ...,
-           label_font_size = 10,
+           label_font_size = 8,
            main_font_size = 8,
            font_family = "Calibri",
            colour_palette = NULL,
@@ -34,7 +34,7 @@ chart_categorical_plot <-
            colour_2nd_binary_cat = "#ffffff",
            vertical = FALSE,
            data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
-           digits = 1,
+           digits = if(data_label == "proportion") 2 else 1,
            x_axis_label_width = 20,
            seed = 1,
            call = rlang::caller_env()) {
@@ -56,9 +56,8 @@ chart_categorical_plot <-
 
     colour_palette <-
       get_colour_set(
-        n_colours_needed = length(levels(data[[".category"]])),
+        x = levels(data[[".category"]]),
         user_colour_set = colour_palette,
-        names = levels(data[[".category"]]),
         colour_na = colour_na,
         colour_2nd_binary_cat = colour_2nd_binary_cat,
         seed = seed,
@@ -70,33 +69,35 @@ chart_categorical_plot <-
                                 .saros.env$summary_data_sort2]
 
     percentage <- data_label %in% c("percentage", "percentage_bare")
+    prop_family <- data_label %in% c("percentage", "percentage_bare", "proportion")
 
     p <-
       data %>%
-      dplyr::mutate(Tooltip =     # Tooltip is opposite of the regular display
-                      if(percentage) sprintf(fmt = "%s: %.0f", .data[[".category"]], .data[[".count"]]),
-                    Tooltip =
-                      if(!percentage) sprintf(fmt = paste0("%s: %.", digits, "f%%"), .data[[".category"]], .data[[".proportion"]]*100)) %>%
+      dplyr::mutate(
+        Tooltip =     # Tooltip is opposite of the regular display
+          if(prop_family) {
+            sprintf(fmt = "%s: %.0f", .data[[".category"]], .data[[".count"]])
+            } else {
+            sprintf(fmt = paste0("%s: %.", digits, "f%%"), .data[[".category"]], .data[[".proportion"]]*100)
+            }) %>%
       ggplot2::ggplot(
-                    mapping = ggplot2::aes(
-                      y = .data[[if(percentage) ".proportion" else ".count"]],
-                      x = if(length(by_vars) == 1) .data[[by_vars]] else .data[[".variable_label"]],
-                      fill = .data[[".category"]],
-                      label = .data[[".data_label"]]),
-                    cumulative = TRUE) +
+        mapping = ggplot2::aes(
+          y = .data[[if(prop_family) ".proportion" else paste0(".", data_label)]],
+          x = if(length(by_vars) == 1) .data[[by_vars]] else .data[[".variable_label"]],
+          fill = .data[[".category"]],
+          label = .data[[".data_label"]]),
+        cumulative = TRUE) +
       ggiraph::geom_col_interactive(
-        # mapping = ggplot2::aes(tooltip = .data[["Tooltip"]]), # Currently does not work
+        # mapping = ggplot2::aes(tooltip = .data[["Tooltip"]]), # BUG: Messes up order of categories if enabled.
         position = ggplot2::position_stack(reverse = TRUE)) +
-      ggiraph::geom_text_interactive(mapping =
-                                       ggplot2::aes(colour =
-                                                      ggplot2::after_scale(x =
-                                                                              hex_bw(.data$fill,
-                                                                                     colour_2nd_binary_cat = if(!multi) colour_2nd_binary_cat))),
+      ggiraph::geom_text_interactive(
+        mapping = ggplot2::aes(colour =
+                                 ggplot2::after_scale(x = hex_bw(.data$fill,
+                                                                 colour_2nd_binary_cat = if(!multi) colour_2nd_binary_cat))),
                                      position = ggplot2::position_stack(vjust = .5, reverse = TRUE)) +
-
-      ggplot2::scale_y_continuous(limits = c(-.003, if(percentage) 1.015 else NA),
+      ggplot2::scale_y_continuous(limits = c(-.003, if(prop_family) 1.015 else NA),
                                   expand = c(0,0),
-                                  labels = if(percentage) function(x) paste0(x*100, "%")) +
+                                  labels = if(percentage) function(x) paste0(x*100, "%") else ggplot2::waiver()) +
       ggiraph::scale_fill_manual_interactive(name="",
                                              values = colour_palette,
                                              data_id = function(x) x,
@@ -148,7 +149,7 @@ chart_categorical_plot <-
 #'
 #'
 #' @inheritParams summarize_data
-#' @inheritParams chart_categorical_plot
+#' @inheritParams prep_cat_plot_html
 #' @param height_per_col [\code{numeric(1)>0}]\cr Height in cm per chart entry.
 #' @param height_fixed [\code{numeric(1)>0}]\cr Fixed height in cm.
 #' @param return_raw [\code{logical(1)}] Whether to return the raw static chart. Defaults to FALSE.
@@ -159,14 +160,14 @@ chart_categorical_plot <-
 #'
 #' @examples
 #' \dontrun{
-#' embed_plot_cat_html(data = ex_survey1, cols = tidyselect::matches("b_"))
+#' embed_cat_plot_html(data = ex_survey1, cols = b_1:b_3)
 #' }
-embed_plot_cat_html <-
+embed_cat_plot_html <-
   function(data,
          ...,
          cols = tidyselect::everything(),
          by = NULL,
-         showNA = c("ifany", "always", "no"),
+         showNA = c("ifany", "always", "never"),
          label_font_size = 8,
          main_font_size = 9,
          font_family = "Calibri",
@@ -176,15 +177,15 @@ embed_plot_cat_html <-
          height_per_col = .3,
          height_fixed = 1,
          data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
-         digits = 1,
+         digits = if(data_label == "proportion") 2 else 1,
          sort_by = NULL,
          vertical = FALSE,
          descend = FALSE,
-         ignore_if_below = 1,
+         ignore_if_below = 0,
          label_separator = NULL,
          x_axis_label_width = 20,
          seed = 1,
-         return_raw = FALSE,
+         return_raw = TRUE,
          call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
@@ -197,8 +198,6 @@ embed_plot_cat_html <-
     check_double(height_per_col, min = 0, call = call)
     check_double(height_fixed, min = 0, call = call)
 
-
-    # data <- dplyr::select(data, {{cols}}, {{by}})
 
     cols_enq <- rlang::enquo(arg = cols)
     cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
@@ -227,7 +226,7 @@ embed_plot_cat_html <-
 
     chart <-
       rlang::exec(
-        chart_categorical_plot,
+        prep_cat_plot_html,
         data = data_out,
         label_font_size = label_font_size,
         main_font_size = main_font_size,
@@ -243,13 +242,11 @@ embed_plot_cat_html <-
         call = call,
         !!!dots)
 
-    if(!is.null(label_separator)) {
-
-
-      main_question <-
-        get_raw_labels(data = data, cols_pos = cols_pos) %>%
-        get_main_question2(label_separator = label_separator)
-    }
+    # if(!is.null(label_separator)) {
+    #   main_question <-
+    #     get_raw_labels(data = data, cols_pos = cols_pos) %>%
+    #     get_main_question2(label_separator = label_separator)
+    # }
 
 
     if(return_raw) {

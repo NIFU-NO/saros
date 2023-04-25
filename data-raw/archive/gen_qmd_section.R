@@ -9,7 +9,7 @@
 #' @param glue_index_string A glue string for indicating the index in data_overview_section that matches the names in the elements list.
 #' @param elements A named list of elements to be included in the Quarto section.
 #' @param grouping_structure A named character vector of the groups in the data_overview_section. Names correspond to number in original hierarchy, and thus heading level.
-#' @param show_if_alpha_below A double between 0 and 1, indicating the threshold for showing an element based on the critical value for statistical significance. If 1 (default), shows everything.
+#' @param ignore_if_below A double between 0 and 1, indicating the threshold for showing an element. If 0 (default), shows everything.
 #' @param path A string specifying the path to the main folder. If not provided, the function uses the current working directory.
 #' @param call Internal call argument. Not to be fiddled with by the user.
 #' @return A single string containing Quarto section code.
@@ -58,7 +58,7 @@ gen_qmd_section <-
 
            grouping_structure = NULL,
 
-           show_if_alpha_below = 1,
+           ignore_if_below = 0,
            path = NULL,
            call = rlang::caller_env()) {
 

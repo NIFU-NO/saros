@@ -115,22 +115,29 @@ mutate_data_label <-
     stat_col <- if(prop_family) ".proportion" else stringr::str_c(".", data_label)
 
     fmt <-
-      stringr::str_c("%.", digits, "f",
-                     if(data_label == "percentage") "%%") %>%
-      stringr::str_replace(pattern = "\\.", decimal_symbol)
+      stringr::str_c("%.", if(data_label == "count") 0 else digits, "f",
+                     if(data_label == "percentage") "%%")
+
 
     ## Could replace fmt <- with a switch of scales::label_percent and scales::label_number
 
+    out <-
     data %>%
     dplyr::mutate(
       .data_label =
         dplyr::if_else(.data[[stat_col]] >= .env$ignore_if_below,
                        .data[[stat_col]],
-                       rep(NA, length=nrow(.))),
-      .data_label = dplyr::if_else(rep(percent_siblings, nrow(.)), .data$.data_label*100, .data$.data_label),
-      .data_label = sprintf(fmt = .env$fmt, .data$.data_label),
-      .data_label = stringr::str_replace(.data$.data_label, " *NA%*$", "")
-    )
+                       rep(NA, length=nrow(.))))
+    if(percent_siblings) out$.data_label <- out$.data_label*100
+    out <-
+      out %>%
+      dplyr::mutate(
+        .data_label = sprintf(fmt = .env$fmt, .data$.data_label),
+        .data_label = stringr::str_replace(.data$.data_label, pattern = " *NA%*$", replacement = ""),
+        .data_label = stringr::str_replace(.data$.data_label, pattern = "\\.", replacement = decimal_symbol)
+      )
+
+    out
   }
 
 #' Summarize a survey dataset for use in tables and graphs
@@ -139,7 +146,7 @@ mutate_data_label <-
 #' @param cols Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.
 #' @param by \code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.
 #' @param data_label [\code{character(1)}] What to display, one of "proportion", "percentage", "percentage_bare" (which is without the percentage symbol), "count", "mean", or "median". Defaults to "proportion".
-#' @param showNA [\code{logical(1)}]\cr Whether to show NA in categorical variables (one of c("ifany", "always", "no"), like in table()).
+#' @param showNA [\code{logical(1)}]\cr Whether to show NA in categorical variables (one of c("ifany", "always", "never"), like in table()).
 #' @param digits [\code{integer(1)}]\cr Number of decimal places as integer.
 #' @param data_label_decimal_symbol [\code{character(1)}] Although the English speaking world uses the dot '.' as decimal marker, some might prefer a comma ',' or something else entirely.
 #' @param sort_by [\code{character(1)}] Sort output (and collapse if requested). Defaults to none (NULL).
@@ -191,8 +198,8 @@ summarize_data <-
            cols = tidyselect::everything(),
            by = NULL,
            data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
-           showNA = c("ifany", "always", "no"),
-           digits = 1,
+           showNA = c("ifany", "always", "never"),
+           digits = if(data_label == "proportion") 2 else 1,
            sort_by = NULL,
            descend = FALSE,
            ignore_if_below = 0,

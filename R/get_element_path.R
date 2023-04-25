@@ -10,13 +10,13 @@ get_element_path <-
     data_overview = NULL,
     elements = NULL,
     glue_index_string = NULL,
-    show_if_alpha_below = 1,
+    ignore_if_below = 0,
     path,
     call = rlang::caller_env()) {
 
 
     if(rlang::is_null(elements) ||
-       (length(elements)==1 && rlang::is_null(elements[[1]]))
+       (length(elements) == 1 && rlang::is_null(elements[[1]]))
       ) {
       return()
     }
@@ -121,7 +121,8 @@ get_element_path <-
       if(!is.null(obj)) {
         saveRDS(object = obj, file = save_filepath_absolute)
         if(ggplot2::is.ggplot(obj)) {
-          ggplot2::ggsave(plot = obj, filename = save_filepath_absolute_png, scale = 2, width = 20, height = 20, units = "cm", dpi = "retina")
+          # ggplot2::ggsave(plot = obj, filename = save_filepath_absolute_png,
+          #                 scale = 2, width = 20, height = 20, units = "cm", dpi = "retina")
         }
         if(inherits(x = obj, "girafe")) {
           # ggiraph::dsvg(standalone = TRUE, file = save_filepath_absolute_png, width = 20, height = 20)
