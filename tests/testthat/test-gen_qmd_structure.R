@@ -22,7 +22,7 @@ test_that("gen_qmd_structure", {
                        element_name = "uni_cat_plot_html",
                        data = ex_survey1)
          )},
-  regexp = "NAs introduced by coercion"
+  regexp = "is a character vector\\. Taking its mean is meaningless and results in NAs"
   )
 
   results2 <-

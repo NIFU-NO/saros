@@ -15,7 +15,7 @@ gen_qmd_chapter <-
            grouping_structure = NULL, # Computed in gen_qmd_report
            glue_index_string = NULL,
 
-           show_if_alpha_below = 1,
+           ignore_if_below = 0,
            chapter_yml = NULL,
            path = getwd(),
            call = rlang::caller_env()) {
@@ -98,7 +98,7 @@ gen_qmd_chapter <-
                       grouping_structure = grouping_structure,
                       elements = elements,
                       glue_index_string = glue_index_string,
-                      show_if_alpha_below = show_if_alpha_below,
+                      ignore_if_below = ignore_if_below,
                       path = path) %>%
 
     # data_overview %>%
@@ -116,7 +116,7 @@ gen_qmd_chapter <-
     #
     #         grouping_structure = grouping_structure[-1],
     #
-    #         show_if_alpha_below = show_if_alpha_below,
+    #         ignore_if_below = ignore_if_below,
     #         path = path,
     #         call = call)
     #

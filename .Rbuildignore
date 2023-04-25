@@ -6,7 +6,6 @@
 ^README\.md$
 ^README\.html$
 ^data-raw$
-^tmp\.docx
 ^LICENSE\.md$
 ^codecov\.yml$
 ^\.github$
@@ -14,5 +13,5 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
-^Oversikt.xlsx
+^testreport$
 ^.*\.Rproj$

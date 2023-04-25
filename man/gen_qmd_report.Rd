@@ -8,7 +8,7 @@ gen_qmd_report(
   data_overview,
   elements = NULL,
   glue_index_string = NULL,
-  show_if_alpha_below = 1,
+  ignore_if_below = 0,
   captions = c("asis", "pretty", "none"),
   report_ymlthis_config = NULL,
   chapter_ymlthis_config = NULL,
@@ -28,7 +28,7 @@ gen_qmd_report(
 
 \item{glue_index_string}{String used to glue together columns in the data_overview for creating an identifier to look up objects in elements-lists and character vectors. Defaults to "{designated_role}_{col_group}_{name_prefix}".}
 
-\item{show_if_alpha_below}{A double between 0 and 1 to control which elements are shown based on their significance level. Defaults to 0 (show all).}
+\item{ignore_if_below}{A double between 0 and 1 to control which elements are hidden based on their significance level. Defaults to 0 (show all).}
 
 \item{captions}{A string indicating whether the caption for each plot/table is displayed. One of
 \describe{
@@ -65,7 +65,7 @@ data_overview <-
                               label_separator = " - ",
                               name_separator = "_")
 
-if(is.numeric_version(quarto::quarto_version())) {
+if(!is.null(quarto::quarto_path())) {
   index_filepath <-
    gen_qmd_report(
       data_overview = data_overview,

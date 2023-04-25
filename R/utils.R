@@ -1,4 +1,17 @@
 
+#' List All Valid Names of The Elements Argument
+#'
+#' @param valid_only Only return implemented elements, or all (planned) elements.
+#' Note that *_docx-elements have limited storage support and
+#' are hence not included in examples in this package as minor (unimportant) warnings will occur.
+#'
+#' @export
+#'
+list_available_element_types <-
+  function(valid_only = TRUE) {
+    names(.saros.env$defaults$element_names[if(valid_only) unname(.saros.env$defaults$element_names) else TRUE])
+  }
+
 
 #' Given Ordered Integer Vector, Return Requested Set.
 #'

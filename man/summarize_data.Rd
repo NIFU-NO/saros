@@ -11,8 +11,8 @@ summarize_data(
   by = NULL,
   data_label = c("proportion", "percentage", "percentage_bare", "count", "mean",
     "median"),
-  showNA = c("ifany", "always", "no"),
-  digits = 1,
+  showNA = c("ifany", "always", "never"),
+  digits = if (data_label == "proportion") 2 else 1,
   sort_by = NULL,
   descend = FALSE,
   ignore_if_below = 0,
@@ -32,7 +32,7 @@ summarize_data(
 
 \item{data_label}{[\code{character(1)}] What to display, one of "proportion", "percentage", "percentage_bare" (which is without the percentage symbol), "count", "mean", or "median". Defaults to "proportion".}
 
-\item{showNA}{[\code{logical(1)}]\cr Whether to show NA in categorical variables (one of c("ifany", "always", "no"), like in table()).}
+\item{showNA}{[\code{logical(1)}]\cr Whether to show NA in categorical variables (one of c("ifany", "always", "never"), like in table()).}
 
 \item{digits}{[\code{integer(1)}]\cr Number of decimal places as integer.}
 

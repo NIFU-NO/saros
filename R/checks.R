@@ -232,3 +232,10 @@ check_yml <-
                        i = "See {.url https://cran.r-project.org/web/packages/ymlthis/vignettes/introduction-to-ymlthis.html}."))
     }
   }
+
+check_existing_path <-
+  function(x, call = rlang::caller_env()) {
+    if(!fs::is_file(x, follow = TRUE)) {
+      cli::cli_abort("{.arg {x}} is not an existing file path.")
+    }
+  }

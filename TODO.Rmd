@@ -13,45 +13,62 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-# Main priorities for version 1.0 (Spørringene)
-- tables: by i tabeller: Same vertical argument as in plots?
--	chart_categorical_ggiraph: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
-- Taking the mean of f_uni doesn't make much sense and results in warnings during build, avoid in example?
-- Add full _quarto.yml file for project.
-    - Should each report be its own website?
+# Version 1.0 (Spørringene)
+- sigtest-related
+    - show_if_p_below
+    - replace_sigtest_with_n_if_n_below
+- implement uni_plot_mean_html and bi_plot_mean_html
+- separate settings for each element type in  (and thus also in mass_lst_element)
+- vertical argument in tables are a pivot-string similar to SSB: 1,2,3
+    - As any element_type so one can get all at once. OR, let reader decide?
+- separate colour_palette for different needs: chapter, designated_type, designated_role, ...
+    - which also allows paletter
+    - if is.colour => as colours, else if in paletter list, use that
+- forest plots
+- prep_cat_plot_pdf: Implement n_right_side for when tooltips are unavailable
+- avoid the default group_by = "col_group" or make it "hidden" (without headings)
+- a more delicate treatment of options()$saros which create an entry if it does not already exist. Loop across all .saros.env defaults.
+- download figure data as xlsx (priority in KU)
+    - toggle between figure and table
+- org-spesifikke nettstedspakker
+- implement embed_cat_text_docx
+- sub-groups (resp in Spørringene, etc.): Must do like Karl did and create interaction indeps.
+- all yaml in the index.qmd into yaml_report, and call it?
+
 
 ## DOCX
 - https://community.rstudio.com/t/creating-a-officer-ms-word-chart-object-within-a-rmd-code-block/157592
-- Might be hard to store in memory/Rds the docx-stuff.
+- Might be hard to store in memory/Rds the docx-stuff. Perhaps better to create separate docx, then stitch together?
     - https://github.com/tidyverse/rvest/issues/181
+    - body_add_docx
 - Test full rendering of DOCX
+-	plot_cat_docx: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
 
 
 
-# Version 1.5
-- Replace ymlthis with yaml-package.
-- check .count is displayed in html plots (bug in ggiraph?)
-- Generalize the element creator switch function and helper function so that user could create own element types. A function factory.
+# Version 2.0
+- Add full _quarto.yml file for project.
+    - Should each report be its own website?
+- Always hide heading if nothing to show within that level
+- different colours for bi-plot with two groups: Slightly brighter for second group
 - descend is currently global across all variables...
-- Allow a autonumberer for sections (inside gen_qmd_structure).
-- Tests for graphs using snapshots and data in ggplot object
-- Support guess_glue_pattern(elements, data_overview) which return(guessed_glue_index_pattern).
-- show_if_alpha_below
-- by i text
-- target and renv initialization with menu selection. => {saros.template}
-- Split off rename_variables into either janitor or a vctrs::vec_as_names() extension
-- chart_categorical_ggiraph: Implement n_right_side. Easy in ggplot, but yet unavailable in mschart. Not really needed with tooltips.
-- Save not only Rds-files but also png/docx copies of tables/plots for manual inspection. Requires figuring out plot() within package
+- Allow a autonumberer for sections (inside gen_qmd_structure) - or can this be done by Quarto automatically?
 
 
 # Version 3.0
-- by in mschart (not yet implemented in mschart?)
+- @keywords internal for all internal functions having documentation.
+- multiple levels of by
 -   S3 class-based objects, or just lists for now? input/output as list of df, var_frame and design_frame. Single input, single output.
--   Avoid :: by @importFrom pkg fun to save evaluation time
-- Use arguments prefixed with a dot internally to avoid conflict if the user has added columns that are named with variables that happen to be used internally.
 -   If you return the same type of output from multiple functions, you should create a function that consistently creates exact the same format (to avoid accidental inconsistency), and consider making it an S3 class (so you can have a custom print method).
+- Generalize the element creator switch function and helper function so that user could create own element types. A function factory.
 -   Replace separators with patterns? Or character vector patterns? First letters before numbers? Similar to the new splitters in {tidyr}
-- Convenience argument: drop_if_single_item (to ease automated psychometric analyses)
+- Convenience argument: drop_if_single_item (to ease automated psychometric analyses and unnecessary tables and plots). This could be done at the data_overview-stage though. So just a simple wrapper around group_by and filter?
+- Tests for graphs using snapshots and data in ggplot object
+- target and renv initialization with menu selection. => {saros.template}
+- Support guess_glue_pattern(elements, data_overview) which return(guessed_glue_index_pattern).
+- Replace ymlthis with yaml-package.
+- showNA "always" and "ifany" are identical? Simplify to TRUE/FALSE?
+- Split off rename_variables into either janitor or a vctrs::vec_as_names() extension
 
 
 # General improvements
@@ -67,8 +84,12 @@ knitr::opts_chunk$set(echo = TRUE)
     - better hints in error/warning messages
     - progress bars
 - increase test coverage
-- more robustness (moduling)
+- more robustness
+    - moduling / code refactoring
+    - target package / renv
+    - argument checks
 - flexible arguments
+- reduce size of package (in MB)
 - reduce dependencies
 	- find upstream packages
 	- copy code when applicable

@@ -6,9 +6,10 @@ crosstable2.data.frame <-
   function(data,
            cols,
            by = NULL,
-           showNA = "ifany",
+           showNA = c("ifany", "always", "never"),
            call = rlang::caller_env()) {
 
+    showNA <- rlang::arg_match(showNA, error_call = call)
 
     dplyr::select(data, {{cols}}) %>%
       colnames() %>%
@@ -65,10 +66,15 @@ crosstable2.data.frame <-
         fct_lvls <-
           if(is.factor(col)) levels(col) else sort(unique(col))
 
+        if(is.character(out$.category)) {
+          cli::cli_warn("{.arg {.x}} is {.obj_type_friendly {out$.category}}. Taking its mean is meaningless and results in NAs.",
+                        call = call)
+        }
         summary_mean <-
           out %>%
+          dplyr::mutate(.mean = suppressWarnings(as.numeric(.data$.category))) %>%
           dplyr::group_by(dplyr::pick(tidyselect::all_of(by_vars))) %>%
-          dplyr::summarize(.mean = mean(as.numeric(.data$.category), na.rm=TRUE)) %>%
+          dplyr::summarize(.mean = mean(.mean, na.rm=TRUE)) %>%
           dplyr::ungroup()
 
         summary_prop <-

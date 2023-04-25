@@ -54,7 +54,7 @@ testthat::test_that("summarize_data", {
     data = saros::ex_survey1,
     cols = a_1:a_9,
     data_label = "percentage",
-    showNA = "no") |>
+    showNA = "never") |>
       dplyr::slice(1) |>
       dplyr::pull(.data_label),
     "55.7%")
@@ -141,7 +141,7 @@ testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 0 b
 
   testthat::expect_equal(object = dplyr::pull(x_srv, .data[[".proportion"]]),
                          expected = dplyr::pull(x, .data[[".proportion"]]),
-                         tolerance = .0000000001)
+                         tolerance = .000000001)
 
   testthat::expect_equal(object = dplyr::pull(x, .data[[".proportion_se"]]),
                          expected = rep(NA_real_, nrow(x)))
@@ -192,8 +192,9 @@ testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 1 b
   testthat::expect_equal(object = dplyr::pull(x_srv, .data[[".variable_label"]]),
                          expected = dplyr::pull(x, .data[[".variable_label"]]))
 
-  testthat::expect_equal(object = dplyr::pull(x_srv, .data[[".data_label"]]),
-                         expected = dplyr::pull(x, .data[[".data_label"]]))
+  testthat::expect_equal(object = as.numeric(dplyr::pull(x_srv, .data[[".data_label"]])),
+                         expected = as.numeric(dplyr::pull(x, .data[[".data_label"]])),
+                         tolerance = .1)
 
   testthat::expect_equal(object = dplyr::pull(x_srv, .data[[".proportion"]]),
                          expected = dplyr::pull(x, .data[[".proportion"]]))

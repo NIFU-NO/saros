@@ -5,9 +5,8 @@
 \title{Provide A Colour Set for A Number of Requested Colours}
 \usage{
 get_colour_set(
-  n_colours_needed,
+  x,
   user_colour_set = NULL,
-  names = NULL,
   colour_na = NULL,
   colour_2nd_binary_cat = NULL,
   seed = 1,
@@ -15,27 +14,25 @@ get_colour_set(
 )
 }
 \arguments{
-\item{n_colours_needed}{Number of colours needed.}
+\item{x}{Vector for which colours will be found.}
 
-\item{user_colour_set}{User-supplied default palette.}
-
-\item{names}{Optional names of colour vector, follows same options as rlang::set_names.}
+\item{user_colour_set}{[\code{character()>0}]\cr User-supplied default palette, excluding colour_na.}
 
 \item{colour_na}{[\code{character(1)}]\cr Colour as a single string.}
 
 \item{colour_2nd_binary_cat}{[\code{character(1)}]\cr Colour for second category in binary variables. Often useful to hide this.}
 
-\item{seed}{Random seed for sampling.}
+\item{seed}{[\code{integer(1)}]\cr Random seed for sampling.}
 
 \item{call}{Caller function if used from inside another function.}
 }
 \value{
-A colour set as character vector.
+A colour set as character vector, where NA has the colour_na, and the rest are taken from user_colour_set if available.
 }
 \description{
 Possibly using user_colour_set if available. If not sufficient, uses a set
     palette from RColorBrewer.
 }
 \examples{
-get_colour_set(n_colours_needed=4)
+get_colour_set(x=1:4)
 }

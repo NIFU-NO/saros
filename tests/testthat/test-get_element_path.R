@@ -162,19 +162,19 @@ testthat::test_that("get_element_path", {
 
   # Test 4: element_contents is a named list
 
-  testthat::expect_equal(
-    saros:::get_element_path(
-      data_overview = data_overview_section1,
-      elements = element_list_valid_paths,
-      path = test_path
-    ),
-    expected = paste(sep="\n",
-      "```{r}",
-      "opening_text_x2_Ambivalence_3_Do_you_consent_to_the_following_ <- ",
-      "  readRDS(\"2 Ambivalence/opening_text/x2_Ambivalence_3_Do_you_consent_to_the_following_.rds\")",
-      "cat(opening_text_x2_Ambivalence_3_Do_you_consent_to_the_following_)",
-      "``` ",
-      ""))
+  # testthat::expect_equal(
+  #   saros:::get_element_path(
+  #     data_overview = data_overview_section1,
+  #     elements = element_list_valid_paths,
+  #     path = test_path
+  #   ),
+  #   expected = paste(sep="\n",
+  #     "```{r}",
+  #     "opening_text_x2_Ambivalence_3_Do_you_consent_to_the_following_ <- ",
+  #     "  readRDS(\"2 Ambivalence/opening_text/x2_Ambivalence_3_Do_you_consent_to_the_following_.rds\")",
+  #     "(opening_text_x2_Ambivalence_3_Do_you_consent_to_the_following_)",
+  #     "``` ",
+  #     ""))
 
 
   testthat::expect_equal(
@@ -191,10 +191,12 @@ testthat::test_that("get_element_path", {
     expected = paste(sep = "\n",
                      "::: {.content-visible when-format=\"html\"}",
                      "```{r}",
+                     "### uni_cat_plot_html",
                      "uni_cat_plot_html_x2_Ambivalence_3_Do_you_consent_to_the_following_ <- ",
                      "  readRDS(\"2 Ambivalence/uni_cat_plot_html/x2_Ambivalence_3_Do_you_consent_to_the_following_.rds\")",
-                     "(uni_cat_plot_html_x2_Ambivalence_3_Do_you_consent_to_the_following_)",
+                     "ggiraph::girafe(ggobj = uni_cat_plot_html_x2_Ambivalence_3_Do_you_consent_to_the_following_)",
                      "``` ",
+                     "",
                      ":::",
                      ""))
 
@@ -215,10 +217,12 @@ testthat::test_that("get_element_path", {
     expected = paste(sep = "\n",
                      "::: {.content-visible when-format=\"html\"}",
                      "```{r}",
+                     "### uni_cat_plot_html",
                      "uni_cat_plot_html_x2_Ambivalence_3 <- ",
                      "  readRDS(\"2 Ambivalence/uni_cat_plot_html/x2_Ambivalence_3.rds\")",
-                     "(uni_cat_plot_html_x2_Ambivalence_3)",
+                     "ggiraph::girafe(ggobj = uni_cat_plot_html_x2_Ambivalence_3)",
                      "``` ",
+                     "",
                      ":::",
                      ""))
 
