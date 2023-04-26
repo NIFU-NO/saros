@@ -18,7 +18,6 @@ utils::globalVariables(names = c("."))
   list(group_by = c("chapter", "label_prefix"),
        label_separator = " - ",
        name_separator = NULL,
-       captions = "none",
        index_filename = "index.qmd",
 
        element_names =
@@ -35,20 +34,23 @@ utils::globalVariables(names = c("."))
            "uni_cat_text" = TRUE,
            "uni_chr_text" = FALSE,
            "uni_int_plot_html" = FALSE,
-           "uni_cat_plot_html" = TRUE,
+           "uni_cat_prop_plot_html" = TRUE,
+           "uni_cat_freq_plot_html" = TRUE,
            "uni_chr_plot_html" = FALSE,
            "uni_int_table_html" = FALSE,
            "uni_cat_table_html" = TRUE,
            "uni_chr_table_html" = FALSE,
            "uni_int_plot_docx" = FALSE,
-           "uni_cat_plot_docx" = TRUE,
+           "uni_cat_prop_plot_docx" = TRUE,
+           "uni_cat_freq_plot_docx" = TRUE,
            "uni_chr_plot_docx" = FALSE,
            "uni_int_table_docx" = FALSE,
            "uni_cat_table_docx" = TRUE,
            "uni_chr_table_docx" = FALSE,
            "uni_int_plot_png" = FALSE,
-           "uni_cat_plot_png" = TRUE,
-           "uni_chr_plot_png" = FALSE,
+           "uni_cat_prop_plot_pdf" = TRUE,
+           "uni_cat_freq_plot_pdf" = TRUE,
+           "uni_chr_plot_pdf" = FALSE,
            "uni_int_table_xlsx" = FALSE,
            "uni_cat_table_xlsx" = FALSE,
            "uni_chr_table_xlsx" = FALSE,
@@ -61,7 +63,8 @@ utils::globalVariables(names = c("."))
            "bi_catint_text" = FALSE,
            "bi_intint_text" = FALSE,
 
-           "bi_catcat_plot_html" = TRUE,
+           "bi_catcat_prop_plot_html" = TRUE,
+           "bi_catcat_freq_plot_html" = TRUE,
            "bi_intcat_plot_html" = FALSE,
            "bi_catint_plot_html" = FALSE,
            "bi_intint_plot_html" = FALSE,
@@ -69,7 +72,8 @@ utils::globalVariables(names = c("."))
            "bi_intcat_table_html" = FALSE,
            "bi_catint_table_html" = FALSE,
            "bi_intint_table_html" = FALSE,
-           "bi_catcat_plot_docx" = TRUE,
+           "bi_catcat_prop_plot_docx" = TRUE,
+           "bi_catcat_freq_plot_docx" = TRUE,
            "bi_intcat_plot_docx" = FALSE,
            "bi_catint_plot_docx" = FALSE,
            "bi_intint_plot_docx" = FALSE,
@@ -111,7 +115,10 @@ utils::globalVariables(names = c("."))
 
               intro_by_prefix = "We will now look at the questions asked regarding ",
               intro_by_infix = " broken down by ",
-              intro_by_suffix = ""
+              intro_by_suffix = "",
+              by_breakdown = " by ",
+              n_equal_prefix = "(N = ",
+              n_equal_suffix = ")"
 
          ),
        element_args =

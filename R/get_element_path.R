@@ -126,15 +126,17 @@ get_element_path <-
 
       if(!rlang::is_null(obj)) {
         if(element_name == "uni_cat_text") utils::str(obj)
-        saveRDS(object = obj, file = save_filepath_absolute)
+        tryCatch(expr = saveRDS(object = obj, file = save_filepath_absolute),
+                 error = function(e) cli::cli_abort("Unable to save {.var {element_name}} to {.file save_filepath_absolute}."))
         if(ggplot2::is.ggplot(obj)) {
-          ggplot2::ggsave(plot = obj, filename = save_filepath_absolute_png,
-                          scale = 1.5, width = 20, height = 20, units = "cm", dpi = "retina")
+          tryCatch(expr = ggplot2::ggsave(plot = obj, filename = save_filepath_absolute_png,
+                          scale = 1.5, width = 20, height = 20, units = "cm", dpi = "retina"),
+                   error = function(e) cli::cli_warn("Unable to save png to {.file {save_filepath_absolute_png}}. Continuing without."))
         }
         if(inherits(x = obj, "data.frame")) {
           tryCatch(expr =
           writexl::write_xlsx(x = obj, path = save_filepath_absolute_xlsx),
-          error = cli::cli_warn("Unable to save to {.path {save_filepath_absolute_xlsx}}. Continuing without.")
+          error = cli::cli_warn("Unable to save {element_name} to {.path {save_filepath_absolute_xlsx}}. Continuing without.")
           )
         }
         if(inherits(x = obj, "girafe")) {
@@ -142,11 +144,13 @@ get_element_path <-
           # plot(obj)
           # dev.off()
         }
+        caption <- attr(obj, "saros_caption")
 
         out <-
           insert_obj_in_qmd(element_name = element_name,
                             index = index,
                             filepath = save_filepath_relative,
+                            caption = caption,
                             call = call)
       } else out <- ""
       return(out)
@@ -157,6 +161,7 @@ get_element_path <-
       }
       fs::file_copy(path = element_contents[[index]],
                     new_path = save_filepath_absolute, overwrite = TRUE)
+
       out <-
         insert_obj_in_qmd(element_name = element_name,
                           index = index,

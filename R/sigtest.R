@@ -148,15 +148,16 @@ sigtest <-
 #' Title
 #'
 #' @inheritParams sigtest
-#' @inheritParams embed_cat_plot_html
+#' @inheritParams embed_cat_prop_plot_html
 #'
 #' @return Data frame
 #' @export
 #'
 #' @examples
-#' embed_sigtest(data=ex_survey1, cols = a_1:a_9)
-#' embed_sigtest(data=ex_survey1, cols = b_1:b_3, label_separator=" - ")
-embed_sigtest <-
+#' embed_uni_sigtest(data=ex_survey1, cols = a_1:a_9)
+#' embed_uni_sigtest(data=ex_survey1, cols = b_1:b_3, label_separator=" - ")
+#' embed_uni_sigtest(data=ex_survey1, cols = c_1:c_2)
+embed_uni_sigtest <-
   function(data,
            cols,
            ...,
@@ -191,21 +192,102 @@ embed_sigtest <-
       if(!is.null(label_separator) &&
          length(main_question)==1) main_question else ".variable_label"
 
+
     out <-
       cols_pos %>%
       names() %>%
       purrr::map(.f = ~{
-        col <- rlang::sym(.x)
+        col_sym <- rlang::sym(.x)
+
+        rlang::inject(
         sigtest(
           data = data,
-          cols = !!col,
+          cols = !!col_sym,
+          # by = !!by_pos,
           col_type = col_type,
           by_type = by_type,
           label_separator = label_separator,
           reps = reps,
           digits = digits,
           call = call,
-          !!!dots)
+          !!!dots))
+      }) %>%
+      dplyr::bind_rows()
+    names(out)[names(out) == ".variable_label"] <- main_question
+
+    if(return_raw) out else reactable::reactable(out, sortable = TRUE)
+
+  }
+
+
+
+#' Title
+#'
+#' @inheritParams sigtest
+#' @inheritParams embed_cat_prop_plot_html
+#'
+#' @return Data frame
+#' @export
+#'
+#' @examples
+#' embed_bi_sigtest(data=ex_survey1, cols = a_1:a_9, by = x1_sex)
+#' embed_bi_sigtest(data=ex_survey1, cols = b_1:b_3, by = x1_sex, label_separator=" - ")
+#' embed_bi_sigtest(data=ex_survey1, cols = c_1:c_2, by = x1_sex)
+embed_bi_sigtest <-
+  function(data,
+           cols,
+           by,
+           ...,
+           col_type = NULL,
+           by_type = NULL,
+           reps = 1000,
+           digits = 1,
+           hide_test_if_n_below = 10,
+           label_separator = NULL,
+           return_raw = TRUE,
+           call = rlang::caller_env()) {
+
+    dots <- rlang::list2(...)
+    check_data_frame(data)
+
+    cols_enq <- rlang::enquo(arg = cols)
+    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
+    by_enq <- rlang::enquo(arg = by)
+    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
+    if(length(by_pos) > 1L) cli::cli_abort("{.arg by} must be at most a single column.")
+
+    data <-
+      data %>%
+      dplyr::filter(dplyr::if_all(.cols=c(cols_pos, by_pos), ~!is.na(.x)))
+
+    main_question <-
+      get_raw_labels(data = data, cols_pos = cols_pos) %>%
+      get_main_question2(label_separator = label_separator, warn_multiple = TRUE, call = call) %>%
+      stringr::str_unique()
+    main_question <-
+      if(!is.null(label_separator) &&
+         length(main_question)==1) main_question else ".variable_label"
+
+    by_sym <- rlang::sym(names(by_pos))
+
+    out <-
+      cols_pos %>%
+      names() %>%
+      purrr::map(.f = ~{
+        col_sym <- rlang::sym(.x)
+
+
+          sigtest(
+            data = data,
+            cols = !!col_sym,
+            by = !!by_sym,
+            col_type = col_type,
+            by_type = by_type,
+            label_separator = label_separator,
+            reps = reps,
+            digits = digits,
+            call = call,
+            !!!dots)
       }) %>%
       dplyr::bind_rows()
     names(out)[names(out) == ".variable_label"] <- main_question

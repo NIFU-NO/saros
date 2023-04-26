@@ -11,7 +11,7 @@ testthat::test_that("gen_element produces elements", {
     lst_saros_elements(data_overview = .,
                        data = ex_survey1,
 
-                               element_name = "uni_cat_plot_docx",
+                               element_name = "uni_cat_prop_plot_docx",
                                label_separator = " - ",
                        showNA = "never")
   )

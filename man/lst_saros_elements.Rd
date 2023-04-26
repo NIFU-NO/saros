@@ -6,7 +6,7 @@
 \usage{
 lst_saros_elements(
   data_overview,
-  element_name = "uni_cat_plot_html",
+  element_name = "uni_cat_prop_plot_html",
   data = NULL,
   ...
 )

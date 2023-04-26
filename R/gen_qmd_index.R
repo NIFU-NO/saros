@@ -49,6 +49,11 @@ gen_qmd_index <-
     }
 
     add_freeze <- "execute:\n  freeze: auto\n---\n\n"
+    add_caption_settings <-
+      "crossref:
+  fig-title: Figur
+  tbl-title: Tabell
+  title-delim: ~"
 
     yml_section <-
       yml_section %>%

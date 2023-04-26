@@ -1,11 +1,11 @@
 
-insert_obj_in_qmd <- function(element_name, index, filepath, call = rlang::caller_env()) {
+insert_obj_in_qmd <- function(element_name, index, filepath, caption = NULL, call = rlang::caller_env()) {
 
   if(!is.null(filepath)) {
 
     if(stringr::str_detect(element_name, "text")) {
       tryCatch(readRDS(filepath),
-               error = function(e) cli::cli_warn("Unable to read {.path {filepath}}.", call = call)
+               error = function(e) cli::cli_warn("Unable to read text from {.path {filepath}}. File not found.", call = call)
       )
     } else {
 
@@ -26,7 +26,7 @@ insert_obj_in_qmd <- function(element_name, index, filepath, call = rlang::calle
       conditional_start <-
         stringr::str_c('::: {.content-visible when-format="', qmd_format, '"}\n')
 
-      conditional_end <- ":::\n\n"
+      conditional_end <- ":::\n\nText\n"
 
       function_call_prefix <-
           dplyr::case_when(stringr::str_detect(element_name, "plot_html") ~ 'ggiraph::girafe(ggobj = ',
@@ -36,8 +36,10 @@ insert_obj_in_qmd <- function(element_name, index, filepath, call = rlang::calle
                            stringr::str_detect(element_name, "sigtest") ~ 'reactable::reactable(',
                            .default = '(')
 
+      caption <-
       stringr::str_c(
-        "### ", element_name, "\n",
+        if(stringr::str_detect(element_name, "plot")) stringr::str_c("#| fig-cap: '", caption, "'\n"),
+        if(stringr::str_detect(element_name, "table")) stringr::str_c("#| tbl-cap: '", caption, "'\n"),
         obj_name,
         ' <- \n  readRDS("', filepath, '")\n',
         function_call_prefix, obj_name, ')') %>%

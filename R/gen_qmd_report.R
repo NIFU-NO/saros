@@ -20,7 +20,6 @@
 #' }
 #' @param glue_index_string String used to glue together columns in the data_overview for creating an identifier to look up objects in elements-lists and character vectors. Defaults to "{designated_role}_{col_group}_{name_prefix}".
 #' @param ignore_if_below A double between 0 and 1 to control which elements are hidden based on their significance level. Defaults to 0 (show all).
-#' @param captions A string indicating whether the caption for each plot/table is displayed. One of
 #' \describe{
 #' \item{\code{"asis"}}{A technical ID, which is useful for troubleshooting or quick search and replace at the end.}
 #' \item{\code{"pretty"}}{A full text title in English. Currently no translations have been implemented.}
@@ -48,7 +47,6 @@
 #'    gen_qmd_report(
 #'       data_overview = data_overview,
 #'       elements = ex_survey_elements_list,
-#'       captions = "pretty",
 #'       path = temp_folder)
 #'
 #'   if(interactive()) {
@@ -63,7 +61,6 @@ gen_qmd_report <-
            elements = NULL,
            glue_index_string = NULL,
            ignore_if_below = 0,
-           captions = c("asis", "pretty", "none"),
            report_ymlthis_config = NULL,
            chapter_ymlthis_config = NULL,
            index_filename = "index.qmd",
@@ -74,7 +71,6 @@ gen_qmd_report <-
     check_elements(elements, call = call)
     check_string(glue_index_string, null.ok = TRUE, call = call)
     check_pval(ignore_if_below, call = call)
-    captions <- rlang::arg_match(captions, multiple = FALSE, error_call = call)
     check_yml(report_ymlthis_config, call = call)
     check_yml(chapter_ymlthis_config, call = call)
     check_string(index_filename, null.ok = FALSE, call = call)
@@ -175,7 +171,6 @@ gen_qmd_report <-
                             elements = elements,
                             glue_index_string = glue_index_string,
                             ignore_if_below = ignore_if_below,
-                            captions = captions,
                             path = path) %>%
           stringr::str_c(chapter_yml,
                          "```{r}",

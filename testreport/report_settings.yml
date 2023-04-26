@@ -8,16 +8,17 @@ params:
   descending: ~
   glue_index_string: ~
   ignore_if_below: 0.0
-  captions: none
   report_ymlthis_config: ~
   chapter_ymlthis_config: ~
   index_filename: index.qmd
   element_names:
-  - uni_cat_plot_html
+  - uni_cat_prop_plot_html
+  - uni_cat_freq_plot_html
   - uni_cat_table_html
   - uni_cat_sigtest
   - uni_int_sigtest
-  - bi_catcat_plot_html
+  - bi_catcat_prop_plot_html
+  - bi_catcat_freq_plot_html
   - bi_catcat_table_html
   - bi_catcat_sigtest
   - bi_intcat_sigtest
@@ -51,6 +52,9 @@ params:
     intro_by_prefix: 'We will now look at the questions asked regarding '
     intro_by_infix: ' broken down by '
     intro_by_suffix: ''
+    by_breakdown: ' by '
+    n_equal_prefix: '(N = '
+    n_equal_suffix: )
   element_args:
     return_raw: yes
     showNA: never

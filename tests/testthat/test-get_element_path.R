@@ -26,7 +26,7 @@ testthat::test_that("get_element_path", {
   element_null_list <- list(NULL)
   element_null_list2 <- list(opening_text = NULL)
   element_null_list3 <- list(opening_text = NULL,
-                             uni_cat_plot_html = NULL)
+                             uni_cat_prop_plot_html = NULL)
 
 
   element_invalid_list1 <- data.frame()
@@ -144,7 +144,7 @@ testthat::test_that("get_element_path", {
     list(opening_text =
            c(`x2_Ambivalence_3_Do_you_consent_to_the_following_` = fs::path(storage_path, "A.rds"),
              B = fs::path(storage_path, "B.rds")),
-         uni_cat_plot_html =
+         uni_cat_prop_plot_html =
            c(x2_Ambivalence_3_Do_you_consent_to_the_following_ = fs::path(storage_path, "A.rds"),
              B = fs::path(storage_path, "B.rds")))
 
@@ -181,23 +181,24 @@ testthat::test_that("get_element_path", {
     saros:::get_element_path(
       data_overview = data_overview_section1,
       elements = list(
-        uni_cat_plot_html =
+        uni_cat_prop_plot_html =
                 lst_saros_elements(
                     data = ex_survey1,
                     data_overview = data_overview_section1,
-                    element_name = "uni_cat_plot_html")),
+                    element_name = "uni_cat_prop_plot_html")),
       path = test_path
     ),
     expected = paste(sep = "\n",
                      "::: {.content-visible when-format=\"html\"}",
                      "```{r}",
-                     "### uni_cat_plot_html",
-                     "uni_cat_plot_html_x2_Ambivalence_3_Do_you_consent_to_the_following_ <- ",
-                     "  readRDS(\"2 Ambivalence/uni_cat_plot_html/x2_Ambivalence_3_Do_you_consent_to_the_following_.rds\")",
-                     "ggiraph::girafe(ggobj = uni_cat_plot_html_x2_Ambivalence_3_Do_you_consent_to_the_following_)",
+                     "#| fig-cap: ''",
+                     "uni_cat_prop_plot_html_x2_Ambivalence_3_Do_you_consent_to_the_following_ <- ",
+                     "  readRDS(\"2 Ambivalence/uni_cat_prop_plot_html/x2_Ambivalence_3_Do_you_consent_to_the_following_.rds\")",
+                     "ggiraph::girafe(ggobj = uni_cat_prop_plot_html_x2_Ambivalence_3_Do_you_consent_to_the_following_)",
                      "``` ",
                      "",
                      ":::",
+                     "",
                      ""))
 
 
@@ -206,24 +207,25 @@ testthat::test_that("get_element_path", {
     saros:::get_element_path(
       data_overview = data_overview_section1,
       elements = list(
-        uni_cat_plot_html =
+        uni_cat_prop_plot_html =
           lst_saros_elements(
             data = ex_survey1,
             data_overview = data_overview_section1 %>% group_by(chapter, col_group),
-            element_name = "uni_cat_plot_html")),
+            element_name = "uni_cat_prop_plot_html")),
       glue_index_string = "{chapter}_{col_group}",
       path = test_path
     ),
     expected = paste(sep = "\n",
                      "::: {.content-visible when-format=\"html\"}",
                      "```{r}",
-                     "### uni_cat_plot_html",
-                     "uni_cat_plot_html_x2_Ambivalence_3 <- ",
-                     "  readRDS(\"2 Ambivalence/uni_cat_plot_html/x2_Ambivalence_3.rds\")",
-                     "ggiraph::girafe(ggobj = uni_cat_plot_html_x2_Ambivalence_3)",
+                     "#| fig-cap: ''",
+                     "uni_cat_prop_plot_html_x2_Ambivalence_3 <- ",
+                     "  readRDS(\"2 Ambivalence/uni_cat_prop_plot_html/x2_Ambivalence_3.rds\")",
+                     "ggiraph::girafe(ggobj = uni_cat_prop_plot_html_x2_Ambivalence_3)",
                      "``` ",
                      "",
                      ":::",
+                     "",
                      ""))
 
 

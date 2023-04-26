@@ -20,20 +20,37 @@ docx <- officer::read_docx()
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### uni_cat_plot_html
-uni_cat_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in <- 
-  readRDS("3 Big mysteries/uni_cat_plot_html/x3_Big_mysteries_How_much_do_you_like_living_in.rds")
-ggiraph::girafe(ggobj = uni_cat_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in)
+#| fig-cap: '_How much do you like living in_ (N = [100-100])'
+uni_cat_prop_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in <- 
+  readRDS("3 Big mysteries/uni_cat_prop_plot_html/x3_Big_mysteries_How_much_do_you_like_living_in.rds")
+ggiraph::girafe(ggobj = uni_cat_prop_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in)
 ``` 
 
 :::
+
+Text
 
 
 
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### uni_cat_table_html
+#| fig-cap: '_How much do you like living in_ (N = [100-100])'
+uni_cat_freq_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in <- 
+  readRDS("3 Big mysteries/uni_cat_freq_plot_html/x3_Big_mysteries_How_much_do_you_like_living_in.rds")
+ggiraph::girafe(ggobj = uni_cat_freq_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in)
+``` 
+
+:::
+
+Text
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+#| tbl-cap: ''
 uni_cat_table_html_x3_Big_mysteries_How_much_do_you_like_living_in <- 
   readRDS("3 Big mysteries/uni_cat_table_html/x3_Big_mysteries_How_much_do_you_like_living_in.rds")
 reactable::reactable(uni_cat_table_html_x3_Big_mysteries_How_much_do_you_like_living_in)
@@ -41,11 +58,12 @@ reactable::reactable(uni_cat_table_html_x3_Big_mysteries_How_much_do_you_like_li
 
 :::
 
+Text
+
 
 
 
 ```{r}
-### uni_cat_sigtest
 uni_cat_sigtest_x3_Big_mysteries_How_much_do_you_like_living_in <- 
   readRDS("3 Big mysteries/uni_cat_sigtest/x3_Big_mysteries_How_much_do_you_like_living_in.rds")
 reactable::reactable(uni_cat_sigtest_x3_Big_mysteries_How_much_do_you_like_living_in)
@@ -61,20 +79,37 @@ reactable::reactable(uni_cat_sigtest_x3_Big_mysteries_How_much_do_you_like_livin
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### bi_catcat_plot_html
-bi_catcat_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human <- 
-  readRDS("3 Big mysteries/bi_catcat_plot_html/x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human.rds")
-ggiraph::girafe(ggobj = bi_catcat_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human)
+#| fig-cap: '_How much do you like living in_  by x2_human(N = [100-100])'
+bi_catcat_prop_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human <- 
+  readRDS("3 Big mysteries/bi_catcat_prop_plot_html/x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human.rds")
+ggiraph::girafe(ggobj = bi_catcat_prop_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human)
 ``` 
 
 :::
+
+Text
 
 
 
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### bi_catcat_table_html
+#| fig-cap: '_How much do you like living in_  by x2_human(N = [100-100])'
+bi_catcat_freq_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human <- 
+  readRDS("3 Big mysteries/bi_catcat_freq_plot_html/x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human.rds")
+ggiraph::girafe(ggobj = bi_catcat_freq_plot_html_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human)
+``` 
+
+:::
+
+Text
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+#| tbl-cap: ''
 bi_catcat_table_html_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human <- 
   readRDS("3 Big mysteries/bi_catcat_table_html/x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human.rds")
 reactable::reactable(bi_catcat_table_html_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human)
@@ -82,11 +117,12 @@ reactable::reactable(bi_catcat_table_html_x3_Big_mysteries_How_much_do_you_like_
 
 :::
 
+Text
+
 
 
 
 ```{r}
-### bi_catcat_sigtest
 bi_catcat_sigtest_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human <- 
   readRDS("3 Big mysteries/bi_catcat_sigtest/x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human.rds")
 reactable::reactable(bi_catcat_sigtest_x3_Big_mysteries_How_much_do_you_like_living_in_BY_x2_human)
@@ -118,8 +154,11 @@ reactable::reactable(bi_catcat_sigtest_x3_Big_mysteries_How_much_do_you_like_liv
 
 
 
+
+
+
+
 ```{r}
-### uni_int_sigtest
 uni_int_sigtest_x3_Big_mysteries_To_what_extent_do_you_agree_or_disagree_to_the_following_policies <- 
   readRDS("3 Big mysteries/uni_int_sigtest/x3_Big_mysteries_To_what_extent_do_you_agree_or_disagree_to_the_following_policies.rds")
 reactable::reactable(uni_int_sigtest_x3_Big_mysteries_To_what_extent_do_you_agree_or_disagree_to_the_following_policies)
@@ -141,8 +180,11 @@ reactable::reactable(uni_int_sigtest_x3_Big_mysteries_To_what_extent_do_you_agre
 
 
 
+
+
+
+
 ```{r}
-### bi_intcat_sigtest
 bi_intcat_sigtest_x3_Big_mysteries_To_what_extent_do_you_agree_or_disagree_to_the_following_policies_BY_x2_human <- 
   readRDS("3 Big mysteries/bi_intcat_sigtest/x3_Big_mysteries_To_what_extent_do_you_agree_or_disagree_to_the_following_policies_BY_x2_human.rds")
 reactable::reactable(bi_intcat_sigtest_x3_Big_mysteries_To_what_extent_do_you_agree_or_disagree_to_the_following_policies_BY_x2_human)
@@ -160,20 +202,37 @@ reactable::reactable(bi_intcat_sigtest_x3_Big_mysteries_To_what_extent_do_you_ag
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### uni_cat_plot_html
-uni_cat_plot_html_x3_Big_mysteries_Is_respondent_human_ <- 
-  readRDS("3 Big mysteries/uni_cat_plot_html/x3_Big_mysteries_Is_respondent_human_.rds")
-ggiraph::girafe(ggobj = uni_cat_plot_html_x3_Big_mysteries_Is_respondent_human_)
+#| fig-cap: '_Is respondent human?_ (N = [100-100])'
+uni_cat_prop_plot_html_x3_Big_mysteries_Is_respondent_human_ <- 
+  readRDS("3 Big mysteries/uni_cat_prop_plot_html/x3_Big_mysteries_Is_respondent_human_.rds")
+ggiraph::girafe(ggobj = uni_cat_prop_plot_html_x3_Big_mysteries_Is_respondent_human_)
 ``` 
 
 :::
+
+Text
 
 
 
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### uni_cat_table_html
+#| fig-cap: '_Is respondent human?_ (N = [100-100])'
+uni_cat_freq_plot_html_x3_Big_mysteries_Is_respondent_human_ <- 
+  readRDS("3 Big mysteries/uni_cat_freq_plot_html/x3_Big_mysteries_Is_respondent_human_.rds")
+ggiraph::girafe(ggobj = uni_cat_freq_plot_html_x3_Big_mysteries_Is_respondent_human_)
+``` 
+
+:::
+
+Text
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+#| tbl-cap: ''
 uni_cat_table_html_x3_Big_mysteries_Is_respondent_human_ <- 
   readRDS("3 Big mysteries/uni_cat_table_html/x3_Big_mysteries_Is_respondent_human_.rds")
 reactable::reactable(uni_cat_table_html_x3_Big_mysteries_Is_respondent_human_)
@@ -181,15 +240,20 @@ reactable::reactable(uni_cat_table_html_x3_Big_mysteries_Is_respondent_human_)
 
 :::
 
+Text
+
 
 
 
 ```{r}
-### uni_cat_sigtest
 uni_cat_sigtest_x3_Big_mysteries_Is_respondent_human_ <- 
   readRDS("3 Big mysteries/uni_cat_sigtest/x3_Big_mysteries_Is_respondent_human_.rds")
 reactable::reactable(uni_cat_sigtest_x3_Big_mysteries_Is_respondent_human_)
 ``` 
+
+
+
+
 
 
 

@@ -1,0 +1,215 @@
+#'
+#' Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories
+#'
+#' @inheritParams summarize_data
+#' @inheritParams prep_cat_prop_plot_pdf
+#'
+#' @importFrom ggplot2 ggplot aes position_fill coord_flip theme_classic guides theme labs scale_y_continuous
+#' @importFrom scales percent_format
+#' @importFrom ggiraph girafe geom_col_interactive scale_fill_manual_interactive guide_legend_interactive element_text_interactive element_rect_interactive geom_text_interactive
+#' @importFrom cli cli_warn
+#' @importFrom rlang caller_env is_bool is_integer is_string !!!
+#'
+#' @return ggiraph object, plottable with plot()
+prep_cat_freq_plot_pdf <-
+  function(data,
+           ...,
+           label_font_size = 8,
+           main_font_size = 8,
+           font_family = "Calibri",
+           colour_palette = NULL,
+           colour_na = "gray90",
+           vertical = FALSE,
+           data_label = c("count", "proportion", "percentage", "percentage_bare", "mean", "median"),
+           digits = if(data_label == "proportion") 2 else if(data_label == "count") 0 else 1,
+           x_axis_label_width = 20,
+           seed = 1,
+           call = rlang::caller_env()) {
+
+    dots <- rlang::list2(...)
+    data_label <- rlang::arg_match(data_label, error_call = call)
+    check_data_frame(data, call = call)
+    check_summary_data_cols(data, call = call)
+    check_bool(vertical, call = call)
+    check_integerish(label_font_size, min=0, max=72, call = call)
+    check_integerish(main_font_size, min=0, max=72, call = call)
+    check_integerish(digits, min=0, call = call)
+    check_integerish(seed, min=0, call = call)
+    check_string(font_family, call = call)
+    check_colour(colour_na, call = call)
+    check_colours(colour_palette, call = call)
+
+
+    colour_palette <-
+      get_colour_set(
+        x = levels(data[[".category"]]),
+        user_colour_set = colour_palette,
+        colour_na = colour_na,
+        colour_2nd_binary_cat = NULL,
+        seed = seed,
+        call = call)
+
+    multi <- length(colour_palette) > 2
+
+    by_vars <- colnames(data)[!colnames(data) %in%
+                                .saros.env$summary_data_sort2]
+
+    percentage <- data_label %in% c("percentage", "percentage_bare")
+    prop_family <- data_label %in% c("percentage", "percentage_bare", "proportion")
+
+    p <-
+      data %>%
+      ggplot2::ggplot(
+        mapping = ggplot2::aes(
+          y = .data[[".count"]],
+          x = if(length(by_vars) == 1) .data[[by_vars]] else .data[[".variable_label"]],
+          fill = .data[[".category"]],
+          label = .data[[".data_label"]]),
+        cumulative = TRUE) +
+      ggplot2::geom_col() +
+      ggplot2::geom_text(
+        mapping = ggplot2::aes(colour =
+                                 ggplot2::after_scale(x = hex_bw(.data$fill)))) +
+      ggplot2::scale_y_continuous(limits = c(-.003, NA),
+                                  expand = c(0,0),
+                                  labels = if(percentage) function(x) paste0(x*100, "%") else ggplot2::waiver()) +
+      ggplot2::scale_fill_manual(name="", values = colour_palette) +
+      ggplot2::scale_colour_manual(guide = FALSE, values = c("black", "white")) +
+      ggplot2::scale_x_discrete(limits = rev, labels = function(x) stringr::str_wrap(x, width = x_axis_label_width)) +
+      ggplot2::guides(fill = ggplot2::guide_legend(nrow = 1),
+                      colour = "none") +
+      ggplot2::theme_classic() +
+      ggplot2::theme(text = ggplot2::element_text(family = font_family),
+                     plot.caption = ggplot2::element_text(size = main_font_size),
+                     legend.position = "bottom",
+                     legend.text = ggplot2::element_text(size = main_font_size),
+                     strip.placement = "outside",
+                     strip.text.y = ggplot2::element_text(angle=180, hjust = .5, size = main_font_size),
+                     strip.background = ggplot2::element_rect(colour = NA)) +
+      ggplot2::labs(x=NULL, y=NULL)
+
+      if(length(by_vars) == 1L) {
+        p <- p +
+          ggplot2::facet_grid(
+            rows = ggplot2::vars(.data[[".variable_label"]]),
+            labeller = ggplot2::labeller(
+              .mapping = ggplot2::aes(label = stringr::str_wrap(.data$.label, width = x_axis_label_width, indent = 0, exdent = 0))),
+            switch = "y", scales = "free_y", space = "free_y"
+          )
+      }
+
+    if(!vertical) {
+      p + ggplot2::coord_flip()
+    } else p
+  }
+
+
+
+#' Embed Interactive Categorical Plot
+#'
+#'
+#' @inheritParams summarize_data
+#' @inheritParams embed_cat_prop_plot_docx
+#' @inheritParams embed_cat_prop_plot_html
+#'
+#' @return ggplot
+#' @importFrom rlang !!!
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' embed_cat_freq_plot_pdf(data = ex_survey1, cols = b_1:b_3)
+#' }
+embed_cat_freq_plot_pdf <-
+  function(data,
+         ...,
+         cols = tidyselect::everything(),
+         by = NULL,
+         showNA = c("ifany", "always", "never"),
+         label_font_size = 8,
+         main_font_size = 9,
+         font_family = "Calibri",
+         colour_palette = NULL,
+         colour_na = "gray90",
+         height_per_col = .3,
+         height_fixed = 1,
+         data_label = c("count", "proportion", "percentage", "percentage_bare", "mean", "median"),
+         digits = if(data_label == "proportion") 2 else if(data_label == "count") 0 else 1,
+         sort_by = NULL,
+         vertical = FALSE,
+         descend = FALSE,
+         ignore_if_below = 0,
+         label_separator = NULL,
+         translations = getOption("saros")$translations,
+         x_axis_label_width = 20,
+         seed = 1,
+         return_raw = TRUE,
+         call = rlang::caller_env()) {
+
+    dots <- rlang::list2(...)
+    showNA <- rlang::arg_match(showNA, call = call)
+    data_label <- rlang::arg_match(data_label, call = call)
+    check_data_frame(data, call = call)
+    check_multiple_by(data, by = {{by}}, call = call)
+    check_string(label_separator, null.ok=TRUE, call = call)
+    check_bool(return_raw, call = call)
+    check_double(height_per_col, min = 0, call = call)
+    check_double(height_fixed, min = 0, call = call)
+
+
+    cols_enq <- rlang::enquo(arg = cols)
+    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
+    by_enq <- rlang::enquo(arg = by)
+    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
+
+
+    check_category_pairs(data = data, cols_pos = c(cols_pos))
+
+
+    data_out <-
+      rlang::exec(
+        summarize_data,
+        data = data,
+        cols = cols_pos,
+        by = by_pos,
+        data_label = "count",
+        showNA = showNA,
+        digits = digits,
+        sort_by = sort_by,
+        descend = descend,
+        ignore_if_below = ignore_if_below,
+        label_separator = label_separator,
+        call = call,
+        !!!dots)
+
+    chart <-
+      rlang::exec(
+        prep_cat_freq_plot_pdf,
+        data = data_out,
+        label_font_size = label_font_size,
+        main_font_size = main_font_size,
+        font_family = font_family,
+        colour_palette = colour_palette,
+        colour_na = colour_na,
+        vertical = vertical,
+        data_label = data_label,
+        digits = digits,
+        x_axis_label_width = x_axis_label_width,
+        seed = seed,
+        call = call,
+        !!!dots)
+
+    if(!rlang::is_null(label_separator)) {
+      attr(chart, "saros_caption") <-
+        get_raw_labels(data = data, cols_pos = cols_pos) %>%
+        get_main_question2(label_separator = label_separator) %>%
+        add_caption_attribute(data_out = data_out, by_pos = by_pos,
+                              translations = translations)
+    }
+
+    chart
+
+
+  }
+
+

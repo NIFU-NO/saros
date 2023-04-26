@@ -64,7 +64,6 @@ render_saros_report <-
       elements = elements_list,
       glue_index_string = yml$params$glue_index_string,
       ignore_if_below = yml$params$ignore_if_below,
-      captions = yml$params$captions,
       report_ymlthis_config = yml$params$report_ymlthis_config,
       chapter_ymlthis_config = yml$params$chapter_ymlthis_config,
       index_filename = yml$params$index_filename,

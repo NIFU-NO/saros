@@ -14,21 +14,22 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Version 1.0 (Spørringene)
+- caption: translations are not included. 
+
+
 - implement uni_plot_int_html and bi_plot_int_html 
 - separate settings for each element type in  (and thus also in mass_lst_element)
-- bi_intcat_sigtest (by_n == 2) => "mean"/"chisq"...?!?!
 - sigtest-related
     - show_if_p_below
     - replace_sigtest_with_n_if_n_below
 - vertical argument in tables are a pivot-string similar to SSB: 1,2,3
     - As any element_type so one can get all at once. OR, let reader decide?
-
+- nothing is actually saved in raw_elements...
 - separate colour_palette for different needs: chapter, designated_type, designated_role, ...
     - which also allows paletter
     - if is.colour => as colours, else if in paletter list, use that
-
-- prep_cat_plot_pdf: Implement n_right_side for when tooltips are unavailable
-- avoid the default group_by = "col_group" or make it "hidden" (without headings)
+- Issue at https://github.com/tidymodels/infer about annoying warning.
+- prep_cat_prop_plot_pdf: Implement n_right_side for when tooltips are unavailable
 - a more delicate treatment of options()$saros which create an entry if it does not already exist. Loop across all .saros.env defaults.
 - download figure data as xlsx (priority in KU)
     - toggle between figure and table
@@ -45,7 +46,7 @@ knitr::opts_chunk$set(echo = TRUE)
     - body_add_docx
 - Test full rendering of DOCX
 -	plot_cat_docx: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
-
+    forcats::fct_unify() in prep_plot?
 
 
 # Version 2.0

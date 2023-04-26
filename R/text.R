@@ -1,7 +1,7 @@
 #' Creates a structured list with text interpretations for a set of variables.
 #'
 #' @inheritParams summarize_data
-#' @inheritParams embed_cat_plot_html
+#' @inheritParams embed_cat_prop_plot_html
 #' @param contents The type of text interpretations to return, multiple allowed. Defaults to all.
 #' @param include_numbers Whether or not to include the actual numbers (percentages, means) in parentheses.
 #' @param require_common_categories Whether to check if all questions share common categories.

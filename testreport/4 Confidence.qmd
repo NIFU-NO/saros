@@ -20,20 +20,37 @@ docx <- officer::read_docx()
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### uni_cat_plot_html
-uni_cat_plot_html_x4_Confidence_How_often_do_you_do_the_following_ <- 
-  readRDS("4 Confidence/uni_cat_plot_html/x4_Confidence_How_often_do_you_do_the_following_.rds")
-ggiraph::girafe(ggobj = uni_cat_plot_html_x4_Confidence_How_often_do_you_do_the_following_)
+#| fig-cap: '_How often do you do the following?_ (N = [100-100])'
+uni_cat_prop_plot_html_x4_Confidence_How_often_do_you_do_the_following_ <- 
+  readRDS("4 Confidence/uni_cat_prop_plot_html/x4_Confidence_How_often_do_you_do_the_following_.rds")
+ggiraph::girafe(ggobj = uni_cat_prop_plot_html_x4_Confidence_How_often_do_you_do_the_following_)
 ``` 
 
 :::
+
+Text
 
 
 
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### uni_cat_table_html
+#| fig-cap: '_How often do you do the following?_ (N = [100-100])'
+uni_cat_freq_plot_html_x4_Confidence_How_often_do_you_do_the_following_ <- 
+  readRDS("4 Confidence/uni_cat_freq_plot_html/x4_Confidence_How_often_do_you_do_the_following_.rds")
+ggiraph::girafe(ggobj = uni_cat_freq_plot_html_x4_Confidence_How_often_do_you_do_the_following_)
+``` 
+
+:::
+
+Text
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+#| tbl-cap: ''
 uni_cat_table_html_x4_Confidence_How_often_do_you_do_the_following_ <- 
   readRDS("4 Confidence/uni_cat_table_html/x4_Confidence_How_often_do_you_do_the_following_.rds")
 reactable::reactable(uni_cat_table_html_x4_Confidence_How_often_do_you_do_the_following_)
@@ -41,11 +58,12 @@ reactable::reactable(uni_cat_table_html_x4_Confidence_How_often_do_you_do_the_fo
 
 :::
 
+Text
+
 
 
 
 ```{r}
-### uni_cat_sigtest
 uni_cat_sigtest_x4_Confidence_How_often_do_you_do_the_following_ <- 
   readRDS("4 Confidence/uni_cat_sigtest/x4_Confidence_How_often_do_you_do_the_following_.rds")
 reactable::reactable(uni_cat_sigtest_x4_Confidence_How_often_do_you_do_the_following_)
@@ -61,20 +79,37 @@ reactable::reactable(uni_cat_sigtest_x4_Confidence_How_often_do_you_do_the_follo
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### bi_catcat_plot_html
-bi_catcat_plot_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni <- 
-  readRDS("4 Confidence/bi_catcat_plot_html/x4_Confidence_How_often_do_you_do_the_following__BY_f_uni.rds")
-ggiraph::girafe(ggobj = bi_catcat_plot_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni)
+#| fig-cap: '_How often do you do the following?_  by f_uni(N = [100-100])'
+bi_catcat_prop_plot_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni <- 
+  readRDS("4 Confidence/bi_catcat_prop_plot_html/x4_Confidence_How_often_do_you_do_the_following__BY_f_uni.rds")
+ggiraph::girafe(ggobj = bi_catcat_prop_plot_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni)
 ``` 
 
 :::
+
+Text
 
 
 
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### bi_catcat_table_html
+#| fig-cap: '_How often do you do the following?_  by f_uni(N = [100-100])'
+bi_catcat_freq_plot_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni <- 
+  readRDS("4 Confidence/bi_catcat_freq_plot_html/x4_Confidence_How_often_do_you_do_the_following__BY_f_uni.rds")
+ggiraph::girafe(ggobj = bi_catcat_freq_plot_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni)
+``` 
+
+:::
+
+Text
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+#| tbl-cap: ''
 bi_catcat_table_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni <- 
   readRDS("4 Confidence/bi_catcat_table_html/x4_Confidence_How_often_do_you_do_the_following__BY_f_uni.rds")
 reactable::reactable(bi_catcat_table_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni)
@@ -82,11 +117,12 @@ reactable::reactable(bi_catcat_table_html_x4_Confidence_How_often_do_you_do_the_
 
 :::
 
+Text
+
 
 
 
 ```{r}
-### bi_catcat_sigtest
 bi_catcat_sigtest_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni <- 
   readRDS("4 Confidence/bi_catcat_sigtest/x4_Confidence_How_often_do_you_do_the_following__BY_f_uni.rds")
 reactable::reactable(bi_catcat_sigtest_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni)
@@ -118,8 +154,11 @@ reactable::reactable(bi_catcat_sigtest_x4_Confidence_How_often_do_you_do_the_fol
 
 
 
+
+
+
+
 ```{r}
-### uni_int_sigtest
 uni_int_sigtest_x4_Confidence_Rate_your_degree_of_confidence_doing_the_following <- 
   readRDS("4 Confidence/uni_int_sigtest/x4_Confidence_Rate_your_degree_of_confidence_doing_the_following.rds")
 reactable::reactable(uni_int_sigtest_x4_Confidence_Rate_your_degree_of_confidence_doing_the_following)
@@ -141,8 +180,11 @@ reactable::reactable(uni_int_sigtest_x4_Confidence_Rate_your_degree_of_confidenc
 
 
 
+
+
+
+
 ```{r}
-### bi_intcat_sigtest
 bi_intcat_sigtest_x4_Confidence_Rate_your_degree_of_confidence_doing_the_following_BY_f_uni <- 
   readRDS("4 Confidence/bi_intcat_sigtest/x4_Confidence_Rate_your_degree_of_confidence_doing_the_following_BY_f_uni.rds")
 reactable::reactable(bi_intcat_sigtest_x4_Confidence_Rate_your_degree_of_confidence_doing_the_following_BY_f_uni)
@@ -160,20 +202,37 @@ reactable::reactable(bi_intcat_sigtest_x4_Confidence_Rate_your_degree_of_confide
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### uni_cat_plot_html
-uni_cat_plot_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_ <- 
-  readRDS("4 Confidence/uni_cat_plot_html/x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_.rds")
-ggiraph::girafe(ggobj = uni_cat_plot_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_)
+#| fig-cap: '_Which of the following universities would you prefer to study at?_ (N = [100-100])'
+uni_cat_prop_plot_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_ <- 
+  readRDS("4 Confidence/uni_cat_prop_plot_html/x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_.rds")
+ggiraph::girafe(ggobj = uni_cat_prop_plot_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_)
 ``` 
 
 :::
+
+Text
 
 
 
 
 ::: {.content-visible when-format="html"}
 ```{r}
-### uni_cat_table_html
+#| fig-cap: '_Which of the following universities would you prefer to study at?_ (N = [100-100])'
+uni_cat_freq_plot_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_ <- 
+  readRDS("4 Confidence/uni_cat_freq_plot_html/x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_.rds")
+ggiraph::girafe(ggobj = uni_cat_freq_plot_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_)
+``` 
+
+:::
+
+Text
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+#| tbl-cap: ''
 uni_cat_table_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_ <- 
   readRDS("4 Confidence/uni_cat_table_html/x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_.rds")
 reactable::reactable(uni_cat_table_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_)
@@ -181,15 +240,20 @@ reactable::reactable(uni_cat_table_html_x4_Confidence_Which_of_the_following_uni
 
 :::
 
+Text
+
 
 
 
 ```{r}
-### uni_cat_sigtest
 uni_cat_sigtest_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_ <- 
   readRDS("4 Confidence/uni_cat_sigtest/x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_.rds")
 reactable::reactable(uni_cat_sigtest_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_)
 ``` 
+
+
+
+
 
 
 
