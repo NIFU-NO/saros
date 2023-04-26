@@ -35,7 +35,8 @@ Mass Generate Elements
 library(dplyr)
 ex_survey_elements_list <-
 mass_lst_saros_elements(
-               element_names = c("uni_cat_plot_html", "bi_catcat_plot_html"),
+               element_names = c("uni_cat_prop_plot_html",
+                                 "bi_catcat_prop_plot_html"),
                data_overview =
                           ex_survey_ch_overview \%>\%
                           refine_data_overview(data = ex_survey1,

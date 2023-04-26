@@ -49,13 +49,19 @@ gen_qmd_index <-
     }
 
     add_freeze <- "execute:\n  freeze: auto\n---\n\n"
+    add_caption_settings <-
+      "crossref:
+  fig-title: Figur
+  tbl-title: Tabell
+  title-delim: ~"
 
     yml_section <-
       yml_section %>%
       ymlthis::yml_author(name = if(!is.null(authors)) authors else ymlthis::yml_empty()) %>%
       ymlthis::yml_toplevel(format = "html",
                             echo = FALSE,
-                            editor = "visual"
+                            editor = "visual",
+                            `number-sections` = TRUE
                             ) %>%
       ymlthis::asis_yaml_output(fences = TRUE) %>%
       stringr::str_replace_all(pattern = "```|yaml|\\[\\]", replacement = "\n") %>%

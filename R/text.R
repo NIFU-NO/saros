@@ -1,7 +1,7 @@
 #' Creates a structured list with text interpretations for a set of variables.
 #'
 #' @inheritParams summarize_data
-#' @inheritParams embed_cat_plot_html
+#' @inheritParams embed_cat_prop_plot_html
 #' @param contents The type of text interpretations to return, multiple allowed. Defaults to all.
 #' @param include_numbers Whether or not to include the actual numbers (percentages, means) in parentheses.
 #' @param require_common_categories Whether to check if all questions share common categories.
@@ -291,7 +291,8 @@ embed_cat_text_html <-
       purrr::map(.f = ~{
         stringr::str_replace(string = .x, pattern = "([[:alpha:]\\)])$", "\\1.")
       })
-    if(return_raw) stringr::str_c(collapse=" ") else out
+
+    if(return_raw) as.list(stringr::str_c(out, collapse=" ")) else out
   }
 
 

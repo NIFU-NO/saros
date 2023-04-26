@@ -35,7 +35,7 @@ get_element_path <-
 
 
     check_string(glue_index_string, n = 1, null.ok = TRUE, call = call)
-    check_data_frame(data_overview)
+    check_data_frame(data_overview, call = call)
 
 
     index <-
@@ -100,6 +100,7 @@ get_element_path <-
 
     base_filename_rds <- stringr::str_c(index, ".rds")
     base_filename_png <- stringr::str_c(index, ".png")
+    base_filename_xlsx <- stringr::str_c(index, ".xlsx")
     read_filepath <- fs::path(read_element_type_path,
                               base_filename_rds)
     save_filepath_relative <- fs::path(save_element_type_path_relative,
@@ -107,7 +108,10 @@ get_element_path <-
     save_filepath_absolute <- fs::path(path, save_filepath_relative)
     save_filepath_relative_png <- fs::path(save_element_type_path_relative,
                                        base_filename_png)
+    save_filepath_relative_xlsx <- fs::path(save_element_type_path_relative,
+                                           base_filename_xlsx)
     save_filepath_absolute_png <- fs::path(path, save_filepath_relative_png)
+    save_filepath_absolute_xlsx <- fs::path(path, save_filepath_relative_xlsx)
 
 
 
@@ -118,22 +122,36 @@ get_element_path <-
 
     if(rlang::is_bare_list(element_contents)) {
       obj <- element_contents[[index]]
-      if(!is.null(obj)) {
-        saveRDS(object = obj, file = save_filepath_absolute)
+
+
+      if(!rlang::is_null(obj)) {
+        if(element_name == "uni_cat_text") utils::str(obj)
+        tryCatch(expr = saveRDS(object = obj, file = save_filepath_absolute),
+                 error = function(e) cli::cli_abort("Unable to save {.var {element_name}} to {.file save_filepath_absolute}."))
         if(ggplot2::is.ggplot(obj)) {
-          # ggplot2::ggsave(plot = obj, filename = save_filepath_absolute_png,
-          #                 scale = 2, width = 20, height = 20, units = "cm", dpi = "retina")
+          tryCatch(expr = ggplot2::ggsave(plot = obj, filename = save_filepath_absolute_png,
+                          scale = 1.5, width = 20, height = 20, units = "cm", dpi = "retina"),
+                   error = function(e) cli::cli_warn("Unable to save png to {.file {save_filepath_absolute_png}}. Continuing without."))
+        }
+        if(inherits(x = obj, "data.frame")) {
+          tryCatch(expr =
+          writexl::write_xlsx(x = obj, path = save_filepath_absolute_xlsx),
+          error = cli::cli_warn("Unable to save {element_name} to {.path {save_filepath_absolute_xlsx}}. Continuing without.")
+          )
         }
         if(inherits(x = obj, "girafe")) {
           # ggiraph::dsvg(standalone = TRUE, file = save_filepath_absolute_png, width = 20, height = 20)
           # plot(obj)
           # dev.off()
         }
+        caption <- attr(obj, "saros_caption")
 
         out <-
           insert_obj_in_qmd(element_name = element_name,
                             index = index,
-                            filepath = save_filepath_relative)
+                            filepath = save_filepath_relative,
+                            caption = caption,
+                            call = call)
       } else out <- ""
       return(out)
     }
@@ -143,10 +161,12 @@ get_element_path <-
       }
       fs::file_copy(path = element_contents[[index]],
                     new_path = save_filepath_absolute, overwrite = TRUE)
+
       out <-
         insert_obj_in_qmd(element_name = element_name,
                           index = index,
-                          filepath = save_filepath_relative)
+                          filepath = save_filepath_relative,
+                          call = call)
       return(out)
     }
 

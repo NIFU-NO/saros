@@ -1,0 +1,106 @@
+params:
+  label_separator: ' - '
+  name_separator: ~
+  group_by:
+  - chapter
+  - label_prefix
+  sort_by: ~
+  descending: ~
+  glue_index_string: ~
+  ignore_if_below: 0.0
+  report_ymlthis_config: ~
+  chapter_ymlthis_config: ~
+  index_filename: index.qmd
+  element_names:
+  - uni_cat_prop_plot_html
+  - uni_cat_freq_plot_html
+  - uni_cat_table_html
+  - uni_cat_sigtest
+  - uni_int_sigtest
+  - bi_catcat_prop_plot_html
+  - bi_catcat_freq_plot_html
+  - bi_catcat_table_html
+  - bi_catcat_sigtest
+  - bi_intcat_sigtest
+  - bi_intint_sigtest
+  translations:
+    last_sep: ' and '
+    intro_prefix: 'We will now look at the questions asked regarding '
+    intro_suffix: ''
+    mode_max_onfix: ' on '
+    mode_max_prefix: 'The most common responses were '
+    mode_max_suffix: ''
+    not_used_prefix: 'The following response categories were not used: '
+    not_used_suffix: ''
+    value_max_prefix: ''
+    value_max_infix: ' {?is/are} the {n_top_bottom} item{?s} where the most have responded '
+    value_max_suffix: ''
+    value_min_prefix: ''
+    value_min_infix: ' {?is/are} the {n_top_bottom} item{?s} where the fewest have
+      responded '
+    value_min_suffix: ''
+    mean_onfix: 'M = '
+    mean_max_prefix: 'They have highest mean on '
+    mean_max_suffix: ''
+    mean_min_prefix: 'They have lowest mean on '
+    mean_min_suffix: ''
+    median_onfix: 'Median = '
+    median_max_prefix: 'They have highest median on '
+    median_max_suffix: ''
+    median_min_prefix: 'They have lowest median on '
+    median_min_suffix: ''
+    intro_by_prefix: 'We will now look at the questions asked regarding '
+    intro_by_infix: ' broken down by '
+    intro_by_suffix: ''
+    by_breakdown: ' by '
+    n_equal_prefix: '(N = '
+    n_equal_suffix: )
+  element_args:
+    return_raw: yes
+    showNA: never
+    ignore_if_below: 0.0
+    label_font_size: 8.0
+    main_font_size: 8.0
+    font_family: Calibri
+    vertical: no
+    data_label:
+    - proportion
+    - percentage
+    - percentage_bare
+    - count
+    - mean
+    - median
+    x_axis_label_width: 20.0
+    seed: 1.0
+    colour_palette:
+    - '#90D4E0'
+    - '#70C7D7'
+    - '#50BBCE'
+    - '#36AABF'
+    - '#2D8E9F'
+    - '#24727F'
+    - '#1B555F'
+    colour_na: gray90
+    colour_2nd_binary_cat: '#ffffff'
+    digits: 1.0
+    hide_test_if_n_below: 10.0
+    sort_by: ~
+    descend: no
+    reps: 1000.0
+    contents:
+    - intro
+    - not_used_category
+    - mode_max
+    - value_max
+    - value_min
+    - value_diff
+    - mean_max
+    - mean_min
+    - mean_diff
+    - median_max
+    - median_min
+    - median_diff
+    - variance_max
+    - variance_min
+    include_numbers: yes
+    n_top_bottom: 1.0

@@ -68,7 +68,7 @@
 
 
 
-#' ex_survey_elements_list: List of elements (currently only uni_cat_plot_html) for the ex_survey1
+#' ex_survey_elements_list: List of elements (currently only uni_cat_prop_plot_html) for the ex_survey1
 #'
 #' @format A nested list of length one, where the unitary element consists
 #' of multiple elements, for each of the data_overview combinations:

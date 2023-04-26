@@ -14,27 +14,30 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Version 1.0 (Spørringene)
+- caption: translations are not included. 
+
+
+- implement uni_plot_int_html and bi_plot_int_html 
+- separate settings for each element type in  (and thus also in mass_lst_element)
 - sigtest-related
     - show_if_p_below
     - replace_sigtest_with_n_if_n_below
-- implement uni_plot_mean_html and bi_plot_mean_html
-- separate settings for each element type in  (and thus also in mass_lst_element)
 - vertical argument in tables are a pivot-string similar to SSB: 1,2,3
     - As any element_type so one can get all at once. OR, let reader decide?
+- nothing is actually saved in raw_elements...
 - separate colour_palette for different needs: chapter, designated_type, designated_role, ...
     - which also allows paletter
     - if is.colour => as colours, else if in paletter list, use that
-- forest plots
-- prep_cat_plot_pdf: Implement n_right_side for when tooltips are unavailable
-- avoid the default group_by = "col_group" or make it "hidden" (without headings)
+- Issue at https://github.com/tidymodels/infer about annoying warning.
+- prep_cat_prop_plot_pdf: Implement n_right_side for when tooltips are unavailable
 - a more delicate treatment of options()$saros which create an entry if it does not already exist. Loop across all .saros.env defaults.
 - download figure data as xlsx (priority in KU)
     - toggle between figure and table
 - org-spesifikke nettstedspakker
-- implement embed_cat_text_docx
 - sub-groups (resp in Spørringene, etc.): Must do like Karl did and create interaction indeps.
 - all yaml in the index.qmd into yaml_report, and call it?
-
+- replace all absolute paths with relative paths in get_element_path, etc
+- YAML: space before and after chunks?
 
 ## DOCX
 - https://community.rstudio.com/t/creating-a-officer-ms-word-chart-object-within-a-rmd-code-block/157592
@@ -43,19 +46,18 @@ knitr::opts_chunk$set(echo = TRUE)
     - body_add_docx
 - Test full rendering of DOCX
 -	plot_cat_docx: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
-
+    forcats::fct_unify() in prep_plot?
 
 
 # Version 2.0
 - Add full _quarto.yml file for project.
     - Should each report be its own website?
-- Always hide heading if nothing to show within that level
-- different colours for bi-plot with two groups: Slightly brighter for second group
+- Always hide heading if nothing to show within that level. If data_overview suggests it exists, it must exist, otherwise empty heading?
 - descend is currently global across all variables...
-- Allow a autonumberer for sections (inside gen_qmd_structure) - or can this be done by Quarto automatically?
 
 
 # Version 3.0
+- different colours for bi-plot with two groups: Slightly brighter for second group
 - @keywords internal for all internal functions having documentation.
 - multiple levels of by
 -   S3 class-based objects, or just lists for now? input/output as list of df, var_frame and design_frame. Single input, single output.

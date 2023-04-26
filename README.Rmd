@@ -51,6 +51,7 @@ pak::pak("sda030/saros")
 ## Initialize a social science project
 
 ```{r example}
+### CURRENTLY NOT WORKING. MOVE TO ANOTHER PACKAGE?
 #> saros::initialize(folder = getwd())
 ```
 
@@ -59,26 +60,11 @@ pak::pak("sda030/saros")
 # Define temporary folder for storing the elements
 library(saros)
 library(dplyr)
-temp_folder <- tempdir()
-data_overview <-
- ex_survey_ch_overview %>%
-  saros::refine_data_overview(data = ex_survey1,
-                              label_separator = " - ",
-                              name_separator = "_")
+render_saros_report(chapter_overview = ex_survey_ch_overview, data = ex_survey1, path = "testreport")
 
-
-index_filepath <-
-  gen_qmd_report(
-    data_overview = data_overview,
-    elements = ex_survey_elements_list,
-    path = temp_folder)
-
-if(interactive()) {
-  browseURL(fs::path(temp_folder, "index.qmd"))
-  quarto::quarto_render(fs::path(temp_folder, "index.qmd"), use_freezer = TRUE, cache = TRUE)
-  browseURL(fs::path(temp_folder, "index.html"))
-}
-unlink(temp_folder)
+browseURL("testreport/index.qmd")
+quarto::quarto_render("testreport/index.qmd")
+browseURL("testreport/index.html")
 ```
 
 

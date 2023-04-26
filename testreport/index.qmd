@@ -1,0 +1,17 @@
+---
+author:
+- Agatha Christie
+- Mark Twain
+- Stephen King
+format: html
+echo: false
+editor: visual
+number-sections: true
+---
+
+
+{{< include "2 Ambivalence.qmd" >}}
+
+{{< include "3 Big mysteries.qmd" >}}
+
+{{< include "4 Confidence.qmd" >}}

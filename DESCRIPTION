@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys Using Tidyverse Syntax
-Version: 0.0.8
+Version: 0.0.9
 Authors@R: 
     person(given = "Stephan", 
            family = "Daus", 
@@ -49,6 +49,7 @@ Imports:
     vctrs,
     RColorBrewer,
     viridisLite,
+    writexl,
     yaml,
     ymlthis
 Suggests:
@@ -61,5 +62,6 @@ Suggests:
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression: bzip2
 RoxygenNote: 7.2.3
 Language: en-US

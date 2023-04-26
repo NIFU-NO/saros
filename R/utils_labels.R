@@ -32,7 +32,7 @@ get_main_question2 <-
   function(x, label_separator, warn_multiple = TRUE, call=rlang::caller_env()) {
     if(!(is.character(x) | is.factor(x) | is.ordered(x))) {
       cli::cli_abort(c(x="{.arg x} must be of type {.cls character} or {.cls factor}.",
-                       i="{.arg x} is {.cls {class(x)}}."),
+                       i="not {.obj_type_friendly {x}}."),
                      call = call)
     }
 
@@ -54,7 +54,7 @@ get_main_question2 <-
 
 
 
-# Helper function to extract raw labels from the data
+# Helper function to extract raw variable labels from the data
 get_raw_labels <-
   function(data, cols_pos=NULL) {
     if(is.null(cols_pos)) cols_pos <- names(data)

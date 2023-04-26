@@ -13,6 +13,8 @@ sigtest(
   by_type = NULL,
   reps = 1000,
   digits = 1,
+  hide_test_if_n_below = 10,
+  label_separator = NULL,
   call = rlang::caller_env()
 )
 }
@@ -30,6 +32,10 @@ sigtest(
 \item{reps}{Integer, number of permutations.}
 
 \item{digits}{[\code{integer(1)}]\cr Number of decimal places as integer.}
+
+\item{hide_test_if_n_below}{Integer, if N is below this value, pvalue will not be shown.}
+
+\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
 
 \item{call}{Error call function, usually not needed.}
 }
