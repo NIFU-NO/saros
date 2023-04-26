@@ -177,7 +177,6 @@ prep_cat_plot_docx <-
 #' print(test_docx_b13, target = "test_docx_b13.docx")
 #' file.remove("test_docx_b13.docx")
 #' }
-
 embed_cat_plot_docx <-
   function(data,
            ...,

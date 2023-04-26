@@ -1,0 +1,224 @@
+---
+author: Agatha Christie
+format: html
+echo: false
+editor: visual
+---
+
+
+```{r}
+###  experimental docx-production
+library(officer)
+docx <- officer::read_docx()
+```
+# 2 Ambivalence
+
+
+## Do you consent to the following?
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### uni_cat_plot_html
+uni_cat_plot_html_x2_Ambivalence_Do_you_consent_to_the_following_ <- 
+  readRDS("2 Ambivalence/uni_cat_plot_html/x2_Ambivalence_Do_you_consent_to_the_following_.rds")
+ggiraph::girafe(ggobj = uni_cat_plot_html_x2_Ambivalence_Do_you_consent_to_the_following_)
+``` 
+
+:::
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### uni_cat_table_html
+uni_cat_table_html_x2_Ambivalence_Do_you_consent_to_the_following_ <- 
+  readRDS("2 Ambivalence/uni_cat_table_html/x2_Ambivalence_Do_you_consent_to_the_following_.rds")
+reactable::reactable(uni_cat_table_html_x2_Ambivalence_Do_you_consent_to_the_following_)
+``` 
+
+:::
+
+
+
+
+```{r}
+### uni_cat_sigtest
+uni_cat_sigtest_x2_Ambivalence_Do_you_consent_to_the_following_ <- 
+  readRDS("2 Ambivalence/uni_cat_sigtest/x2_Ambivalence_Do_you_consent_to_the_following_.rds")
+reactable::reactable(uni_cat_sigtest_x2_Ambivalence_Do_you_consent_to_the_following_)
+``` 
+
+
+
+
+
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### bi_catcat_plot_html
+bi_catcat_plot_html_x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex <- 
+  readRDS("2 Ambivalence/bi_catcat_plot_html/x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex.rds")
+ggiraph::girafe(ggobj = bi_catcat_plot_html_x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex)
+``` 
+
+:::
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### bi_catcat_table_html
+bi_catcat_table_html_x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex <- 
+  readRDS("2 Ambivalence/bi_catcat_table_html/x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex.rds")
+reactable::reactable(bi_catcat_table_html_x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex)
+``` 
+
+:::
+
+
+
+
+```{r}
+### bi_catcat_sigtest
+bi_catcat_sigtest_x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex <- 
+  readRDS("2 Ambivalence/bi_catcat_sigtest/x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex.rds")
+reactable::reactable(bi_catcat_sigtest_x2_Ambivalence_Do_you_consent_to_the_following__BY_x1_sex)
+``` 
+
+
+
+
+
+
+
+
+
+
+
+## How many years of experience do you have in
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+### uni_int_sigtest
+uni_int_sigtest_x2_Ambivalence_How_many_years_of_experience_do_you_have_in <- 
+  readRDS("2 Ambivalence/uni_int_sigtest/x2_Ambivalence_How_many_years_of_experience_do_you_have_in.rds")
+reactable::reactable(uni_int_sigtest_x2_Ambivalence_How_many_years_of_experience_do_you_have_in)
+``` 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+### bi_intcat_sigtest
+bi_intcat_sigtest_x2_Ambivalence_How_many_years_of_experience_do_you_have_in_BY_x1_sex <- 
+  readRDS("2 Ambivalence/bi_intcat_sigtest/x2_Ambivalence_How_many_years_of_experience_do_you_have_in_BY_x1_sex.rds")
+reactable::reactable(bi_intcat_sigtest_x2_Ambivalence_How_many_years_of_experience_do_you_have_in_BY_x1_sex)
+``` 
+
+
+
+
+
+
+
+## Gender
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### uni_cat_plot_html
+uni_cat_plot_html_x2_Ambivalence_Gender <- 
+  readRDS("2 Ambivalence/uni_cat_plot_html/x2_Ambivalence_Gender.rds")
+ggiraph::girafe(ggobj = uni_cat_plot_html_x2_Ambivalence_Gender)
+``` 
+
+:::
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### uni_cat_table_html
+uni_cat_table_html_x2_Ambivalence_Gender <- 
+  readRDS("2 Ambivalence/uni_cat_table_html/x2_Ambivalence_Gender.rds")
+reactable::reactable(uni_cat_table_html_x2_Ambivalence_Gender)
+``` 
+
+:::
+
+
+
+
+```{r}
+### uni_cat_sigtest
+uni_cat_sigtest_x2_Ambivalence_Gender <- 
+  readRDS("2 Ambivalence/uni_cat_sigtest/x2_Ambivalence_Gender.rds")
+reactable::reactable(uni_cat_sigtest_x2_Ambivalence_Gender)
+``` 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+###  experimental docx-production
+print(docx, target='2 Ambivalence.docx')
+```

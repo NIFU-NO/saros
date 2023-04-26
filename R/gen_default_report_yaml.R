@@ -4,6 +4,9 @@ gen_default_report_yaml <- function(yaml_path) {
     ymlthis::yml_params(
       label_separator = options()$saros$label_separator,
       name_separator = options()$saros$name_separator,
+      group_by = options()$saros$group_by,
+      sort_by = options()$saros$sort_by,
+      descending = options()$saros$descending,
       glue_index_string = options()$saros$glue_index_string,
       ignore_if_below = options()$saros$element_args$ignore_if_below,
       captions = options()$saros$captions,

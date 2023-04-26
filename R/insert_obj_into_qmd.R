@@ -1,27 +1,33 @@
 
-insert_obj_in_qmd <- function(element_name, index, filepath) {
+insert_obj_in_qmd <- function(element_name, index, filepath, call = rlang::caller_env()) {
 
   if(!is.null(filepath)) {
 
-    obj_name <-
-      stringr::str_c(element_name, "_", index) %>%
-      conv_to_valid_obj_name()
+    if(stringr::str_detect(element_name, "text")) {
+      tryCatch(readRDS(filepath),
+               error = function(e) cli::cli_warn("Unable to read {.path {filepath}}.", call = call)
+      )
+    } else {
 
-    qmd_format <-
-      if(stringr::str_detect(element_name, "html")) {
-        "html"
-      } else if(stringr::str_detect(element_name, "docx")) {
-        "docx"
-      } else if(stringr::str_detect(element_name, "pdf")) {
-        "pdf"
-      } else ""
 
-    conditional_start <-
-      stringr::str_c('::: {.content-visible when-format="', qmd_format, '"}\n')
+      obj_name <-
+        stringr::str_c(element_name, "_", index) %>%
+        conv_to_valid_obj_name()
 
-    conditional_end <- ":::\n"
+      qmd_format <-
+        if(stringr::str_detect(element_name, "html")) {
+          "html"
+        } else if(stringr::str_detect(element_name, "docx")) {
+          "docx"
+        } else if(stringr::str_detect(element_name, "pdf")) {
+          "pdf"
+        } else ""
 
-    if(stringr::str_detect(element_name, "text", negate = TRUE)) {
+      conditional_start <-
+        stringr::str_c('::: {.content-visible when-format="', qmd_format, '"}\n')
+
+      conditional_end <- ":::\n\n"
+
       function_call_prefix <-
           dplyr::case_when(stringr::str_detect(element_name, "plot_html") ~ 'ggiraph::girafe(ggobj = ',
                            stringr::str_detect(element_name, "table_html") ~ 'reactable::reactable(',
@@ -39,6 +45,6 @@ insert_obj_in_qmd <- function(element_name, index, filepath) {
         stringr::str_c(if(nchar(qmd_format) > 0) conditional_start,
                        .,
                        if(nchar(qmd_format) > 0) conditional_end)
-    } else readRDS(filepath)
+    }
   } else ""
 }

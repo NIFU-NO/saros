@@ -7,7 +7,7 @@
 refine_data_overview(
   data_overview,
   data = NULL,
-  group_by = c("chapter", "col_group", "label_prefix"),
+  group_by = c("chapter", "label_prefix"),
   sort_by = NULL,
   label_separator = NULL,
   name_separator = NULL

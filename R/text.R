@@ -291,7 +291,8 @@ embed_cat_text_html <-
       purrr::map(.f = ~{
         stringr::str_replace(string = .x, pattern = "([[:alpha:]\\)])$", "\\1.")
       })
-    if(return_raw) stringr::str_c(collapse=" ") else out
+
+    if(return_raw) as.list(stringr::str_c(out, collapse=" ")) else out
   }
 
 

@@ -20,6 +20,7 @@ render_saros_report <-
            path = "testreport",
            yaml_path = fs::path(path, "report_settings.yml")
   ) {
+    timestamp <- proc.time()
     check_data_frame(chapter_overview)
     check_data_frame(data)
     check_string(yaml_path, n=1, null.ok=FALSE)
@@ -29,7 +30,7 @@ render_saros_report <-
       tryCatch(expr = yaml::yaml.load_file(yaml_path),
           warning = function(e) {
             cli::cli_progress_message(msg = "Creating YAML-template file...")
-            cli::cli_warn("{.arg {yaml_path}} did not exist, created it with defaults.")
+            cli::cli_inform("{.arg {yaml_path}} did not exist, created it with defaults.")
             gen_default_report_yaml(yaml_path = yaml_path)
             })
 
@@ -39,6 +40,8 @@ render_saros_report <-
       rlang::exec(
         refine_data_overview,
         data_overview = chapter_overview,
+        group_by = yml$params$group_by,
+        sort_by = yml$params$sort_by,
         label_separator = yml$params$label_separator,
         name_separator = yml$params$name_separator,
         data = data)
@@ -78,5 +81,7 @@ render_saros_report <-
     if(interactive()) {
         utils::browseURL(url = report_filepath)
     }
+    cat(proc.time()-timestamp)
+    cat("\n")
     report_filepath
   }

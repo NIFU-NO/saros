@@ -1,0 +1,224 @@
+---
+author: Stephen King
+format: html
+echo: false
+editor: visual
+---
+
+
+```{r}
+###  experimental docx-production
+library(officer)
+docx <- officer::read_docx()
+```
+# 4 Confidence
+
+
+## How often do you do the following?
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### uni_cat_plot_html
+uni_cat_plot_html_x4_Confidence_How_often_do_you_do_the_following_ <- 
+  readRDS("4 Confidence/uni_cat_plot_html/x4_Confidence_How_often_do_you_do_the_following_.rds")
+ggiraph::girafe(ggobj = uni_cat_plot_html_x4_Confidence_How_often_do_you_do_the_following_)
+``` 
+
+:::
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### uni_cat_table_html
+uni_cat_table_html_x4_Confidence_How_often_do_you_do_the_following_ <- 
+  readRDS("4 Confidence/uni_cat_table_html/x4_Confidence_How_often_do_you_do_the_following_.rds")
+reactable::reactable(uni_cat_table_html_x4_Confidence_How_often_do_you_do_the_following_)
+``` 
+
+:::
+
+
+
+
+```{r}
+### uni_cat_sigtest
+uni_cat_sigtest_x4_Confidence_How_often_do_you_do_the_following_ <- 
+  readRDS("4 Confidence/uni_cat_sigtest/x4_Confidence_How_often_do_you_do_the_following_.rds")
+reactable::reactable(uni_cat_sigtest_x4_Confidence_How_often_do_you_do_the_following_)
+``` 
+
+
+
+
+
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### bi_catcat_plot_html
+bi_catcat_plot_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni <- 
+  readRDS("4 Confidence/bi_catcat_plot_html/x4_Confidence_How_often_do_you_do_the_following__BY_f_uni.rds")
+ggiraph::girafe(ggobj = bi_catcat_plot_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni)
+``` 
+
+:::
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### bi_catcat_table_html
+bi_catcat_table_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni <- 
+  readRDS("4 Confidence/bi_catcat_table_html/x4_Confidence_How_often_do_you_do_the_following__BY_f_uni.rds")
+reactable::reactable(bi_catcat_table_html_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni)
+``` 
+
+:::
+
+
+
+
+```{r}
+### bi_catcat_sigtest
+bi_catcat_sigtest_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni <- 
+  readRDS("4 Confidence/bi_catcat_sigtest/x4_Confidence_How_often_do_you_do_the_following__BY_f_uni.rds")
+reactable::reactable(bi_catcat_sigtest_x4_Confidence_How_often_do_you_do_the_following__BY_f_uni)
+``` 
+
+
+
+
+
+
+
+
+
+
+
+## Rate your degree of confidence doing the following
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+### uni_int_sigtest
+uni_int_sigtest_x4_Confidence_Rate_your_degree_of_confidence_doing_the_following <- 
+  readRDS("4 Confidence/uni_int_sigtest/x4_Confidence_Rate_your_degree_of_confidence_doing_the_following.rds")
+reactable::reactable(uni_int_sigtest_x4_Confidence_Rate_your_degree_of_confidence_doing_the_following)
+``` 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+### bi_intcat_sigtest
+bi_intcat_sigtest_x4_Confidence_Rate_your_degree_of_confidence_doing_the_following_BY_f_uni <- 
+  readRDS("4 Confidence/bi_intcat_sigtest/x4_Confidence_Rate_your_degree_of_confidence_doing_the_following_BY_f_uni.rds")
+reactable::reactable(bi_intcat_sigtest_x4_Confidence_Rate_your_degree_of_confidence_doing_the_following_BY_f_uni)
+``` 
+
+
+
+
+
+
+
+## Which of the following universities would you prefer to study at?
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### uni_cat_plot_html
+uni_cat_plot_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_ <- 
+  readRDS("4 Confidence/uni_cat_plot_html/x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_.rds")
+ggiraph::girafe(ggobj = uni_cat_plot_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_)
+``` 
+
+:::
+
+
+
+
+::: {.content-visible when-format="html"}
+```{r}
+### uni_cat_table_html
+uni_cat_table_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_ <- 
+  readRDS("4 Confidence/uni_cat_table_html/x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_.rds")
+reactable::reactable(uni_cat_table_html_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_)
+``` 
+
+:::
+
+
+
+
+```{r}
+### uni_cat_sigtest
+uni_cat_sigtest_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_ <- 
+  readRDS("4 Confidence/uni_cat_sigtest/x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_.rds")
+reactable::reactable(uni_cat_sigtest_x4_Confidence_Which_of_the_following_universities_would_you_prefer_to_study_at_)
+``` 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+###  experimental docx-production
+print(docx, target='4 Confidence.docx')
+```

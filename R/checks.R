@@ -209,7 +209,8 @@ check_elements <-
     check_list(x=x, null.ok = TRUE, call = call)
     if(!rlang::is_named(x=x)) cli::cli_abort("{.arg {x}} must be named.")
     if(!all(names(x) %in% list_available_element_types())) {
-      cli::cli_abort("{.arg {x}} must only contain the following names: {.var {list_available_element_types()}}.")
+      cli::cli_abort(c("{.arg elements} must only contain the following names: {.var {list_available_element_types()}}.",
+                     "Invalid elements: {names(x)[!names(x) %in% list_available_element_types()]}"))
     }
     purrr::walk(x, ~{
       if(!rlang::is_null(x) &&

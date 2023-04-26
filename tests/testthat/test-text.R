@@ -1,6 +1,9 @@
 test_that("embed_cat_text_html", {
-  #  Test 1: Check if the function returns a list
+  #  Test 1: Check if the function returns a character
     result <- embed_cat_text_html(ex_survey1, cols = starts_with("e_"), return_raw = FALSE)
+    testthat::expect_true(is.list(result))
+    #  Test 1b: Check if the function returns a character
+    result <- embed_cat_text_html(ex_survey1, cols = starts_with("e_"), return_raw = TRUE)
     testthat::expect_true(is.list(result))
 
 #  Test 2: Check if the intro content is correct

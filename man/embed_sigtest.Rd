@@ -13,6 +13,8 @@ embed_sigtest(
   by_type = NULL,
   reps = 1000,
   digits = 1,
+  hide_test_if_n_below = 10,
+  label_separator = NULL,
   return_raw = TRUE,
   call = rlang::caller_env()
 )
@@ -32,6 +34,10 @@ embed_sigtest(
 
 \item{digits}{[\code{integer(1)}]\cr Number of decimal places as integer.}
 
+\item{hide_test_if_n_below}{Integer, if N is below this value, pvalue will not be shown.}
+
+\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+
 \item{return_raw}{[\code{logical(1)}] Whether to return the raw static chart. Defaults to FALSE.}
 
 \item{call}{Error call function, usually not needed.}
@@ -41,4 +47,8 @@ Data frame
 }
 \description{
 Title
+}
+\examples{
+embed_sigtest(data=ex_survey1, cols = a_1:a_9)
+embed_sigtest(data=ex_survey1, cols = b_1:b_3, label_separator=" - ")
 }

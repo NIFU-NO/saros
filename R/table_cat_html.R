@@ -55,7 +55,9 @@ embed_cat_table_html <-
     check_category_pairs(data = data, cols_pos = c(cols_pos), call = call)
 
     main_question <-
-      get_main_question2(names(data)[cols_pos], label_separator = label_separator, warn_multiple = TRUE, call = call)
+      get_raw_labels(data = data, cols_pos = cols_pos) %>%
+      get_main_question2(label_separator = label_separator, warn_multiple = TRUE, call = call) %>%
+      stringr::str_unique()
 
     data_out <-
       rlang::exec(

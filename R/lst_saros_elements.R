@@ -52,6 +52,21 @@ lst_saros_elements <-
           y_col_pos <- unique(section_df$col_name)
           y_col_pos <- match(y_col_pos, data_cols)
 
+
+          ######################################################################
+
+          if(element_name == "uni_cat_text" &&
+             all(section_df$designated_type == "cat")) {
+            out <-
+              rlang::exec(
+                embed_cat_text_html,
+                data = data,
+                cols = y_col_pos,
+                !!!dots)
+
+            return(rlang::set_names(list(out), nm = name))
+          }
+
           ######################################################################
 
 
@@ -149,25 +164,13 @@ lst_saros_elements <-
                 embed_sigtest,
                 data = data,
                 cols = y_col_pos,
+                col_type = "int",
                 !!!dots)
 
             return(rlang::set_names(list(out), nm = name))
           }
 
 
-          ######################################################################
-
-          if(element_name == "uni_int_sigtest" &&
-             all(section_df$designated_type == "int")) {
-            out <-
-              rlang::exec(
-                embed_cat_text_html,
-                data = data,
-                cols = y_col_pos,
-                !!!dots)
-
-            return(rlang::set_names(list(out), nm = name))
-          }
 
           ######################################################################
 
@@ -195,10 +198,28 @@ lst_saros_elements <-
                     dplyr::pull(.data$designated_type)
 
 
+                  ##############################################################
+
+
+                  ######################################################################
+
+                  # if(element_name == "bi_catcat_text" &&
+                  #    all(section_df$designated_type == "cat") &&
+                  #    all(by_type == "cat")) {
+                  #   out <-
+                  #     rlang::exec(
+                  #       embed_cat_text_html,
+                  #       data = data,
+                  #       cols = y_col_pos,
+                  #       by = by_pos,
+                  #       !!!dots)
+                  #
+                  #   return(rlang::set_names(list(out), nm = name))
+                  # }
+
                   if(element_name == "bi_catcat_plot_html" &&
                      all(section_df$designated_type == "cat") &&
                      all(by_type == "cat")) {
-
 
                     return(
                       rlang::exec(
@@ -213,6 +234,7 @@ lst_saros_elements <-
                   if(element_name == "bi_catcat_plot_docx" &&
                      all(section_df$designated_type == "cat") &&
                      all(by_type == "cat")) {
+
                     return(
                       rlang::exec(
                         embed_cat_plot_docx,
@@ -227,6 +249,7 @@ lst_saros_elements <-
                   if(element_name == "bi_catcat_plot_pdf" &&
                      all(section_df$designated_type == "cat") &&
                      all(by_type == "cat")) {
+
                     return(
                       rlang::exec(
                         embed_cat_plot_pdf,
@@ -241,7 +264,6 @@ lst_saros_elements <-
                      all(section_df$designated_type == "cat") &&
                      all(by_type == "cat")) {
 
-
                     return(
                       rlang::exec(
                         embed_cat_table_html,
@@ -255,6 +277,7 @@ lst_saros_elements <-
                   if(element_name == "bi_catcat_table_docx" &&
                      all(section_df$designated_type == "cat") &&
                      all(by_type == "cat")) {
+
                     return(
                       rlang::exec(
                         embed_cat_table_docx,
@@ -269,12 +292,15 @@ lst_saros_elements <-
                   if(element_name == "bi_catcat_sigtest" &&
                      all(section_df$designated_type == "cat") &&
                      all(by_type == "cat")) {
+
                     return(
                       rlang::exec(
                         embed_sigtest,
                         data = data,
                         cols = y_col_pos,
                         by = by_pos,
+                        col_type = "cat",
+                        by_type = "cat",
                         !!!dots)
                     )
                   }
@@ -283,12 +309,15 @@ lst_saros_elements <-
                   if(element_name == "bi_intcat_sigtest" &&
                      all(section_df$designated_type == "int") &&
                      all(by_type == "cat")) {
+
                     return(
                       rlang::exec(
                         embed_sigtest,
                         data = data,
                         cols = y_col_pos,
                         by = by_pos,
+                        col_type = "int",
+                        by_type = "cat",
                         !!!dots)
                     )
                   }
@@ -298,12 +327,15 @@ lst_saros_elements <-
                   if(element_name == "bi_intint_sigtest" &&
                      all(section_df$designated_type == "int") &&
                      all(by_type == "int")) {
+
                     return(
                       rlang::exec(
                         embed_sigtest,
                         data = data,
                         cols = y_col_pos,
                         by = by_pos,
+                        col_type = "int",
+                        by_type = "int",
                         !!!dots)
                     )
                   }
