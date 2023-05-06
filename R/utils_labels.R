@@ -1,11 +1,16 @@
 
+string_wrap <- function(str, width) {
+  unlist(
+    purrr::map(
+      stringi::stri_wrap(str = str, width = width, simplify = F),
+      .f= ~paste0(.x, collapse="\n")))
+}
 #' Remove Special Characters (<,>) in Variable Labels
 #'
 #' @param df Data frame
 #'
 #' @return A data frame
 #' @export
-
 remove_special_chars_in_labels <-
   function(df) {
     z <-
@@ -18,7 +23,7 @@ remove_special_chars_in_labels <-
                       cli::cli_warn(c(
                         "Current version of function doesn't handle special characters `<` or `>` in labels.",
                         i="Will remove these in {{y}}"))
-                      names(x)<- gsub("<|>", "", names(x))
+                      names(x) <- stringi::stri_replace_all(str = names(x), regex = "<|>", replacement = "")
                     }
                     x
                   })
@@ -37,10 +42,10 @@ get_main_question2 <-
     }
 
     x <-
-      stringr::str_replace(string = x,
-                           pattern = paste0("(^.*)", label_separator, "(.*$)"),
-                           replacement = "\\1") %>%
-      stringr::str_unique() %>%
+      stringi::stri_replace(str = x,
+                           regex = stringr::str_c("(^.*)", label_separator, "(.*$)"),
+                           replacement = "$1") %>%
+      unique() %>%
       stringr::str_c(., collapse="\n")
     if(length(x) > 1L && warn_multiple) {
       cli::cli_warn(c(x="There are multiple main questions for these variables.",
@@ -59,7 +64,7 @@ get_raw_labels <-
   function(data, cols_pos=NULL) {
     if(is.null(cols_pos)) cols_pos <- names(data)
     cols_pos %>%
-      rlang::set_names() %>%
+      stats::setNames(nm=.) %>%
       purrr::map_chr(.f = ~{
       y <- attr(data[[.x]], "label")
       if (!is.null(y)) y else NA
@@ -82,7 +87,7 @@ set_var_labels <- function(data, cols=tidyselect::everything(), overwrite=TRUE) 
       data[[.x]]
     })
   names(data) <- col_names
-  tibble::as_tibble(x = data)
+  vctrs::new_data_frame(vctrs::df_list(data))
 }
 
 
@@ -99,12 +104,6 @@ set_var_labels <- function(data, cols=tidyselect::everything(), overwrite=TRUE) 
 #' @param stop_words Words to ignore in label when abbreviating label to name.
 #'
 #' @return Data with renamed variable names.
-#' @importFrom dplyr arrange group_by ungroup mutate rename_with pull n
-#' @importFrom vctrs as_list_of
-#' @importFrom labelled lookfor
-#' @importFrom tidyr separate unite
-#' @importFrom purrr map_chr
-#' @importFrom rlang .data
 #' @export
 #'
 #' @examples
@@ -126,8 +125,8 @@ rename_by_labels <-
     df_labels$label_pre2 <-
       purrr::map_chr(df_labels$label_pre_str, .f=function(.x) {
         out <- .x[!.x %in% stop_words]
-        out <- if(length(out) > 0L) paste0(out, collapse=" ") else paste0(.x, collapse=" ")
-        out <- paste0(out, collapse=" ")
+        out <- if(length(out) > 0L) stringr::str_c(out, collapse=" ") else stringr::str_c(.x, collapse=" ")
+        out <- stringr::str_c(out, collapse=" ")
       })
     df_labels$label_pre3 <- abbreviate(names.arg = df_labels$label_pre2,
                                        named = TRUE, minlength = 2L, dot = FALSE, method = "both")
@@ -148,9 +147,9 @@ rename_by_labels <-
 #'
 #' Columns not containing labels will remain unaffected, and warning given.
 #'
-#' @param data Data frame or tibble.
+#' @param data Data frame
 #'
-#' @return Data.frame/tibble.
+#' @return Data.frame
 #' @export
 #'
 #' @examples swap_label_colnames(mtcars)

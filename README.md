@@ -35,11 +35,11 @@ eclipse.
 - Cyclical occurrences: Both versions of SAROS refer to cyclical events
   that recur at regular intervals. In the case of the R package, it
   relates to surveys that are repeated annually or biannually, while in
-  astronomy, it refers to the recurring pattern of eclipses.
+  astronomy, it refers to the recurring regex of eclipses.
 
 - Consistency: The SAROS R package aims to maintain consistency in
   reporting and analysis across survey iterations, just as the
-  astronomical Saros cycle represents a predictable pattern in the
+  astronomical Saros cycle represents a predictable regex in the
   occurrence of solar and lunar eclipses.
 
 - Time-saving: The SAROS R package is designed to automate and

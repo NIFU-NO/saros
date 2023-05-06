@@ -1,32 +1,35 @@
-
-rcode_to_quarto <- function(code, call = rlang::caller_env()) {
-  check_string(code, n=1, null.ok=FALSE, call = call)
-  paste("```{r}",
-         code,
-         "``` \n\n",
-         sep = "\n")
-}
+#
+# rcode_to_quarto <- function(code, call = rlang::caller_env()) {
+#   check_string(code, n=1, null.ok=FALSE, call = call)
+#   stringr::str_c(
+#                   "```{r}",
+#                   code,
+#                   "``` \n",
+#                   sep = "\n")
+# }
 
 fix_path_spaces <- function(path) {
   if(!rlang::is_null(quarto::quarto_path()) &&
      quarto::quarto_version() < 1.3) {
-    gsub("[[:space:]]", "_", path)
+    stringi::stri_replace_all(str = path, regex = "[[:space:]]", replacement = "_")
   } else path
 }
 
-conv_to_valid_obj_name <- function(x) {
-  stringr::str_replace_all(string = x,
-                           pattern = "[[:space:][:punct:]]",
+conv_to_valid_obj_name <- function(x, max_width = 48) {
+  stringi::stri_replace_all(str = x,
+                           regex = "[[:space:][:punct:]]",
                            replacement = "_") %>%
-    stringr::str_replace(pattern = "^([0-9])", replacement = "x\\1")
+    stringi::stri_replace(regex = "^([0-9])", replacement = "x$1") %>%
+    stringi::stri_sub(str = ., from = 1, to = max_width,
+                      use_matrix = FALSE, ignore_negative_length = TRUE)
 
 }
 
-list_valid_obj_name <- function(data) {
+list_valid_obj_name <- function(data, max_width = 48) {
   data %>%
     dplyr::distinct(dplyr::pick(tidyselect::everything())) %>%
     glue::glue_data(stringr::str_c("{", colnames(.), "}", collapse="_")) %>%
-    conv_to_valid_obj_name()
+    conv_to_valid_obj_name(max_width = max_width)
 }
 
 create_heading <- function(x, level = NULL,
@@ -36,7 +39,7 @@ create_heading <- function(x, level = NULL,
   check_string(x, n = NULL, null.ok = TRUE, arg = arg, call = call)
   if(rlang::is_null(level)) level <- names(x)[1]
   stringr::str_c(
-    stringr::str_dup("#", level), " ",
+    strrep("#", times=level), " ",
     x[level])
 }
 

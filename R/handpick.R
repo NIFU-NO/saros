@@ -2,12 +2,10 @@
 #'
 #' Only works if in interactive session. Copies to the clipboard if to_clipboard = TRUE, and if clipboard is available on system.
 #'
-#' @param data A dataset; tibble or data frame.
+#' @param data A dataset; data frame.
 #' @param to_clipboard Boolean. Defaults to FALSE. If TRUE, overwrites what you already have copied. Use with caution.
 #'
 #' @return Character vector. Prints to console.
-#' @importFrom utils select.list
-#' @importFrom clipr write_clip
 #' @export
 #'
 #' @examples \dontrun{if(interactive()) handpick(mtcars)}

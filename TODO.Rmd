@@ -5,7 +5,6 @@ output:
   html_document: 
     toc: yes
     number_sections: yes
-    df_print: tibble
 ---
 
 ```{r setup, include=FALSE}
@@ -14,47 +13,64 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Version 1.0 (Spørringene)
-- caption: translations are not included. 
+- plots: 
+    - hiding facet now happens with n_cols>1! (for PREP and FREQ)
+    - transpose plots (at least two different orientations of prop_plot available)
+        current prop_plot for bivariates: y-axis=by-variable categories. 
+    - interactivity...
+    - when there is no colour_2nd_binary_cat, 
+    update docx and pdf to match html
+- tables: 
+    - total row in bi-tables?
 
-
+- chapter initial r chunk with options and useful packages
+    - ggiraph set global options within qmd/yaml
+    - tidyverse
+    - 
+- colours
+	- if .categories %in% yml$params$colour, use associated colour
+		- Bruk så fargepalett på resten
+	- colour_palette_ordinal, colour_palette_nominal
+	colour_palette <- if(class(data[[col_pos]]) == "ordered" && !is.null(colour_palette_ordinal)) colour_palette_ordinal else if(!is.null(colour_palette_nominal)) colour_palette_nominal
+	- separate colour_palette for different needs: chapter, designated_type, designated_role, ...
+		- which also allows paletter
+		- if is.colour => as colours, else if in paletter list, use that
+		- if colour_2nd_binary is applicable, should forcats::fct_rev(.x)
+- nifutheme
+	- all yaml-files
+  - doc-reference template for quarto
+- warn if label_separator is found more than once in a label
+- N in legend for each by group
+    - add_n_to_bygroup => yaml
+- implement t-test etc in early removal of bivariates
 - implement uni_plot_int_html and bi_plot_int_html 
-- separate settings for each element type in  (and thus also in mass_lst_element)
-- sigtest-related
-    - show_if_p_below
-    - replace_sigtest_with_n_if_n_below
+- separate settings for each element type
 - vertical argument in tables are a pivot-string similar to SSB: 1,2,3
     - As any element_type so one can get all at once. OR, let reader decide?
-- nothing is actually saved in raw_elements...
-- separate colour_palette for different needs: chapter, designated_type, designated_role, ...
-    - which also allows paletter
-    - if is.colour => as colours, else if in paletter list, use that
-- Issue at https://github.com/tidymodels/infer about annoying warning.
 - prep_cat_prop_plot_pdf: Implement n_right_side for when tooltips are unavailable
-- a more delicate treatment of options()$saros which create an entry if it does not already exist. Loop across all .saros.env defaults.
 - download figure data as xlsx (priority in KU)
-    - toggle between figure and table
-- org-spesifikke nettstedspakker
-- sub-groups (resp in Spørringene, etc.): Must do like Karl did and create interaction indeps.
-- all yaml in the index.qmd into yaml_report, and call it?
-- replace all absolute paths with relative paths in get_element_path, etc
-- YAML: space before and after chunks?
+    - toggle between figure and table using ::: {.panel-tabset} + heading for each tabset
+- sub-groups, interaction terms or "stratification" (resp in Spørringene, etc.)
+- simpler dep_cat notation: allow spaces, not having to use matchesP?
+- reintroduce dep_txt
+- only call summarize_data once and reuse.
+- save settings with the object(s)/log?
+- Issue at https://github.com/tidymodels/infer about annoying warning.
+- report to quarto-cli that tbl-cap: '' results in error "attempt to index a nil value (field 'integer index')"
+- report to Rstudio that when previewing/showing a rendered html, building a package should stop this connection - otherwise hangs.
 
 ## DOCX
 - https://community.rstudio.com/t/creating-a-officer-ms-word-chart-object-within-a-rmd-code-block/157592
 - Might be hard to store in memory/Rds the docx-stuff. Perhaps better to create separate docx, then stitch together?
     - https://github.com/tidyverse/rvest/issues/181
     - body_add_docx
-- Test full rendering of DOCX
--	plot_cat_docx: Colours are not correct if first category in the first variable is completely missing, at least in Tett på realfag, "I hvilken grad benytter du deg av følgende undervisningsformer i naturfagundervisningen"
-    forcats::fct_unify() in prep_plot?
-
 
 # Version 2.0
 - Add full _quarto.yml file for project.
     - Should each report be its own website?
 - Always hide heading if nothing to show within that level. If data_overview suggests it exists, it must exist, otherwise empty heading?
 - descend is currently global across all variables...
-
+- count number of rows removed with hide_bi_entry_if_sig_above
 
 # Version 3.0
 - different colours for bi-plot with two groups: Slightly brighter for second group
@@ -67,7 +83,6 @@ knitr::opts_chunk$set(echo = TRUE)
 - Convenience argument: drop_if_single_item (to ease automated psychometric analyses and unnecessary tables and plots). This could be done at the data_overview-stage though. So just a simple wrapper around group_by and filter?
 - Tests for graphs using snapshots and data in ggplot object
 - target and renv initialization with menu selection. => {saros.template}
-- Support guess_glue_pattern(elements, data_overview) which return(guessed_glue_index_pattern).
 - Replace ymlthis with yaml-package.
 - showNA "always" and "ifany" are identical? Simplify to TRUE/FALSE?
 - Split off rename_variables into either janitor or a vctrs::vec_as_names() extension
@@ -75,11 +90,34 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # General improvements
 - speed performance
+    - early fails
+    - replace all stringr::str_c with stringi::stri_na2empty() and stringi::stri_c
+  - replace all cols/by, enquos, etc with y_var, x_var
+  - normalization with hash/ID lookup:
+      - chapter overview (input only)
+      - data frame (or string matrix?) of variables and their fixed information (labels, variable names, univariates?)
+      - data frame (or string matrix?) of bivariate combinations with sigtest info (long format)
+      - data frame (or numeric matrix?) of all summary_data stuff for univariates
+      - data frame (or numeric matrix?) of all summary_data stuff for bivariates
+      - NB: Matrices are hard to work with and do not allow grouping storage
 	- vectorization, avoid looping (can be parallellized in outer loop)
 	- profiling
 	- avoid copying
+	- vctrs, rlang, base
+	- premake summarized_data and reuse it across elements, filtering as needed
+	- pipe => no pipe
+	- if not grouping:
+    	- dplyr::filter => vctrs::vec_slice()
+	    - dplyr::mutate => base
+	    - dplyr::select => base
+	    - dplyr::pull => base
+	    - bind_rows => vctrs::vec_rbind
+	    - remove tidyselect/data masking: all using strings for columns names internally
+	    - dtplyr?
 - refactoring
 - more memorable and logical naming of functions, arguments, etc.
+- rename files so they are logical for developers
+    - alphabetical order of operations
 - documentation and examples
     - inheritParams
     - exemplify all non-trivial argument inputs (lists, vectors, objects)
@@ -155,7 +193,7 @@ knitr::opts_chunk$set(echo = TRUE)
 -	instead of tolower, only change first letter of sentence.
 -	V1: Template sentences for fit.
 -   V2: Text reporting: Adding adverbial clauses to spice up: If contrast to previous finding.
--   V2: Text reporting: Summarize findings if all of the same pattern (X positively correlated with all of Y1, Y2, Y3, ... and detailed=FALSE)
+-   V2: Text reporting: Summarize findings if all of the same regex (X positively correlated with all of Y1, Y2, Y3, ... and detailed=FALSE)
 -   V2: Distinguish between first-time mention of a variable within a section (where full x_label is mentioned "Vi finner for x_label at...)
 -	V2: What to do for the "else"-category, those not matched? Leave to user to specify a catch-all regex?
 -   V2: Get someone to translate template sentences to English, German, Nynorsk, etc.

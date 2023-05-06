@@ -1,11 +1,15 @@
 gen_qmd_structure <-
   function(data_overview,
-           # grouping_structure = NULL,
-           elements,
-           glue_index_string = NULL,
-           ignore_if_below = 0,
-           path,
+           data,
+           element_names = list_available_element_types(),
+           chapter_folderpath_absolute,
+           chapter_foldername,
+           translations = .saros.env$defaults$translations,
+           summarized_data = NULL,
+           ...,
            call = rlang::caller_env()) {
+
+    dots <- rlang::list2(...)
 
 
   gen_group_structure <- function(grouped_data,
@@ -13,14 +17,16 @@ gen_qmd_structure <-
                                   grouping_structure,
                                   level_values = character()) {
     output <- ""
+
     if (level > length(grouped_data)) {
       return(output)
     }
 
     for(value in unique(grouped_data[[level]])) {
       output <-
-        stringr::str_dup(string = "#", times = level) %>%
-        stringr::str_c(output, ., " ", value, "\n")
+        stringr::str_c(output, strrep("#", times = level), " ", value,
+                       "{#sec-", conv_to_valid_obj_name(value), "_",
+                       stringr::str_c(sample(0:9, size=3, replace = TRUE), collapse=""), "}\n")
 
       sub_df <- dplyr::filter(grouped_data, .data[[colnames(grouped_data)[level]]] == value)
       names(grouping_structure)[level] <- value
@@ -32,47 +38,58 @@ gen_qmd_structure <-
 
         for(i in seq_along(grouping_structure)) {
           data_overview_section <-
-            data_overview_section %>%
-            dplyr::filter(.data[[grouping_structure[i]]] == names(grouping_structure)[i])
+            dplyr::filter(data_overview_section,
+                          .data[[grouping_structure[i]]] == names(grouping_structure)[i])
         }
 
 
         data_overview_section <-
-          data_overview_section %>%
-          dplyr::group_by(dplyr::pick(tidyselect::all_of(unname(grouping_structure))))
+          dplyr::group_by(data_overview_section,
+                          dplyr::pick(tidyselect::all_of(unname(grouping_structure))))
 
 
         if(nrow(data_overview_section)>0) {
-        output <-
-          purrr::map(
-            .x = seq_along(elements), .f= ~{
+        new_out <-
+          purrr::map_chr(
+            .x = seq_along(element_names), .f = ~{
 
-              content <-
-                get_element_path(
-                  data_overview = data_overview_section,
-                  elements = elements[.x],
-                  glue_index_string = glue_index_string,
-                  ignore_if_below = ignore_if_below,
-                  path = path,
-                  call = call)
 
-              if(!rlang::is_null(content)) {
-                stringr::str_c("\n\n", content)
-              }
+              qmd_snippet <-
+              gen_element_and_qmd_snippet(
+                data_overview = data_overview_section,
+                element_name = element_names[.x],
+                data = data,
+                summarized_data = summarized_data,
+                grouping_structure = grouping_structure,
+                element_folderpath_absolute = fs::path(chapter_folderpath_absolute, element_names[.x]),
+                element_folderpath_relative = fs::path(chapter_foldername, element_names[.x]),
+                translations = translations,
+                !!!dots,
+                call = call)
 
-            }) %>%
-          .[lengths(.)>0] %>%
-          stringr::str_c(collapse = "\n\n") %>% # Space between elements
-          stringr::str_c(output, ., sep = "\n") # Space between heading and first element
+
+
+                if(!rlang::is_null(qmd_snippet) && !is.na(qmd_snippet) && !stringi::stri_isempty(qmd_snippet)) {
+                  stringr::str_c("\n\n", qmd_snippet)
+                } else ""
+            })
+
+
+        new_out <- stringr::str_c(new_out[!stringi::stri_isempty(new_out)],
+                                   collapse = "\n\n") # Space between elements
+
+        output <- stringr::str_c(output, new_out, sep = "\n") # Space between heading and first element
+
         }
       }
 
       output <-
-        gen_group_structure(grouped_data = sub_df,
-                            level = level + 1,
-                            grouping_structure = grouping_structure,
-                            level_values = level_values) %>%
-        stringr::str_c(output, ., sep="\n\n") # Space between each section (before new heading)
+        stringr::str_c( output,
+                        gen_group_structure(grouped_data = sub_df,
+                                            level = level + 1,
+                                            grouping_structure = grouping_structure,
+                                            level_values = level_values),
+                        sep="\n\n") # Space between each section (before new heading)
     }
 
     return(output)

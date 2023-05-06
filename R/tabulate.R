@@ -14,14 +14,10 @@
 #' @param na.rm.xvar Remove missing in independent variable? Defaults to false.
 #'
 #' @return data.frame with some fixed columns
-#' @importFrom dplyr count all_of mutate
-#' @importFrom tidyr pivot_wider
-#' @importFrom purrr map_dfr
-#' @importFrom rlang set_names abort
 #' @export
 #'
-#' @examples tab_cat_prop(ex_survey1[,paste0("b_", 1:3)])
-#' tab_cat_prop(ex_survey1, xvars = "x1_sex", yvars = paste0("b_", 1:3))
+#' @examples tab_cat_prop(ex_survey1[,stringr::str_c("b_", 1:3)])
+#' tab_cat_prop(ex_survey1, xvars = "x1_sex", yvars = stringr::str_c("b_", 1:3))
 
 tab_cat_prop <- function(data,
                          yvars=NULL,
@@ -42,7 +38,7 @@ tab_cat_prop <- function(data,
   if(is.null(yvars) && !is.null(xvars)) rlang::abort("yvars must be specified if xvars is specified.")
   if(is.null(yvars)) yvars <- names(data)
 
-  yvars <- rlang::set_names(yvars)
+  yvars <- stats::setNames(yvars, nm=yvars)
 
   out <-
     purrr::map_dfr(
@@ -53,7 +49,7 @@ tab_cat_prop <- function(data,
         if(is.null(data[[dep]])) rlang::abort(c(i="Unable to find yvars variable", x=dep))
 
         if(!is.null(xvars)) {
-          xvars <- rlang::set_names(xvars)
+          xvars <- stats::setNames(xvars, xvars)
           purrr::map_dfr(xvars, .id = "xvar", .f = function(indep) {
             if(is.null(data[[indep]])) rlang::abort(c(i="Unable to find xvars variable", x=indep))
 
@@ -73,11 +69,11 @@ tab_cat_prop <- function(data,
             x_label <- attr(data[[indep]], "label")
             out$yvar_label <-
               if(!is.null(y_label)) c(dep,
-                                      paste0(dep, " - ", y_label),
+                                      stringr::str_c(dep, " - ", y_label),
                                       y_label)[var_labels+1] else dep
             out$xvar_label <-
               if(!is.null(x_label)) c(indep,
-                                      paste0(indep, " - ", x_label),
+                                      stringr::str_c(indep, " - ", x_label),
                                       x_label)[var_labels+1] else indep
 
             if(val_labels) {
@@ -100,7 +96,7 @@ tab_cat_prop <- function(data,
           y_label <- attr(data[[dep]], "label")
           out$yvar_label <-
             if(!is.null(y_label)) c(dep,
-                                    paste0(dep, " - ", y_label),
+                                    stringr::str_c(dep, " - ", y_label),
                                     y_label)[var_labels+1] else dep
           if(val_labels) {
             .w <- attr(data[[dep]], "labels")
@@ -149,7 +145,7 @@ tab_cat_prop <- function(data,
 # 	if(is.null(yvars) && !is.null(xvars)) rlang::abort("yvars must be specified if xvars is specified.")
 # 	if(is.null(yvars)) yvars <- names(data)
 #
-# 	yvars <- rlang::set_names(yvars)
+# 	yvars <- stats::setNames(yvars, yvars)
 #
 # 	out <-
 # 		purrr::map_dfr(
@@ -160,7 +156,7 @@ tab_cat_prop <- function(data,
 # 				if(is.null(data[[dep]])) rlang::abort(c(i="Unable to find yvars variable", x=dep))
 #
 # 				if(!is.null(xvars)) {
-# 					xvars <- rlang::set_names(xvars)
+# 					xvars <- stats::setNames(xvars, xvars)
 # 					purrr::map_dfr(xvars, .id = "xvar", .f = function(indep) {
 # 						if(is.null(data[[indep]])) rlang::abort(c(i="Unable to find xvars variable", x=indep))
 #
@@ -180,11 +176,11 @@ tab_cat_prop <- function(data,
 # 						x_label <- attr(data[[indep]], "label")
 # 						out$yvar_label <-
 # 							if(!is.null(y_label)) c(dep,
-# 													paste0(dep, " - ", y_label),
+# 													stringr::str_c(dep, " - ", y_label),
 # 													y_label)[var_labels+1] else dep
 # 						out$xvar_label <-
 # 							if(!is.null(x_label)) c(indep,
-# 													paste0(indep, " - ", x_label),
+# 													stringr::str_c(indep, " - ", x_label),
 # 													x_label)[var_labels+1] else indep
 #
 # 						if(val_labels) {
@@ -207,7 +203,7 @@ tab_cat_prop <- function(data,
 # 					y_label <- attr(data[[dep]], "label")
 # 					out$yvar_label <-
 # 						if(!is.null(y_label)) c(dep,
-# 												paste0(dep, " - ", y_label),
+# 												stringr::str_c(dep, " - ", y_label),
 # 												y_label)[var_labels+1] else dep
 # 					if(val_labels) {
 # 						.w <- attr(data[[dep]], "labels")
@@ -239,7 +235,7 @@ tab_cat_prop <- function(data,
 
 
 
-#' Turn tibble-result from tab_cat_prop into a prettier table
+#' Turn data frame-result from tab_cat_prop into a prettier table
 #'
 #' Does what it says.
 #' @param data data.frame from tab_cat_prop
@@ -249,7 +245,7 @@ tab_cat_prop <- function(data,
 #' @return data.frame
 #' @export
 #'
-#' @examples tab_cat_prop_to_table(tab_cat_prop(ex_survey1[,paste0("b_", 1:3)]))
+#' @examples tab_cat_prop_to_table(tab_cat_prop(ex_survey1[,stringr::str_c("b_", 1:3)]))
 tab_cat_prop_to_table <- function(data, prefix="") {
   tidyr::pivot_wider(data = data,
                      # id_cols = dplyr::all_of(c("yvar", "yvar_label",
