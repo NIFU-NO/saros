@@ -1,20 +1,14 @@
 #' Creates a structured list with text interpretations for a set of variables.
 #'
 #' @inheritParams summarize_data
-#' @inheritParams embed_cat_prop_plot_html
+#' @inheritParams embed_cat_prop_plot
 #' @param contents The type of text interpretations to return, multiple allowed. Defaults to all.
 #' @param include_numbers Whether or not to include the actual numbers (percentages, means) in parentheses.
 #' @param require_common_categories Whether to check if all questions share common categories.
 #' @param n_top_bottom The number of top and bottom entries to report.
 #' @param translations A list of translations for the template text. See getOption("saros").
 #'
-#' @importFrom dplyr %>% arrange select filter group_map group_by pull slice_max slice_min
-#' @importFrom rlang arg_match enquo .data .env
-#' @importFrom tidyselect eval_select
-#' @importFrom purrr map_chr
-#' @importFrom cli cli_warn cli_abort ansi_collapse pluralize
-#' @importFrom stringr str_c str_replace str_remove
-#' @importFrom glue glue
+#' @importFrom dplyr %>%
 #' @return List
 #' @export
 #'
@@ -28,52 +22,19 @@ embed_cat_text_html <-
            ...,
            cols = NULL,
            by = NULL, # Not implemented
-           data_label = c("proportion", "percentage", "percentage_bare", "count", "mean", "median"),
-           showNA = c("ifany", "always", "never"),
+           summarized_data = NULL,
            label_separator = NULL,
-
-           contents = c("intro", "not_used_category",
-                        "mode_max",
-                        "value_max", "value_min", "value_diff", # Diff not implemented
-                        "mean_max", "mean_min", "mean_diff",
-                        "median_max", "median_min", "median_diff", # Not implemented
-                        "variance_max", "variance_min"), # Not implemented
-           include_numbers = TRUE, # not implemented
-           sort_by = NULL, # Lacks providing a single integer for the top or bottom categories
-           descend = FALSE, # not implemented
-           ignore_if_below = 0,
-           n_top_bottom = 1,
-           require_common_categories = TRUE,
-           translations = getOption("saros")$translations,
-           digits = 1,
-           return_raw = TRUE,
+           translations = .saros.env$defaults$translations,
            call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
-    data_label <- rlang::arg_match(data_label, call = call)
-    contents <- rlang::arg_match(arg = contents, multiple = TRUE, call = call)
-    showNA <- rlang::arg_match(arg = showNA, call = call)
 
+    cols_enq <- rlang::enquo(arg = cols)
+    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
+    by_enq <- rlang::enquo(arg = by)
+    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
 
-    check_data_frame(data, call = call)
-    check_string(label_separator, null.ok = TRUE, call = call)
-    check_bool(include_numbers, call = call)
-    check_bool(descend, call = call)
-    check_bool(require_common_categories, call = call)
-    check_integerish(ignore_if_below, min = 0, call = call)
-    check_integerish(n_top_bottom, min = 0, call = call)
-    check_integerish(digits, min = 0, call = call)
-    check_list(translations, null.ok = FALSE, call = call)
-
-    # data <- dplyr::select(data, {{cols}}, {{by}})
-    cols_pos <-
-      rlang::enquo(arg = cols) %>%
-      tidyselect::eval_select(data = data)
-    by_pos <-
-      rlang::enquo(arg = by) %>%
-      tidyselect::eval_select(data = data)
-
-    if(require_common_categories) {
+    if(dots$require_common_categories) {
       check_category_pairs(data = data,
                            cols_pos = cols_pos,
                            call = call)
@@ -85,12 +46,6 @@ embed_cat_text_html <-
         data = data,
         cols = cols_pos,
         by = by_pos,
-        data_label = data_label,
-        showNA = showNA,
-        digits = digits,
-        sort_by = sort_by,
-        descend = descend,
-        ignore_if_below = ignore_if_below,
         label_separator = label_separator,
         call = call,
         !!!dots)
@@ -120,7 +75,7 @@ embed_cat_text_html <-
     generate_mode_max <- function() {
       data_out %>%
         dplyr::slice_max(order_by = .data$.count, by = ".variable_label", n = 1) %>%
-        dplyr::mutate(text = glue::glue("({.count}", if(.env$data_label == "percentage") "%" else "", ")",
+        dplyr::mutate(text = glue::glue("({.count}", if(.env$dots$data_label == "percentage") "%" else "", ")",
                                         translations$mode_max_onfix, "{.variable_label}")) %>%
         dplyr::arrange(".category") %>%
         dplyr::summarize(text = create_text_collapse(.data$text),
@@ -135,7 +90,7 @@ embed_cat_text_html <-
 
     generate_not_used_category <- function() {
       data_out %>%
-        dplyr::filter(.data$.count < .env$ignore_if_below, !is.na(.data$.count)) %>%
+        dplyr::filter(.data$.count < .env$dots$hide_label_if_prop_below, !is.na(.data$.count)) %>%
         dplyr::select(tidyselect::all_of(c(".category", ".variable_label"))) %>%
         dplyr::arrange(dplyr::pick(tidyselect::all_of(c(".category", ".variable_label")))) %>%
         dplyr::group_by(.data$.category) %>%
@@ -145,7 +100,7 @@ embed_cat_text_html <-
         }, .keep = TRUE) %>%
         unlist() %>%
         create_text_collapse() %>%
-        {if(nchar(.) > 0) stringr::str_c(
+        {if(stringi::stri_length(.) > 0) stringr::str_c(
           translations$not_used_prefix,
           .,
           translations$not_used_suffix) else ""}
@@ -158,9 +113,9 @@ embed_cat_text_html <-
 
       slice_function <- ifelse(contents == "value_max",
                                dplyr::slice_max, dplyr::slice_min)
-      prefix_key <- paste0(contents, "_prefix")
-      infix_key <- paste0(contents, "_infix")
-      suffix_key <- paste0(contents, "_suffix")
+      prefix_key <- stringr::str_c(contents, "_prefix")
+      infix_key <- stringr::str_c(contents, "_infix")
+      suffix_key <- stringr::str_c(contents, "_suffix")
 
       category_selection <-
         data_out %>%
@@ -171,10 +126,10 @@ embed_cat_text_html <-
 
         data_out %>%
         {if(!is.null(.[[".sum_value"]])) dplyr::mutate(., .count = .data$.sum_value) else .} %>%
-        dplyr::filter(.data$.count >= .env$ignore_if_below, !is.na(.data$.count)) %>%
-        slice_function(order_by = dplyr::pick(".count"), n = n_top_bottom, na_rm = TRUE, with_ties = FALSE) %>%
+        dplyr::filter(.data$.count >= .env$dots$hide_label_if_prop_below, !is.na(.data$.count)) %>%
+        slice_function(order_by = dplyr::pick(".count"), n = dots$n_top_bottom, na_rm = TRUE, with_ties = FALSE) %>%
         dplyr::distinct(dplyr::pick(tidyselect::all_of(c(".variable_label", ".count"))), .keep_all = TRUE) %>%
-        dplyr::mutate(text = glue::glue("{.variable_label} ({.count}", if(.env$data_label == "percentage") "%" else "", ")")) %>%
+        dplyr::mutate(text = glue::glue("{.variable_label} ({.count}", if(.env$dots$data_label == "percentage") "%" else "", ")")) %>%
         dplyr::pull(.data$text) %>%
         create_text_collapse() %>%
         stringr::str_c(translations[[prefix_key]], .,
@@ -182,19 +137,19 @@ embed_cat_text_html <-
                        create_text_collapse(category_selection),
                        translations[[suffix_key]]) %>%
         cli::pluralize() %>%
-        stringr::str_replace(pattern = " 1 ", replacement = " ")
+        stringi::stri_replace(regex = " 1 ", replacement = " ")
     }
 
     generate_mean_min_max <- function(contents) {
       slice_function <- ifelse(contents == "mean_max", dplyr::slice_max, dplyr::slice_min)
-      prefix_key <- paste0(contents, "_prefix")
-      infix_key <- paste0(contents, "_infix")
-      suffix_key <- paste0(contents, "_suffix")
+      prefix_key <- stringr::str_c(contents, "_prefix")
+      infix_key <- stringr::str_c(contents, "_infix")
+      suffix_key <- stringr::str_c(contents, "_suffix")
 
       data_out %>%
-        dplyr::summarize(.mean = round(sum(.data$.mean_base, na.rm=TRUE)/100, digits = .env$digits),
+        dplyr::summarize(.mean = round(sum(.data$.mean_base, na.rm=TRUE)/100, digits = .env$dots$digits),
                          .by = ".variable_label") %>%
-        slice_function(order_by = .data$.mean, n = n_top_bottom) %>%
+        slice_function(order_by = .data$.mean, n = dots$n_top_bottom) %>%
         dplyr::mutate(text = glue::glue("{.variable_label} (",
                                         translations$mean_onfix,
                                         "{.mean})")) %>%
@@ -220,7 +175,7 @@ embed_cat_text_html <-
 
     # output$median_max <-
     #   data_median %>%
-    #   dplyr::slice_max(order_by = .data$median, n = n_top_bottom) %>%
+    #   dplyr::slice_max(order_by = .data$median, n = dots$n_top_bottom) %>%
     #   dplyr::mutate(text = glue::glue("{label} (",
     #                                   translations$median_onfix,
     #                                   "{median})")) %>%
@@ -231,7 +186,7 @@ embed_cat_text_html <-
     #
     # output$median_min <-
     #   data_median %>%
-    #   dplyr::slice_min(order_by = .data$median, n = n_top_bottom) %>%
+    #   dplyr::slice_min(order_by = .data$median, n = dots$n_top_bottom) %>%
     #   dplyr::mutate(text = glue::glue("{.label} (",
     #                                   getOption("saros")$translations$median_onfix,
     #                                   "{median})")) %>%
@@ -287,12 +242,12 @@ embed_cat_text_html <-
       }
 
     out <-
-    generate_output_text(contents = contents) %>%
+    generate_output_text(contents = dots$contents) %>%
       purrr::map(.f = ~{
-        stringr::str_replace(string = .x, pattern = "([[:alpha:]\\)])$", "\\1.")
+        stringi::stri_replace(str = .x, regex = "([[:alpha:]\\)])$", "$1.")
       })
 
-    if(return_raw) as.list(stringr::str_c(out, collapse=" ")) else out
+    if(dots$return_raw) as.list(stringr::str_c(out, collapse=" ")) else out
   }
 
 

@@ -9,7 +9,7 @@
 #' @param parametric Logical, if false, applies a set of non-parametric tests equivalent to the t-, chisq-, and prop tests.
 #'
 #' @importFrom rlang := !!!
-#' @return A tibble containing for each response-explanatory row combination
+#' @return A data frame containing for each response-explanatory row combination
 #' columns summarizing the test statistic.
 #' @export
 #'
@@ -55,9 +55,9 @@ test_multiple_comb <-
                            ~{if(is.factor(.x)) droplevels(.x) else .x}))
 
     resp_cols <- names(response_cols)
-    resp_cols <- rlang::set_names(resp_cols)
+    resp_cols <- stats::setNames(resp_cols, nm=resp_cols)
     expl_cols <- names(explanatory_cols)
-    expl_cols <- rlang::set_names(expl_cols)
+    expl_cols <- stats::setNames(expl_cols, nm=expl_cols)
 
     cli::cli_progress_bar("Computing tests", total = length(resp_cols))
 
@@ -117,7 +117,7 @@ test_multiple_comb <-
                                               dplyr::summarize(mean = mean(!!resp_col, na.rm=TRUE),
                                                                n = dplyr::n()) %>%
                                               tidyr::pivot_wider(names_from = !!expl_col,
-                                                                 values_from = c(mean, n))
+                                                                 values_from = c("mean", "n"))
 
                                             res_test <-
                                               infer::t_test(x = data,

@@ -22,8 +22,6 @@ list_available_element_types <-
 #'   ".mid_lower", ".bottom")
 #' @param spread_n The number of values to extract when set is "spread".
 #' @param sort Whether to sort the output, defaults to FALSE.
-#' @importFrom stats median
-#' @importFrom rlang arg_match
 #' @return Selected set of vector.
 #' @export
 #' @examples
@@ -52,7 +50,7 @@ subset_vector <-
 			vec[1:(n/2)]
 		}
 	} else {
-		m <- median(seq_len(n))
+		m <- stats::median(seq_len(n))
 		if(set==".upper") {
 			vec[(m+1):n]
 		} else if(set==".lower") {
@@ -96,7 +94,7 @@ subset_vector <-
 						max_set <- c(max_set, 3L, n-2L)
 					}
 					if(spread_n %% 2 != 0L) {
-						m <- round(median(seq_len(n)))
+						m <- round(stats::median(seq_len(n)))
 						max_set <- c(max_set, m)
 					}
 				}
@@ -128,7 +126,7 @@ subset_vector <-
 #'
 #' @examples
 #' # Original data
-#' input <- setNames(as.data.frame(matrix(c(
+#' input <- stats::setNames(as.data.frame(matrix(c(
 #' 	1,0,1,0,1, # All present
 #' 	NA,0,1,0,1, # First missing
 #' 	NA,NA,1,0,1, # First two missing
@@ -138,7 +136,7 @@ subset_vector <-
 #' 	1,0,1,NA,NA, # Last two missing
 #' 	1,0,NA,NA,NA, # Last three missing
 #' 	NA,NA,NA,NA,NA # All missing
-#' ), nrow = 9, byrow = TRUE)), nm=paste0("X", 1:5))
+#' ), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
 #' # What should be the output for item estimation according to Mislevy
 #' # Skipped=> 0, not_administered=>NA, all_missing=>NA
 #' y_i <-  stats::setNames(as.data.frame(matrix(c(
@@ -151,7 +149,7 @@ subset_vector <-
 #' 	1,0,1,0,NA, # Last two missing
 #' 	1,0,0,NA,NA, # Last three missing
 #' 	NA,NA,NA,NA,NA # All missing
-#' ), nrow = 9, byrow = TRUE)), nm=paste0("X", 1:5))
+#' ), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
 #'
 #' # What should be the output for person estimation according to Mislevy
 #' # Skipped=> 0, not_administered=>NA, all_missing=>NA
@@ -165,7 +163,7 @@ subset_vector <-
 #' 	1,0,1,0,0, # Last two missing
 #' 	1,0,0,0,0, # Last three missing
 #' 	0,0,0,0,0 # All missing
-#' ), nrow = 9, byrow = TRUE)), nm=paste0("X", 1:5))
+#' ), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
 #' # Recoding for counting skipped, not_administered, all_missing, etc
 #' # Skipped=> 99, not_administered=>999, all_missing=>9999
 #' y_info <- stats::setNames(as.data.frame(matrix(c(
@@ -178,7 +176,7 @@ subset_vector <-
 #' 	1,0,1,99,999, # Last two missing
 #' 	1,0,99,999,999, # Last three missing
 #' 	9999,9999,9999,9999,9999 # All missing
-#' ), nrow = 9, byrow = TRUE)), nm=paste0("X", 1:5))
+#' ), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
 #'
 #' y_i2 <- omitted_recoder_df(input) #Mislevy item estimation
 #' y_p2 <- omitted_recoder_df(input, skipped = 0L, #Mislevy person estimation
@@ -232,7 +230,7 @@ omitted_recoder_df <- function(df, accept_vector=FALSE, skipped=0L,
 			rlang::warn("Unable to recode single-column data.frame without knowing context.")
 			df
 		} else {
-			rlang::set_names(as.data.frame(t(apply(df, 1, omittedRecoderVec))),
+		  stats::setNames(as.data.frame(t(apply(df, 1, omittedRecoderVec))),
 							 nm=colnames(df))
 		}
 	}
@@ -266,7 +264,7 @@ combn_upto <-
 	stopifnot(n_max<=length(vec))
 	x <-
 	  unlist(lapply(n_min:n_max, function(x) utils::combn(x = vec, m = x, simplify = F)), recursive = FALSE)
-	x <- rlang::set_names(x, x)
+	x <- stats::setNames(x, x)
 	rev(x)
 }
 
@@ -282,16 +280,16 @@ combn_upto <-
 #'  maxwidth=20)
 center_string <- function(string, maxwidth=50) {
 		sapply(string, USE.NAMES = F, function(x) {
-			maxw <- median(nchar(string))
+			maxw <- stats::median(stringi::stri_length(string))
 			maxw <- maxwidth
-			if(nchar(x)<maxw) {
+			if(stringi::stri_length(x)<maxw) {
 				x
 			} else {
-				if(nchar(x)>=maxw & nchar(x)<2*maxw) {
-					stringr::str_wrap(x, nchar(x)/2)
+				if(stringi::stri_length(x)>=maxw & stringi::stri_length(x)<2*maxw) {
+					string_wrap(x, stringi::stri_length(x)/2)
 				} else {
-					if(nchar(x)>=2*maxw) {
-						stringr::str_wrap(x, nchar(x)/3)
+					if(stringi::stri_length(x)>=2*maxw) {
+						string_wrap(x, stringi::stri_length(x)/3)
 					}
 				}
 			}
@@ -330,9 +328,9 @@ check_category_pairs <-
 #   x <- purrr::map_chr(data[, cols_pos], ~attr(.x, "label"))
 #   x <- unname(x)
 #   x <-
-#     stringr::str_replace(string = x,
-#                          pattern = paste0("(^.*)", label_separator, "(.*$)"),
-#                          replacement = "\\1")
+#     stringi::stri_replace(string = x,
+#                          regex = stringr::str_c("(^.*)", label_separator, "(.*$)"),
+#                          replacement = "$1")
 #   x <- unique(x)
 #   x <-
 #     stringr::str_c(x, collapse="\n")
@@ -345,7 +343,7 @@ check_category_pairs <-
 #' @description Easily mutate a single column into multiple columns (~dummies+1),
 #' while retaining variable labels and order of the original factor variable.
 #'
-#' @param data Data frame or tibble
+#' @param data Data frame.
 #' @param col Single column. Tidy-select.
 #' @param var_separator [\code{character(1)>0}]\cr Separator between old variable name and categories.
 #' @param label_separator  [\code{character(1)>0}]\cr Separator between old label name and new label part.
@@ -382,12 +380,12 @@ col_to_binaries <- function(data, col, var_separator = "___", label_separator = 
     tidyr::pivot_wider(names_from = {{col}},
                        values_from = tidyselect::all_of("_dummy"),
                        values_fill = 0L,
-                       names_glue = paste0(col_nm, var_separator, "{.name}")) |> #
+                       names_glue = stringr::str_c(col_nm, var_separator, "{.name}")) |> #
     dplyr::select(!tidyselect::all_of("_id"))
 
 
   labelled::var_label(x = data3) <-
-    paste0(col_label, label_separator, unique(data2[[col_pos]]))
+    stringr::str_c(col_label, label_separator, unique(data2[[col_pos]]))
   dplyr::bind_cols(data2, data3)
   }
 

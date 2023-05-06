@@ -53,11 +53,11 @@ get_block_caption <-
 
 
 get_docx_height <-
-  function(height_fixed,
-           height_per_col,
+  function(plot_height_fixed_constant,
+           plot_height_multiplier,
            minimum_height,
            n_col) {
-  min(c(height_fixed + height_per_col*n_col,
+  min(c(plot_height_fixed_constant + plot_height_multiplier*n_col,
         minimum_height))
 
 }

@@ -11,12 +11,6 @@
 #' @param stop_words Words to ignore in label when abbreviating label to name.
 #'
 #' @return Data with renamed variable names.
-#' @importFrom dplyr arrange group_by ungroup mutate rename_with pull n
-#' @importFrom vctrs as_list_of
-#' @importFrom labelled lookfor
-#' @importFrom tidyr separate unite
-#' @importFrom purrr map_chr
-#' @importFrom rlang .data
 #' @export
 #'
 #' @examples
@@ -37,8 +31,8 @@ rename_by_labels <-
 		df_labels$label_pre2 <-
 			purrr::map_chr(df_labels$label_pre_str, .f=function(.x) {
 				out <- .x[!.x %in% stop_words]
-				out <- if(length(out) > 0L) paste0(out, collapse=" ") else paste0(.x, collapse=" ")
-				out <- paste0(out, collapse=" ")
+				out <- if(length(out) > 0L) stringr::str_c(out, collapse=" ") else stringr::str_c(.x, collapse=" ")
+				out <- stringr::str_c(out, collapse=" ")
 			})
 		df_labels$label_pre3 <- abbreviate(names.arg = df_labels$label_pre2,
 										   named = TRUE, minlength = 2L, dot = FALSE, method = "both")
@@ -59,9 +53,9 @@ rename_by_labels <-
 #'
 #' Columns not containing labels will remain unaffected, and warning given.
 #'
-#' @param data Data frame or tibble.
+#' @param data Data frame
 #'
-#' @return Data.frame/tibble.
+#' @return Data.frame
 #' @export
 #'
 #' @examples swap_label_colnames(mtcars)
