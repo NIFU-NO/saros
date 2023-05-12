@@ -96,7 +96,7 @@ testthat::test_that("summarize_data", {
 })
 
 
-testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 0 by-col", {
+testthat::test_that("crosstable3 srvyr gives same output as regular tbl with 0 by-col", {
   suppressMessages(library(dplyr))
   suppressMessages(library(srvyr))
   x <-
@@ -156,7 +156,7 @@ testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 0 b
                          expected = dplyr::pull(x, .data[[".mean_base"]]))
 })
 
-testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 1 by-col", {
+testthat::test_that("crosstable3 srvyr gives same output as regular tbl with 1 by-col", {
   suppressMessages(library(dplyr))
   suppressMessages(library(srvyr))
   x <-
@@ -213,20 +213,20 @@ testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 1 b
 })
 
 
-testthat::test_that("crosstable2 srvyr gives same output as regular tbl with 2 by-col", {
+testthat::test_that("crosstable3 srvyr gives same output as regular tbl with 2 by-col", {
   suppressMessages(library(dplyr))
   suppressMessages(library(srvyr))
   x <-
     saros::ex_survey1 %>%
     saros:::summarize_data(cols = matches("^b_"), by = c(x1_sex, x2_human),
                                   sort_by = c("A lot", "A bit"),
-                                  label_separator = " - ", percentage = TRUE)
+                                  label_separator = " - ")
   x_srv <-
     saros::ex_survey1 %>%
     srvyr::as_survey(strata = f_uni) %>%
     saros:::summarize_data(cols = matches("^b_"), by = c(x1_sex, x2_human),
                                   sort_by = c("A lot", "A bit"),
-                                  label_separator = " - ", percentage = TRUE)
+                                  label_separator = " - ")
 
   testthat::expect_equal(object = names(x_srv),
                          expected = names(x))

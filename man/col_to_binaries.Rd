@@ -7,7 +7,7 @@
 col_to_binaries(data, col, var_separator = "___", label_separator = " - ")
 }
 \arguments{
-\item{data}{Data frame or tibble}
+\item{data}{Data frame.}
 
 \item{col}{Single column. Tidy-select.}
 

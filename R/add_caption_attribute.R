@@ -5,7 +5,7 @@
 #' @param by_pos Named integer for the by-variable.
 #' @param translations List of named strings for by and (N=, etc. see getOption("saros")$translations.
 #'
-#' @return
+#' @return String
 add_caption_attribute <- function(main_question,
                                   data_out,
                                   by_pos,

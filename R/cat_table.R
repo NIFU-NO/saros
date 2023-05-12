@@ -34,6 +34,7 @@ embed_cat_table <-
 
     check_category_pairs(data = data, cols_pos = c(cols_pos), call = call)
 
+    # if(any(cols_pos == "s_801_1"))  print(list(cols_pos, by_pos))
 
 
     ######### MUST TIDY UP FROM HERE ############
@@ -67,6 +68,7 @@ embed_cat_table <-
     }
     cat_lvls <- levels(data_out[[".category"]])
     cat_lvls <- cat_lvls[cat_lvls %in% unique(data_out[[".category"]])]
+
     data_out <-
       data_out %>%
       dplyr::mutate(N = sum(.count, na.rm=TRUE),

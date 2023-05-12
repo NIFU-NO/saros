@@ -9,7 +9,7 @@ get_colour_set(
   user_colour_set = NULL,
   colour_na = NULL,
   colour_2nd_binary_cat = NULL,
-  seed = 1,
+  ordinal = FALSE,
   call = rlang::caller_env()
 )
 }
@@ -22,9 +22,9 @@ get_colour_set(
 
 \item{colour_2nd_binary_cat}{[\code{character(1)}]\cr Colour for second category in binary variables. Often useful to hide this.}
 
-\item{seed}{[\code{integer(1)}]\cr Random seed for sampling.}
-
 \item{call}{Caller function if used from inside another function.}
+
+\item{seed}{[\code{integer(1)}]\cr Random seed for sampling.}
 }
 \value{
 A colour set as character vector, where NA has the colour_na, and the rest are taken from user_colour_set if available.

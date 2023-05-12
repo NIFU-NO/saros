@@ -11,8 +11,6 @@ prep_cat_prop_plot_docx <-
            ...,
            call = rlang::caller_env()) {
 
-
-    # check_summary_data_cols(data, call = call)
     dots <- rlang::list2(...)
 
     colour_palette <-
@@ -29,7 +27,12 @@ prep_cat_prop_plot_docx <-
                                 .saros.env$summary_data_sort2]
 
     hide_axis_text <- length(by_vars) == 0 && dplyr::n_distinct(data[[".variable_label"]]) == 1
-    hide_legend <- dplyr::n_distinct(data[[".category"]]) == 2 && !rlang::is_null(dots$colour_na)
+    hide_legend <-
+      dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
+      !rlang::is_null(dots$colour_na)
+
+    percentage <- dots$data_label %in% c("percentage", "percentage_bare")
+    prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
 
     fp_text_settings <-
       lapply(colour_palette,
@@ -46,38 +49,26 @@ prep_cat_prop_plot_docx <-
     main_text <- officer::fp_text(font.size = dots$main_font_size, font.family = dots$font_family)
 
     m <- mschart::ms_barchart(data = data,
-                              y = ".count", x = ".variable_label",
-                              group = ".category", labels = ".data_label")
+                              y = ".count",
+                              x = if(length(by_vars) == 1) by_vars else ".variable_label",
+                              group = ".category",
+                              labels = ".data_label")
 
-    if(dots$data_label %in% c("percentage", "percentage_bare")) {
+    if(percentage) {
       m <- mschart::as_bar_stack(x = m, percent = TRUE)
     }
-    # overlap <- if(!percentage) { # Silly way due to poor programming in mschart
-    #
-    #   m <- mschart::chart_settings(x = m, dir = if(vertical) "vertical" else "horizontal",
-    #                                overlap = overlap)
-    # } else {
-    #   m <- mschart::chart_settings(x = m, dir = if(vertical) "vertical" else "horizontal")
-    # }
+    overlap <- if(!percentage) -40 else 100
+    gap_width <- if(!percentage) 150 else 50
 
-    # if(!percentage) { # Silly way due to poor programming in mschart
-      overlap <- if(!dots$data_label %in% c("percentage", "percentage_bare")) -40 else 100
-      gap_width <- if(!dots$data_label %in% c("percentage", "percentage_bare")) 150 else 50
-
-      m <- mschart::chart_settings(x = m,
-                                   dir = if(dots$vertical) "vertical" else "horizontal",
-                                   overlap = overlap, gap_width = gap_width)
-    # } else {
-    #   m <- mschart::chart_settings(x = m,
-    #                                dir = if(vertical) "vertical" else "horizontal",
-    #                                overlap = 100, gap_width = 50)
-    # }
+    m <- mschart::chart_settings(x = m,
+                                 dir = if(dots$vertical) "vertical" else "horizontal",
+                                 overlap = overlap, gap_width = gap_width)
     m <- mschart::chart_data_fill(x = m, values = colour_palette)
     m <- mschart::chart_data_stroke(x = m, values = colour_palette)
     m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
     m <- mschart::chart_labels(x = m, ylab = NULL, xlab = NULL, title = NULL)
     m <- mschart::chart_ax_x(x = m, major_tick_mark = "none")
-    if(dots$data_label %in% c("percentage", "percentage_bare")) {
+    if(percentage) {
       m <- mschart::chart_ax_y(x = m, num_fmt = "0%")
     }
     m <- mschart::chart_theme(x = m,
@@ -168,8 +159,16 @@ embed_cat_prop_plot_docx <-
         call = call,
         !!!dots)
 
-    if(length(by_pos)>0) {
-      data_out[[names(by_pos)]] <- forcats::fct_rev(data_out[[names(by_pos)]])
+    # if(length(by_pos)>0) {
+    #   data_out[[names(by_pos)]] <- forcats::fct_rev(data_out[[names(by_pos)]])
+    # }
+    if(length(by_pos)==0) {
+      data_out[[".variable_label"]] <- forcats::fct_rev(data_out[[".variable_label"]])
+    }
+
+    if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
+       !rlang::is_null(dots$colour_2nd_binary_cat)) {
+      data_out$.category <- forcats::fct_rev(data_out$.category)
     }
 
     chart <-

@@ -2,7 +2,7 @@
 % Please edit documentation in R/tabulate.R
 \name{tab_cat_prop_to_table}
 \alias{tab_cat_prop_to_table}
-\title{Turn tibble-result from tab_cat_prop into a prettier table}
+\title{Turn data frame-result from tab_cat_prop into a prettier table}
 \usage{
 tab_cat_prop_to_table(data, prefix = "")
 }
@@ -18,5 +18,5 @@ data.frame
 Does what it says.
 }
 \examples{
-tab_cat_prop_to_table(tab_cat_prop(ex_survey1[,paste0("b_", 1:3)]))
+tab_cat_prop_to_table(tab_cat_prop(ex_survey1[,stringr::str_c("b_", 1:3)]))
 }

@@ -3,8 +3,6 @@ crosstable2 <- function(x, ...) UseMethod("crosstable2", x)
 
 crosstable2.data.frame <-
   function(data,
-			y_vars = colnames(data),
-			x_vars = NULL,
            cols = tidyselect::everything(),
            by = NULL,
            showNA = c("ifany", "always", "never"),
@@ -15,6 +13,7 @@ crosstable2.data.frame <-
     by_names <- colnames(dplyr::select(data, {{by}}))
     col_names <- colnames(dplyr::select(data, {{cols}})) %>% .[!. %in% by_names]
 
+    output <-
     purrr::map(stats::setNames(col_names, col_names), .f = ~{
 
         out <-
@@ -88,24 +87,28 @@ crosstable2.data.frame <-
         summary_prop$.category <- factor(x = summary_prop$.category,
                                levels = fct_lvls,
                                labels = fct_lvls)
-        summary_prop$.variable_label <- get_raw_labels(data, cols_pos = .x)
+        summary_prop$.variable_label <- unname(get_raw_labels(data, cols_pos = .x))
         summary_prop$.mean_base <- as.integer(summary_prop$.category) * summary_prop$.count
         summary_prop$.count_se <- NA_real_
         summary_prop$.proportion_se <- NA_real_
         summary_prop$.mean_se <- NA_real_
 
         if(length(by_vars) > 0) {
-          dplyr::left_join(summary_prop, summary_mean, by = intersect(names(summary_prop), names(summary_mean)))
+          dplyr::left_join(summary_prop, summary_mean,
+                           by = intersect(names(summary_prop), names(summary_mean)))
         } else cbind(summary_prop, summary_mean)
 
-      }) %>%
+      })
+
+    output %>%
       dplyr::bind_rows(.id = ".variable_name") %>%
       dplyr::relocate(tidyselect::all_of(c(".variable_name", ".variable_label",
                                            ".category",
                                            ".count", ".count_se",
                                            ".proportion", ".proportion_se",
                                            ".mean", ".mean_se",
-                                           ".mean_base")))
+                                           ".mean_base"))) %>%
+      dplyr::arrange(dplyr::pick(tidyselect::all_of(c(".variable_name", by_names, ".category", ".proportion"))))
       # dplyr::relocate(".count_se", .after = ".count") %>%
       # dplyr::relocate(".proportion_se", .after = ".proportion") %>%
       # dplyr::relocate(".mean", .after = ".proportion_se") %>%

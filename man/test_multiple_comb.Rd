@@ -25,7 +25,7 @@ test_multiple_comb(
 )
 }
 \arguments{
-\item{data}{Data frame or tibble.}
+\item{data}{Data frame.}
 
 \item{...}{For passing in other arguments to \link[stats:t.test]{t.test()}.}
 
@@ -77,7 +77,7 @@ to see this connection.}
 \item{call}{Error call function, usually not needed.}
 }
 \value{
-A tibble containing for each response-explanatory row combination
+A data frame containing for each response-explanatory row combination
 columns summarizing the test statistic.
 }
 \description{

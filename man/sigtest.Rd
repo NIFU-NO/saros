@@ -11,15 +11,12 @@ sigtest(
   by = NULL,
   col_type = NULL,
   by_type = NULL,
-  reps = 1000,
-  digits = 1,
-  hide_test_if_n_below = 10,
   label_separator = NULL,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data}{Data frame or tibble.}
+\item{data}{Data frame.}
 
 \item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
 
@@ -29,15 +26,13 @@ sigtest(
 
 \item{col_type, by_type}{Optional string specifying data type ("int", "cat", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
 
-\item{reps}{Integer, number of permutations.}
-
-\item{digits}{[\code{integer(1)}]\cr Number of decimal places as integer.}
-
-\item{hide_test_if_n_below}{Integer, if N is below this value, pvalue will not be shown.}
-
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
 
 \item{call}{Error call function, usually not needed.}
+
+\item{reps}{Integer, number of permutations.}
+
+\item{hide_test_if_n_below}{Integer, if N is below this value, pvalue will not be shown.}
 }
 \value{
 Data frame

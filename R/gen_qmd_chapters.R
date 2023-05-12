@@ -103,8 +103,7 @@ gen_qmd_chapters <-
             chapter_yml %>%
             ymlthis::yml_author(name = unique(data_overview_chapter[["author"]])) %>%
             ymlthis::yml_toplevel(format = "html",
-                                  echo = FALSE,
-                                  editor = "visual") %>%
+                                  execute = list(list(cache = TRUE, echo = FALSE))) %>%
             ymlthis::asis_yaml_output() %>%
             as.character() %>%
             stringi::stri_replace_all(regex = "```|yaml|\\[\\]", replacement = "\n") %>%

@@ -1,9 +1,7 @@
-crosstable3 <- function(x, ...) UseMethod("crosstable2", x)
+crosstable3 <- function(x, ...) UseMethod("crosstable3", x)
 
 crosstable3.data.frame <-
   function(data,
-           y_vars = colnames(data),
-           x_vars = NULL,
            cols = colnames(data),
            by = NULL,
            showNA = c("ifany", "always", "never"),
@@ -12,9 +10,11 @@ crosstable3.data.frame <-
     showNA <- rlang::arg_match(showNA, error_call = call)
 
     by_names <- colnames(data[, by, drop = FALSE])
+    by_labels <- get_raw_labels(data, cols_pos = by_names)
     col_names <- colnames(data[, cols, drop = FALSE])[!(colnames(data[, cols, drop = FALSE]) %in% by_names)]
 
-    output <- lapply(stats::setNames(col_names, col_names), function(.x) {
+    output <-
+      lapply(stats::setNames(col_names, col_names), function(.x) {
 
       out <- data
       names(out)[names(out) == .x] <- ".category"
@@ -54,40 +54,61 @@ crosstable3.data.frame <-
         cli::cli_warn("{.arg {.x}} is {.obj_type_friendly {out$.category}}. Taking its mean is meaningless and results in NAs.",
                       call = call)
       }
+      out <- out[rlang::inject(order(!!!out[, c(by_names, ".category")])), ]
       summary_mean <- out
       summary_mean$.mean <- suppressWarnings(as.numeric(summary_mean$.category))
       summary_mean <- stats::aggregate(x = .mean ~ ., data = summary_mean[, c(by_names, ".mean"), drop = FALSE], FUN = mean, na.rm = TRUE)
 
       summary_prop <- out
-      summary_prop <- stats::aggregate(x = .count ~ ., data = summary_prop[, c(by_names, ".category"), drop = FALSE], FUN = length)
-      summary_prop <- summary_prop[order(summary_prop$.category), ]
-      summary_prop$.proportion <- summary_prop$.count / sum(summary_prop$.count, na.rm = TRUE)
+      summary_prop$.count <- 1L
+      summary_prop <- stats::aggregate(x = summary_prop$.count, by = summary_prop[, c(by_names, ".category"), drop = FALSE], FUN = length, simplify = TRUE)
+      names(summary_prop)[names(summary_prop) == "x"] <- ".count" ## FAKE SOLUTION, A VARIABLE CALLED x will break it all
+      grouped_count <- stats::aggregate(x = summary_prop$.count, by = summary_prop[, by_names, drop = FALSE], FUN = sum, na.rm=TRUE, simplify = TRUE)
+
+      summary_prop <- merge(summary_prop, grouped_count, by = by_names)
+      summary_prop$.proportion <- summary_prop$.count / summary_prop$x
       summary_prop$.category <- factor(x = summary_prop$.category,
                                        levels = fct_lvls,
                                        labels = fct_lvls)
-      summary_prop$.variable_label <- get_raw_labels(data, cols_pos = .x)
+      summary_prop$.variable_label <- unname(get_raw_labels(data, cols_pos = .x))
       summary_prop$.mean_base <- as.integer(summary_prop$.category) * summary_prop$.count
       summary_prop$.count_se <- NA_real_
       summary_prop$.proportion_se <- NA_real_
       summary_prop$.mean_se <- NA_real_
 
       if(length(by_names) > 0) {
-        merge(summary_prop, summary_mean, by = intersect(names(summary_prop), names(summary_mean)), all.x = TRUE)
+        out <- dplyr::left_join(summary_prop, summary_mean,
+                         by = intersect(names(summary_prop), names(summary_mean)))
       } else {
-        cbind(summary_prop, summary_mean)
+        out <- cbind(summary_prop, summary_mean)
       }
+      # if(length(by_names) > 0) {
+      #   merge(summary_prop, summary_mean, by = intersect(names(summary_prop), names(summary_mean)), all.x = TRUE)
+      # } else {
+      #   cbind(summary_prop, summary_mean)
+      # }
+
+      out$.variable_name <- .x
+      out
 
     })
+    out <- do.call(rbind, output)
+    out <-
+      out[#do.call(order, out[c(".variable_name", by_names, ".category", ".proportion")]),
+        c(".variable_name", ".variable_label",
+          ".category",
+          ".count", ".count_se",
+          ".proportion", ".proportion_se",
+          ".mean", ".mean_se",
+          ".mean_base", by_names)]
+    for(by_var in by_names) {
+      attr(out[[by_var]], "label") <- by_labels[[by_var]]
+    }
+    out <- dplyr::arrange(out, dplyr::pick(tidyselect::all_of(c(".variable_name", by_names, ".category", ".proportion"))))
 
-    output_df <- do.call(rbind, output)
-    output_df <- stats::setNames(output_df, c(".variable_name", ".variable_label",
-                                       ".category",
-                                       ".count", ".count_se",
-                                       ".proportion", ".proportion_se",
-                                       ".mean", ".mean_se",
-                                       ".mean_base"))
+    rownames(out) <- NULL
+    out
 
-    return(output_df)
   }
 
 
@@ -160,11 +181,10 @@ crosstable3.tbl_svy <-
 
     })
 
-    output <- do.call(rbind, output)
-    output <- stats::setNames(output,
-                       c(".variable_name", ".variable_label", ".category",
-                         ".count", ".count_se",
-                         ".proportion", ".proportion_se",
-                         ".mean", ".mean_se", ".mean_base"))
-    output
+    do.call(rbind, output)[, c(".variable_name", ".variable_label",
+                               ".category",
+                               ".count", ".count_se",
+                               ".proportion", ".proportion_se",
+                               ".mean", ".mean_se",
+                               ".mean_base")]
   }

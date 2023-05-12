@@ -1,6 +1,8 @@
+# are all elements of list x identical to each other?
 compare_many <- function(x) {
   all(purrr::map_lgl(as.list(x[-1]),
-                     .f = ~identical(.x, x[[1]])))
+                     .f = ~identical(.x, x[[1]]))) ||
+  nrow(x[[1]])==1
 }
 
 
@@ -59,7 +61,9 @@ gen_element_and_qmd_snippet <-
 
 
     y_col_names <- unique(data_overview_section$col_name)
-    y_col_pos <- match(y_col_names, data_cols)
+    y_col_pos <- match(y_col_names, colnames(data))
+
+
 
     variable_prefix <- if(!rlang::is_null(section_key$name_prefix) &&
                           dplyr::n_distinct(section_key$name_prefix)==1) unique(section_key$name_prefix)
@@ -110,7 +114,7 @@ gen_element_and_qmd_snippet <-
 
       if(element_name == "uni_cat_prop_plot" &&
          all(data_overview_section$designated_type == "cat")) {
-        out <-
+        out_docx <-
           rlang::exec(
             embed_cat_prop_plot_docx,
             data = data,
@@ -118,7 +122,7 @@ gen_element_and_qmd_snippet <-
             summarized_data = summarized_data,
             translations = translations,
             !!!dots)
-        print(out, target = filepath_abs_docx)
+        print(out_docx, target = filepath_abs_docx)
 
         out_html <-
           rlang::exec(
@@ -334,7 +338,6 @@ gen_element_and_qmd_snippet <-
     }
 
 
-
     ######################################################################
 
     if(all(data_overview_section$designated_role != "indep") &&
@@ -345,7 +348,6 @@ gen_element_and_qmd_snippet <-
        compare_many(data_overview_section$by_cols_df)) {
 
       by_df <- data_overview_section$by_cols_df[[1]]
-
 
       if(inherits(by_df, what = "data.frame")) {
 
@@ -554,9 +556,11 @@ gen_element_and_qmd_snippet <-
 
           }
 
+
           if(element_name == "bi_catcat_table" &&
              all(data_overview_section$designated_type == "cat") &&
              all(by_type == "cat")) {
+
 
             out <-
               rlang::exec(

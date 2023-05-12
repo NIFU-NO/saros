@@ -34,7 +34,6 @@ prep_cat_prop_plot_html <-
         colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
         call = call)
 
-
     multi <- length(colour_palette) > 2
 
     by_vars <- colnames(data)[!colnames(data) %in%
@@ -42,7 +41,8 @@ prep_cat_prop_plot_html <-
 
     hide_axis_text <- length(by_vars) == 0 && dplyr::n_distinct(data[[".variable_label"]]) == 1
     hide_legend <-
-      dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 && !rlang::is_null(dots$colour_2nd_binary_cat)
+      dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
+      !rlang::is_null(dots$colour_2nd_binary_cat)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
@@ -158,9 +158,7 @@ embed_cat_prop_plot <-
     by_enq <- rlang::enquo(arg = by)
     by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
 
-
     check_category_pairs(data = data, cols_pos = c(cols_pos))
-
 
     data_out <-
       rlang::exec(
@@ -177,20 +175,10 @@ embed_cat_prop_plot <-
       data_out[[names(by_pos)]] <- forcats::fct_rev(data_out[[names(by_pos)]])
     }
 
-    # if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2) {
-    #   if(length(by_pos)==0 && #names(by_pos) == "landsdel_gs" &&
-    #      length(cols_pos) == 1 &&
-    #      cols_pos == "s_603") {
-    #     View(data_out)
-    #   print(levels(data_out[[names(by_pos)]]))
-    #   print(levels(data_out[[".category"]]))
-    #   # browser()
-    #   }
-
-    #   if(!rlang::is_null(dots$colour_2nd_binary_cat)) {
-    #     # data_out$.category <- forcats::fct_rev(data_out$.category)
-    #   }
-    # }
+    if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
+       !rlang::is_null(dots$colour_2nd_binary_cat)) {
+      data_out$.category <- forcats::fct_rev(data_out$.category)
+    }
 
     chart <-
       rlang::exec(
