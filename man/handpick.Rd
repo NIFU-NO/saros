@@ -7,7 +7,7 @@
 handpick(data, to_clipboard = FALSE)
 }
 \arguments{
-\item{data}{A dataset; tibble or data frame.}
+\item{data}{A dataset; data frame.}
 
 \item{to_clipboard}{Boolean. Defaults to FALSE. If TRUE, overwrites what you already have copied. Use with caution.}
 }

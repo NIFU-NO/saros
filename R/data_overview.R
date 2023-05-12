@@ -151,7 +151,7 @@ remove_non_significant_bivariates <-
     check_double(hide_bi_entry_if_sig_above, min = 0, max = 1, call = call)
     check_string(always_show_bi_for_by, null.ok = TRUE, n = NULL, call = call)
     if(hide_bi_entry_if_sig_above < 1) {
-      cli::cli_progress_message("Removing bivariate occurences if {.arg hide_bi_entry_if_sig_above}: {.arg {hide_bi_entry_if_sig_above}}.")
+      cli::cli_progress_message("Removing bivariate occurences if {.arg hide_bi_entry_if_sig_above}: {.arg {hide_bi_entry_if_sig_above}}, except {always_show_bi_for_by}.")
 
       out <-
         refined_data_overview %>%
@@ -196,7 +196,6 @@ remove_non_significant_bivariates <-
                                out_by$chi_p <= hide_bi_entry_if_sig_above) |
                                out_by$col_name %in% always_show_bi_for_by,
                              error_call = call)
-
           df_col_row
 
         }) %>%

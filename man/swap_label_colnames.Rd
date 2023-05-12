@@ -9,12 +9,12 @@ swap_label_colnames(data)
 swap_label_colnames(data)
 }
 \arguments{
-\item{data}{Data frame or tibble.}
+\item{data}{Data frame}
 }
 \value{
-Data.frame/tibble.
+Data.frame
 
-Data.frame/tibble.
+Data.frame
 }
 \description{
 Columns not containing labels will remain unaffected, and warning given.

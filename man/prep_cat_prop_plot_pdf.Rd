@@ -4,35 +4,19 @@
 \alias{prep_cat_prop_plot_pdf}
 \title{Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories}
 \usage{
-prep_cat_prop_plot_pdf(
-  data,
-  ...,
-  label_font_size = 8,
-  main_font_size = 8,
-  font_family = "Calibri",
-  colour_palette = NULL,
-  colour_na = "gray90",
-  colour_2nd_binary_cat = "#ffffff",
-  vertical = FALSE,
-  data_label = c("proportion", "percentage", "percentage_bare", "count", "mean",
-    "median"),
-  digits = if (data_label == "proportion") 2 else 1,
-  x_axis_label_width = 20,
-  seed = 1,
-  call = rlang::caller_env()
-)
+prep_cat_prop_plot_pdf(data, ..., call = rlang::caller_env())
 }
 \arguments{
-\item{data}{Data frame or tibble.}
+\item{data}{Data frame.}
 
 \item{...}{Optional parameters forwarded from above.}
+
+\item{call}{For internal use}
 
 \item{label_font_size}{[\code{integer(1)}]\cr Font size for data labels}
 
 \item{main_font_size}{[\code{integer(1)}]\cr Font size for all other text
 Must contain at least the number of unique values (excl. missing) in the data set.}
-
-\item{font_family}{Word font family. See officer::fp_text}
 
 \item{colour_palette}{[\code{character()}]\cr
 Must contain at least the number of unique values (incl. missing) in the data set.}
@@ -41,17 +25,13 @@ Must contain at least the number of unique values (incl. missing) in the data se
 
 \item{colour_2nd_binary_cat}{[\code{character(1)}]\cr Colour for second category in binary variables. Often useful to hide this.}
 
+\item{font_family}{Word font family. See officer::fp_text}
+
 \item{vertical}{[\code{logical(1)}] Logical. If FALSE (default), then horizontal.}
-
-\item{data_label}{[\code{character(1)}] What to display, one of "proportion", "percentage", "percentage_bare" (which is without the percentage symbol), "count", "mean", or "median". Defaults to "proportion".}
-
-\item{digits}{[\code{integer(1)}]\cr Number of decimal places as integer.}
 
 \item{x_axis_label_width}{[\code{integer(1)}] Width of the labels used for the categorical column names.}
 
 \item{seed}{[\code{integer(1)}] Optional random seed for selection of colours in blender.}
-
-\item{call}{For internal use}
 }
 \value{
 ggiraph object, plottable with plot()

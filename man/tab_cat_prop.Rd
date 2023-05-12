@@ -43,6 +43,6 @@ data.frame with some fixed columns
 Tabulate categorical variables with proportions
 }
 \examples{
-tab_cat_prop(ex_survey1[,paste0("b_", 1:3)])
-tab_cat_prop(ex_survey1, xvars = "x1_sex", yvars = paste0("b_", 1:3))
+tab_cat_prop(ex_survey1[,stringr::str_c("b_", 1:3)])
+tab_cat_prop(ex_survey1, xvars = "x1_sex", yvars = stringr::str_c("b_", 1:3))
 }

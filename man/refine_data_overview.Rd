@@ -7,10 +7,10 @@
 refine_data_overview(
   data_overview,
   data = NULL,
-  group_by = c("chapter", "label_prefix"),
-  sort_by = NULL,
   label_separator = NULL,
-  name_separator = NULL
+  name_separator = NULL,
+  ...,
+  call = rlang::caller_env()
 )
 }
 \arguments{
@@ -18,13 +18,13 @@ refine_data_overview(
 
 \item{data}{Optional full survey data set for which columns can be looked up.}
 
-\item{group_by}{Character vector of colnames used for identifying chapters and sections.}
-
-\item{sort_by}{Character vector of of colnames used to order pieces within each group_by combination.}
-
 \item{label_separator}{Optional string for separating label between main question and sub-item.}
 
 \item{name_separator}{Optional string for separating column name between main question and sub-item.}
+
+\item{group_by}{Character vector of colnames used for identifying chapters and sections.}
+
+\item{sort_by}{Character vector of of colnames used to order pieces within each group_by combination.}
 }
 \value{
 Data frame

@@ -163,6 +163,10 @@ embed_cat_freq_plot <-
     if(length(by_pos)>0) {
       data_out[[names(by_pos)]] <- forcats::fct_rev(data_out[[names(by_pos)]])
     }
+    if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
+       !rlang::is_null(dots$colour_2nd_binary_cat)) {
+      data_out$.category <- forcats::fct_rev(data_out$.category)
+    }
 
     chart <-
       rlang::exec(

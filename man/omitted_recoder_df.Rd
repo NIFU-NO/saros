@@ -37,7 +37,7 @@ Useful for item difficulty estimation according to Mislevy's recommendation.
 }
 \examples{
 # Original data
-input <- setNames(as.data.frame(matrix(c(
+input <- stats::setNames(as.data.frame(matrix(c(
 	1,0,1,0,1, # All present
 	NA,0,1,0,1, # First missing
 	NA,NA,1,0,1, # First two missing
@@ -47,7 +47,7 @@ input <- setNames(as.data.frame(matrix(c(
 	1,0,1,NA,NA, # Last two missing
 	1,0,NA,NA,NA, # Last three missing
 	NA,NA,NA,NA,NA # All missing
-), nrow = 9, byrow = TRUE)), nm=paste0("X", 1:5))
+), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
 # What should be the output for item estimation according to Mislevy
 # Skipped=> 0, not_administered=>NA, all_missing=>NA
 y_i <-  stats::setNames(as.data.frame(matrix(c(
@@ -60,7 +60,7 @@ y_i <-  stats::setNames(as.data.frame(matrix(c(
 	1,0,1,0,NA, # Last two missing
 	1,0,0,NA,NA, # Last three missing
 	NA,NA,NA,NA,NA # All missing
-), nrow = 9, byrow = TRUE)), nm=paste0("X", 1:5))
+), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
 
 # What should be the output for person estimation according to Mislevy
 # Skipped=> 0, not_administered=>NA, all_missing=>NA
@@ -74,7 +74,7 @@ y_p <- stats::setNames(as.data.frame(matrix(c(
 	1,0,1,0,0, # Last two missing
 	1,0,0,0,0, # Last three missing
 	0,0,0,0,0 # All missing
-), nrow = 9, byrow = TRUE)), nm=paste0("X", 1:5))
+), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
 # Recoding for counting skipped, not_administered, all_missing, etc
 # Skipped=> 99, not_administered=>999, all_missing=>9999
 y_info <- stats::setNames(as.data.frame(matrix(c(
@@ -87,7 +87,7 @@ y_info <- stats::setNames(as.data.frame(matrix(c(
 	1,0,1,99,999, # Last two missing
 	1,0,99,999,999, # Last three missing
 	9999,9999,9999,9999,9999 # All missing
-), nrow = 9, byrow = TRUE)), nm=paste0("X", 1:5))
+), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
 
 y_i2 <- omitted_recoder_df(input) #Mislevy item estimation
 y_p2 <- omitted_recoder_df(input, skipped = 0L, #Mislevy person estimation

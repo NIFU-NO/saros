@@ -5,7 +5,7 @@
 \title{Generate Quarto Index File That Merges All Chapters}
 \usage{
 gen_qmd_index(
-  ymlthis_config = NULL,
+  yaml_file = NULL,
   authors = NULL,
   index_filepath = "complete_report.qmd",
   chapter_filepaths = NULL,
@@ -13,7 +13,7 @@ gen_qmd_index(
 )
 }
 \arguments{
-\item{ymlthis_config}{A ymlthis-object. Defaults will be obtained from getOptions("ymlthis.default_options") if NULL.}
+\item{yaml_file}{A ymlthis-object. Defaults will be obtained from getOptions("ymlthis.default_options") if NULL.}
 
 \item{authors}{A character vector listing the authors of the Quarto document. If not provided, the author information will be omitted.}
 

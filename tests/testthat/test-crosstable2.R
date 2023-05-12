@@ -1,9 +1,9 @@
-testthat::test_that("crosstable2", {
+testthat::test_that("crosstable3", {
 
   testthat::expect_no_error(object = {
     x <-
       ex_survey1 |>
-      saros:::crosstable2.data.frame(
+      saros:::crosstable3.data.frame(
         cols = tidyselect::matches("b_"), by = NULL, showNA = "ifany")
   })
   testthat::expect_equal(dim(x), c(9,10))
@@ -16,7 +16,7 @@ testthat::test_that("crosstable2", {
   testthat::expect_no_error(object = {
     x <-
       ex_survey1 |>
-      saros:::crosstable2.data.frame(
+      saros:::crosstable3.data.frame(
         cols = tidyselect::matches("b_"), by = x1_sex, showNA = "ifany")
   })
   testthat::expect_equal(dim(x), c(18, 11))

@@ -12,21 +12,24 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-# Version 1.0 (Spørringene)
+# Version 1.5 (Spørringene)
+- not keeping significant relationships!
+- grouping_var
+
 - plots: 
     - hiding facet now happens with n_cols>1! (for PREP and FREQ)
     - transpose plots (at least two different orientations of prop_plot available)
         current prop_plot for bivariates: y-axis=by-variable categories. 
     - interactivity...
-    - when there is no colour_2nd_binary_cat, 
-    update docx and pdf to match html
 - tables: 
     - total row in bi-tables?
+- confirm whether long path names are working regarding quarto render, and render_saros_report   
 
 - chapter initial r chunk with options and useful packages
     - ggiraph set global options within qmd/yaml
     - tidyverse
-    - 
+- extract gen_yaml_default stuff from render_saros_report
+- new argument: formats (html, non-html, all)
 - colours
 	- if .categories %in% yml$params$colour, use associated colour
 		- Bruk så fargepalett på resten
@@ -39,11 +42,12 @@ knitr::opts_chunk$set(echo = TRUE)
 - nifutheme
 	- all yaml-files
   - doc-reference template for quarto
-- warn if label_separator is found more than once in a label
+  - https://quarto.org/docs/extensions/project-types.html
 - N in legend for each by group
     - add_n_to_bygroup => yaml
 - implement t-test etc in early removal of bivariates
 - implement uni_plot_int_html and bi_plot_int_html 
+- Chapter files and subfolders should be placed in subfolders, and these should be nested in author-folders
 - separate settings for each element type
 - vertical argument in tables are a pivot-string similar to SSB: 1,2,3
     - As any element_type so one can get all at once. OR, let reader decide?
@@ -60,14 +64,9 @@ knitr::opts_chunk$set(echo = TRUE)
 - report to Rstudio that when previewing/showing a rendered html, building a package should stop this connection - otherwise hangs.
 
 ## DOCX
-- https://community.rstudio.com/t/creating-a-officer-ms-word-chart-object-within-a-rmd-code-block/157592
-- Might be hard to store in memory/Rds the docx-stuff. Perhaps better to create separate docx, then stitch together?
-    - https://github.com/tidyverse/rvest/issues/181
-    - body_add_docx
+- officer::body_add(doc_1, officer::block_pour_docx("graph.docx"))
 
-# Version 2.0
-- Add full _quarto.yml file for project.
-    - Should each report be its own website?
+- Figure out project website structure and location
 - Always hide heading if nothing to show within that level. If data_overview suggests it exists, it must exist, otherwise empty heading?
 - descend is currently global across all variables...
 - count number of rows removed with hide_bi_entry_if_sig_above

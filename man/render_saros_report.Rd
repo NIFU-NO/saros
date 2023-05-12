@@ -8,11 +8,11 @@ render_saros_report(
   chapter_overview,
   data,
   path = "testreport",
-  yaml_path = fs::path(path, "report_settings.yml")
+  report_generation_yaml_path = fs::path(path, "_report_generation_setup.yml")
 )
 }
 \arguments{
-\item{chapter_overview}{A raw overview of chapters, as a data frame/tibble with one row per chapter. Must contain columns 'chapter', 'dep_cat', etc.}
+\item{chapter_overview}{A raw overview of chapters, as a data frame with one row per chapter. Must contain columns 'chapter', 'dep_cat', etc.}
 
 \item{data}{A data frame (or a srvyr-object) with the columns specified in the chapter_overview 'dep_cat', etc columns.}
 

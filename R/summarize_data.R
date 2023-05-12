@@ -18,8 +18,8 @@ mutate_data_label <-
     hide_label_if_prop_below=0,
     decimal_symbol=".") {
 
-    percent_siblings <- data_label %in% c("percentage", "percentage_bare")
-    prop_family <- data_label %in% c("percentage", "percentage_bare", "proportion")
+    percent_siblings <- any(c("percentage", "percentage_bare") == data_label)
+    prop_family <- any(c("percentage", "percentage_bare", "proportion") == data_label)
     stat_col <- if(prop_family) ".proportion" else stringr::str_c(".", data_label)
 
     fmt <-
@@ -29,21 +29,15 @@ mutate_data_label <-
 
     ## Could replace fmt <- with a switch of scales::label_percent and scales::label_number
 
-    out <-
-      data %>%
-      dplyr::mutate(
-        .data_label =
-          dplyr::if_else(.data[[stat_col]] >= .env$hide_label_if_prop_below,
-                         .data[[stat_col]],
-                         rep(NA, times=nrow(.))))
+    out <- data
+    out$.data_label <-
+          dplyr::if_else(out[[stat_col]] >= hide_label_if_prop_below,
+                         out[[stat_col]],
+                         rep(NA, times=nrow(out)))
     if(percent_siblings) out$.data_label <- out$.data_label*100
-    out <-
-      out %>%
-      dplyr::mutate(
-        .data_label = sprintf(fmt = .env$fmt, .data$.data_label),
-        .data_label = stringi::stri_replace(.data$.data_label, regex = " *NA%*$", replacement = ""),
-        .data_label = stringi::stri_replace(.data$.data_label, regex = "\\.", replacement = decimal_symbol)
-      )
+    out$.data_label <- sprintf(fmt = fmt, out$.data_label)
+    out$.data_label <- stringi::stri_replace(out$.data_label, regex = " *NA%*$", replacement = "")
+    out$.data_label <- stringi::stri_replace(out$.data_label, regex = "\\.", replacement = decimal_symbol)
 
     out
   }
@@ -64,7 +58,7 @@ add_collapsed_categories <-
     lvls <- levels(data_summary$.category)
     lvls <- lvls[!lvls %in% categories_treated_as_na]
     if(length(sort_by)==1 &&
-       sort_by %in% .saros.env$summary_data_sort1) {
+       any(.saros.env$summary_data_sort1==sort_by)) {
       sort_by <- subset_vector(vec = lvls, set = sort_by)
     }
 
@@ -246,7 +240,7 @@ summarize_data <-
 
 
     data %>%
-      crosstable2(cols = {{cols}}, by = {{by}}, showNA = dots$showNA) %>%
+      crosstable3(cols = {{cols}}, by = {{by}}, showNA = dots$showNA) %>%
       mutate_data_label(data_label = dots$data_label,
                         digits = dots$digits,
                         hide_label_if_prop_below = dots$hide_label_if_prop_below,

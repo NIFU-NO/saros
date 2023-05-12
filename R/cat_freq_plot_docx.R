@@ -44,8 +44,10 @@ prep_cat_freq_plot_docx <-
     main_text <- officer::fp_text(font.size = dots$main_font_size, font.family = dots$font_family)
 
     m <- mschart::ms_barchart(data = data,
-                              y = ".count", x = ".variable_label",
-                              group = ".category", labels = ".data_label")
+                              y = ".count",
+                              x = if(length(by_vars) == 1) by_vars else ".variable_label",
+                              group = ".category",
+                              labels = ".data_label")
 
     # if(data_label %in% c("percentage", "percentage_bare")) {
     #   m <- mschart::as_bar_stack(x = m, percent = TRUE)
@@ -95,7 +97,7 @@ prep_cat_freq_plot_docx <-
 #'
 #' @inheritParams summarize_data
 #' @inheritParams prep_cat_freq_plot_docx
-#' @inheritParams embed_cat_freq_plot_html
+#' @inheritParams embed_cat_freq_plot
 #' @inheritParams add_caption_attribute
 #' @param docx_template  [\code{character(1) || officer::read_docx()}]\cr
 #' Either a filepath to a template file, or a rdocx-object from \link[officer]{read_docx}.
@@ -157,8 +159,17 @@ embed_cat_freq_plot_docx <-
         call = call,
         !!!dots)
 
-    if(length(by_pos)>0) {
-      data_out[[names(by_pos)]] <- forcats::fct_rev(data_out[[names(by_pos)]])
+    # if(length(by_pos)>0) {
+    #   data_out[[names(by_pos)]] <- forcats::fct_rev(data_out[[names(by_pos)]])
+    # }
+
+    if(length(by_pos)==0) {
+      data_out[[".variable_label"]] <- forcats::fct_rev(data_out[[".variable_label"]])
+    }
+
+    if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
+       !rlang::is_null(dots$colour_2nd_binary_cat)) {
+      data_out$.category <- forcats::fct_rev(data_out$.category)
     }
 
 
