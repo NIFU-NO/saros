@@ -8,7 +8,8 @@ replace_stata_labels(
   data,
   df_new_labels,
   var_name_col = "name",
-  var_label_col = "vallab_full"
+  var_label_col = "vallab_full",
+  trim = "both"
 )
 }
 \arguments{
@@ -17,6 +18,8 @@ replace_stata_labels(
 \item{df_new_labels}{a data frame with a var_name_col and a var_label_col}
 
 \item{var_name_col, var_label_col}{variable names (as strings) for the lookup of variable names in data, and the corresponding variable label.}
+
+\item{trim}{string, trim "both" sides (default), "left" or "right".}
 }
 \value{
 data, with variable labels replaced

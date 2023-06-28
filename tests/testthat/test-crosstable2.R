@@ -4,9 +4,9 @@ testthat::test_that("crosstable3", {
     x <-
       ex_survey1 |>
       saros:::crosstable3.data.frame(
-        cols = tidyselect::matches("b_"), by = NULL, showNA = "ifany")
+        cols = paste0("b_", 1:3), by = NULL, showNA = "ifany")
   })
-  testthat::expect_equal(dim(x), c(9,10))
+  testthat::expect_equal(dim(x), c(9,9))
   testthat::expect_equal(object =
                            x |>
                            dplyr::filter(.variable_name == "b_1", .category == "A bit") |>
@@ -17,9 +17,9 @@ testthat::test_that("crosstable3", {
     x <-
       ex_survey1 |>
       saros:::crosstable3.data.frame(
-        cols = tidyselect::matches("b_"), by = x1_sex, showNA = "ifany")
+        cols = paste0("b_", 1:3), by = "x1_sex", showNA = "ifany")
   })
-  testthat::expect_equal(dim(x), c(18, 11))
+  testthat::expect_equal(dim(x), c(18, 10))
   testthat::expect_equal(object =
                            x |>
                            dplyr::filter(.variable_name == "b_1",

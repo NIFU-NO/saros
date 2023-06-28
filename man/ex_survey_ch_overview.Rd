@@ -9,9 +9,8 @@ A data frame with 3 rows and 6 variables:
 \describe{
   \item{chapter}{Manual entry chapter title}
   \item{author}{Single or multiple authors, separated by comma}
-  \item{dep_int}{Columns in ex_survey1 having the role of dependent variable and treated as integerish}
-  \item{dep_cat}{Columns in ex_survey1 having the role of dependent variable and treated as categorical/ordinal/nominal}
-  \item{indep_cat}{Columns in ex_survey1 having the role of independent variable and treated as categorical/ordinal/nominal}
+  \item{dep}{Columns in ex_survey1 having the role of dependent variable}
+  \item{indep}{Columns in ex_survey1 having the role of independent variable}
   \item{irrelevant_col}{Just a column about something else to verify that the system works also with superfluous information.}
 }
 }

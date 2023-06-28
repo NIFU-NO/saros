@@ -12,7 +12,7 @@
 handpick <- function(data, to_clipboard = FALSE) {
   if(interactive()) {
   x <-
-    select.list(colnames(data),
+    utils::select.list(colnames(data),
                    multiple=TRUE,
                    title='Pick columns in dataset',
                    graphics=TRUE)

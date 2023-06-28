@@ -8,6 +8,7 @@ render_saros_report(
   chapter_overview,
   data,
   path = "testreport",
+  tailored_var = NULL,
   report_generation_yaml_path = fs::path(path, "_report_generation_setup.yml")
 )
 }

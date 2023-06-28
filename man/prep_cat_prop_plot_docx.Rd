@@ -19,6 +19,3 @@ mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
 \description{
 Create Categorical Data Chart from Summarized Data
 }
-\examples{
-saros:::prep_cat_prop_plot_docx(saros:::summarize_data(ex_survey1[stringr::str_c("b_", 1:3)]))
-}

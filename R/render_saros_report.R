@@ -18,16 +18,18 @@ render_saros_report <-
   function(chapter_overview,
            data,
            path = "testreport",
+           tailored_var = NULL,
            report_generation_yaml_path = fs::path(path, "_report_generation_setup.yml")
-  ) {
+           ) {
+
     timestamp <- proc.time()
     check_data_frame(chapter_overview)
     check_data_frame(data)
     check_string(path, n=1, null.ok=TRUE)
     check_string(report_generation_yaml_path, n = 1, null.ok=FALSE)
-
-
-
+    check_string(tailored_var, n = 1, null.ok=TRUE)
+    if(rlang::is_string(tailored_var) &&
+       !any(colnames(data) == tailored_var)) cli::cli_abort("{.arg tailored_var}: {.arg {tailored_var}} not found in data.")
 
     if(inherits(data, "survey")) {
       data <- srvyr::ungroup(data)
@@ -54,13 +56,16 @@ render_saros_report <-
         label_separator = yml$label_separator,
         name_separator = yml$name_separator,
         !!!yml$element_args) %>%
-      dplyr::filter(.data$designated_role == "dep",
-                    .data$designated_type != "txt",
-                    .data$col_type != "chr"
-      ) ## TEMPORARY FIX!!
+      dplyr::filter(.data$designated_role == "dep") ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
+
 
 
     if(nrow(data_overview)==0) cli::cli_abort("{.var data_overview} is empty! Something is not right. Are there no factors in your data?")
+
+    all_authors <- get_authors(data = data_overview, col_name="authors")
+
+    if(rlang::is_null(tailored_var)) {
+      cli::cli_progress_message(msg = "Generating report ...")
 
       chapter_filepaths <-
         rlang::exec(
@@ -74,18 +79,67 @@ render_saros_report <-
           !!!yml$element_args,
           path = path)
 
-
       report_filepath <-
-        gen_qmd_index(
+        rlang::exec(
+          gen_qmd_index,
           yaml_file = yml$report_yaml_file,
-          authors = unique(data_overview[["author"]]),
+          title = yml$title,
+          authors = all_authors,
           index_filepath = fs::path(path, yml$index_filename),
           chapter_filepaths = chapter_filepaths,
+          !!!yml,
           call = rlang::caller_env())
 
-    if(interactive()) {
+      if(interactive()) {
         utils::browseURL(url = report_filepath)
+      }
+
+    } else {
+      uniques <-
+        if(is.factor(data[[tailored_var]])) levels(data[[tailored_var]]) else as.character(unique(data[[tailored_var]]))
+      if(any(nchar(uniques) > 12)) {
+        cli::cli_warn(c(x="tailored_var has levels > 12 characters: {{uniques[nchar(uniques)>12]}}.",
+                        i="This creates filepaths that are too long for Sharepoint/Quarto to handle..."))
+      }
+      report_filepath <-
+      purrr::map_chr(.x =
+                       cli::cli_progress_along(uniques,
+                                               format = "Generating tailored report for... {uniques[cli::pb_current]}",
+                                               clear = FALSE,
+                                               auto_terminate = FALSE),
+                     .f = ~{
+
+
+      chapter_filepaths <-
+        rlang::exec(
+          gen_qmd_chapters,
+          data_overview = data_overview,
+          data = data,
+          tailored_var = tailored_var,
+          tailored_group = uniques[.x],
+          element_names = yml$element_names,
+          chapter_yaml_file = yml$chapter_yaml_file,
+          label_separator = yml$label_separator,
+          translations = yml$translations,
+          !!!yml$element_args,
+          path = fs::path(path, uniques[.x]))
+
+
+      report_filepath <-
+        rlang::exec(
+          gen_qmd_index,
+          yaml_file = yml$report_yaml_file,
+          title = stringr::str_c(yml$title, uniques[.x]),
+          authors = all_authors,
+          index_filepath = fs::path(path, uniques[.x],
+                                    stringr::str_c(uniques[.x], "_", yml$index_filename)),
+          chapter_filepaths = chapter_filepaths,
+          !!!yml,
+          call = rlang::caller_env())
+
+      })
     }
+
     cat(proc.time()-timestamp)
     cat("\n")
     report_filepath

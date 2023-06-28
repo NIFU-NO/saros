@@ -8,6 +8,8 @@ gen_element_and_qmd_snippet(
   data_overview_section,
   element_name = "uni_cat_prop_plot",
   data,
+  tailored_var = NULL,
+  tailored_group = NULL,
   summarized_data = NULL,
   element_folderpath_absolute,
   element_folderpath_relative,
@@ -22,7 +24,7 @@ gen_element_and_qmd_snippet(
 \describe{
 \item{<grouping variables>}{ used to distinguish sets of columns belonging to each element.}
 \item{"col_name"}{ name of columns.}
-\item{"designated_type"}{ either 'cat' (categorical/ordinal/binary), 'int' (interval/continuous) or 'chr' (text).}
+\item{"col_type"}{ either 'cat' (categorical/ordinal/binary), 'int' (interval/continuous) or 'chr' (text).}
 }}
 
 \item{element_name}{See \code{element_list()} for options.}

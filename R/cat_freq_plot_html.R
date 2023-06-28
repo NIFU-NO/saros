@@ -76,8 +76,7 @@ prep_cat_freq_plot_html <-
                      legend.position = "bottom",
                      legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
                      strip.placement = "outside",
-                     strip.text = if(length(by_vars)>0) ggplot2::element_blank() else ggiraph::element_text_interactive(angle=90, hjust = .5, size = dots$main_font_size),
-
+                     strip.text =  ggiraph::element_text_interactive(data_id = "strip.text", angle=90, hjust = .5, size = dots$main_font_size), #if(length(by_vars)>0) ggplot2::element_blank() else
                      strip.background = ggiraph::element_rect_interactive(colour = NA)) +
       ggplot2::labs(x=NULL, y=NULL)
 
@@ -86,7 +85,7 @@ prep_cat_freq_plot_html <-
           ggiraph::facet_grid_interactive(
             rows = ggplot2::vars(.data[[".variable_label"]]),
             labeller = ggiraph::labeller_interactive(
-              .mapping = ggplot2::aes(tooltip = "Tooltip",
+              .mapping = ggplot2::aes(tooltip = .data[[".variable_label"]],
                                       label = string_wrap(.data$.label,
                                                           width = dots$x_axis_label_width))),
             interactive_on = "text",
@@ -115,10 +114,10 @@ prep_cat_freq_plot_html <-
 #' @inheritParams summarize_data
 #' @inheritParams prep_cat_freq_plot_html
 #' @inheritParams add_caption_attribute
-#' @param plot_height_multiplier [\code{numeric(1)>0}]\cr Height in cm per chart entry.
-#' @param plot_height_fixed_constant [\code{numeric(1)>0}]\cr Fixed height in cm.
-#' @param return_raw [\code{logical(1)}] Whether to return the raw static chart. Defaults to FALSE.
 #' @param ... Optional parameters forwarded from above.
+#' @param summarized_data Currently not in use
+#' @param tailored_group String, indicating name of tailored group.
+#' @param html_interactive Flag, defaults to TRUE
 #' @return ggplot
 #' @importFrom rlang !!!
 #' @export
@@ -134,7 +133,8 @@ embed_cat_freq_plot <-
          by = NULL,
          summarized_data = NULL,
          label_separator = NULL,
-         translations = getOption("saros")$translations,
+         tailored_group = NULL,
+         translations = .saros.env$defaults$translations,
          html_interactive = TRUE,
          call = rlang::caller_env()) {
 
@@ -153,10 +153,11 @@ embed_cat_freq_plot <-
       rlang::exec(
         summarize_data,
         data = data,
-        cols = cols_pos,
-        by = by_pos,
+        cols = names(cols_pos),
+        by = names(by_pos),
         label_separator = label_separator,
         add_n_to_bygroup = TRUE,
+        translations = translations,
         call = call,
         !!!dots)
 
@@ -182,6 +183,7 @@ embed_cat_freq_plot <-
         get_main_question2(label_separator = label_separator) %>%
         add_caption_attribute(data_out = data_out,
                               by_pos = by_label,
+                              tailored_group = tailored_group,
                               translations = translations)
     }
 

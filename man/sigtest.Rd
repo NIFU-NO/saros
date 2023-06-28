@@ -24,7 +24,7 @@ sigtest(
 
 \item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
-\item{col_type, by_type}{Optional string specifying data type ("int", "cat", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+\item{col_type, by_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
 
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
 

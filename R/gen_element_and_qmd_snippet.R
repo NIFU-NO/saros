@@ -12,7 +12,7 @@ compare_many <- function(x) {
 #' \describe{
 #' \item{<grouping variables>}{ used to distinguish sets of columns belonging to each element.}
 #' \item{"col_name"}{ name of columns.}
-#' \item{"designated_type"}{ either 'cat' (categorical/ordinal/binary), 'int' (interval/continuous) or 'chr' (text).}
+#' \item{"col_type"}{ either 'cat' (categorical/ordinal/binary), 'int' (interval/continuous) or 'chr' (text).}
 #' }
 #' @param element_name See \code{element_list()} for options.
 #' @param data Survey data.
@@ -24,6 +24,8 @@ gen_element_and_qmd_snippet <-
   function(data_overview_section,
            element_name = "uni_cat_prop_plot",
            data,
+           tailored_var = NULL,
+           tailored_group = NULL,
            summarized_data = NULL,
            element_folderpath_absolute,
            element_folderpath_relative,
@@ -37,12 +39,11 @@ gen_element_and_qmd_snippet <-
 
 
     stopifnot(inherits(data, "data.frame") || inherits(data, "survey"))
-    data_cols <- if(inherits(data, "survey")) survey:::dimnames.survey.design(data)[[2]] else colnames(data)
+    data_cols <- if(inherits(data, "survey")) colnames(data$variables) else colnames(data)
 
     fs::dir_create(element_folderpath_absolute, recurse = TRUE)
 
-    if(dplyr::n_distinct(data_overview_section$col_type) != 1 ||
-       dplyr::n_distinct(data_overview_section$designated_type) != 1 || # Later add check that all items contain the same by_cols_df
+    if(dplyr::n_distinct(data_overview_section$col_type) != 1 || # Later add check that all items contain the same by_cols_df
        dplyr::n_distinct(data_overview_section$label_prefix) != 1) return("")
 
 
@@ -57,7 +58,10 @@ gen_element_and_qmd_snippet <-
 
     if(nrow(section_key)>1) cli::cli_warn("Something weird going on in grouping.")
 
-    name <- list_valid_obj_name(section_key, max_width = dots$max_width_obj)
+    obj_name <- stringr::str_c(list_valid_obj_name(section_key, max_width = dots$max_width_obj),
+                               if(rlang::is_string(tailored_group)) "_", tailored_group)
+    name <- stringr::str_c(list_valid_obj_name(section_key, max_width = dots$max_width_obj),
+                           if(rlang::is_string(tailored_group)) "_", tailored_group)
 
 
     y_col_names <- unique(data_overview_section$col_name)
@@ -65,12 +69,12 @@ gen_element_and_qmd_snippet <-
 
 
 
-    variable_prefix <- if(!rlang::is_null(section_key$name_prefix) &&
-                          dplyr::n_distinct(section_key$name_prefix)==1) unique(section_key$name_prefix)
+    variable_prefix <-
+      if(any(names(section_key) == "name_prefix") &&
+         dplyr::n_distinct(section_key$name_prefix)==1) unique(section_key$name_prefix)
 
 
-
-    if(!stringi::stri_detect(element_name, regex="^bi_.*")) {
+    if(stringi::stri_detect(element_name, regex="^uni_.*")) {
 
       filename_prefix <- name
       filepath_rel_rds <- fs::path(element_folderpath_relative, stringr::str_c(filename_prefix, ".rds"))
@@ -84,42 +88,67 @@ gen_element_and_qmd_snippet <-
       filepath_abs_txt <- fs::path(element_folderpath_absolute, stringr::str_c(filename_prefix, ".txt"))
       filepath_abs_docx <- fs::path(element_folderpath_absolute, stringr::str_c(filename_prefix, ".docx"))
 
-      plot_height <-
-        if(!dots$vertical) {
-          max(stringi::stri_length(data_overview_section$label_prefix), na.rm=TRUE) /
-            dots$x_axis_label_width *
-            length(y_col_pos) *
-            dots$plot_height_multiplier +
-            dots$plot_height_fixed_constant
-        } else 10
+      plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
+                                          vertical = dots$vertical,
+                                          label_prefix = data_overview_section$label_prefix,
+                                          x_axis_label_width = dots$x_axis_label_width,
+                                          data = data,
+                                          showNA = dots$showNA,
+                                          plot_height_multiplier = dots$plot_height_multiplier,
+                                          plot_height_fixed_constant = dots$plot_height_fixed_constant,
+                                          plot_height_max = dots$plot_height_max,
+                                          plot_height_min = dots$plot_height_min,
+                                          vertical_height = dots$vertical_height)
+
 
 
       ######################################################################
 
       if(element_name == "uni_cat_text" &&
-         all(data_overview_section$designated_type == "cat")) {
+         all(data_overview_section$col_type == "fct")) {
         out <-
           rlang::exec(
             embed_cat_text_html,
             data = data,
             cols = y_col_pos,
             summarized_data = summarized_data,
+            tailored_group = tailored_group,
             translations = translations,
             !!!dots)
+        saveRDS(out, file = filepath_abs_rds)
         writeLines(text = stringr::str_c(out, collapse=""), con = filepath_abs_txt)
+      }
+
+      ######################################################################
+
+      if(element_name == "uni_chr_table" &&
+         all(data_overview_section$col_type == "chr") &&
+         length(y_col_pos) == 1) {
+        out <-
+          rlang::exec(
+            embed_chr_table_html,
+            data = data,
+            cols = y_col_pos,
+            summarized_data = summarized_data,
+            tailored_group = tailored_group,
+            translations = translations,
+            !!!dots)
+        saveRDS(out, file = filepath_abs_rds)
+        writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
       }
 
       ######################################################################
 
 
       if(element_name == "uni_cat_prop_plot" &&
-         all(data_overview_section$designated_type == "cat")) {
+         all(data_overview_section$col_type == "fct")) {
         out_docx <-
           rlang::exec(
             embed_cat_prop_plot_docx,
             data = data,
             cols = y_col_pos,
             summarized_data = summarized_data,
+            tailored_group = tailored_group,
             translations = translations,
             !!!dots)
         print(out_docx, target = filepath_abs_docx)
@@ -130,6 +159,7 @@ gen_element_and_qmd_snippet <-
             data = data,
             cols = y_col_pos,
             summarized_data = summarized_data,
+            tailored_group = tailored_group,
             translations = translations,
             html_interactive = TRUE,
             !!!dots)
@@ -154,33 +184,38 @@ gen_element_and_qmd_snippet <-
         return(
           stringr::str_c(
             insert_obj_in_qmd(element_name = paste0(element_name, "_html"),
-                              index = name,
+                              index = obj_name,
                               variable_prefix = variable_prefix,
+                              tailored_group = tailored_group,
                               filepath = filepath_rel_rds,
                               figure_height = plot_height,
                               add_text = FALSE,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
+                              translations = dots$translations,
                               caption = attr(out_html, "saros_caption")),
             insert_obj_in_qmd(element_name = paste0(element_name, "_pdf"),
-                              index = name,
+                              index = obj_name,
                               variable_prefix = variable_prefix,
+                              tailored_group = tailored_group,
                               filepath = filepath_rel_rds,
                               figure_height = plot_height,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
+                              translations = dots$translations,
                               caption = attr(out_html, "saros_caption")), sep="\n"))
       }
       ######################################################################
 
       if(element_name == "uni_cat_freq_plot" &&
-         all(data_overview_section$designated_type == "cat")) {
+         all(data_overview_section$col_type == "fct")) {
         out_docx <-
           rlang::exec(
             embed_cat_freq_plot_docx,
             data = data,
             cols = y_col_pos,
             summarized_data = summarized_data,
+            tailored_group = tailored_group,
             translations = translations,
             !!!dots)
         print(out_docx, target = filepath_abs_docx)
@@ -191,6 +226,7 @@ gen_element_and_qmd_snippet <-
             data = data,
             cols = y_col_pos,
             summarized_data = summarized_data,
+            tailored_group = tailored_group,
             translations = translations,
             html_interactive = TRUE,
             !!!dots)
@@ -203,117 +239,57 @@ gen_element_and_qmd_snippet <-
         return(
           stringr::str_c(
             insert_obj_in_qmd(element_name = paste0(element_name, "_html"),
-                              index = name,
+                              index = obj_name,
                               variable_prefix = variable_prefix,
+                              tailored_group = tailored_group,
                               filepath = filepath_rel_rds,
                               figure_height = plot_height,
                               add_text = FALSE,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
+                              translations = dots$translations,
                               caption = attr(out_html, "saros_caption")),
             insert_obj_in_qmd(element_name = paste0(element_name, "_pdf"),
-                              index = name,
+                              index = obj_name,
                               variable_prefix = variable_prefix,
+                              tailored_group = tailored_group,
                               filepath = filepath_rel_rds,
                               figure_height = plot_height,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
+                              translations = dots$translations,
                               caption = attr(out_html, "saros_caption")), sep="\n"))
       }
 
 
       ######################################################################
 
-      ######################################################################
-
-
-      # if(element_name == "uni_cat_freq_plot_html" &&
-      #    all(data_overview_section$designated_type == "cat")) {
-      #   out <-
-      #     rlang::exec(
-      #       embed_cat_freq_plot,
-      #       data = data,
-      #       cols = y_col_pos,
-      #       summarized_data = summarized_data,
-      #       translations = translations,
-      #       html_interactive = TRUE,
-      #       !!!dots)
-      #
-      # }
-      # ######################################################################
-      #
-      #
-      # if(element_name == "uni_cat_freq_plot_docx" &&
-      #    all(data_overview_section$designated_type == "cat")) {
-      #   out <-
-      #     rlang::exec(
-      #       embed_cat_freq_plot_docx,
-      #       data = data,
-      #       cols = y_col_pos,
-      #       summarized_data = summarized_data,
-      #       translations = translations,
-      #       !!!dots)
-      #   print(out, target = filepath_abs_docx)
-      # }
-      #
-      # ######################################################################
-      #
-      #
-      # if(element_name == "uni_cat_freq_plot_pdf" &&
-      #    all(data_overview_section$designated_type == "cat")) {
-      #   out <-
-      #     rlang::exec(
-      #       embed_cat_freq_plot,
-      #       data = data,
-      #       cols = y_col_pos,
-      #       summarized_data = summarized_data,
-      #       translations = translations,
-      #       html_interactive = FALSE,
-      #       !!!dots)
-      # }
-
-      ######################################################################
-
 
       if(element_name == "uni_cat_table" &&
-         all(data_overview_section$designated_type == "cat")) {
+         all(data_overview_section$col_type == "fct")) {
         out <-
           rlang::exec(
             embed_cat_table,
             data = data,
             cols = y_col_pos,
             summarized_data = summarized_data,
+            tailored_group = tailored_group,
             translations = translations,
             !!!dots)
         saveRDS(out, file = filepath_abs_rds)
         writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
       }
 
-      ######################################################################
-
-      # if(element_name == "uni_cat_table_docx" &&
-      #    all(data_overview_section$designated_type == "cat")) {
-      #   out <-
-      #     rlang::exec(
-      #       embed_cat_table_docx,
-      #       data = data,
-      #       cols = y_col_pos,
-      #       summarized_data = summarized_data,
-      #       !!!dots)
-      #   print(out, target = filepath_abs_docx)
-      #
-      # }
-
-      ######################################################################
 
       if(stringi::stri_detect(element_name, fixed = "uni_sigtest") &&
-         dplyr::n_distinct(unique(data_overview_section$designated_type)) == 1) {
+         dplyr::n_distinct(unique(data_overview_section$col_type)) == 1) {
         out <-
           rlang::exec(
             embed_uni_sigtest,
             data = data,
             cols = y_col_pos,
-            col_type = unique(data_overview_section$designated_type),
+            col_type = unique(data_overview_section$col_type),
+            tailored_group = tailored_group,
             translations = translations,
             !!!dots)
         saveRDS(out, file = filepath_abs_rds)
@@ -325,13 +301,15 @@ gen_element_and_qmd_snippet <-
       if(exists("out")) {
           out <-
             insert_obj_in_qmd(element_name = element_name,
-                              index = name,
+                              index = obj_name,
                               variable_prefix = variable_prefix,
+                              tailored_group = tailored_group,
                               filepath_txt = filepath_abs_rds,
                               filepath = filepath_rel_rds,
                               figure_height = plot_height,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
+                              translations = dots$translations,
                               caption = attr(out, "saros_caption"))
         return(out)
       }
@@ -368,13 +346,16 @@ gen_element_and_qmd_snippet <-
         out <-
         purrr::map2(.x = name_by, .y = names(name_by), .f = ~{
 
+          # Early check whether x and y are the same, which saros cannot handle
+          if(is.null(y_col_names) || is.null(.x) || any(y_col_names == .x)) return("")
+
           by_pos <- match(.x, data_cols)
 
           by_type <- vctrs::vec_slice(by_df, by_df$col_name == .x)
-          by_type <- by_type$designated_type
+          by_type <- by_type$col_type
 
           ##############################################################################
-          if(dplyr::n_distinct(data_overview_section$designated_type) == 1 &&
+          if(dplyr::n_distinct(data_overview_section$col_type) == 1 &&
              dplyr::n_distinct(by_type) == 1) {
             return(
               rlang::exec(
@@ -382,14 +363,15 @@ gen_element_and_qmd_snippet <-
                 data = data,
                 cols = y_col_pos,
                 by = by_pos,
-                col_type = unique(data_overview_section$designated_type),
+                col_type = unique(data_overview_section$col_type),
                 by_type = unique(by_type),
+                tailored_group = tailored_group,
                 translations = translations,
                 !!!dots)
             )
           }
         }) %>%
-          bind_rows()
+          dplyr::bind_rows()
 
         if(nrow(out)>0) {
           writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
@@ -397,21 +379,25 @@ gen_element_and_qmd_snippet <-
           return(
             insert_obj_in_qmd(element_name = element_name,
                               index = filename_prefix,
+                              tailored_group = tailored_group,
                               filepath_txt = filepath_abs_rds,
                               filepath = filepath_rel_rds,
+                              figure_height = plot_height,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
+                              translations = dots$translations,
                               caption = attr(out, "saros_caption")))
           }
         } else {
 
 
         purrr::map2_chr(.x = name_by, .y = names(name_by), .f = ~{
+          if(is.null(y_col_names) || is.null(.x) || any(y_col_names == .x)) return("")
 
           by_pos <- match(.x, data_cols)
 
           by_type <- vctrs::vec_slice(by_df, by_df$col_name == .x)
-          by_type <- by_type$designated_type
+          by_type <- by_type$col_type
 
           filename_prefix <- stringr::str_c(.y, collapse = "_")
           filepath_rel_rds <- fs::path(element_folderpath_relative, stringr::str_c(filename_prefix, ".rds"))
@@ -425,25 +411,28 @@ gen_element_and_qmd_snippet <-
           filepath_abs_txt <- fs::path(element_folderpath_absolute, stringr::str_c(filename_prefix, ".txt"))
           filepath_abs_docx <- fs::path(element_folderpath_absolute, stringr::str_c(filename_prefix, ".docx"))
 
+          plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
+                                              x_cols = by_pos,
+                                              vertical = dots$vertical,
+                                              label_prefix = data_overview_section$label_prefix,
+                                              x_axis_label_width = dots$x_axis_label_width,
+                                              data = data,
+                                              showNA = dots$showNA,
+                                              plot_height_multiplier = dots$plot_height_multiplier,
+                                              plot_height_fixed_constant = dots$plot_height_fixed_constant,
+                                              plot_height_max = dots$plot_height_max,
+                                              plot_height_min = dots$plot_height_min,
+                                              vertical_height = dots$vertical_height)
 
-          plot_height <-
-            if(!dots$vertical) {
-              max(stringi::stri_length(data_overview_section$label_prefix), na.rm=TRUE) /
-                dots$x_axis_label_width *
-                length(y_col_pos) *
-                length(by_pos) *
-                dplyr::n_distinct(data[[by_pos]], na.rm = TRUE) *
-                dots$plot_height_multiplier +
-                dots$plot_height_fixed_constant
-            } else 10
+
 
 
           ##############################################################
 
 
           # if(element_name == "bi_catcat_text" &&
-          #    all(data_overview_section$designated_type == "cat") &&
-          #    all(by_type == "cat")) {
+          #    all(data_overview_section$col_type == "fct") &&
+          #    all(by_type == "fct")) {
           #   out <-
           #     rlang::exec(
           #       embed_cat_text_html,
@@ -457,8 +446,8 @@ gen_element_and_qmd_snippet <-
 
 
           if(element_name == "bi_catcat_prop_plot" &&
-             all(data_overview_section$designated_type == "cat") &&
-             all(by_type == "cat")) {
+             all(data_overview_section$col_type == "fct") &&
+             all(by_type == "fct")) {
             out_docx <-
               rlang::exec(
                 embed_cat_prop_plot_docx,
@@ -466,6 +455,7 @@ gen_element_and_qmd_snippet <-
                 cols = y_col_pos,
                 by = by_pos,
                 summarized_data = summarized_data,
+                tailored_group = tailored_group,
                 translations = translations,
                 !!!dots)
             print(out_docx, target = filepath_abs_docx)
@@ -477,6 +467,7 @@ gen_element_and_qmd_snippet <-
                 cols = y_col_pos,
                 by = by_pos,
                 summarized_data = summarized_data,
+                tailored_group = tailored_group,
                 translations = translations,
                 html_interactive = TRUE,
                 !!!dots)
@@ -489,11 +480,13 @@ gen_element_and_qmd_snippet <-
               stringr::str_c(
                 insert_obj_in_qmd(element_name = paste0(element_name, "_html"),
                                   index = filename_prefix,
+                                  tailored_group = tailored_group,
                                   filepath = filepath_rel_rds,
                                   figure_height = plot_height,
                                   add_text = FALSE,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
+                                  translations = dots$translations,
                                   caption = attr(out_html, "saros_caption")),
                 insert_obj_in_qmd(element_name = paste0(element_name, "_pdf"),
                                   index = filename_prefix,
@@ -501,14 +494,15 @@ gen_element_and_qmd_snippet <-
                                   figure_height = plot_height,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
+                                  translations = dots$translations,
                                   caption = attr(out_html, "saros_caption")), sep="\n"))
 
 
           }
 
           if(element_name == "bi_catcat_freq_plot" &&
-             all(data_overview_section$designated_type == "cat") &&
-             all(by_type == "cat")) {
+             all(data_overview_section$col_type == "fct") &&
+             all(by_type == "fct")) {
             out_docx <-
               rlang::exec(
                 embed_cat_freq_plot_docx,
@@ -516,6 +510,7 @@ gen_element_and_qmd_snippet <-
                 cols = y_col_pos,
                 by = by_pos,
                 summarized_data = summarized_data,
+                tailored_group = tailored_group,
                 translations = translations,
                 !!!dots)
             print(out_docx, target = filepath_abs_docx)
@@ -527,6 +522,7 @@ gen_element_and_qmd_snippet <-
                 cols = y_col_pos,
                 by = by_pos,
                 summarized_data = summarized_data,
+                tailored_group = tailored_group,
                 translations = translations,
                 html_interactive = TRUE,
                 !!!dots)
@@ -539,18 +535,22 @@ gen_element_and_qmd_snippet <-
               stringr::str_c(
                 insert_obj_in_qmd(element_name = paste0(element_name, "_html"),
                                   index = filename_prefix,
+                                  tailored_group = tailored_group,
                                   filepath = filepath_rel_rds,
                                   figure_height = plot_height,
                                   add_text = FALSE,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
+                                  translations = dots$translations,
                                   caption = attr(out_html, "saros_caption")),
                 insert_obj_in_qmd(element_name = paste0(element_name, "_pdf"),
                                   index = filename_prefix,
+                                  tailored_group = tailored_group,
                                   filepath = filepath_rel_rds,
                                   figure_height = plot_height,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
+                                  translations = dots$translations,
                                   caption = attr(out_html, "saros_caption")), sep="\n"))
 
 
@@ -558,8 +558,8 @@ gen_element_and_qmd_snippet <-
 
 
           if(element_name == "bi_catcat_table" &&
-             all(data_overview_section$designated_type == "cat") &&
-             all(by_type == "cat")) {
+             all(data_overview_section$col_type == "fct") &&
+             all(by_type == "fct")) {
 
 
             out <-
@@ -569,6 +569,7 @@ gen_element_and_qmd_snippet <-
                 cols = y_col_pos,
                 by = by_pos,
                 summarized_data = summarized_data,
+                tailored_group = tailored_group,
                 translations = translations,
                 !!!dots)
             writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
@@ -582,11 +583,13 @@ gen_element_and_qmd_snippet <-
               return(
                 insert_obj_in_qmd(element_name = element_name,
                                   index = filename_prefix,
+                                  tailored_group = tailored_group,
                                   filepath_txt = filepath_abs_rds,
                                   filepath = filepath_rel_rds,
                                   figure_height = plot_height,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
+                                  translations = dots$translations,
                                   caption = attr(out, "saros_caption")))
           } else ""
         }) %>% stringr::str_c(collapse = "\n")

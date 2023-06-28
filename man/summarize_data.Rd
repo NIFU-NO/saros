@@ -7,10 +7,11 @@
 summarize_data(
   data,
   ...,
-  cols = tidyselect::everything(),
+  cols = colnames(data),
   by = NULL,
   label_separator = NULL,
   add_n_to_bygroup = FALSE,
+  translations = .saros.env$defaults$translations,
   call = rlang::caller_env()
 )
 }

@@ -2,24 +2,21 @@ testthat::test_that("get_colour_set", {
   testthat::expect_warning(
       get_colour_set(x = 1:4,
                      user_colour_set = c("#444444", "#dddddd", "#123414"),
-                     colour_na = "#ffffff",
-                     seed = 1),
+                     colour_na = "#ffffff"),
     regexp = "Fewer colours in user-provided colour palette than needed.")
   # testthat::expect_equal(x, c("#CAB2D6", "#33A02C", "#FDBF6F", "#A6CEE3"))
 
   testthat::expect_no_message(
     x <-
       get_colour_set(x = 1:3,
-                     user_colour_set = c("#444444", "#dddddd", "#123414"),
-                     seed = 1))
+                     user_colour_set = c("#444444", "#dddddd", "#123414")))
   testthat::expect_equal(x, c("1" = "#444444", "2" = "#dddddd", "3" = "#123414"))
 
 
   testthat::expect_warning(
     x <-
       get_colour_set(x = 1:14,
-                     user_colour_set = c("#444444", "#dddddd", "#123414"),
-                     seed = 1),
+                     user_colour_set = c("#444444", "#dddddd", "#123414")),
     regexp = "Fewer colours in user-provided colour palette than needed.")
   testthat::expect_equal(x,
                          c(`1` = "#440154FF", `2` = "#481D6FFF", `3` = "#453581FF", `4` = "#3D4D8AFF",
@@ -29,31 +26,26 @@ testthat::test_that("get_colour_set", {
 
   x <-
     get_colour_set(x = 1:2,
-                   user_colour_set = c("#440154FF", "#40BC72FF", "#CBE11EFF"),
-                   seed = 1)
-  testthat::expect_equal(x, c("1" = "#440154FF", "2" = "#CBE11EFF"))
+                   user_colour_set = c("#440154FF", "#40BC72FF", "#CBE11EFF"))
+  testthat::expect_equal(x, c("1" = "#440154FF", "2" = "#40BC72FF"))
 
   x <-
     get_colour_set(x = 1:2,
-                   user_colour_set = c("#440154FF", "#40BC72FF", "#CBE11EFF"),
-                   colour_2nd_binary_cat = "#ffffff",
-                   seed = 1)
-  testthat::expect_equal(x, c("1" = "#40BC72FF", "2" = "#ffffff"))
+                   user_colour_set = c("#440154FF", "#40BC72FF", "#CBE11EFF"))
+  testthat::expect_equal(x, c("1" = "#440154FF", "2" = "#40BC72FF"))
 
 
   x <-
     get_colour_set(x = c(1:2, NA),
                    user_colour_set = c("#440154FF", "#40BC72FF", "#CBE11EFF"),
-                   colour_na = "gray",
-                   seed = 1)
-  testthat::expect_equal(x, c("1" = "#440154FF", "2" = "#CBE11EFF", "NA" = "gray"))
+                   colour_na = "gray")
+  testthat::expect_equal(x, c("1" = "#440154FF", "2" = "#40BC72FF", "NA" = "gray"))
 
   x <-
     get_colour_set(x = c(1:2, NA),
                    user_colour_set = c("#440154FF", "#40BC72FF", "#CBE11EFF"),
                    colour_na = "gray",
-                   colour_2nd_binary_cat = "white",
-                   seed = 1)
-  testthat::expect_equal(x, c("1" = "#40BC72FF", "2" = "white", "NA" = "gray"))
+                   colour_2nd_binary_cat = "white")
+  testthat::expect_equal(x, c("1" = "#440154FF", "2" = "white", "NA" = "gray"))
 
 })

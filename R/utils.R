@@ -13,6 +13,22 @@ list_available_element_types <-
   }
 
 
+get_authors <- function(data, col_name) {
+  if(!rlang::is_null(data[[col_name]]) &&
+     !all(is.na(data[[col_name]]))) {
+
+    if(is.factor(data[[col_name]])) {
+
+      return(levels(data[[col_name]]))
+
+    } else if(is.character(data[[col_name]])) {
+
+      return(unique(data[[col_name]]))
+
+    } else cli::cli_abort("{.arg {col_name}} must be factor or character, not {.obj_type_friendly {data[[col_name]]}}.")
+  } else ''
+}
+
 #' Given Ordered Integer Vector, Return Requested Set.
 #'
 #' Useful for identifying which categories are to be collected.
@@ -392,7 +408,7 @@ col_to_binaries <- function(data, col, var_separator = "___", label_separator = 
 
 create_text_collapse <-
   function(text = NULL,
-           last_sep = getOption("saros")$translations$last_sep) {
+           last_sep = .saros.env$defaults$translations$last_sep) {
     cli::ansi_collapse(text, last = last_sep)
   }
 

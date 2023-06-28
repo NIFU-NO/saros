@@ -11,6 +11,7 @@ embed_cat_table(
   by = NULL,
   summarized_data = NULL,
   label_separator = NULL,
+  tailored_group = NULL,
   translations = .saros.env$defaults$translations,
   call = rlang::caller_env()
 )
@@ -25,6 +26,8 @@ embed_cat_table(
 \item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+
+\item{tailored_group}{String, indicating the name of the tailored group}
 
 \item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
 

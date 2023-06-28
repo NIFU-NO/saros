@@ -11,7 +11,8 @@ embed_cat_freq_plot_docx(
   by = NULL,
   summarized_data = NULL,
   label_separator = NULL,
-  translations = getOption("saros")$translations
+  tailored_group = NULL,
+  translations = .saros.env$defaults$translations
 )
 }
 \arguments{
@@ -23,18 +24,13 @@ embed_cat_freq_plot_docx(
 
 \item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
+\item{summarized_data}{Currently not in use}
+
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
 
+\item{tailored_group}{String, indicating name of tailored group.}
+
 \item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
-
-\item{docx_template}{[\code{character(1) || officer::read_docx()}]\cr
-Either a filepath to a template file, or a rdocx-object from \link[officer]{read_docx}.}
-
-\item{chart_formatting}{[\code{character(1)}]\cr Template style to be used for formatting chart}
-
-\item{caption_style}{[\code{character(1)}]\cr Template style to be used for formatting chart. Defaults to "Normal".}
-
-\item{caption_autonum}{Object obtained from \link[officer]{run_autonum}.}
 }
 \value{
 rdocx object, which can be saved with print() after loading the officer-package
@@ -44,20 +40,23 @@ Create Word Report with Univariates for Categorical Columns Sharing Same Categor
 }
 \examples{
 library(officer) # To save the rdocx object to disk
-filepath <-
- ex_survey1 |>
- embed_cat_freq_plot_docx(cols = a_1:a_9, return_raw = FALSE) |>
- print(target = "test_docx_a19.docx")
-file.remove(filepath)
-
-
 
  test_docx_b13 <-
    ex_survey1 |>
    embed_cat_freq_plot_docx(cols = b_1:b_3,
-                       plot_height_multiplier = .3,
-                       plot_height_fixed_constant = 1,
-                       return_raw = FALSE)
+              showNA = "never",
+              descend = TRUE,
+              return_raw = FALSE,
+              hide_label_if_prop_below=0,
+              data_label = "count",
+              data_label_decimal_symbol = ",",
+              digits = 1,
+              label_font_size = 12,
+              main_font_size = 12,
+             plot_height_multiplier = .3,
+             plot_height_fixed_constant = 1,
+              vertical = FALSE,
+              font_family = "sans")
 \dontrun{
 print(test_docx_b13, target = "test_docx_b13.docx")
 file.remove("test_docx_b13.docx")
