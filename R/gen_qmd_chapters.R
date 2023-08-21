@@ -23,9 +23,10 @@
 gen_qmd_chapters <-
   function(data_overview,
            data,
+           tailored_var = NULL,
+           tailored_group = NULL,
            element_names = NULL,
            label_separator = NULL,
-           report_yaml_file = NULL,
            chapter_yaml_file = NULL,
            translations = .saros.env$defaults$translations,
            path = getwd(),
@@ -33,16 +34,13 @@ gen_qmd_chapters <-
            call = rlang::caller_env()
   ) {
     dots <- rlang::list2(...)
+    check_string(tailored_group, n=1, null.ok=TRUE, call = call)
 
-    cli::cli_progress_message(msg = "Creating report files...")
     path <- fs::as_fs_path(path)
     fs::dir_create(path = path, recurse = TRUE)
 
 
-    if(is.null(chapter_yaml_file)) {
-       chapter_yml <-
-         ymlthis::yml_empty()
-    } else chapter_yml <- chapter_yaml_file
+
 
     grouping_structure <- dplyr::group_vars(data_overview)
 
@@ -54,8 +52,7 @@ gen_qmd_chapters <-
     }
 
     data_overview_chapter_groups <-
-      data_overview %>%
-      dplyr::group_by(.data[[grouping_structure[1]]])
+      dplyr::group_by(data_overview, dplyr::pick(tidyselect::all_of(grouping_structure[1])))
 
     cli::cli_progress_bar(name = "Creating chapter files...", type = "iterator",
                           format_done = "Chapter files completed!", clear = FALSE,
@@ -64,7 +61,7 @@ gen_qmd_chapters <-
 
     ## Generate each chapter. Returns paths to files, which are then used for index.qmd
     chapter_filepaths <-
-      data_overview_chapter_groups %>%
+      data_overview_chapter_groups %>% # CONVERT TO purrr::map_chr by taking dplyr::
       dplyr::group_map(
         .keep = TRUE,
         .f = function(data_overview_chapter,
@@ -78,57 +75,54 @@ gen_qmd_chapters <-
             dplyr::group_by(data_overview_chapter, dplyr::pick(tidyselect::all_of(grouping_structure)))
 
           # Paths
-            chapter_foldername <-
-              data_overview_chapter[[grouping_structure[1]]] %>%
-              unique() %>%
-              fix_path_spaces()
+          chapter_foldername <-
+            data_overview_chapter[[grouping_structure[1]]] %>%
+            unique() %>%
+            fix_path_spaces()
 
-            cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
+          cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
 
 
-            chapter_folderpath_absolute <- fs::path(path, chapter_foldername)
+          chapter_folderpath_absolute <- fs::path(path, chapter_foldername)
 
           fs::dir_create(path = chapter_folderpath_absolute, recurse = TRUE)
 
-          chapter_filepath_relative <-
-            stringr::str_c(chapter_foldername, ".qmd")
+          chapter_filepath_relative <- stringr::str_c(chapter_foldername, ".qmd")
 
-          chapter_filepath_absolute <-
-            fs::path(path, chapter_filepath_relative)
+          chapter_filepath_absolute <- fs::path(path, chapter_filepath_relative)
 
 
-          ### YAML
-
-          chapter_yml <-
-            chapter_yml %>%
-            ymlthis::yml_author(name = unique(data_overview_chapter[["author"]])) %>%
-            ymlthis::yml_toplevel(format = "html",
-                                  execute = list(list(cache = TRUE, echo = FALSE))) %>%
-            ymlthis::asis_yaml_output() %>%
-            as.character() %>%
-            stringi::stri_replace_all(regex = "```|yaml|\\[\\]", replacement = "\n") %>%
-            stringi::stri_replace_all(regex = "\\'FALSE\\'", replacement = "false") %>%
-            stringi::stri_replace_all(regex = "\\'TRUE\\'", replacement = "true") %>%
-            stringi::stri_replace_all(regex = "^\n\n\n", replacement = "")
+          authors <- get_authors(data = data_overview_chapter, col_name="authors")
+            # if(!rlang::is_null(data_overview_chapter$author) &&
+            #    !all(is.na(unique(data_overview_chapter$author)))) unique(data_overview_chapter$author) else ""
+          chapter_yml <- process_yaml(yaml_file = chapter_yaml_file,
+                                      title = NULL,
+                                      authors = authors)
 
           chapter_contents <-
-          rlang::exec(
-            gen_qmd_structure,
-            data = data,
-            data_overview = data_overview_chapter,
-            element_names = element_names,
-            label_separator = label_separator,
-            chapter_folderpath_absolute = chapter_folderpath_absolute,
-            chapter_foldername = chapter_foldername,
-            translations = translations,
-            summarized_data = NULL,
-            !!!dots,
-            call = call)
+            rlang::exec(
+              gen_qmd_structure,
+              data = data,
+              data_overview = data_overview_chapter,
+              tailored_var = tailored_var,
+              tailored_group = tailored_group,
+              element_names = element_names,
+              label_separator = label_separator,
+              chapter_folderpath_absolute = chapter_folderpath_absolute,
+              chapter_foldername = chapter_foldername,
+              translations = translations,
+              summarized_data = NULL,
+              !!!dots,
+              call = call)
 
+          qmd_start_section <- if(!rlang::is_null(dots$qmd_start_section_filepath)) readLines(con = dots$qmd_start_section_filepath)
+          qmd_end_section <- if(!rlang::is_null(dots$qmd_end_section_filepath)) readLines(con = dots$qmd_end_section_filepath)
 
-            stringr::str_c(chapter_yml,
-                           chapter_contents,
-                           sep = "\n") %>%
+          stringr::str_c(chapter_yml,
+                         qmd_start_section,
+                         chapter_contents,
+                         qmd_end_section,
+                         sep = "\n") %>%
             cat(file = chapter_filepath_absolute)
 
           chapter_filepath_relative

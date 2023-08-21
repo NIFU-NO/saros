@@ -50,8 +50,6 @@ add_collapsed_categories <-
            categories_treated_as_na = c(),
            call = rlang::caller_env()) {
 
-    # print(data_summary$.category)
-    # print(sort_by)
     check_sort_by(x = data_summary$.category, sort_by = sort_by, call = call)
 
 
@@ -66,7 +64,7 @@ add_collapsed_categories <-
       c(".category",
         ".count", ".count_se",
         ".proportion", ".proportion_se",
-        ".mean", ".mean_se", ".mean_base",
+        ".mean", ".mean_se", #".mean_base",
         ".data_label", ".sum_value")
 
     data_summary %>%
@@ -97,7 +95,7 @@ keep_subitem <- function(fct, label_separator = NULL,
          ordered = TRUE)
 }
 
-add_n_to_bygroups <- function(data_summary, add_n_to_bygroup = FALSE, by_names = by_names) {
+add_n_to_bygroups <- function(data_summary, add_n_to_bygroup = FALSE, by_names = NULL) {
 
   # if(!(add_n_to_bygroup && length(by_names) > 0)) {
   return(data_summary)
@@ -159,7 +157,7 @@ sort_data <- function(data_summary,
   } else if((length(dots$sort_by) == 1 &&
              dots$sort_by %in% .saros.env$summary_data_sort1) ||
             all(dots$sort_by %in% unique(data_summary$.category))) {
-    sort_col <- c(".comb_categories", ".sum_value", ".category")
+    sort_col <- c(".comb_categories", ".sum_value", by_names, ".category")
   }
 
   if(dots$descend) {
@@ -182,9 +180,15 @@ sort_data <- function(data_summary,
   data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label, variables_always_at_top, after = 0)
 
   if(length(by_names) > 0) {
+
     for(by_name in by_names) {
-      uniques <- rev(as.character(unique(data_summary[[by_name]])))
+      if(is.factor(data_summary[[by_name]])) {
+        uniques <- rev(levels(data_summary[[by_name]]))
+      } else {
+        uniques <- rev(as.character(unique(data_summary[[by_name]])))
+      }
       data_summary[[by_name]] <- forcats::fct_relevel(data_summary[[by_name]], uniques)
+      data_summary[[by_name]] <- forcats::fct_relevel(data_summary[[by_name]], dots$translations$tailored_label_all_others, after = length(uniques))
     }
   }
   data_summary
@@ -226,32 +230,43 @@ sort_data <- function(data_summary,
 summarize_data <-
   function(data,
            ...,
-           cols = tidyselect::everything(),
+           cols = colnames(data),
            by = NULL,
            label_separator = NULL,
            add_n_to_bygroup = FALSE,
+           translations = .saros.env$defaults$translations,
            call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
+    inherited_args <- formals(render_saros_report)
+    dots <- utils::modifyList(inherited_args, dots)
+    if(any(cols %in% by)) return()
 
-    fct_unions <- levels(forcats::fct_unify(fs = dplyr::select(data, {{cols}}))[[1]])
 
-    by_names <- colnames(dplyr::select(data, {{by}}))
+    fct_unions <- if(!inherits(data, "survey.design")) data[, cols] else data$variables[, cols]
+    fct_unions <- forcats::fct_unify(fs = fct_unions)[[1]]
+    fct_unions <- levels(fct_unions)
 
-
-    data %>%
-      crosstable3(cols = {{cols}}, by = {{by}}, showNA = dots$showNA) %>%
+    tmp <-
+    crosstable3(data,
+                cols = cols,
+                by = by,
+                showNA = dots$showNA,
+                totals = dots$totals,
+                translations = translations) %>%
       mutate_data_label(data_label = dots$data_label,
                         digits = dots$digits,
                         hide_label_if_prop_below = dots$hide_label_if_prop_below,
                         decimal_symbol = dots$data_label_decimal_symbol) %>%
       category_var_as_fct(fct_unions = fct_unions) %>%
-      add_collapsed_categories(sort_by = dots$sort_by, categories_treated_as_na = dots$categories_treated_as_na,
+      add_collapsed_categories(sort_by = dots$sort_by,
+                               categories_treated_as_na = dots$categories_treated_as_na,
                                data_label = dots$data_label) %>%
       dplyr::mutate(.variable_label = keep_subitem(fct = .data$.variable_label,
                                                    label_separator = label_separator)) %>%
-      add_n_to_bygroups(add_n_to_bygroup = add_n_to_by_group, by_names = by_names) %>%
-      flip_exception_categories(categories_treated_as_na = dots$categories_treated_as_na, sort_by = dots$sort_by) %>%
-      sort_data(by_names = by_names, !!!dots)
+      add_n_to_bygroups(add_n_to_bygroup = add_n_to_bygroup, by_names = by) %>%
+      flip_exception_categories(categories_treated_as_na = dots$categories_treated_as_na,
+                                sort_by = dots$sort_by) %>%
+      sort_data(by_names = by, !!!dots)
   }
 

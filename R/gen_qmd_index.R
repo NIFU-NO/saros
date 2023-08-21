@@ -23,66 +23,40 @@
 #'                  "Ch2.qmd",
 #'                  "Ch3.qmd"),
 #'                  index_filepath = filepath)
-#' if(interactive()) browseURL(filepath)
-#' unlink(filepath)
 gen_qmd_index <-
   function(
     yaml_file = NULL,
+    title = NULL,
     authors = NULL,
     index_filepath = "complete_report.qmd",
+    ...,
     chapter_filepaths = NULL,
     call = rlang::caller_env()) {
 
+    dots <- rlang::list2(...)
     check_string(authors, n = NULL, null.ok = TRUE, call = call)
     check_string(index_filepath, null.ok = FALSE, n = 1, call = call)
-    check_yml(yaml_file, call = call)
-
-    if(rlang::is_null(yaml_file)) {
-      yml_section <-
-        ymlthis::yml(get_yml = TRUE,
-                     author = FALSE,
-                     date = FALSE)
-    } else {
-      yml_section <-  yaml_file
-    }
-
-    add_freeze <- "execute:\n  freeze: auto\n---\n\n"
-    add_caption_settings <-
-      "crossref:
-  fig-title: Figur
-  tbl-title: Tabell
-  title-delim: ~"
 
     yml_section <-
-      yml_section %>%
-      ymlthis::yml_author(name = if(!is.null(authors)) authors else ymlthis::yml_empty()) %>%
-      ymlthis::yml_toplevel(format = "html",
-                            echo = FALSE,
-                            editor = "visual",
-                            `number-sections` = TRUE
-                            ) %>%
-      ymlthis::asis_yaml_output(fences = TRUE) %>%
-      stringi::stri_replace_all(regex = "```|yaml|\\[\\]", replacement = "\n") %>%
-      stringi::stri_replace_all(regex = "\\'FALSE\\'", replacement = "false") %>%
-      stringi::stri_replace_all(regex = "\\'TRUE\\'", replacement = "true") %>%
-      stringi::stri_replace_all(regex = "^\n\n\n", replacement = "") %>%
-      as.character() #%>%
-      # stringi::stri_replace_all(regex = "---\n\n", replacement = add_freeze) %>%
+      process_yaml(yaml_file = yaml_file,
+                   title = title,
+                   authors = authors)
 
 
     main_section <-
       purrr::map_chr(chapter_filepaths,
-                     .f = ~stringr::str_c('\n{{< include "', .x, '" >}}')) %>%
-      stringr::str_c(collapse = "\n")
+                     .f = ~stringr::str_c('\n{{< include "', .x, '" >}}'))
+    main_section <-  stringr::str_c(main_section, collapse = "\n")
 
-    end_section <-
-      "\n\n### Referanser
+    qmd_start_section <- if(!rlang::is_null(dots$qmd_start_section_filepath)) stringr::str_c(readLines(con = dots$qmd_start_section_filepath), collapse="\n")
+    qmd_end_section <- if(!rlang::is_null(dots$qmd_end_section_filepath)) stringr::str_c(readLines(con = dots$qmd_end_section_filepath), collapse="\n")
 
-::: {#refs}
-:::"
-    stringr::str_c(yml_section, main_section,
-                   end_section) %>%
-      cat(file = index_filepath, append = FALSE)
+    out <-
+      stringr::str_c(yml_section,
+                   qmd_start_section,
+                   main_section,
+                   qmd_end_section)
+    cat(out, file = index_filepath, append = FALSE)
     index_filepath
   }
 

@@ -11,7 +11,8 @@ embed_cat_freq_plot(
   by = NULL,
   summarized_data = NULL,
   label_separator = NULL,
-  translations = getOption("saros")$translations,
+  tailored_group = NULL,
+  translations = .saros.env$defaults$translations,
   html_interactive = TRUE,
   call = rlang::caller_env()
 )
@@ -25,17 +26,17 @@ embed_cat_freq_plot(
 
 \item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
+\item{summarized_data}{Currently not in use}
+
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+
+\item{tailored_group}{String, indicating name of tailored group.}
 
 \item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
 
+\item{html_interactive}{Flag, defaults to TRUE}
+
 \item{call}{Error call function, usually not needed.}
-
-\item{plot_height_multiplier}{[\code{numeric(1)>0}]\cr Height in cm per chart entry.}
-
-\item{plot_height_fixed_constant}{[\code{numeric(1)>0}]\cr Fixed height in cm.}
-
-\item{return_raw}{[\code{logical(1)}] Whether to return the raw static chart. Defaults to FALSE.}
 }
 \value{
 ggplot

@@ -7,9 +7,10 @@
 gen_qmd_chapters(
   data_overview,
   data,
+  tailored_var = NULL,
+  tailored_group = NULL,
   element_names = NULL,
   label_separator = NULL,
-  report_yaml_file = NULL,
   chapter_yaml_file = NULL,
   translations = .saros.env$defaults$translations,
   path = getwd(),
@@ -19,8 +20,6 @@ gen_qmd_chapters(
 }
 \arguments{
 \item{data_overview}{A (possibly grouped) tbl with overview of the survey columns in data.}
-
-\item{report_yaml_file, chapter_yaml_file}{Optional ymlthis-objects. Defaults will be obtained from getOptions("ymlthis.default_options") if NULL. The chapter_yaml_file will be used across all chapters. Authors will always be taken from the data_overview.}
 
 \item{path}{String specifying the path to the working directory. Defaults to the current working directory.}
 
@@ -32,6 +31,8 @@ gen_qmd_chapters(
 }}
 
 \item{index_filename}{String specifying the name of the main index Quarto file (and its subfolder) used to collect all the chapters. Defaults to "index.qmd".}
+
+\item{report_yaml_file, chapter_yaml_file}{Optional ymlthis-objects. Defaults will be obtained from getOptions("ymlthis.default_options") if NULL. The chapter_yaml_file will be used across all chapters. Authors will always be taken from the data_overview.}
 }
 \value{
 A Quarto survey report generated in the specified working directory.

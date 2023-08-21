@@ -3,8 +3,8 @@ argument_validation_and_insertion <- function(params) {
     if (!validation_fun(target[[param_name]])) {
       default <- env[[param_name]]
       cli::cli_warn(paste0("{.arg {param_name}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}), using default: {default}"))
-      target[[param_name]] <- default
-    }
+      default
+    } else target[[param_name]]
   }
   is_scalar_finite_doubleish <- function(x) {
     rlang::is_double(x, n = 1, finite = TRUE) || rlang::is_integerish(x, n = 1, finite = TRUE)
@@ -16,6 +16,8 @@ argument_validation_and_insertion <- function(params) {
     element_names = list(fun = function(x) rlang::is_character(x) && all(x %in% .saros.env$defaults$element_names)),
     report_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && fs::file_exists(x))),
     chapter_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && fs::file_exists(x))),
+    qmd_start_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && fs::file_exists(x))),
+    qmd_end_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && fs::file_exists(x))),
     index_filename = list(fun = rlang::is_string),
     translations = list(fun = function(x) rlang::is_bare_list(x) && all(purrr::map_lgl(x, ~is.character(.x)))) ### SHOULD BE MORE SPECIFIC FOR EACH ITEM?
   )
@@ -26,8 +28,16 @@ argument_validation_and_insertion <- function(params) {
     vertical = list(fun = rlang::is_bool),
     include_numbers = list(fun = rlang::is_bool),
     require_common_categories = list(fun = rlang::is_bool),
+    hide_chr_for_others = list(fun = rlang::is_bool),
+    tailored_first = list(fun = rlang::is_bool),
+    panel_tabset_tailored = list(fun = rlang::is_bool),
+    single_y_bivariate_elements = list(fun = rlang::is_bool),
+    totals = list(fun = rlang::is_bool),
     plot_height_multiplier = list(fun = function(x) is_scalar_finite_doubleish(x) && x > 0),
     plot_height_fixed_constant = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0),
+    plot_height_max = list(fun = function(x) is_scalar_finite_doubleish(x) && x > 0),
+    plot_height_min = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0),
+    vertical_height = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0),
     hide_label_if_prop_below = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0 && x <= 1),
     hide_bi_entry_if_sig_above = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0 && x <= 1),
     digits = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0),
@@ -44,17 +54,18 @@ argument_validation_and_insertion <- function(params) {
     font_family = list(fun = rlang::is_string),
     data_label_decimal_symbol = list(fun = rlang::is_string),
     data_label = list(fun = function(x) rlang::is_character(x) && any(.saros.env$defaults$element_args$data_label == x[1])),
+    groupby = list(fun = function(x) rlang::is_character(x)),
     showNA = list(fun = function(x) rlang::is_character(x) && any(.saros.env$defaults$element_args$showNA == x[1]))
   )
 
   for (par in names(arg_params)) {
-    check_and_set_default(target = params, param_name = par,
+    params[[par]] <- check_and_set_default(target = params, param_name = par,
                           validation_fun = arg_params[[par]]$fun,
                           env = .saros.env$defaults)
   }
 
   for (par in names(element_arg_params)) {
-    check_and_set_default(target = params$element_args, param_name = par,
+    params$element_args[[par]] <- check_and_set_default(target = params$element_args, param_name = par,
                           validation_fun = element_arg_params[[par]]$fun,
                           env = .saros.env$defaults$element_args)
   }

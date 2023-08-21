@@ -12,6 +12,7 @@ embed_cat_text_html(
   summarized_data = NULL,
   label_separator = NULL,
   translations = .saros.env$defaults$translations,
+  tailored_group = NULL,
   call = rlang::caller_env()
 )
 }
@@ -26,7 +27,9 @@ embed_cat_text_html(
 
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
 
-\item{translations}{A list of translations for the template text. See getOption("saros").}
+\item{translations}{A list of translations for the template text. See .saros.env$defaults.}
+
+\item{tailored_group}{String, indicating the name of the tailored group}
 
 \item{call}{Error call function, usually not needed.}
 
@@ -46,7 +49,18 @@ Creates a structured list with text interpretations for a set of variables.
 }
 \examples{
 embed_cat_text_html(ex_survey1,
-                  cols = tidyselect::matches("e_"),
-                  label_separator = " - ")
+cols = tidyselect::matches("e_"),
+contents = c("intro", "mode_max", "value_max",
+"value_min", "not_used_category", "mean_max", "mean_min"),
+label_separator = " - ",
+require_common_categories = FALSE,
+n_top_bottom = 1,
+showNA = "never",
+descend = TRUE,
+return_raw = TRUE,
+hide_label_if_prop_below=0,
+data_label = "count",
+data_label_decimal_symbol = ",",
+digits = 1)
 
 }

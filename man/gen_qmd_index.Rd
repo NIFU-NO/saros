@@ -6,8 +6,10 @@
 \usage{
 gen_qmd_index(
   yaml_file = NULL,
+  title = NULL,
   authors = NULL,
   index_filepath = "complete_report.qmd",
+  ...,
   chapter_filepaths = NULL,
   call = rlang::caller_env()
 )
@@ -41,6 +43,4 @@ index_file <-
                  "Ch2.qmd",
                  "Ch3.qmd"),
                  index_filepath = filepath)
-if(interactive()) browseURL(filepath)
-unlink(filepath)
 }

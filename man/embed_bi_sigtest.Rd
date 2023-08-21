@@ -25,7 +25,7 @@ embed_bi_sigtest(
 
 \item{...}{Optional parameters forwarded from above.}
 
-\item{col_type, by_type}{Optional string specifying data type ("int", "cat", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+\item{col_type, by_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
 
 \item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
 
@@ -40,7 +40,10 @@ Data frame
 Title
 }
 \examples{
-embed_bi_sigtest(data=ex_survey1, cols = a_1:a_9, by = x1_sex)
-embed_bi_sigtest(data=ex_survey1, cols = b_1:b_3, by = x1_sex, label_separator=" - ")
-embed_bi_sigtest(data=ex_survey1, cols = c_1:c_2, by = x1_sex)
+embed_bi_sigtest(data=ex_survey1, cols = a_1:a_9, by = x1_sex,
+                 reps=10, hide_test_if_n_below=1)
+embed_bi_sigtest(data=ex_survey1, cols = b_1:b_3, by = x1_sex,
+                 reps=10, hide_test_if_n_below=1, label_separator=" - ")
+embed_bi_sigtest(data=ex_survey1, cols = c_1:c_2, by = x1_sex,
+                 reps=10, hide_test_if_n_below=1)
 }

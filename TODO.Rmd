@@ -11,25 +11,44 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 # Version 1.5 (Spørringene)
-- not keeping significant relationships!
-- grouping_var
+- Unngå dots i alt... Bruk 
+dots <- rlang::list2(...)
+args_inherited <- formals(main_function)
+dots <- modifyList(args_inherited, dots)
 
-- plots: 
-    - hiding facet now happens with n_cols>1! (for PREP and FREQ)
+- single_y_bivariate_elements
+
+
+# Ønsker fra andre:
+- Litt mer interaktivitet i figurer (få opp N når man holder markøren over en prosentandel, og motsatt)
+- Trivariater/stratifiserte figurer/tabeller: Ser ut som at det ikke bare er Spørringene som har en variabel som man alltid ønsker å bryte ned på (resp). I KU er det fagfelt og institusjon, i AGU er det sektor. Da bør man kunne få ut tabell/figur for et spørsmål som er brutt ned på både resp og sentralitet (Karl har allerede lagd noen slike kryssede variabler, men det kan gjøres enda litt mer tilpasset).
+- Laste ned bakgrunnsdata for figurene som Excel-fil - både for hele rapporten og for ev. deltakende institusjoner. Da kan oppdragsgivere og andre deltakere lage sine egne figurer om de ønsker det. Dette blir også ganske tilsvarende det Karl gjør i dag, bare satt opp på en litt annen måte.
+
+
+
+
+# docx (NIFU stil?):
+    - tables should be centered by default
+    - tables are not having right style?
+    - more air between elements?
+
+# sigtest
+  + overkill with main_question in label + as label-column header.
+  - Caption should contain translations$sigtest_caption_stub
+
+# plots
+- estimate_plot_height: consider totals=TRUE
+- colour_2nd_binary_cat is not working consistently with data$s_43 (gender) and when tailored
+    - legend is missing when there are two categories in cat_prop, but n
+    - unused levels seem to cause confusion in hide_legend and colours. and tables
+        - all should be displayed 
     - transpose plots (at least two different orientations of prop_plot available)
         current prop_plot for bivariates: y-axis=by-variable categories. 
     - interactivity...
-- tables: 
-    - total row in bi-tables?
-- confirm whether long path names are working regarding quarto render, and render_saros_report   
-
-- chapter initial r chunk with options and useful packages
-    - ggiraph set global options within qmd/yaml
-    - tidyverse
-- extract gen_yaml_default stuff from render_saros_report
-- new argument: formats (html, non-html, all)
+    - N in legend for each by group
+    - add_n_to_bygroup => yaml
+    - implement uni_plot_int_* bi_plot_intint_* bi_plot_intcat_* 
 - colours
 	- if .categories %in% yml$params$colour, use associated colour
 		- Bruk så fargepalett på resten
@@ -39,40 +58,88 @@ knitr::opts_chunk$set(echo = TRUE)
 		- which also allows paletter
 		- if is.colour => as colours, else if in paletter list, use that
 		- if colour_2nd_binary is applicable, should forcats::fct_rev(.x)
-- nifutheme
+- prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable
+- can label_font_size, main_font_size, font_family, data_label_decimal_symbol be set later through CSS/YAML?
+
+
+# cat_text
+  - incorrect numbers?
+  - If only single question, simplify output!
+  - respecting data_label
+  - long batteries not respecting n_top_bottom?
+  - must explain that it is sum of upper categories
+  - bool: str_to_sentence, asis
+
+# summarize_data
+- sorting of by should only occur if is.ordered(data[[by_name]]), otherwise ignore it and just sort by .sum_value
+- only call summarize_data once and reuse.
+
+
+# refine_data_overview
++ not keeping significant relationships!
+- simpler data_overview dep/indep notation: allow spaces, not having to use matches?
+- No var label will cause entire chapter to be NA...
+    + NA labels should be replaced with variable name in refine_data_overview
+    - Functions should not return NA to stringr::str_c()
+    - Any group_by set of variables in data_overview should not have NA (or deal appropriately with them)
+- cleaner error message if variable does not exist in data:
+     Error in `dplyr::mutate()`:es if `hide_bi_entry_if_sig_above`: `0.05`, except .
+ ℹ In argument: `cols = eval_cols(x = .data$col_spec, data = .env$data, call = call)`.
+ Caused by error in `purrr::map()`:
+  ℹ In index: 1.
+  Caused by error in `render_saros_report()`:
+   ! Column `svarp` does not exist in data.
+- Check early on if multiple variables have identical labels and warn imemdiately
+- cli_inform rows removed with hide_bi_entry_if_sig_above
+
+# YAML, config, etc
+- extract gen_yaml_default stuff from render_saros_report
+- separate settings for each element type
+- rewrite dots so that each function works independently (easier for testing, documentation, etc)
+- move some parameters from _report_generation_setup.yml to _quarto.yml file and perform modifications in a R-script loaded in the beginning of index.qmd
+- descend is currently global across all variables...
+- showNA "always" and "ifany" are identical? Simplify to TRUE/FALSE?
+
+
+# Folder structure
+- Chapter files and subfolders should be placed in subfolders, and these should be nested in author-folders
+- folder structure: all png in separate folder, etc.
+- Preclean folder names: The name of the input file cannot contain the special shell characters: [ <>()|\:&;#?*']
+
+
+# tables
+- vertical argument in tables are a pivot-string similar to SSB: 1,2,3
+    - As any element_type so one can get all at once. OR, let reader decide?
+
+# nifutheme
 	- all yaml-files
   - doc-reference template for quarto
   - https://quarto.org/docs/extensions/project-types.html
-- N in legend for each by group
-    - add_n_to_bygroup => yaml
-- implement t-test etc in early removal of bivariates
-- implement uni_plot_int_html and bi_plot_int_html 
-- Chapter files and subfolders should be placed in subfolders, and these should be nested in author-folders
-- separate settings for each element type
-- vertical argument in tables are a pivot-string similar to SSB: 1,2,3
-    - As any element_type so one can get all at once. OR, let reader decide?
-- prep_cat_prop_plot_pdf: Implement n_right_side for when tooltips are unavailable
-- download figure data as xlsx (priority in KU)
-    - toggle between figure and table using ::: {.panel-tabset} + heading for each tabset
+- css: nifustil.css
+    ```{=html}
+<style type="text/css">
+caption, .table-caption {
+  text-align: left;
+}
+</style>
+```
 - sub-groups, interaction terms or "stratification" (resp in Spørringene, etc.)
-- simpler dep_cat notation: allow spaces, not having to use matchesP?
-- reintroduce dep_txt
-- only call summarize_data once and reuse.
-- save settings with the object(s)/log?
+- avoid copying main report when rlang::is_string(tailored_group)
+
+
+## Stuff partially out of my control:
 - Issue at https://github.com/tidymodels/infer about annoying warning.
+- Report to quarto-cli that not possible to do both comments: and TOC. in website.
 - report to quarto-cli that tbl-cap: '' results in error "attempt to index a nil value (field 'integer index')"
 - report to Rstudio that when previewing/showing a rendered html, building a package should stop this connection - otherwise hangs.
-
-## DOCX
+- Waiting for Quarto feature: download figure data as xlsx (priority in KU)
+- - Issue at Quarto-cli for: The name of the input file cannot contain the special shell characters: [ <>()|\:&;#?*']
 - officer::body_add(doc_1, officer::block_pour_docx("graph.docx"))
+- Local URLs should be integrated into index_files-folder
 
 - Figure out project website structure and location
-- Always hide heading if nothing to show within that level. If data_overview suggests it exists, it must exist, otherwise empty heading?
-- descend is currently global across all variables...
-- count number of rows removed with hide_bi_entry_if_sig_above
 
 # Version 3.0
-- different colours for bi-plot with two groups: Slightly brighter for second group
 - @keywords internal for all internal functions having documentation.
 - multiple levels of by
 -   S3 class-based objects, or just lists for now? input/output as list of df, var_frame and design_frame. Single input, single output.
@@ -83,7 +150,6 @@ knitr::opts_chunk$set(echo = TRUE)
 - Tests for graphs using snapshots and data in ggplot object
 - target and renv initialization with menu selection. => {saros.template}
 - Replace ymlthis with yaml-package.
-- showNA "always" and "ifany" are identical? Simplify to TRUE/FALSE?
 - Split off rename_variables into either janitor or a vctrs::vec_as_names() extension
 
 
@@ -122,8 +188,8 @@ knitr::opts_chunk$set(echo = TRUE)
     - exemplify all non-trivial argument inputs (lists, vectors, objects)
     - better hints in error/warning messages
     - progress bars
-- increase test coverage
 - more robustness
+    - increase test coverage
     - moduling / code refactoring
     - target package / renv
     - argument checks
@@ -154,7 +220,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # OLD STUFF, IGNORE
 
 
-## Psychometrics
+## saros.instruments
 	Improvement over time (p1-p0)
 	IRT parameters (a, b, c), with low discriminators, and extremely hard/easy items flagged
 	Items with responses above/below 95/5 percentage flagged
@@ -166,11 +232,12 @@ knitr::opts_chunk$set(echo = TRUE)
 -	https://github.com/tidymodels/model-implementation-principles/blob/master/06-arguments.Rmd
 
 
+# saros.model
 
-# step_auto_tick_recode
+## step_auto_tick_recode
 -   Some form of automatic recode of multiple tick-box items where no cross is missing? Or perhaps strongly advice people not to use them?
 
-# add_regression
+## add_regression
 -   Extract dummy recoder?
 -   loading_cutoff =\> move to add_fit?
 -   V2: How to distinguish x_var as single latent variable from set of manifest variables?

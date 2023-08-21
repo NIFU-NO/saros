@@ -54,7 +54,8 @@ prep_cat_prop_plot_html <-
           if(prop_family) {
             sprintf(fmt = "%s: %.0f", .data[[".category"]], .data[[".count"]])
             } else {
-            sprintf(fmt = stringr::str_c("%s: %.", dots$digits, "f%%"), .data[[".category"]], .data[[".proportion"]]*100)
+            sprintf(fmt = stringr::str_c("%s: %.", dots$digits, "f%%"),
+                    .data[[".category"]], .data[[".proportion"]]*100)
             }) %>%
       ggplot2::ggplot(
         mapping = ggplot2::aes(
@@ -89,17 +90,18 @@ prep_cat_prop_plot_html <-
                      legend.position = "bottom",
                      legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
                      strip.placement = "outside",
-                     strip.text = if(length(by_vars)>0) ggplot2::element_blank() else ggiraph::element_text_interactive(angle=90, hjust = .5, size = dots$main_font_size),
+                     strip.text = ggiraph::element_text_interactive(data_id = "strip.text", angle=0, hjust = .5, size = dots$main_font_size), #if(length(by_vars)>0) ggplot2::element_blank() else
                      strip.background = ggiraph::element_rect_interactive(colour = NA)) +
       ggplot2::labs(x=NULL, y=NULL)
 
-      if(length(by_vars) >= 1L) {
+      if(length(by_vars) > 1L || (length(by_vars) >= 1L && dplyr::n_distinct(data[[".variable_label"]]) > 1)) {
         p <- p +
           ggiraph::facet_grid_interactive(
             rows = ggplot2::vars(.data[[".variable_label"]]),
             labeller = ggiraph::labeller_interactive(
-              .mapping = ggplot2::aes(tooltip = "Tooltip",
-                                      label = string_wrap(.data$.label, width = dots$x_axis_label_width))),
+              .mapping = ggplot2::aes(tooltip = .data[[".variable_label"]],
+                                      label = string_wrap(.data$.variable_label,
+                                                          width = dots$x_axis_label_width))),
             interactive_on = "text",
             switch = "y", scales = "free_y", space = "free_y"
           )
@@ -145,6 +147,7 @@ embed_cat_prop_plot <-
          by = NULL,
          summarized_data = NULL,
          label_separator = NULL,
+         tailored_group = NULL,
          html_interactive = TRUE,
          translations = .saros.env$defaults$translations,
          call = rlang::caller_env()) {
@@ -164,10 +167,11 @@ embed_cat_prop_plot <-
       rlang::exec(
         summarize_data,
         data = data,
-        cols = cols_pos,
-        by = by_pos,
+        cols = names(cols_pos),
+        by = names(by_pos),
         label_separator = label_separator,
         add_n_to_bygroup = TRUE,
+        translations = translations,
         call = call,
         !!!dots)
 
@@ -193,6 +197,7 @@ embed_cat_prop_plot <-
         get_raw_labels(data = data, cols_pos = cols_pos) %>%
         get_main_question2(label_separator = label_separator) %>%
         add_caption_attribute(data_out = data_out, by_pos = by_label,
+                              tailored_group = tailored_group,
                               translations = translations)
     }
 

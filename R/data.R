@@ -59,19 +59,11 @@
 #' \describe{
 #'   \item{chapter}{Manual entry chapter title}
 #'   \item{author}{Single or multiple authors, separated by comma}
-#'   \item{dep_int}{Columns in ex_survey1 having the role of dependent variable and treated as integerish}
-#'   \item{dep_cat}{Columns in ex_survey1 having the role of dependent variable and treated as categorical/ordinal/nominal}
-#'   \item{indep_cat}{Columns in ex_survey1 having the role of independent variable and treated as categorical/ordinal/nominal}
+#'   \item{dep}{Columns in ex_survey1 having the role of dependent variable}
+#'   \item{indep}{Columns in ex_survey1 having the role of independent variable}
 #'   \item{irrelevant_col}{Just a column about something else to verify that the system works also with superfluous information.}
 #' }
 "ex_survey_ch_overview"
 
-
-
-#' ex_survey_elements_list: List of elements (currently only uni_cat_prop_plot_html) for the ex_survey1
-#'
-#' @format A nested list of length one, where the unitary element consists
-#' of multiple elements, for each of the data_overview combinations:
-"ex_survey_elements_list"
 
 

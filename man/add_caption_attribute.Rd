@@ -8,6 +8,7 @@ add_caption_attribute(
   main_question,
   data_out,
   by_pos,
+  tailored_group = NULL,
   translations = .saros.env$defaults$translations
 )
 }
@@ -17,6 +18,8 @@ add_caption_attribute(
 \item{data_out}{Output from summarize_data}
 
 \item{by_pos}{Named integer for the by-variable.}
+
+\item{tailored_group}{String, indicating the name of the tailored group}
 
 \item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
 }

@@ -45,13 +45,13 @@ get_main_question2 <-
       stringi::stri_replace(str = x,
                            regex = stringr::str_c("(^.*)", label_separator, "(.*$)"),
                            replacement = "$1") %>%
-      unique() %>%
-      stringr::str_c(., collapse="\n")
+      unique()
+    x <- if(length(x)>0) stringr::str_c(x, collapse="\n")
     if(length(x) > 1L && warn_multiple) {
       cli::cli_warn(c(x="There are multiple main questions for these variables.",
                       i="Check your data."), call = call)
     } else if(length(x) == 0L) {
-      cli::cli_abort(c(x="No main question found.",
+      cli::cli_warn(c(x="No main question found.",
                        i="Check your {.arg label_separator}."), call = call)
     }
     x
@@ -133,7 +133,7 @@ rename_by_labels <-
     df_labels <- dplyr::arrange(df_labels, .data$label_pre, .data[[sort_var]])
     df_labels <- dplyr::group_by(df_labels, .data$label_pre)
     df_labels <- dplyr::mutate(df_labels,
-                               label_suf_no = if(dplyr::n()==1L) NA_character_ else if(n()<10L) sprintf("%01d", seq_len(n())) else if(dplyr::n()>=10L) sprintf("%02d", seq_len(dplyr::n())))
+                               label_suf_no = if(dplyr::n()==1L) NA_character_ else if(dplyr::n()<10L) sprintf("%01d", seq_len(dplyr::n())) else if(dplyr::n()>=10L) sprintf("%02d", seq_len(dplyr::n())))
     df_labels <- dplyr::ungroup(df_labels)
     df_labels <- tidyr::unite(df_labels, col = "variable_new", c(.data$label_pre3, .data$label_suf_no), sep = new_var_sep, na.rm = TRUE)
     data <- dplyr::rename_with(.data = data,

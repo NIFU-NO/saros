@@ -6,8 +6,6 @@
 #'
 #' @return mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
 #'
-#' @examples
-#' saros:::prep_cat_freq_plot_docx(saros:::summarize_data(ex_survey1[stringr::str_c("b_", 1:3)]))
 prep_cat_freq_plot_docx <-
   function(data,
            ...,
@@ -99,31 +97,29 @@ prep_cat_freq_plot_docx <-
 #' @inheritParams prep_cat_freq_plot_docx
 #' @inheritParams embed_cat_freq_plot
 #' @inheritParams add_caption_attribute
-#' @param docx_template  [\code{character(1) || officer::read_docx()}]\cr
-#' Either a filepath to a template file, or a rdocx-object from \link[officer]{read_docx}.
-#' @param chart_formatting [\code{character(1)}]\cr Template style to be used for formatting chart
-#' @param caption_style [\code{character(1)}]\cr Template style to be used for formatting chart. Defaults to "Normal".
-#' @param caption_autonum Object obtained from \link[officer]{run_autonum}.
 #'
 #' @return rdocx object, which can be saved with print() after loading the officer-package
 #' @export
 #'
 #' @examples
 #' library(officer) # To save the rdocx object to disk
-#' filepath <-
-#'  ex_survey1 |>
-#'  embed_cat_freq_plot_docx(cols = a_1:a_9, return_raw = FALSE) |>
-#'  print(target = "test_docx_a19.docx")
-#' file.remove(filepath)
-#'
-#'
 #'
 #'  test_docx_b13 <-
 #'    ex_survey1 |>
 #'    embed_cat_freq_plot_docx(cols = b_1:b_3,
-#'                        plot_height_multiplier = .3,
-#'                        plot_height_fixed_constant = 1,
-#'                        return_raw = FALSE)
+#'               showNA = "never",
+#'               descend = TRUE,
+#'               return_raw = FALSE,
+#'               hide_label_if_prop_below=0,
+#'               data_label = "count",
+#'               data_label_decimal_symbol = ",",
+#'               digits = 1,
+#'               label_font_size = 12,
+#'               main_font_size = 12,
+#'              plot_height_multiplier = .3,
+#'              plot_height_fixed_constant = 1,
+#'               vertical = FALSE,
+#'               font_family = "sans")
 #' \dontrun{
 #' print(test_docx_b13, target = "test_docx_b13.docx")
 #' file.remove("test_docx_b13.docx")
@@ -135,7 +131,8 @@ embed_cat_freq_plot_docx <-
            by = NULL,
            summarized_data = NULL,
            label_separator = NULL,
-           translations = getOption("saros")$translations) {
+           tailored_group = NULL,
+           translations = .saros.env$defaults$translations) {
 
     dots <- rlang::list2(...)
 
@@ -152,10 +149,11 @@ embed_cat_freq_plot_docx <-
       rlang::exec(
         summarize_data,
         data = data,
-        cols = cols_pos,
-        by = by_pos,
+        cols = names(cols_pos),
+        by = names(by_pos),
         label_separator = label_separator,
         add_n_to_bygroup = TRUE,
+        translations = translations,
         call = call,
         !!!dots)
 
@@ -186,6 +184,7 @@ embed_cat_freq_plot_docx <-
           get_raw_labels(data = data, cols_pos = cols_pos) %>%
           get_main_question2(label_separator = label_separator) %>%
           add_caption_attribute(data_out = data_out, by_pos = by_label,
+                                tailored_group = tailored_group,
                                 translations = translations)
     }
 

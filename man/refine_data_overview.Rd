@@ -22,9 +22,9 @@ refine_data_overview(
 
 \item{name_separator}{Optional string for separating column name between main question and sub-item.}
 
-\item{group_by}{Character vector of colnames used for identifying chapters and sections.}
+\item{groupby}{Character vector of colnames used for identifying chapters and sections.}
 
-\item{sort_by}{Character vector of of colnames used to order pieces within each group_by combination.}
+\item{sort_by}{Character vector of of colnames used to order pieces within each groupby combination.}
 }
 \value{
 Data frame
@@ -33,9 +33,10 @@ Data frame
 Processes A 'data_overview' Data Frame
 }
 \examples{
-refine_data_overview(ex_survey_ch_overview)
-refine_data_overview(ex_survey_ch_overview,
+ref_df <- refine_data_overview(ex_survey_ch_overview)
+ref_df2 <- refine_data_overview(ex_survey_ch_overview,
                      data = ex_survey1,
                      label_separator = " - ",
+                     hide_bi_entry_if_sig_above = .05,
                      name_separator = "_")
 }

@@ -181,7 +181,7 @@ testthat::test_that("check_data_frame", {
   test_arg <- "not_a_data_frame"
   testthat::expect_error(
     object = saros:::check_data_frame(test_arg),
-    regexp = "`test_arg` must be a data.frame or tibble, not a string"
+    regexp = "`test_arg` must be a data.frame, not a string"
   )
 
   test_arg <- data.frame(a = 1:3, b = 4:6)
@@ -189,21 +189,17 @@ testthat::test_that("check_data_frame", {
     object = saros:::check_data_frame(test_arg)
   )
 
-  test_arg <- tibble::tibble(a = 1:3, b = 4:6)
-  testthat::expect_no_error(
-    object = saros:::check_data_frame(test_arg)
-  )
 
   test_arg <- list(a = 1:3, b = 4:6)
   testthat::expect_error(
     object = saros:::check_data_frame(test_arg),
-    regexp = "`test_arg` must be a data.frame or tibble, not a list"
+    regexp = "`test_arg` must be a data.frame, not a list"
   )
 
   test_arg <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 3, ncol = 2)
   testthat::expect_error(
     object = saros:::check_data_frame(test_arg),
-    regexp = "`test_arg` must be a data.frame or tibble, not a double matrix"
+    regexp = "`test_arg` must be a data.frame, not a double matrix"
   )
 })
 

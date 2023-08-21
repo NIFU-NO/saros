@@ -16,19 +16,19 @@ find_stat_config <-
 
         col_n == 2 && length(by_pos) == 0 ~ "prop",
 
-        col_type %in% c("cat", "factor", "character") && col_n > 2 && length(by_pos) == 0 ~ "chisq",
+        col_type %in% c("fct", "factor", "character") && col_n > 2 && length(by_pos) == 0 ~ "chisq",
 
         col_type %in% c("numeric", "integer", "int") && length(by_pos) == 1 &&
           by_type %in% c("numeric", "integer", "int") && by_n >= 5 ~ "correlation",
 
         col_type %in% c("numeric", "integer", "int") && length(by_pos) == 1 &&
-          by_type %in% c("cat", "factor", "character") && by_n > 2 ~ "F",
+          by_type %in% c("fct", "factor", "character") && by_n > 2 ~ "F",
 
         col_type %in% c("numeric", "integer", "int") && length(by_pos) == 1 &&
-          by_type %in% c("cat", "factor", "character") && by_n == 2 ~ "t",
+          by_type %in% c("fct", "factor", "character") && by_n == 2 ~ "t",
 
-        col_type %in% c("cat", "factor", "character") && length(by_pos) == 1 &&
-          by_type %in% c("cat", "factor", "character") && by_n >= 2 ~ "chisq",
+        col_type %in% c("fct", "factor", "character") && length(by_pos) == 1 &&
+          by_type %in% c("fct", "factor", "character") && by_n >= 2 ~ "chisq",
 
         .default = "NA"
       )
@@ -63,7 +63,7 @@ find_stat_config <-
 #' Test Significance Based on Randomization Theory
 #'
 #' @inheritParams summarize_data
-#' @param col_type,by_type Optional string specifying data type ("int", "cat", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.
+#' @param col_type,by_type Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.
 #' @param reps Integer, number of permutations.
 #' @param hide_test_if_n_below Integer, if N is below this value, pvalue will not be shown.
 #'
@@ -123,7 +123,7 @@ sigtest <-
       col_type <- class(data[[cols_pos]])
     } else if(col_type == "int" && class(data[[cols_pos]]) %in% c("factor")) {
       data[[cols_pos]] <- as.numeric(data[[cols_pos]])
-    } else if(col_type == "cat" && class(data[[cols_pos]]) %in% c("integer", "numeric")) {
+    } else if(col_type == "fct" && class(data[[cols_pos]]) %in% c("integer", "numeric")) {
       data[[cols_pos]] <- as.factor(data[[cols_pos]])
     }
     col_n <- dplyr::n_distinct(data[[cols_pos]], na.rm = TRUE)
@@ -152,7 +152,8 @@ sigtest <-
 
     if(col_n > 1 &&
        (length(by_pos) == 0 || by_n > 1) &&
-       all(count_uniques$.n_count >= 10)) {
+       (col_type != "factor" || all(count_uniques$.n_count >= 10))) {
+
 
       stat_config <-
         find_stat_config(cols_pos = cols_pos,
@@ -209,9 +210,13 @@ sigtest <-
 #' @export
 #'
 #' @examples
-#' embed_uni_sigtest(data=ex_survey1, cols = a_1:a_9)
-#' embed_uni_sigtest(data=ex_survey1, cols = b_1:b_3, label_separator=" - ")
-#' embed_uni_sigtest(data=ex_survey1, cols = c_1:c_2)
+#' embed_uni_sigtest(data=ex_survey1,
+#'                   cols = a_1:a_9, reps=10, hide_test_if_n_below=10)
+#' embed_uni_sigtest(data=ex_survey1,
+#'                   cols = b_1:b_3, reps=10, hide_test_if_n_below=10,
+#'                   label_separator=" - ")
+#' embed_uni_sigtest(data=ex_survey1,
+#'                   cols = c_1:c_2, reps=10, hide_test_if_n_below=10)
 embed_uni_sigtest <-
   function(data,
            cols,
@@ -263,7 +268,7 @@ embed_uni_sigtest <-
       }) %>%
       dplyr::bind_rows()
     out$N <- NULL
-    names(out)[names(out) == ".variable_label"] <- main_question
+    # names(out)[names(out) == ".variable_label"] <- main_question
 
     if(dplyr::n_distinct(out[[main_question]])==1) out[[main_question]] <- NULL
 
@@ -286,9 +291,12 @@ embed_uni_sigtest <-
 #' @export
 #'
 #' @examples
-#' embed_bi_sigtest(data=ex_survey1, cols = a_1:a_9, by = x1_sex)
-#' embed_bi_sigtest(data=ex_survey1, cols = b_1:b_3, by = x1_sex, label_separator=" - ")
-#' embed_bi_sigtest(data=ex_survey1, cols = c_1:c_2, by = x1_sex)
+#' embed_bi_sigtest(data=ex_survey1, cols = a_1:a_9, by = x1_sex,
+#'                  reps=10, hide_test_if_n_below=1)
+#' embed_bi_sigtest(data=ex_survey1, cols = b_1:b_3, by = x1_sex,
+#'                  reps=10, hide_test_if_n_below=1, label_separator=" - ")
+#' embed_bi_sigtest(data=ex_survey1, cols = c_1:c_2, by = x1_sex,
+#'                  reps=10, hide_test_if_n_below=1)
 embed_bi_sigtest <-
   function(data,
            cols,

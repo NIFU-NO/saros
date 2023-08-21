@@ -25,7 +25,7 @@ embed_uni_sigtest(
 
 \item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
 
-\item{col_type, by_type}{Optional string specifying data type ("int", "cat", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+\item{col_type, by_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
 
 \item{label_separator}{[\code{character(1)}]\cr Split pattern.}
 
@@ -40,7 +40,11 @@ Data frame
 Title
 }
 \examples{
-embed_uni_sigtest(data=ex_survey1, cols = a_1:a_9)
-embed_uni_sigtest(data=ex_survey1, cols = b_1:b_3, label_separator=" - ")
-embed_uni_sigtest(data=ex_survey1, cols = c_1:c_2)
+embed_uni_sigtest(data=ex_survey1,
+                  cols = a_1:a_9, reps=10, hide_test_if_n_below=10)
+embed_uni_sigtest(data=ex_survey1,
+                  cols = b_1:b_3, reps=10, hide_test_if_n_below=10,
+                  label_separator=" - ")
+embed_uni_sigtest(data=ex_survey1,
+                  cols = c_1:c_2, reps=10, hide_test_if_n_below=10)
 }

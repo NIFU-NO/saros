@@ -6,7 +6,7 @@
 #' @param include_numbers Whether or not to include the actual numbers (percentages, means) in parentheses.
 #' @param require_common_categories Whether to check if all questions share common categories.
 #' @param n_top_bottom The number of top and bottom entries to report.
-#' @param translations A list of translations for the template text. See getOption("saros").
+#' @param translations A list of translations for the template text. See .saros.env$defaults.
 #'
 #' @importFrom dplyr %>%
 #' @return List
@@ -14,8 +14,19 @@
 #'
 #' @examples
 #' embed_cat_text_html(ex_survey1,
-#'                   cols = tidyselect::matches("e_"),
-#'                   label_separator = " - ")
+#' cols = tidyselect::matches("e_"),
+#' contents = c("intro", "mode_max", "value_max",
+#' "value_min", "not_used_category", "mean_max", "mean_min"),
+#' label_separator = " - ",
+#' require_common_categories = FALSE,
+#' n_top_bottom = 1,
+#' showNA = "never",
+#' descend = TRUE,
+#' return_raw = TRUE,
+#' hide_label_if_prop_below=0,
+#' data_label = "count",
+#' data_label_decimal_symbol = ",",
+#' digits = 1)
 #'
 embed_cat_text_html <-
   function(data,
@@ -25,6 +36,7 @@ embed_cat_text_html <-
            summarized_data = NULL,
            label_separator = NULL,
            translations = .saros.env$defaults$translations,
+           tailored_group = NULL,
            call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
@@ -44,8 +56,8 @@ embed_cat_text_html <-
       rlang::exec(
         summarize_data,
         data = data,
-        cols = cols_pos,
-        by = by_pos,
+        cols = names(cols_pos),
+        by = names(by_pos),
         label_separator = label_separator,
         call = call,
         !!!dots)
@@ -58,13 +70,13 @@ embed_cat_text_html <-
 
       get_raw_labels(data = data, cols_pos = cols_pos) %>%
         get_main_question2(label_separator = label_separator) %>%
-        create_text_collapse() %>%
+        create_text_collapse(last_sep = translations$last_sep) %>%
         stringr::str_c(translations$intro_prefix, .,
                        translations$intro_suffix)
       } else {
         get_raw_labels(data = data, cols_pos = cols_pos) %>%
           get_main_question2(label_separator = label_separator) %>%
-          create_text_collapse() %>%
+          create_text_collapse(last_sep = translations$last_sep) %>%
           stringr::str_c(translations$intro_prefix, .,
                          translations$intro_suffix)
 
@@ -75,14 +87,17 @@ embed_cat_text_html <-
     generate_mode_max <- function() {
       data_out %>%
         dplyr::slice_max(order_by = .data$.count, by = ".variable_label", n = 1) %>%
-        dplyr::mutate(text = glue::glue("({.count}", if(.env$dots$data_label == "percentage") "%" else "", ")",
+        dplyr::mutate(.count = round(.data$.count, digits = dots$digits),
+                      text = glue::glue("({.count}",
+                                        if(.env$dots$data_label == "percentage") "%" else "", ")",
                                         translations$mode_max_onfix, "{.variable_label}")) %>%
         dplyr::arrange(".category") %>%
-        dplyr::summarize(text = create_text_collapse(.data$text),
+        dplyr::summarize(text = create_text_collapse(.data$text,
+                                                     last_sep = translations$last_sep),
                          .by = ".category") %>%
         dplyr::mutate(text = glue::glue("{.category} {text}")) %>%
         dplyr::pull(.data$text) %>%
-        create_text_collapse() %>%
+        create_text_collapse(last_sep = translations$last_sep) %>%
         stringr::str_c(translations$mode_max_prefix, .,
                        translations$mode_max_suffix)
     }
@@ -90,16 +105,17 @@ embed_cat_text_html <-
 
     generate_not_used_category <- function() {
       data_out %>%
-        dplyr::filter(.data$.count < .env$dots$hide_label_if_prop_below, !is.na(.data$.count)) %>%
+        dplyr::filter(!is.na(.data$.count)) %>% #.data$.count < .env$dots$hide_label_if_prop_below,
         dplyr::select(tidyselect::all_of(c(".category", ".variable_label"))) %>%
         dplyr::arrange(dplyr::pick(tidyselect::all_of(c(".category", ".variable_label")))) %>%
         dplyr::group_by(.data$.category) %>%
         dplyr::group_map(.f = function(x, y) {
-          create_text_collapse(x$.variable_label) %>%
+          create_text_collapse(x$.variable_label,
+                               last_sep = translations$last_sep) %>%
             stringr::str_c(y$.category, " (", ., ")")
         }, .keep = TRUE) %>%
         unlist() %>%
-        create_text_collapse() %>%
+        create_text_collapse(last_sep = translations$last_sep) %>%
         {if(stringi::stri_length(.) > 0) stringr::str_c(
           translations$not_used_prefix,
           .,
@@ -126,15 +142,17 @@ embed_cat_text_html <-
 
         data_out %>%
         {if(!is.null(.[[".sum_value"]])) dplyr::mutate(., .count = .data$.sum_value) else .} %>%
-        dplyr::filter(.data$.count >= .env$dots$hide_label_if_prop_below, !is.na(.data$.count)) %>%
+        dplyr::filter(!is.na(.data$.count)) %>% #.data$.count >= .env$dots$hide_label_if_prop_below,
         slice_function(order_by = dplyr::pick(".count"), n = dots$n_top_bottom, na_rm = TRUE, with_ties = FALSE) %>%
         dplyr::distinct(dplyr::pick(tidyselect::all_of(c(".variable_label", ".count"))), .keep_all = TRUE) %>%
-        dplyr::mutate(text = glue::glue("{.variable_label} ({.count}", if(.env$dots$data_label == "percentage") "%" else "", ")")) %>%
+        dplyr::mutate(.count = round(.data$.count, digits = dots$digits),
+                      text = glue::glue("{.variable_label} ({.count}", if(.env$dots$data_label %in% c("percentage", "percentage_bare")) "%" else "", ")")) %>%
         dplyr::pull(.data$text) %>%
-        create_text_collapse() %>%
+        create_text_collapse(last_sep = translations$last_sep) %>%
         stringr::str_c(translations[[prefix_key]], .,
                        translations[[infix_key]],
-                       create_text_collapse(category_selection),
+                       create_text_collapse(category_selection,
+                                            last_sep = translations$last_sep),
                        translations[[suffix_key]]) %>%
         cli::pluralize() %>%
         stringi::stri_replace(regex = " 1 ", replacement = " ")
@@ -146,15 +164,17 @@ embed_cat_text_html <-
       infix_key <- stringr::str_c(contents, "_infix")
       suffix_key <- stringr::str_c(contents, "_suffix")
 
+
       data_out %>%
-        dplyr::summarize(.mean = round(sum(.data$.mean_base, na.rm=TRUE)/100, digits = .env$dots$digits),
-                         .by = ".variable_label") %>%
+        # dplyr::summarize(.mean = #round(sum(.data$.mean_base, na.rm=TRUE)/100, digits = .env$dots$digits),
+        #                  .by = ".variable_label") %>%
         slice_function(order_by = .data$.mean, n = dots$n_top_bottom) %>%
-        dplyr::mutate(text = glue::glue("{.variable_label} (",
+        dplyr::mutate(.mean = round(.data$.mean, digits = max(c(1, dots$digits), na.rm = TRUE)),
+                      text = glue::glue("{.variable_label} (",
                                         translations$mean_onfix,
                                         "{.mean})")) %>%
         dplyr::pull(.data$text) %>%
-        create_text_collapse() %>%
+        create_text_collapse(last_sep = translations$last_sep) %>%
         stringr::str_c(translations[[prefix_key]], .,
                        translations[[suffix_key]])
     }
@@ -180,7 +200,7 @@ embed_cat_text_html <-
     #                                   translations$median_onfix,
     #                                   "{median})")) %>%
     #   dplyr::pull(.data$text) %>%
-    #   create_text_collapse() %>%
+    #   create_text_collapse(last_sep = translations$last_sep) %>%
     #   stringr::str_c(translations$median_max_prefix, .,
     #                  translations$median_max_suffix)
     #
@@ -188,12 +208,12 @@ embed_cat_text_html <-
     #   data_median %>%
     #   dplyr::slice_min(order_by = .data$median, n = dots$n_top_bottom) %>%
     #   dplyr::mutate(text = glue::glue("{.label} (",
-    #                                   getOption("saros")$translations$median_onfix,
+    #                                   .saros.env$defaults$translations$median_onfix,
     #                                   "{median})")) %>%
     #   dplyr::pull(.data$text) %>%
-    #   create_text_collapse() %>%
-    #   stringr::str_c(getOption("saros")$translations$median_min_prefix, .,
-    #                  getOption("saros")$translations$median_min_suffix)
+    #   create_text_collapse(last_sep = translations$last_sep) %>%
+    #   stringr::str_c(.saros.env$defaults$translations$median_min_prefix, .,
+    #                  .saros.env$defaults$translations$median_min_suffix)
 
     # }
 

@@ -61,7 +61,7 @@ prep_cat_freq_plot_pdf <-
                      legend.position = "bottom",
                      legend.text = ggplot2::element_text(size = dots$main_font_size),
                      strip.placement = "outside",
-                     strip.text = if(length(by_vars)>0) ggplot2::element_blank() else ggiraph::element_text_interactive(angle=90, hjust = .5, size = dots$main_font_size),
+                     strip.text = ggiraph::element_text_interactive(angle=90, hjust = .5, size = dots$main_font_size), #if(length(by_vars)>0) ggplot2::element_blank() else
 
                      strip.background = ggplot2::element_rect(colour = NA)) +
       ggplot2::labs(x=NULL, y=NULL)
