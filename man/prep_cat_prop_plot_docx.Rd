@@ -34,3 +34,4 @@ mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
 \description{
 Create Categorical Data Chart from Summarized Data
 }
+\keyword{internal}

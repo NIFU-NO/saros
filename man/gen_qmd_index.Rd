@@ -43,3 +43,4 @@ index_file <-
                  "Ch3.qmd"),
                  index_filepath = filepath)
 }
+\keyword{internal}

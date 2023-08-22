@@ -34,3 +34,4 @@ ggiraph object, plottable with plot()
 \description{
 Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories
 }
+\keyword{internal}

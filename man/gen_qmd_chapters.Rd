@@ -58,3 +58,4 @@ A chapter can contain any user-defined set of dependent, independent or bivariat
 A chapter consists of multiple sections.
 A section is defined as a group in the chapter_overview (ignoring the chapter grouping level) containing variables of the same type, meaning at a minimum that the variables in the section sharing the same response options, the same main question, and being of the same data type.
 }
+\keyword{internal}
