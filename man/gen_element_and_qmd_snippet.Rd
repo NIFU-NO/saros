@@ -5,36 +5,70 @@
 \title{Mass Create Elements of A Certain Type}
 \usage{
 gen_element_and_qmd_snippet(
-  data_overview_section,
+  chapter_overview_section,
   element_name = "uni_cat_prop_plot",
   data,
-  tailored_var = NULL,
-  tailored_group = NULL,
-  summarized_data = NULL,
+  mesos_group = NULL,
   element_folderpath_absolute,
   element_folderpath_relative,
   grouping_structure = NULL,
-  translations = .saros.env$defaults$translations,
   ...,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data_overview_section}{A (grouped) data frame containing at least the following columns
-\describe{
-\item{<grouping variables>}{ used to distinguish sets of columns belonging to each element.}
-\item{"col_name"}{ name of columns.}
-\item{"col_type"}{ either 'cat' (categorical/ordinal/binary), 'int' (interval/continuous) or 'chr' (text).}
-}}
+\item{chapter_overview_section}{\emph{Overview of chapter section}
 
-\item{element_name}{See \code{element_list()} for options.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{data}{Survey data.}
+Data frame (or tibble, possibly grouped). Must contain column 'dep'
+with similar items. See \code{draft_report()}.}
 
-\item{...}{<[`dynamic-dots`][rlang::dyn-dots]> arguments forwarded to the corresponding functions that create the elements.}
+\item{element_name}{\emph{Element name}
+
+\verb{scalar<character>} // \emph{default:} \code{"uni_cat_prop_plot"}
+
+One of the element_names, see \code{draft_report()}.}
+
+\item{data}{\emph{Survey data}
+
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
+
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
+
+\item{mesos_group}{\emph{Specific group to compare with}
+
+\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
+
+\item{element_folderpath_absolute, element_folderpath_relative}{\emph{Absolute and relative folder paths}
+
+\verb{scalar<character>} // Required
+
+Both the absolute and relative folderpaths are required, as strings.}
+
+\item{grouping_structure}{\emph{Vector of groups}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{Optional})
+
+Internal usage.}
+
+\item{...}{\emph{Dynamic dots}
+
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+
+Arguments forwarded to the corresponding functions that create the elements.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
-Named list of elements, where each element can .
+Named list of elements, where each element can UNFINISHED.
 }
 \description{
 Mass Create Elements of A Certain Type

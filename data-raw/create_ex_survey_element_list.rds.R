@@ -4,9 +4,9 @@ library(dplyr)
 #     uni_cat_prop_plot_html =
 #       saros::lst_saros_elements(
 #         data = saros::ex_survey1,
-#         data_overview =
+#         chapter_overview =
 #           saros::ex_survey_ch_overview %>%
-#           saros::refine_data_overview(data = saros::ex_survey1,
+#           saros::refine_chapter_overview(data = saros::ex_survey1,
 #                                       label_separator = " - ",
 #                                       name_separator = "_"),
 #         element_name = "uni_cat_prop_plot_html",
@@ -14,9 +14,9 @@ library(dplyr)
 #       ),
 #     bi_catcat_prop_plot_html =
 #       saros::lst_saros_elements(
-#         data_overview =
+#         chapter_overview =
 #           saros::ex_survey_ch_overview %>%
-#           saros::refine_data_overview(data = saros::ex_survey1,
+#           saros::refine_chapter_overview(data = saros::ex_survey1,
 #                                       label_separator = " - ",
 #                                       name_separator = "_"),
 #         element_name = "bi_catcat_prop_plot_html",
@@ -26,9 +26,9 @@ library(dplyr)
 #       ),
 #     bi_catcat_prop_plot_docx =
 #       saros::lst_saros_elements(
-#         data_overview =
+#         chapter_overview =
 #           saros::ex_survey_ch_overview %>%
-#           saros::refine_data_overview(data = saros::ex_survey1,
+#           saros::refine_chapter_overview(data = saros::ex_survey1,
 #                                       label_separator = " - ",
 #                                       name_separator = "_"),
 #         element_name = "bi_catcat_prop_plot_docx",
@@ -42,12 +42,12 @@ library(dplyr)
 # ex_survey_elements_list <-
 #   mass_lst_saros_elements(element_names =
 #                             saros:::.saros.env$defaults$element_names[c(1,4)],# %>%
-#                             # stringr::str_match_all(pattern = ".*_table_html|.*_sigtest|.*_text") %>%
+#                             # stringi::stri_match_all_regex(pattern = ".*_table_html|.*_sigtest|.*_text") %>%
 #                             # unlist(),
-#                           data_overview =
+#                           chapter_overview =
 #                             saros::ex_survey_ch_overview %>%
-#                             saros::refine_data_overview(data = saros::ex_survey1,
-#                                                         groupby = c("chapter", "label_prefix"),
+#                             saros::refine_chapter_overview(data = saros::ex_survey1,
+#                                                         groupby = c("chapter", ".variable_label_prefix"),
 #                                                         label_separator = " - ",
 #                                                         name_separator = "_"),
 #                           data = saros::ex_survey1,

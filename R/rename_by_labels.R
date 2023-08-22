@@ -6,7 +6,7 @@
 #'
 #' @param data Dataset.
 #' @param label_sep The separator between group part and unique part of label.
-#' @param sort_var When numbering variables within a group, what to sort by? pos is original position in dataset,
+#' @param sort_var When numbering variables within a group, what to sort by? pos is original position in dataset, variable is variable name (alphabetical), and label is label (alphabetical)
 #' @param new_var_sep When creating new variables, how to glue together variable group name prefix and numbering?
 #' @param stop_words Words to ignore in label when abbreviating label to name.
 #'
@@ -21,19 +21,25 @@ rename_by_labels <-
 			 sort_var = c("pos", "variable", "label"),
 			 new_var_sep = "_",
 			 stop_words = unique(c(stopwords[["en"]], "where", "is", "do", "which", "how", "to"))) {
+
 		sort_var <- rlang::arg_match(sort_var)
 
-		df_labels <- labelled::lookfor(data = data, details = FALSE)
+		df_pos <- seq_len(ncol(data))
+		df_name <- names(data)
+		df_label <- unname(get_raw_labels(data))
+		metadata <- data.frame(pos=df_pos,
+		                       variable = df_name,
+		                       label = df_label)
 		df_labels <- tidyr::separate(data = df_labels, col = .data$label, sep = label_sep, fill = "right",
 									 into = c("label_pre", "label_suf"), remove = FALSE)
 		df_labels$label_pre <- tolower(df_labels$label_pre)
 		df_labels$label_pre_str <- vctrs::as_list_of(strsplit(x = df_labels$label_pre, split = "[[:space:][:punct:]]"))
 		df_labels$label_pre2 <-
-			purrr::map_chr(df_labels$label_pre_str, .f=function(.x) {
+			unlist(lapply(df_labels$label_pre_str, FUN = function(.x) {
 				out <- .x[!.x %in% stop_words]
-				out <- if(length(out) > 0L) stringr::str_c(out, collapse=" ") else stringr::str_c(.x, collapse=" ")
-				out <- stringr::str_c(out, collapse=" ")
-			})
+				out <- if(length(out) > 0L) stringi::stri_c(ignore_null=TRUE, out, collapse=" ") else stringi::stri_c(ignore_null=TRUE, .x, collapse=" ")
+				out <- stringi::stri_c(ignore_null=TRUE, out, collapse=" ")
+			}))
 		df_labels$label_pre3 <- abbreviate(names.arg = df_labels$label_pre2,
 										   named = TRUE, minlength = 2L, dot = FALSE, method = "both")
 		df_labels <- dplyr::arrange(df_labels, .data$label_pre, .data[[sort_var]])
@@ -41,10 +47,14 @@ rename_by_labels <-
 		df_labels <- dplyr::mutate(df_labels,
 								   label_suf_no = if(dplyr::n()==1L) NA_character_ else if(dplyr::n()<10L) sprintf("%01d", seq_len(dplyr::n())) else if(dplyr::n()>=10L) sprintf("%02d", seq_len(dplyr::n())))
 		df_labels <- dplyr::ungroup(df_labels)
-		df_labels <- tidyr::unite(df_labels, col = "variable_new", c(.data$label_pre3, .data$label_suf_no), sep = new_var_sep, na.rm = TRUE)
+		df_labels <- tidyr::unite(df_labels,
+		                          col = "variable_new",
+		                          c(.data$label_pre3, .data$label_suf_no),
+		                          sep = new_var_sep, na.rm = TRUE)
 		data <- dplyr::rename_with(.data = data,
-								   .fn = ~purrr::map_chr(.x = .,
-								   					  .f = ~dplyr::pull(df_labels[df_labels$variable == .x, "variable_new"])))
+								   .fn = ~unlist(lapply(X = .,
+								   					  FUN = function(.x) dplyr::pull(df_labels[df_labels$variable == .x,
+								   					                                           "variable_new"]))))
 		data
 	}
 

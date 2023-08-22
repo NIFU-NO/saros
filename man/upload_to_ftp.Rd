@@ -7,15 +7,15 @@
 upload_to_ftp(folder_path, ftp_path, ftp_server, username, password)
 }
 \arguments{
-\item{folder_path}{Local path to upload}
+\item{folder_path}{String. Local path to upload.}
 
-\item{ftp_path}{Remote path}
+\item{ftp_path}{String. Remote path.}
 
-\item{ftp_server}{server, without "ftp://". Can be stored in .renviron for safe storage. Use SAROS_FTP_USERNAME}
+\item{ftp_server}{String. Server, without "ftp://". Can be stored in .renviron for safe storage. Use SAROS_FTP_USERNAME}
 
-\item{username}{Can be stored in .renviron for safe storage. Use SAROS_FTP_USERNAME}
+\item{username}{String. Can be stored in .renviron for safe storage. Use SAROS_FTP_USERNAME}
 
-\item{password}{Can be stored in .renviron for safe storage. Use SAROS_FTP_USERNAME}
+\item{password}{String. Can be stored in .renviron for safe storage. Use SAROS_FTP_PASSWORD}
 }
 \value{
 results from RCurl

@@ -1,35 +1,37 @@
 process_yaml <- function(yaml_file = NULL,
                          title = NULL,
-                         authors = NULL) {
+                         authors = NULL,
+                         add_fences = TRUE) {
 
-  if(rlang::is_null(yaml_file)) {
+  if(!rlang::is_string(yaml_file)) {
     yml_section <-
-      ymlthis::yml(get_yml = TRUE,
-                   author = FALSE,
-                   date = FALSE)
-    if(!rlang::is_null(title)) yml_section <- ymlthis::yml_title(yml_section, title=title)
-    yml_section <-
-      ymlthis::yml_toplevel(yml_section,
-                            format = "html",
-                            echo = FALSE) %>%
-      ymlthis::yml_author(name = if(!is.null(authors)) authors else ymlthis::yml_empty()) %>%
-      ymlthis::asis_yaml_output(fences = TRUE)
+      list(title = title,
+           format = "html",
+           echo = FALSE,
+           authors = authors)
   } else {
-    yml_section <- stringr::str_c(readLines(yaml_file), collapse="\n")
-    if(!rlang::is_null(title)) {
-      if(stringi::stri_detect(str = yml_section, fixed="title: ")) {
-        yml_section <- stringr::str_replace(yml_section, pattern = "title:(.+)\n",
-                                            replacement = stringr::str_c("title:\\1 - ", title, "\n"))
-      } else yml_section <- stringr::str_c("title: '", title, "'\n", yml_section)
+    yml_section <- yaml::read_yaml(file = yaml_file)
+    if(any(names(yml_section) == "translations")) {
+      yml_section$translations <- unlist(yml_section$translations, recursive = FALSE)
     }
+    new_title <- stringi::stri_c(yml_section$title,
+                                 if(rlang::is_string(title) &&
+                                    rlang::is_string(yml_section$title)) " - ",
+                                 title, ignore_null=TRUE)
+
+    if(length(new_title)>0)  yml_section$title <- new_title
+    if(rlang::is_character(authors)) yml_section$authors <- authors
+
   }
 
+  yml_section <- yaml::as.yaml(yml_section)
 
-  out <-
-    yml_section %>%
-    stringi::stri_replace_all(regex = "```|yaml|\\[\\]", replacement = "\n") %>%
-    stringi::stri_replace_all(regex = "\\'FALSE\\'", replacement = "false") %>%
-    stringi::stri_replace_all(regex = "\\'TRUE\\'", replacement = "true") %>%
-    stringi::stri_replace_all(regex = "^\n\n\n", replacement = "") %>%
-    as.character()
+  if(add_fences) {
+    yml_section <- stringi::stri_c("---",
+                                   yml_section,
+                                   "---",
+                                   sep="\n",
+                                   ignore_null = TRUE)
+  }
+  yml_section
 }

@@ -20,46 +20,42 @@ Depends:
     R (>= 4.2.0)
 Imports: 
     cli,
-    clipr,
+    utils,
+    vctrs,
     dplyr,
-    forcats,
-    fs,
+    tidyr,
+    tidyselect,
     glue,
-    ggplot2,
-    ggiraph,
-    htmltools,
-    labelled,
-    infer,
-    mschart,
-    officer,
-    openai,
-    purrr,
-    quarto,
-    reactable,
     rlang,
     srvyr,
     stringi,
-	stringr,
-    tidyr,
-    tidyselect,
-    utils,
-    vctrs,
-    RColorBrewer,
-    RCurl,
-    viridisLite,
     writexl,
     yaml,
-    ymlthis
+    infer,
+    ggplot2,
+    ggiraph,
+    mschart,
+    officer,
+    forcats,
+    fs,
+    clipr,
+    RCurl
 Suggests:
     covr,
     ggfittext,
+    labelled,
     testthat (>= 3.0.0),
     readxl,
+    htmltools,
+    reactable,
+	stringr,
+    openai,
     withr,
+    quarto,
     spelling
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-LazyDataCompression: bzip2
 RoxygenNote: 7.2.3
+Roxygen: list(markdown = TRUE)
 Language: en-US

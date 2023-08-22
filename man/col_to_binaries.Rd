@@ -7,13 +7,24 @@
 col_to_binaries(data, col, var_separator = "___", label_separator = " - ")
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
+
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
+
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
 \item{col}{Single column. Tidy-select.}
 
-\item{var_separator}{[\code{character(1)>0}]\cr Separator between old variable name and categories.}
+\item{var_separator}{\emph{Variable separator}
 
-\item{label_separator}{[\code{character(1)>0}]\cr Separator between old label name and new label part.}
+\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Separator between old variable name and categories.}
+
+\item{label_separator}{\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Separator between old label name and new label part.}
 }
 \value{
 Original data frame with the binary columns attached, containing new labels.

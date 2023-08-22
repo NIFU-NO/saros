@@ -1,5 +1,5 @@
 err_msg <- function(infix) {
-  stringr::str_c("{.arg {arg}} must be a",
+  stringi::stri_c(ignore_null=TRUE, "{.arg {arg}} must be a",
          infix,
          ", not {.obj_type_friendly {x}}.")
 }
@@ -26,7 +26,7 @@ check_integerish <- function(x, min=-Inf, max=Inf,
                              call = rlang::caller_env(),
                              arg = rlang::caller_arg(x)) {
   pos_str <- if(min==0) " positive" else "n"
-  max_str <- if(!max==Inf) stringr::str_c(" (max=", max, ")") else ""
+  max_str <- if(!max==Inf) stringi::stri_c(ignore_null=TRUE, " (max=", max, ")") else ""
   if(!rlang::is_integerish(x, n = 1) || x > max || x < min) {
     cli::cli_abort(err_msg("{pos_str} integer of length 1{max_str}"),
                    call = call)
@@ -36,8 +36,8 @@ check_integerish <- function(x, min=-Inf, max=Inf,
 check_double <- function(x, min=-Inf, max=Inf, call = rlang::caller_env(),
                          arg = rlang::caller_arg(x)) {
   pos_str <- if(min==0) " positive" else ""
-  max_str <- if(!max==Inf) stringr::str_c(" (max=", max, ")") else ""
-  min_str <- if(!min==-Inf) stringr::str_c(" (min=", min, ")") else ""
+  max_str <- if(!max==Inf) stringi::stri_c(ignore_null=TRUE, " (max=", max, ")") else ""
+  min_str <- if(!min==-Inf) stringi::stri_c(ignore_null=TRUE, " (min=", min, ")") else ""
   if(!rlang::is_double(x, n = 1) || x < min || x > max) {
     cli::cli_abort(err_msg("{pos_str} numeric of length 1{max_str}{min_str}"),
                    call = call)
@@ -48,7 +48,7 @@ check_double <- function(x, min=-Inf, max=Inf, call = rlang::caller_env(),
 check_string <- function(x, null.ok = FALSE, n = 1,
                          call = rlang::caller_env(),
                          arg = rlang::caller_arg(x)) {
-  msg_suffix <- err_msg(stringr::str_c(" character vector",
+  msg_suffix <- err_msg(stringi::stri_c(ignore_null=TRUE, " character vector",
                         if(!is.null(n)) " of length ",
                         if(!is.null(n)) n))
   if(is.null(x)) {
@@ -57,7 +57,7 @@ check_string <- function(x, null.ok = FALSE, n = 1,
     }
   } else if (!rlang::is_character(x, n = n)) {
     msg_prefix <- if(null.ok) "If not NULL, " else ""
-    msg <- stringr::str_c(msg_prefix, msg_suffix)
+    msg <- stringi::stri_c(ignore_null=TRUE, msg_prefix, msg_suffix)
     cli::cli_abort(message = msg, call = call)
   }
 }
@@ -69,7 +69,7 @@ check_list <- function(x,
                        n = NULL,
                        call = rlang::caller_env(),
                        arg = rlang::caller_arg(x)) {
-  msg_suffix <- err_msg(stringr::str_c(" list",
+  msg_suffix <- err_msg(stringi::stri_c(ignore_null=TRUE, " list",
                                if(!is.null(n)) " of length ",
                                if(!is.null(n)) n))
   if(is.null(x)) {
@@ -78,7 +78,7 @@ check_list <- function(x,
     }
   } else if (!rlang::is_list(x, n = n)) {
     msg_prefix <- if(null.ok) "If not NULL, " else ""
-    msg <- stringr::str_c(msg_prefix, msg_suffix)
+    msg <- stringi::stri_c(ignore_null=TRUE, msg_prefix, msg_suffix)
     cli::cli_abort(message = msg, call = call)
   }
 }
@@ -87,7 +87,7 @@ check_list <- function(x,
 check_colour <- function(x, call = rlang::caller_env(),
                          arg = rlang::caller_arg(x)) {
   if(!is.null(x) && (!all(is_colour(x)) || length(x)>1)) {
-    cli::cli_abort(stringr::str_c("If not NULL, ", err_msg(" character (hex colour code) of length 1")),
+    cli::cli_abort(stringi::stri_c(ignore_null=TRUE, "If not NULL, ", err_msg(" character (hex colour code) of length 1")),
                    call = call)
   }
 }
@@ -138,38 +138,38 @@ check_summary_data_cols <- function(x, call = rlang::caller_env(),
 check_autonum <- function(x, call = rlang::caller_env(),
                           arg = rlang::caller_arg(x)) {
   if(!is.null(x) && !inherits(x, "run_autonum")) {
-    cli::cli_abort(stringr::str_c("If not NULL, ", err_msg("n object from {.fun officer::run_autonum}")),
+    cli::cli_abort(stringi::stri_c(ignore_null=TRUE, "If not NULL, ", err_msg("n object from {.fun officer::run_autonum}")),
                    call = call)
   }
 }
 
 
 
-check_multiple_by <-
-  function(data, by,
+check_multiple_indep <-
+  function(data, indep,
            call = rlang::caller_env()) {
 
-    by_call <- rlang::expr_deparse(rlang::enquo(by))
+    indep_call <- rlang::expr_deparse(rlang::enquo(indep))
 
-    if(ncol(dplyr::select(.data = data, {{by}})) > 1L) {
-      cli::cli_abort(c("Too many columns provided for {.arg by}.",
-                       x = "Only 1 by-column is currently allowed.",
-                       i = "You provided by = {by_call}"), call = call)
+    if(ncol(dplyr::select(.data = data, {{indep}})) > 1L) {
+      cli::cli_abort(c("Too many columns provided for {.arg indep}.",
+                       x = "Only 1 indep-column is currently allowed.",
+                       i = "You provided indep = {indep_call}"), call = call)
     }
   }
 
 
-check_multiple_cols_and_one_by <-
-  function(data, cols, by,
+check_multiple_dep_and_one_indep <-
+  function(data, dep, indep,
            call = rlang::caller_env()) {
 
-    cols_call <- rlang::expr_deparse(rlang::enquo(cols))
-    by_call <- rlang::expr_deparse(rlang::enquo(by))
+    dep_call <- rlang::expr_deparse(rlang::enquo(dep))
+    indep_call <- rlang::expr_deparse(rlang::enquo(indep))
 
-    if((ncol(dplyr::select(.data = data, {{cols}})) > 1L &&
-       ncol(dplyr::select(.data = data, {{by}})) >= 1L)) {
-      cli::cli_abort(c("Multiple columns for {.arg cols} and {.arg by} are not allowed.",
-                       i="You provided cols = {cols_call} and by = {by_call}"),
+    if((ncol(dplyr::select(.data = data, {{dep}})) > 1L &&
+       ncol(dplyr::select(.data = data, {{indep}})) >= 1L)) {
+      cli::cli_abort(c("Multiple columns for {.arg dep} and {.arg indep} are not allowed.",
+                       i="You provided dep = {dep_call} and indep = {indep_call}"),
                      call = call)
     }
   }
@@ -212,7 +212,7 @@ check_elements <-
       cli::cli_abort(c("{.arg elements} must only contain the following names: {.var {list_available_element_types()}}.",
                      "Invalid elements: {names(x)[!names(x) %in% list_available_element_types()]}"))
     }
-    purrr::walk(x, ~{
+    lapply(x, function(x) {
       if(!rlang::is_null(x) &&
          !rlang::is_bool(x) &&
          !(rlang::is_named(x) && (rlang::is_character(x) || rlang::is_bare_list(x)))) {
@@ -224,15 +224,10 @@ check_elements <-
                          x="not {.obj_type_friendly {x}}."))
     }
     })
+    TRUE
   }
 
-check_yml <-
-  function(x, call = rlang::caller_env()) {
-    if(!is.null(x) && !ymlthis::is_yml(x)) {
-      cli::cli_abort(c(stringr::str_c("If not NULL, ", err_msg(" yml-object from {.fun ymlthis::yml()}")),
-                       i = "See {.url https://cran.r-project.org/web/packages/ymlthis/vignettes/introduction-to-ymlthis.html}."))
-    }
-  }
+
 
 check_existing_path <-
   function(x, call = rlang::caller_env()) {

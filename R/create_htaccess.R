@@ -39,7 +39,7 @@ create_htaccess <-
     remote_basepath <- fs::path_tidy(remote_basepath)
     local_basepath <- fs::path_tidy(local_basepath)
 
-    purrr::walk(.x = local_subfolders, .f = ~{
+    lapply(X = local_subfolders, function(.x) {
       ### .htaccess
       con <- file(fs::path(local_basepath, .x, ".htaccess"), "w")
       content <- paste0('AuthName "NIFUs mesos-rapporter: ', .x, '"
@@ -53,13 +53,13 @@ AddHandler server-parsed .html')
 
 ### .htpasswd
 
-      content <- read.delim(file = local_main_htpasswd_path, header = FALSE,
+      content <- utils::read.delim(file = local_main_htpasswd_path, header = FALSE,
                             sep = ":", quote = "", col.names = c("username", "hash"),
                             colClasses = "character", strip.white = FALSE, blank.lines.skip = TRUE,
                             encoding = "UTF-8", fileEncoding = "UTF-8")
       content <- content[content$username %in% c(.x, universal_usernames),]
       # con <- file(, "w")
-      write.table(x = content, file = fs::path(local_basepath, .x, ".htpasswd"),
+      utils::write.table(x = content, file = fs::path(local_basepath, .x, ".htpasswd"),
                   quote = FALSE, sep = ":", col.names = FALSE, row.names = FALSE,
                   fileEncoding = "UTF-8")
       # close(con)

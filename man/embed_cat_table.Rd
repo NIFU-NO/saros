@@ -7,33 +7,43 @@
 embed_cat_table(
   data,
   ...,
-  cols = tidyselect::everything(),
-  by = NULL,
-  summarized_data = NULL,
-  label_separator = NULL,
-  tailored_group = NULL,
-  translations = .saros.env$defaults$translations,
+  dep = tidyselect::everything(),
+  indep = NULL,
+  mesos_group = NULL,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{...}{Further arguments passed down.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
-\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
+\item{...}{\emph{Dynamic dots}
 
-\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
 
-\item{tailored_group}{String, indicating the name of the tailored group}
+Arguments forwarded to the corresponding functions that create the elements.}
 
-\item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
+\item{dep, indep}{\emph{Variable selections}
 
-\item{call}{Error call function, usually not needed.}
+<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
 
-\item{information}{Which pre-computed information for each variable-category to display.}
+Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
+
+\item{mesos_group}{\emph{Specific group to compare with}
+
+\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 A reactable object. If return_raw=FALSE, then just the table.

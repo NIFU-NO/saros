@@ -16,22 +16,40 @@ get_colour_set(
 \arguments{
 \item{x}{Vector for which colours will be found.}
 
-\item{user_colour_set}{[\code{character()>0}]\cr User-supplied default palette, excluding colour_na.}
+\item{user_colour_set}{\emph{User specified colour set}
 
-\item{colour_na}{[\code{character(1)}]\cr Colour as a single string.}
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-\item{colour_2nd_binary_cat}{[\code{character(1)}]\cr Colour for second category in binary variables. Often useful to hide this.}
+User-supplied default palette, excluding \code{colour_na}.}
 
-\item{call}{Caller function if used from inside another function.}
+\item{colour_na}{\emph{Colour for NA category}
 
-\item{seed}{[\code{integer(1)}]\cr Random seed for sampling.}
+\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Colour as a single string for NA values.}
+
+\item{colour_2nd_binary_cat}{\emph{Colour for second binary category}
+
+\verb{scalar<character>} // \emph{default:} \code{"#ffffff"} (\code{optional})
+
+Colour for second category in binary variables. Often useful to hide this.}
+
+\item{ordinal}{\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Is palette ordinal?}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
-A colour set as character vector, where NA has the colour_na, and the rest are taken from user_colour_set if available.
+A colour set as character vector, where \code{NA} has the \code{colour_na}, and the rest are taken from user_colour_set if available.
 }
 \description{
 Possibly using user_colour_set if available. If not sufficient, uses a set
-    palette from RColorBrewer.
+palette from RColorBrewer.
 }
 \examples{
 get_colour_set(x=1:4)

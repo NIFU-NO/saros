@@ -6,79 +6,73 @@
 #' A report consists of multiple chapters and an index file that merges them together.
 #' A chapter can contain any user-defined set of dependent, independent or bivariate variable sets.
 #' A chapter consists of multiple sections.
-#' A section is defined as a group in the data_overview (ignoring the chapter grouping level) containing variables of the same type, meaning at a minimum that the variables in the section sharing the same response options, the same main question, and being of the same data type.
+#' A section is defined as a group in the chapter_overview (ignoring the chapter grouping level) containing variables of the same type, meaning at a minimum that the variables in the section sharing the same response options, the same main question, and being of the same data type.
 #'
-#' @param data_overview A (possibly grouped) tbl with overview of the survey columns in data.
-#' @param elements A named list of elements used to populate each chapter's section. The names of the list must be one of \code{\link{list_available_element_types}}. Defaults to a list of TRUE values for various elements. Each named element of the list can contain
-#' \describe{
-#' \item{\code{NULL}}{(default)}{ no element is inserted.}
-#' \item{\code{list()}}{A named sublist of already produced objects of the same type. The names must be of }
-#' \item{\code{character()}}{A character vector of paths to Rds-files containing the objects. These will be read in as needed, saving memory.}
-#' }
-#' @param index_filename String specifying the name of the main index Quarto file (and its subfolder) used to collect all the chapters. Defaults to "index.qmd".
-#' @param report_yaml_file,chapter_yaml_file Optional ymlthis-objects. Defaults will be obtained from getOptions("ymlthis.default_options") if NULL. The chapter_yaml_file will be used across all chapters. Authors will always be taken from the data_overview.
-#' @param path String specifying the path to the working directory. Defaults to the current working directory.
+#' @inheritParams draft_report
+#' @inheritParams summarize_data
+#' @param mesos_group *Specific group to compare with*
+#'
+#'   `scalar<character>` // *Default:* `NULL` (`optional`)
+#'
+#'   Both the absolute and relative folderpaths are required, as strings.
+#'
 #'
 #' @return A Quarto survey report generated in the specified working directory.
 gen_qmd_chapters <-
-  function(data_overview,
+  function(chapter_overview,
            data,
-           tailored_var = NULL,
-           tailored_group = NULL,
-           element_names = NULL,
-           label_separator = NULL,
-           chapter_yaml_file = NULL,
-           translations = .saros.env$defaults$translations,
-           path = getwd(),
+           mesos_group = NULL,
            ...,
            call = rlang::caller_env()
   ) {
-    dots <- rlang::list2(...)
-    check_string(tailored_group, n=1, null.ok=TRUE, call = call)
+    dots <- update_dots(dots = rlang::list2(...),
+                        allow_unique_overrides = FALSE)
 
-    path <- fs::as_fs_path(path)
+    check_string(mesos_group, n=1, null.ok=TRUE, call = call)
+
+    path <- fs::as_fs_path(dots$path)
     fs::dir_create(path = path, recurse = TRUE)
 
 
-
-
-    grouping_structure <- dplyr::group_vars(data_overview)
+    grouping_structure <- dplyr::group_vars(chapter_overview)
 
     if(length(grouping_structure) == 0) {
       cli::cli_abort(c(
-        "!"="No grouping variables found in {.arg data_overview}.",
+        "!"="No grouping variables found in {.arg chapter_overview}.",
         "x"="Without grouping variables, contents in {.arg elements} cannot be located.",
-        "i"="Consider using {.fun refine_data_overview}."))
+        "i"="Consider using {.fun refine_chapter_overview}."))
     }
 
-    data_overview_chapter_groups <-
-      dplyr::group_by(data_overview, dplyr::pick(tidyselect::all_of(grouping_structure[1])))
+    chapter_overview_chapter_groups <-
+      dplyr::group_by(chapter_overview,
+                      dplyr::pick(tidyselect::all_of(grouping_structure[1])))
 
     cli::cli_progress_bar(name = "Creating chapter files...", type = "iterator",
                           format_done = "Chapter files completed!", clear = FALSE,
-                          total = dplyr::n_distinct(data_overview_chapter_groups[[grouping_structure[1]]]))
+                          total = dplyr::n_distinct(chapter_overview_chapter_groups[[grouping_structure[1]]]) + dots$flexi)
 
 
     ## Generate each chapter. Returns paths to files, which are then used for index.qmd
     chapter_filepaths <-
-      data_overview_chapter_groups %>% # CONVERT TO purrr::map_chr by taking dplyr::
+      chapter_overview_chapter_groups %>% # CONVERT TO unlist(lapply()) by taking dplyr::
       dplyr::group_map(
         .keep = TRUE,
-        .f = function(data_overview_chapter,
+        .f = function(chapter_overview_chapter,
                       key_chapter) {
 
 
 
 
 
-          data_overview_chapter <-
-            dplyr::group_by(data_overview_chapter, dplyr::pick(tidyselect::all_of(grouping_structure)))
+          chapter_overview_chapter <-
+            dplyr::group_by(chapter_overview_chapter,
+                            dplyr::pick(tidyselect::all_of(grouping_structure)))
 
           # Paths
           chapter_foldername <-
-            data_overview_chapter[[grouping_structure[1]]] %>%
-            unique() %>%
-            fix_path_spaces()
+            chapter_overview_chapter[[grouping_structure[1]]] %>%
+            unique() #%>%
+            # fix_path_spaces()
 
           cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
 
@@ -87,49 +81,65 @@ gen_qmd_chapters <-
 
           fs::dir_create(path = chapter_folderpath_absolute, recurse = TRUE)
 
-          chapter_filepath_relative <- stringr::str_c(chapter_foldername, ".qmd")
+          chapter_filepath_relative <- stringi::stri_c(ignore_null=TRUE, chapter_foldername, ".qmd")
 
           chapter_filepath_absolute <- fs::path(path, chapter_filepath_relative)
 
 
-          authors <- get_authors(data = data_overview_chapter, col_name="authors")
-            # if(!rlang::is_null(data_overview_chapter$author) &&
-            #    !all(is.na(unique(data_overview_chapter$author)))) unique(data_overview_chapter$author) else ""
-          chapter_yml <- process_yaml(yaml_file = chapter_yaml_file,
+          authors <- get_authors(data = chapter_overview_chapter, col = "authors")
+            # if(!rlang::is_null(chapter_overview_chapter$author) &&
+            #    !all(is.na(unique(chapter_overview_chapter$author)))) unique(chapter_overview_chapter$author) else ""
+          chapter_yml <- process_yaml(yaml_file = dots$chapter_yaml_file,
                                       title = NULL,
                                       authors = authors)
 
           chapter_contents <-
             rlang::exec(
-              gen_qmd_structure,
+              gen_qmd_structure2,
               data = data,
-              data_overview = data_overview_chapter,
-              tailored_var = tailored_var,
-              tailored_group = tailored_group,
-              element_names = element_names,
-              label_separator = label_separator,
+              chapter_overview = chapter_overview_chapter,
+              mesos_group = mesos_group,
               chapter_folderpath_absolute = chapter_folderpath_absolute,
               chapter_foldername = chapter_foldername,
-              translations = translations,
-              summarized_data = NULL,
-              !!!dots,
-              call = call)
+              !!!dots#[!names(dots) %in% c("chapter_overview", "call")]
+              )
 
           qmd_start_section <- if(!rlang::is_null(dots$qmd_start_section_filepath)) readLines(con = dots$qmd_start_section_filepath)
           qmd_end_section <- if(!rlang::is_null(dots$qmd_end_section_filepath)) readLines(con = dots$qmd_end_section_filepath)
 
-          stringr::str_c(chapter_yml,
+          out <-
+          stringi::stri_c(ignore_null=TRUE,
+                          chapter_yml,
                          qmd_start_section,
                          chapter_contents,
                          qmd_end_section,
-                         sep = "\n") %>%
-            cat(file = chapter_filepath_absolute)
+                         sep = "\n")
+          out <- stringi::stri_replace_all_regex(out,
+                                                 pattern = "\n{3,}",
+                                                 replacement = "\n\n\n")
+          cat(out, file = chapter_filepath_absolute)
 
           chapter_filepath_relative
 
         })
 
+
+    if(rlang::is_true(dots$flexi) && rlang::is_string(dots$mesos_var)) {
+
+      cli::cli_progress_message(msg = "Generating flexi-app")
+
+      out <-
+        embed_flexi(data = data,
+                  chapter_overview = chapter_overview_chapter_groups,
+                  !!!dots)
+      flexi_filepath <- "_flexi/_zzz_flexi.qmd"
+      cat(out, file = fs::path(dots$path, flexi_filepath), sep="\n")
+
+      # chapter_filepaths <- c(chapter_filepaths, flexi_filepath)
+    }
     cli::cli_process_done()
+
+
     chapter_filepaths
 
 

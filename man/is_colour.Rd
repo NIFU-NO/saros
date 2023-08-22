@@ -13,7 +13,7 @@ is_colour(x)
 Logical, or error.
 }
 \description{
-As title says. From: http://stackoverflow.com/a/13290832/3315962
+As title says. From: (https://stackoverflow.com/a/13290832/3315962)
 }
 \examples{
 is_colour(c("#ff00ff", "#010101"))

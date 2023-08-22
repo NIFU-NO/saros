@@ -1,52 +1,62 @@
 
 find_stat_config <-
-  function(cols_pos,
-           col_type,
-           col_n,
-           cols_unique,
-           by_type,
-           by_pos,
-           by_n,
-           by_unique,
-           call = rlang::caller_env()) {
+  function(dep_pos,
+           .variable_type,
+           dep_n,
+           dep_unique,
+           indep_type,
+           indep_pos,
+           indep_n,
+           indep_unique) {
 
     stat_test <-
       dplyr::case_when(
-        col_type %in% c("numeric", "integer", "int") && col_n > 2 && length(by_pos) == 0 ~ "mean",
+        .variable_type %in% c("numeric", "dbl", "integer", "int") &&
+          dep_n > 2 && length(indep_pos) == 0 ~ "mean",
 
-        col_n == 2 && length(by_pos) == 0 ~ "prop",
+        dep_n == 2 && length(indep_pos) == 0 ~ "prop",
 
-        col_type %in% c("fct", "factor", "character") && col_n > 2 && length(by_pos) == 0 ~ "chisq",
+        .variable_type %in% c("fct", "factor", "chr", "character") &&
+          dep_n > 2 && length(indep_pos) == 0 ~ "chisq",
 
-        col_type %in% c("numeric", "integer", "int") && length(by_pos) == 1 &&
-          by_type %in% c("numeric", "integer", "int") && by_n >= 5 ~ "correlation",
+        .variable_type %in% c("numeric", "dbl", "integer", "int") &&
+          length(indep_pos) == 1 &&
+          indep_type %in% c("numeric", "dbl", "integer", "int") &&
+          indep_n >= 5 ~ "correlation",
 
-        col_type %in% c("numeric", "integer", "int") && length(by_pos) == 1 &&
-          by_type %in% c("fct", "factor", "character") && by_n > 2 ~ "F",
+        .variable_type %in% c("numeric", "dbl", "integer", "int") &&
+          length(indep_pos) == 1 &&
+          indep_type %in% c("fct", "factor", "chr", "character") &&
+          indep_n > 2 ~ "F",
 
-        col_type %in% c("numeric", "integer", "int") && length(by_pos) == 1 &&
-          by_type %in% c("fct", "factor", "character") && by_n == 2 ~ "t",
+        .variable_type %in% c("numeric", "dbl", "integer", "int") &&
+          length(indep_pos) == 1 &&
+          indep_type %in% c("fct", "factor", "chr", "character") &&
+          indep_n == 2 ~ "t",
 
-        col_type %in% c("fct", "factor", "character") && length(by_pos) == 1 &&
-          by_type %in% c("fct", "factor", "character") && by_n >= 2 ~ "chisq",
+        .variable_type %in% c("fct", "factor", "character") &&
+          dep_n >= 2 &&
+          length(indep_pos) == 1 &&
+          indep_type %in% c("fct", "factor", "chr", "character") &&
+          indep_n >= 2 ~ "chisq",
 
         .default = "NA"
       )
     if(stat_test == "NA") {
-      error_by_str <- if(length(by_pos) == 1) stringr::str_c(" and {.arg {by_type}}")
-      cli::cli_warn(stringr::str_c("Statistical test not found for {.arg {col_type}} (n_unique={.var {col_n}})", error_by_str, "."), call = call)
+      error_indep_str <- if(length(indep_pos) == 1) stringi::stri_c(ignore_null=TRUE, " and {.arg {indep_type}} ({.arg {indep_pos}})")
+      cli::cli_warn(stringi::stri_c(ignore_null=TRUE, "Statistical test not found for {.arg { .variable_type}} ({.arg {dep_pos}}, n_unique={.var {dep_n}})", error_indep_str, "."), call = call)
     }
 
-    lvls <- cols_unique %>% as.character()
-    success <- if(stat_test %in% c("prop", "chisq") && col_n == 2) lvls[length(lvls)]
-    p_lvls <- if(stat_test %in% c("prop", "chisq") && length(by_pos) == 0) stats::setNames(rep(1/length(lvls), length(lvls)), nm=lvls)
+    lvls <- dep_unique %>% as.character()
+    success <- if(stat_test %in% c("prop", "chisq") && dep_n == 2) lvls[length(lvls)]
+    p_lvls <- if(stat_test %in% c("prop", "chisq") && length(indep_pos) == 0) stats::setNames(rep(1/length(lvls), length(lvls)), nm=lvls)
     m_lvls <- if(stat_test %in% c("mean")) 0
     order_lvls <- if(stat_test %in% c("prop", "chisq", "t") &&
-                     # col_type %in% c("numeric", "integer", "int") &&
-                     length(by_pos) == 1 &&
-                     by_n == 2) by_unique %>% as.character()
-    generate_type <- if(length(by_pos) == 0 && stat_test %in% c("chisq", "prop")) "draw" else "bootstrap"
-    null_hypothesis_type <- if(length(by_pos) == 0) "point" else "independence"
+                     # .variable_type %in% c("numeric", "integer", "int") &&
+                     length(indep_pos) == 1 &&
+                     indep_n == 2) as.character(indep_unique)
+    generate_type <- if(length(indep_pos) == 0 && stat_test %in% c("chisq", "prop")) "draw" else "bootstrap"
+    null_hypothesis_type <- if(length(indep_pos) == 0) "point" else "independence"
 
     list(test = stat_test,
          lvls = lvls,
@@ -62,10 +72,10 @@ find_stat_config <-
 
 #' Test Significance Based on Randomization Theory
 #'
+#' @inheritParams draft_report
+#' @inheritParams gen_qmd_chapters
 #' @inheritParams summarize_data
-#' @param col_type,by_type Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.
-#' @param reps Integer, number of permutations.
-#' @param hide_test_if_n_below Integer, if N is below this value, pvalue will not be shown.
+#' @param .variable_type,indep_type Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.
 #'
 #' @return Data frame
 #' @export
@@ -75,109 +85,116 @@ find_stat_config <-
 #' set.seed(1)
 #' library(dplyr)
 #' bind_rows(
-#' sigtest(data=ex_survey1, cols = a_1) # t-test of proportions (.5): p=.98
-#' sigtest(data=ex_survey1, cols = b_1), # Chi-square (all=.333): p=<.001
-#' sigtest(data=ex_survey1, cols = c_1), # one-sample t-test p<.001
-#' sigtest(data=ex_survey1, cols = b_1, by = x1_sex), # Chi-square: p = .548
-#' sigtest(data=ex_survey1, cols = b_1, by = f_uni), # Chi-square: p = .102
-#' sigtest(data=ex_survey1, cols = c_1, by = x1_sex), # two-sample t-test: p = .97
-#' sigtest(data=ex_survey1, cols = c_1, by = f_uni), # ANOVA/F-test: p = .22
-#' sigtest(data=ex_survey1, cols = c_1, by = c_2)) # correlation: p = .976
+#' sigtest(data=ex_survey1, dep = a_1) # t-test of proportions (.5): p=.98
+#' sigtest(data=ex_survey1, dep = b_1), # Chi-square (all=.333): p=<.001
+#' sigtest(data=ex_survey1, dep = c_1), # one-sample t-test p<.001
+#' sigtest(data=ex_survey1, dep = b_1, indep = x1_sex), # Chi-square: p = .548
+#' sigtest(data=ex_survey1, dep = b_1, indep = f_uni), # Chi-square: p = .102
+#' sigtest(data=ex_survey1, dep = c_1, indep = x1_sex), # two-sample t-test: p = .97
+#' sigtest(data=ex_survey1, dep = c_1, indep = f_uni), # ANOVA/F-test: p = .22
+#' sigtest(data=ex_survey1, dep = c_1, indep = c_2)) # correlation: p = .976
 #'
-#' sigtest(data=ex_survey1, cols = a_1, by = c_1) # NA
-#' sigtest(data=ex_survey1, cols = b_1, by = c_1) # NA
+#' sigtest(data=ex_survey1, dep = a_1, indep = c_1) # NA
+#' sigtest(data=ex_survey1, dep = b_1, indep = c_1) # NA
 #'}
 #'
 sigtest <-
   function(data,
-           cols,
+           dep,
            ...,
-           by = NULL,
-           col_type = NULL,
-           by_type = NULL,
-           label_separator = NULL,
+           indep = NULL,
+           .variable_type = NULL,
+           indep_type = NULL,
            call = rlang::caller_env()) {
 
-    dots <- rlang::list2(...)
+    dots <- update_dots(dots = rlang::list2(...),
+                        caller_function = "sigtest")
 
-    cols_enq <- rlang::enquo(arg = cols)
-    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
-    if(length(cols_pos) != 1L) cli::cli_abort("{.arg {cols_pos}} must be a single column.")
-    by_enq <- rlang::enquo(arg = by)
-    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
-    if(length(by_pos) > 1L) cli::cli_abort("{.arg by} must be at most a single column.")
+
+    dep_enq <- rlang::enquo(arg = dep)
+    dep_pos <- tidyselect::eval_select(dep_enq, data = data, error_call = call)
+    if(length(dep_pos) != 1) cli::cli_abort("{.arg dep}: {dep_pos} must be a single column.")
+    indep_enq <- rlang::enquo(arg = indep)
+    indep_pos <- tidyselect::eval_select(indep_enq, data = data, error_call = call)
+    if(length(indep_pos) >= 2) cli::cli_abort("{.arg indep}: {indep_pos} must be at most a single column.")
 
     data <-
-      data %>%
-      dplyr::filter(dplyr::if_all(.cols=c({{cols}}, {{by}}), .fns = ~!is.na(.x))) %>%
-      dplyr::mutate(dplyr::across(c({{cols}}, {{by}}) & tidyselect::where(~is.factor(.x)), ~forcats::fct_drop(.x)))
+      dplyr::filter(data, dplyr::if_all(.cols=c({{dep}}, {{indep}}), .fns = ~!is.na(.x))) %>%
+      dplyr::mutate(dplyr::across(c({{dep}}, {{indep}}) & tidyselect::where(~is.factor(.x)), ~forcats::fct_drop(.x)))
 
     number_rows <- nrow(data)
+    number_rows_by_group <- min(table(data[,c(dep_pos, indep_pos)]))
 
     var_labels <-
-      get_raw_labels(data = data, cols_pos = cols_pos) %>%
-      keep_subitem(label_separator = label_separator) %>%
+      get_raw_labels(data = data, col_pos = dep_pos) %>%
+      keep_subitem(label_separator = dots$label_separator) %>%
       as.character()
 
-    if(is.null(col_type)) {
-      col_type <- class(data[[cols_pos]])
-    } else if(col_type == "int" && class(data[[cols_pos]]) %in% c("factor")) {
-      data[[cols_pos]] <- as.numeric(data[[cols_pos]])
-    } else if(col_type == "fct" && class(data[[cols_pos]]) %in% c("integer", "numeric")) {
-      data[[cols_pos]] <- as.factor(data[[cols_pos]])
+    if(is.null(.variable_type)) {
+      .variable_type <- class(data[[dep_pos]])
+    } else if(.variable_type == "int" && class(data[[dep_pos]]) %in% c("factor")) {
+      data[[dep_pos]] <- as.numeric(data[[dep_pos]])
+    } else if(.variable_type == "fct" && class(data[[dep_pos]]) %in% c("integer", "numeric")) {
+      data[[dep_pos]] <- as.factor(data[[dep_pos]])
     }
-    col_n <- dplyr::n_distinct(data[[cols_pos]], na.rm = TRUE)
+    dep_n <- dplyr::n_distinct(data[[dep_pos]], na.rm = TRUE)
 
-    by_label <-
-      if(length(by_pos)>0) get_raw_labels(data, unname(by_pos))
+    indep_label <-
+      if(length(indep_pos) >= 1) get_raw_labels(data = data, col_pos = unname(indep_pos))
 
     df_main <-
-      vctrs::df_list(variable = names(cols_pos),
+      vctrs::df_list(variable = names(dep_pos),
                      .variable_label = var_labels,
                      N = number_rows,
-                     X = by_label)
+                     X = indep_label)
     df_main <- vctrs::new_data_frame(df_main)
 
 
-    if(length(by_pos) > 0) {
-      if(is.null(by_type)) {
-        by_type <- class(data[[by_pos]])
+    if(length(indep_pos) >= 1) {
+      if(is.null(indep_type)) {
+        indep_type <- class(data[[indep_pos]])
       }
-      by_n <- dplyr::n_distinct(data[[by_pos]], na.rm = TRUE)
+      indep_n <- dplyr::n_distinct(data[[indep_pos]], na.rm = TRUE)
     }
 
-    count_uniques <- dplyr::count(data,
-                                  dplyr::pick(tidyselect::any_of(names(c(cols_pos, by_pos)))),
-                                  name = ".n_count")
+    count_uniques <-
+      dplyr::count(data,
+                   dplyr::pick(tidyselect::any_of(names(c(dep_pos, indep_pos)))),
+                   name = ".n_count")
 
-    if(col_n > 1 &&
-       (length(by_pos) == 0 || by_n > 1) &&
-       (col_type != "factor" || all(count_uniques$.n_count >= 10))) {
+    if(dep_n >= 2 &&
+       (length(indep_pos) == 0 || indep_n >= 2) &&
+       (!.variable_type %in% c("fct", "factor") ||
+        all(count_uniques$.n_count >= 10)) &&
+       df_main$N >= 1 &&
+       min(table(data[, c(dep_pos, indep_pos)])) >= 1) {
 
 
       stat_config <-
-        find_stat_config(cols_pos = cols_pos,
-                         col_type = col_type,
-                         col_n = col_n,
-                         cols_unique = unique(data[[cols_pos]]),
-                         by_type = by_type,
-                         by_pos = by_pos,
-                         by_n = by_n,
-                         by_unique = unique(data[[by_pos]]),
-                         call = call)
+        find_stat_config(dep_pos = dep_pos,
+                         .variable_type = .variable_type,
+                         dep_n = dep_n,
+                         dep_unique = unique(data[[dep_pos]]),
+                         indep_type = indep_type,
+                         indep_pos = indep_pos,
+                         indep_n = indep_n,
+                         indep_unique = unique(data[[indep_pos]]))
 
       estimate <-
-        data %>%
-        infer::specify(response = {{cols}},
-                       explanatory = {{by}},
-                       success = stat_config$success) %>%
-        infer::calculate(stat = stat_config$test, order = stat_config$order_lvls) %>%
+        infer::specify(data,
+                       response = {{dep}},
+                       explanatory = {{indep}},
+                       success = stat_config$success)
+      estimate <-
+        infer::calculate(estimate,
+                         stat = stat_config$test,
+                         order = stat_config$order_lvls) %>%
         suppressWarnings()
 
       null_dist <-
-        data %>%
-        infer::specify(response = {{cols}},
-                       explanatory = {{by}},
+        infer::specify(data,
+                       response = {{dep}},
+                       explanatory = {{indep}},
                        success = stat_config$success) %>%
         infer::hypothesize(null = stat_config$null_hypothesis_type,
                            p = stat_config$p_lvls,
@@ -192,8 +209,8 @@ sigtest <-
         suppressWarnings()
       pval <- pval$p_value
 
-      df_main %>%
-        dplyr::mutate(test = stat_config$test,
+        dplyr::mutate(df_main,
+                      test = stat_config$test,
                       stat = round(estimate[["stat"]], digits = 1),
                       p = dplyr::if_else(pval > 0, pval, 3/dots$reps),
                       p = dplyr::if_else(.data$N >= dots$hide_test_if_n_below, .data$p, NA_real_))
@@ -204,6 +221,7 @@ sigtest <-
 #' Title
 #'
 #' @inheritParams sigtest
+#' @inheritParams gen_qmd_chapters
 #' @inheritParams embed_cat_prop_plot
 #'
 #' @return Data frame
@@ -211,59 +229,59 @@ sigtest <-
 #'
 #' @examples
 #' embed_uni_sigtest(data=ex_survey1,
-#'                   cols = a_1:a_9, reps=10, hide_test_if_n_below=10)
+#'                   dep = a_1:a_9, reps=10, hide_test_if_n_below=10)
 #' embed_uni_sigtest(data=ex_survey1,
-#'                   cols = b_1:b_3, reps=10, hide_test_if_n_below=10,
+#'                   dep = b_1:b_3, reps=10, hide_test_if_n_below=10,
 #'                   label_separator=" - ")
 #' embed_uni_sigtest(data=ex_survey1,
-#'                   cols = c_1:c_2, reps=10, hide_test_if_n_below=10)
+#'                   dep = c_1:c_2, reps=10, hide_test_if_n_below=10)
 embed_uni_sigtest <-
   function(data,
-           cols,
+           dep,
            ...,
-           by = NULL,
-           col_type = NULL,
-           by_type = NULL,
-           label_separator = NULL,
-           translations = .saros.env$defaults$translations,
+           indep = NULL,
+           .variable_type = NULL,
+           indep_type = NULL,
+           mesos_group = NULL,
            call = rlang::caller_env()) {
 
-    dots <- rlang::list2(...)
 
-    cols_enq <- rlang::enquo(arg = cols)
-    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
-    by_enq <- rlang::enquo(arg = by)
-    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
-    if(length(by_pos) > 1L) cli::cli_abort("{.arg by} must be at most a single column.")
+    dots <- update_dots(dots = rlang::list2(...),
+                        caller_function = "uni_sigtest")
+
+    dep_enq <- rlang::enquo(arg = dep)
+    dep_pos <- tidyselect::eval_select(dep_enq, data = data, error_call = call)
+    indep_enq <- rlang::enquo(arg = indep)
+    indep_pos <- tidyselect::eval_select(indep_enq, data = data, error_call = call)
+    if(length(indep_pos) > 1L) cli::cli_abort("{.arg indep} must be at most a single column.")
 
     data <-
       data %>%
-      dplyr::filter(dplyr::if_all(.cols=c(cols_pos, by_pos), ~!is.na(.x)))
+      dplyr::filter(dplyr::if_all(.cols=c(dep_pos, indep_pos), ~!is.na(.x)))
 
     main_question <-
-      get_raw_labels(data = data, cols_pos = cols_pos) %>%
-      get_main_question2(label_separator = label_separator, warn_multiple = TRUE, call = call) %>%
+      get_raw_labels(data = data, col_pos = dep_pos) %>%
+      get_main_question2(label_separator = dots$label_separator,
+                         warn_multiple = TRUE) %>%
       unique()
     main_question <-
-      if(!is.null(label_separator) &&
+      if(!is.null(dots$label_separator) &&
          length(main_question)==1) main_question else ".variable_label"
 
 
     out <-
-      cols_pos %>%
+      dep_pos %>%
       names() %>%
-      purrr::map(.f = ~{
+      lapply(FUN = function(.x) {
         col_sym <- rlang::sym(.x)
 
         rlang::inject(
           sigtest(
             data = data,
-            cols = !!col_sym,
-            # by = !!by_pos,
-            col_type = col_type,
-            by_type = by_type,
-            label_separator = label_separator,
-            call = call,
+            dep = !!col_sym,
+            # indep = !!indep_pos,
+            .variable_type = .variable_type,
+            indep_type = indep_type,
             !!!dots))
       }) %>%
       dplyr::bind_rows()
@@ -272,9 +290,9 @@ embed_uni_sigtest <-
 
     if(dplyr::n_distinct(out[[main_question]])==1) out[[main_question]] <- NULL
 
-    attr(out, "saros_caption") <- stringr::str_c(translations$sigtest_prefix,
+    attr(out, "saros_caption") <- stringi::stri_c(ignore_null=TRUE, dots$translations$sigtest_prefix,
                                                  main_question,
-                                                 translations$sigtest_suffix)
+                                                 dots$translations$sigtest_suffix)
 
     out
 
@@ -282,79 +300,79 @@ embed_uni_sigtest <-
 
 
 
-#' Title
+#' Bivariate significance tests
 #'
+#' @inheritParams draft_report
+#' @inheritParams gen_qmd_chapters
+#' @inheritParams summarize_data
 #' @inheritParams sigtest
-#' @inheritParams embed_cat_prop_plot
 #'
 #' @return Data frame
 #' @export
 #'
 #' @examples
-#' embed_bi_sigtest(data=ex_survey1, cols = a_1:a_9, by = x1_sex,
+#' embed_bi_sigtest(data=ex_survey1, dep = a_1:a_9, indep = x1_sex,
 #'                  reps=10, hide_test_if_n_below=1)
-#' embed_bi_sigtest(data=ex_survey1, cols = b_1:b_3, by = x1_sex,
+#' embed_bi_sigtest(data=ex_survey1, dep = b_1:b_3, indep = x1_sex,
 #'                  reps=10, hide_test_if_n_below=1, label_separator=" - ")
-#' embed_bi_sigtest(data=ex_survey1, cols = c_1:c_2, by = x1_sex,
+#' embed_bi_sigtest(data=ex_survey1, dep = c_1:c_2, indep = x1_sex,
 #'                  reps=10, hide_test_if_n_below=1)
 embed_bi_sigtest <-
   function(data,
-           cols,
-           by,
+           dep,
+           indep,
            ...,
-           col_type = NULL,
-           by_type = NULL,
-           translations = .saros.env$defaults$translations,
-           label_separator = NULL,
+           .variable_type = NULL,
+           indep_type = NULL,
            call = rlang::caller_env()) {
 
-    dots <- rlang::list2(...)
+    dots <- update_dots(dots = rlang::list2(...),
+                        caller_function = "bi_sigtest")
 
-    cols_enq <- rlang::enquo(arg = cols)
-    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
-    by_enq <- rlang::enquo(arg = by)
-    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
-    if(length(by_pos) > 1L) cli::cli_abort("{.arg by} must be at most a single column.")
+
+    dep_enq <- rlang::enquo(arg = dep)
+    dep_pos <- tidyselect::eval_select(dep_enq, data = data, error_call = call)
+    indep_enq <- rlang::enquo(arg = indep)
+    indep_pos <- tidyselect::eval_select(indep_enq, data = data, error_call = call)
+    if(length(indep_pos) > 1L) cli::cli_abort("{.arg indep} must be at most a single column.")
 
     data <-
-      data %>%
-      dplyr::filter(dplyr::if_all(.cols=c(cols_pos, by_pos), ~!is.na(.x)))
+      dplyr::filter(data, dplyr::if_all(.cols = c(dep_pos, indep_pos), ~!is.na(.x)))
 
     main_question <-
-      get_raw_labels(data = data, cols_pos = cols_pos) %>%
-      get_main_question2(label_separator = label_separator, warn_multiple = TRUE, call = call) %>%
+      get_raw_labels(data = data, col_pos = dep_pos) %>%
+      get_main_question2(label_separator = dots$label_separator,
+                         warn_multiple = TRUE) %>%
       unique()
 
     main_question <-
-      if(!is.null(label_separator) &&
+      if(!is.null(dots$label_separator) &&
          length(main_question)==1) main_question else ".variable_label"
 
-    by_sym <- rlang::sym(names(by_pos))
+    indep_sym <- rlang::sym(names(indep_pos))
 
     out <-
-      cols_pos %>%
+      dep_pos %>%
       names() %>%
-      purrr::map(.f = ~{
+      lapply(FUN = function(.x) {
         col_sym <- rlang::sym(.x)
 
 
         sigtest(
           data = data,
-          cols = !!col_sym,
-          by = !!by_sym,
-          col_type = col_type,
-          by_type = by_type,
-          label_separator = label_separator,
-          call = call,
+          dep = !!col_sym,
+          indep = !!indep_sym,
+          .variable_type = .variable_type,
+          indep_type = indep_type,
           !!!dots)
       }) %>%
       dplyr::bind_rows()
     names(out)[names(out) == ".variable_label"] <- main_question
     if(dplyr::n_distinct(out[[main_question]])==1) out[[main_question]] <- NULL
 
-    attr(out, "saros_caption") <- stringr::str_c(translations$sigtest_prefix,
+    attr(out, "saros_caption") <- stringi::stri_c(ignore_null=TRUE, dots$translations$sigtest_prefix,
                                                  main_question,
-                                                 translations$sigtest_suffix)
+                                                 dots$translations$sigtest_suffix)
 
     out
 

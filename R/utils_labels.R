@@ -1,10 +1,11 @@
 
 string_wrap <- function(str, width) {
   unlist(
-    purrr::map(
+    lapply(
       stringi::stri_wrap(str = str, width = width, simplify = F),
-      .f= ~paste0(.x, collapse="\n")))
+      FUN = function(.x) paste0(.x, collapse="\n")))
 }
+
 #' Remove Special Characters (<,>) in Variable Labels
 #'
 #' @param df Data frame
@@ -13,12 +14,15 @@ string_wrap <- function(str, width) {
 #' @export
 remove_special_chars_in_labels <-
   function(df) {
+    # z <-
+    #   labelled::val_labels(df)
     z <-
-      labelled::val_labels(df)
+      lapply(X = df, FUN = function(x) attr(x, "labels"))
     z <-
-      purrr::map2(.x = z,
-                  .y = names(z),
-                  .f = function(x, y) {
+      lapply(X = seq_along(z), FUN = function(i) {
+        x <- z[[i]]
+        y <- names(z)[[i]]
+
                     if(!is.null(x) && any(grepl("<|>", names(x)))) {
                       cli::cli_warn(c(
                         "Current version of function doesn't handle special characters `<` or `>` in labels.",
@@ -27,7 +31,10 @@ remove_special_chars_in_labels <-
                     }
                     x
                   })
-    labelled::val_labels(df) <- z
+    for(i in seq_len(ncol(df))) {
+      attr(df[[i]], "labels") <- z[[i]]
+    }
+    # labelled::val_labels(df) <- z
     df
   }
 
@@ -43,10 +50,10 @@ get_main_question2 <-
 
     x <-
       stringi::stri_replace(str = x,
-                           regex = stringr::str_c("(^.*)", label_separator, "(.*$)"),
+                           regex = stringi::stri_c(ignore_null=TRUE, "(^.*)", label_separator, "(.*$)"),
                            replacement = "$1") %>%
       unique()
-    x <- if(length(x)>0) stringr::str_c(x, collapse="\n")
+    x <- if(length(x)>0) stringi::stri_c(ignore_null=TRUE, x, collapse="\n")
     if(length(x) > 1L && warn_multiple) {
       cli::cli_warn(c(x="There are multiple main questions for these variables.",
                       i="Check your data."), call = call)
@@ -61,14 +68,15 @@ get_main_question2 <-
 
 # Helper function to extract raw variable labels from the data
 get_raw_labels <-
-  function(data, cols_pos=NULL) {
-    if(is.null(cols_pos)) cols_pos <- names(data)
-    cols_pos %>%
-      stats::setNames(nm=.) %>%
-      purrr::map_chr(.f = ~{
-      y <- attr(data[[.x]], "label")
-      if (!is.null(y)) y else NA
-    })
+  function(data, col_pos = NULL, return_as_list = FALSE) {
+    if(is.null(col_pos)) col_pos <- names(data)
+    out <- lapply(X = stats::setNames(col_pos, nm=col_pos),
+                  FUN = function(.x) {
+                    y <- attr(data[[.x]], "label")
+                    if (!is.null(y)) y else NA
+                  })
+    if(isFALSE(return_as_list)) out <- unlist(out)
+    out
   }
 
 
@@ -77,7 +85,7 @@ set_var_labels <- function(data, cols=tidyselect::everything(), overwrite=TRUE) 
   cols_pos <- tidyselect::eval_select(expr = cols_enq, data = data)
   col_names <- colnames(data)
   data <-
-    purrr::map(seq_len(ncol(data)), ~{
+    lapply(seq_len(ncol(data)), FUN = function(.x) {
       if(
         .x %in% cols_pos &&
         (overwrite || is.null(attr(data[[.x]], "label")))
@@ -117,17 +125,22 @@ rename_by_labels <-
            stop_words=NULL) {
     sort_var <- rlang::arg_match(sort_var)
 
-    df_labels <- labelled::lookfor(data = data, details = FALSE)
+    df_pos <- seq_len(ncol(data))
+    df_name <- names(data)
+    df_label <- unname(get_raw_labels(data))
+    df_labels <- data.frame(pos = df_pos,
+                            variable = df_name,
+                            label = df_label)
     df_labels <- tidyr::separate(data = df_labels, col = .data$label, sep = label_sep, fill = "right",
                                  into = c("label_pre", "label_suf"), remove = FALSE)
     df_labels$label_pre <- tolower(df_labels$label_pre)
     df_labels$label_pre_str <- vctrs::as_list_of(strsplit(x = df_labels$label_pre, split = "[[:space:][:punct:]]"))
     df_labels$label_pre2 <-
-      purrr::map_chr(df_labels$label_pre_str, .f=function(.x) {
+      unlist(lapply(df_labels$label_pre_str, FUN = function(.x) {
         out <- .x[!.x %in% stop_words]
-        out <- if(length(out) > 0L) stringr::str_c(out, collapse=" ") else stringr::str_c(.x, collapse=" ")
-        out <- stringr::str_c(out, collapse=" ")
-      })
+        out <- if(length(out) > 0L) stringi::stri_c(ignore_null=TRUE, out, collapse=" ") else stringi::stri_c(ignore_null=TRUE, .x, collapse=" ")
+        out <- stringi::stri_c(ignore_null=TRUE, out, collapse=" ")
+      }))
     df_labels$label_pre3 <- abbreviate(names.arg = df_labels$label_pre2,
                                        named = TRUE, minlength = 2L, dot = FALSE, method = "both")
     df_labels <- dplyr::arrange(df_labels, .data$label_pre, .data[[sort_var]])
@@ -137,8 +150,8 @@ rename_by_labels <-
     df_labels <- dplyr::ungroup(df_labels)
     df_labels <- tidyr::unite(df_labels, col = "variable_new", c(.data$label_pre3, .data$label_suf_no), sep = new_var_sep, na.rm = TRUE)
     data <- dplyr::rename_with(.data = data,
-                               .fn = ~purrr::map_chr(.x = .,
-                                                     .f = ~dplyr::pull(df_labels[df_labels$variable == .x, "variable_new"])))
+                               .fn = ~unlist(lapply(X = .,
+                                                     FUN = function(.x) dplyr::pull(df_labels[df_labels$variable == .x, "variable_new"]))))
     data
   }
 

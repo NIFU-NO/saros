@@ -77,16 +77,16 @@ library(dplyr)
 #> 
 #>     intersect, setdiff, setequal, union
 temp_folder <- tempdir()
-data_overview <-
+chapter_overview <-
  ex_survey_ch_overview %>%
-  saros::refine_data_overview(data = ex_survey1,
+  saros::refine_chapter_overview(data = ex_survey1,
                               label_separator = " - ",
                               name_separator = "_")
 
 
 index_filepath <-
   gen_qmd_report(
-    data_overview = data_overview,
+    chapter_overview = chapter_overview,
     elements = ex_survey_elements_list,
     path = temp_folder)
 #> Creating file for chapter... '2 Ambivalence'

@@ -1,7 +1,7 @@
 
 #' Are All Colours in Vector Valid Colours
 #'
-#' As title says. From: http://stackoverflow.com/a/13290832/3315962
+#' As title says. From: (https://stackoverflow.com/a/13290832/3315962)
 #'
 #' @param x Character vector of colours in hex-format.
 #'
@@ -50,9 +50,7 @@ is_colour <- function(x) {
 hex_bw <- function(hex_code, colour_2nd_binary_cat = NULL) {
 
   rgb_conv <-
-    hex_code %>%
-    grDevices::col2rgb() %>%
-    purrr::map(.f = ~{
+    lapply(grDevices::col2rgb(hex_code), FUN = function(.x) {
       ifelse(.x / 255 <= 0.04045,
              .x * 12.92 / 255,
              ((.x / 255 + 0.055) / 1.055) ^ 2.4)
@@ -84,9 +82,8 @@ check_colour_palette <- function(colour_palette, call = rlang::caller_env()) {
 
 get_remaining_colours <- function(user_colour_set,
                                   n_colours_needed,
-                                  ordinal = FALSE,
-                                  call) {
-  check_colour_palette(user_colour_set, call = call)
+                                  ordinal = FALSE) {
+  check_colour_palette(user_colour_set)
 
   if(!is.null(user_colour_set)) {
 
@@ -99,18 +96,18 @@ get_remaining_colours <- function(user_colour_set,
       } else return(user_colour_set[seq_len(n_colours_needed)])
 
     } else {
-      cli::cli_warn("Fewer colours in user-provided colour palette than needed.",
-                    call = call)
+      cli::cli_warn("Fewer colours in user-provided colour palette than needed.")
     }
   }
-  if(n_colours_needed <= 12 && requireNamespace("RColorBrewer")) {
-
-      return(sample(x = RColorBrewer::brewer.pal(n = 12, name = "Paired"),
-                    size = n_colours_needed))
-  }
-  if(requireNamespace("viridisLite")) {
-    return(viridisLite::viridis(n = n_colours_needed))
-  }
+  hues <- seq(15, 375, length = n_colours_needed + 1)
+  return(grDevices::hcl(h = hues, l = 65, c = 100)[1:n_colours_needed])
+  # if(n_colours_needed <= 12 && requireNamespace("RColorBrewer")) {
+  #
+  #     return(sample(x = RColorBrewer::brewer.pal(n = 12, name = "Paired"),
+  #                   size = n_colours_needed))
+  # } else if(requireNamespace("viridisLite")) {
+  #   return(viridisLite::viridis(n = n_colours_needed))
+  # }
 }
 
 
@@ -119,14 +116,22 @@ get_remaining_colours <- function(user_colour_set,
 #' Possibly using user_colour_set if available. If not sufficient, uses a set
 #'     palette from RColorBrewer.
 #'
+#' @inheritParams draft_report
+#' @inheritParams summarize_data
 #' @param x Vector for which colours will be found.
-#' @param user_colour_set [\code{character()>0}]\cr User-supplied default palette, excluding colour_na.
-#' @param colour_na [\code{character(1)}]\cr Colour as a single string.
-#' @param colour_2nd_binary_cat [\code{character(1)}]\cr Colour for second category in binary variables. Often useful to hide this.
-#' @param seed [\code{integer(1)}]\cr Random seed for sampling.
-#' @param call Caller function if used from inside another function.
+#' @param user_colour_set *User specified colour set*
 #'
-#' @return A colour set as character vector, where NA has the colour_na, and the rest are taken from user_colour_set if available.
+#'  `vector<character>` // *default:* `NULL` (`optional`)
+#'
+#'   User-supplied default palette, excluding `colour_na`.
+#'
+#' @param ordinal
+#'
+#'  `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'
+#'  Is palette ordinal?
+#'
+#' @return A colour set as character vector, where `NA` has the `colour_na`, and the rest are taken from user_colour_set if available.
 #' @export
 #' @examples
 #' get_colour_set(x=1:4)
@@ -155,8 +160,7 @@ get_colour_set <-
       get_remaining_colours(
         user_colour_set = user_colour_set,
         n_colours_needed = n_colours_needed,
-        ordinal = ordinal,
-        call = call)
+        ordinal = ordinal)
 
     if(!rlang::is_null(colour_2nd_binary_cat) &&
        n_colours_needed == 1) {
@@ -165,8 +169,8 @@ get_colour_set <-
 
       tryCatch(
       x[!names(x) == "NA"] <- colours_available[seq_along(x[!names(x) == "NA"])], ## PERHAPS NOT PERFECT HERE?
-      warning = function(e) cli::cli_warn(stringr::str_c("colours_available: {colours_available}. 'x' yields {x}.", e)),
-      error = function(e) cli::cli_warn(stringr::str_c("colours_available: {colours_available}. 'x' yields {x}.", e)))
+      warning = function(e) cli::cli_warn(stringi::stri_c(ignore_null=TRUE, "colours_available: {colours_available}. 'x' yields {x}.", e)),
+      error = function(e) cli::cli_warn(stringi::stri_c(ignore_null=TRUE, "colours_available: {colours_available}. 'x' yields {x}.", e)))
     }
     x
   }
@@ -240,23 +244,23 @@ get_colour_set <-
 #
 #     if(length(type) != length(unique_set_group)) {
 #       rlang::abort(c("type and unique_set_group are not of equal length.",
-#                      x=stringr::str_c("type is of length ", length(type),
+#                      x=stringi::stri_c(ignore_null=TRUE, "type is of length ", length(type),
 #                               " whereas unique_set_group is of length ", length(unique_set_group))))
 #     }
 #     if(length(unique_set) != length(unique_set_group)) {
 #       rlang::abort(c("unique_set and unique_set_group are not of equal length.",
-#                      x=stringr::str_c("unique_set is of length ", length(unique_set),
+#                      x=stringi::stri_c(ignore_null=TRUE, "unique_set is of length ", length(unique_set),
 #                               " whereas unique_set_group is of length ", length(unique_set_group))))
 #     }
 #     lengths_comparisons <- lengths(unique_set) <= lengths(unique_set_group)
 #     if(!all(lengths_comparisons)) {
 #       rlang::abort(c("unique_set and unique_set_group contain vectors of pairwise unequal lengths.",
-#                      x=stringr::str_c("Problem(s) at row ", which(!lengths_comparisons),
+#                      x=stringi::stri_c(ignore_null=TRUE, "Problem(s) at row ", which(!lengths_comparisons),
 #                               " when unique_set is ", lengths(unique_set)[!lengths_comparisons],
 #                               " and unique_set_group is ", lengths(unique_set_group)[!lengths_comparisons])))
 #     }
 #     # out <-
-#     purrr::map(.x = seq_along(type),# .y = unique_set,
+#     lapply(seq_along(type),# .y = unique_set,
 #                function(i) {
 #                  vctrs::vec_assert(x = unique_set_group[[i]], ptype = character())
 #                  vctrs::vec_assert(x = unique_set[[i]], ptype = character())

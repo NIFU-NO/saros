@@ -1,16 +1,16 @@
 
-eval_cols <- function(x, data, call = rlang::caller_env()) {
+eval_cols <- function(x, data,
+                      call = rlang::caller_env()) {
   check_string(x = x, n = NULL, null.ok = FALSE, call = call)
   check_data_frame(data, call = call)
-  x %>%
-    purrr::map(.f = function(col_entry) {
+  lapply(x, function(col_entry) {
       if(stringi::stri_length(col_entry)>0) {
-        expr <- stringr::str_c('tidyselect::eval_select(expr = rlang::expr(c(',
+        expr <- stringi::stri_c(ignore_null=TRUE, 'tidyselect::eval_select(expr = rlang::expr(c(',
                             col_entry,
                             ')), data = data)')
-        out <- tryCatch(eval(parse(text = expr)),
-                 error = function(e) cli::cli_abort("Column {.var {col_entry}} does not exist in data.",
-                                        call = call)
+        out <- rlang::try_fetch(eval(parse(text = expr)),
+                 error = function(e) cli::cli_abort("Column {.var {col_entry}} doesn't exist in data.",
+                                                    call = call)
           )
 
       } else out <- NA_integer_
@@ -31,10 +31,10 @@ look_for_extended <- function(data,
   if(ncol(data_part) == 0 || nrow(data_part) == 0) cli::cli_abort("data.frame is of 0 length.")
 
   x <- data.frame(
-    col_pos = match(colnames(data_part), colnames(data)),
-    col_name = colnames(data_part),
-    col_label = get_raw_labels(data = data_part),
-    col_type = purrr::map_chr(names(data_part), ~vctrs::vec_ptype_abbr(data_part[[.x]])),
+    .variable_position = match(colnames(data_part), colnames(data)),
+    .variable_name = colnames(data_part),
+    .variable_label = get_raw_labels(data = data_part),
+    .variable_type = as.character(unlist(lapply(names(data_part), function(.x) vctrs::vec_ptype_abbr(data_part[[.x]])))),
     row.names = NULL
   )
 
@@ -42,72 +42,72 @@ look_for_extended <- function(data,
     if(rlang::is_character(name_separator, n = 1)) {
       x <-
         x %>%
-        tidyr::separate_wider_delim(cols = "col_name",
+        tidyr::separate_wider_delim(cols = ".variable_name",
                                     delim = name_separator,
-                                    names = c("name_prefix", "name_suffix"),
+                                    names = c(".variable_name_prefix", ".variable_name_suffix"),
                                     cols_remove = FALSE,
                                     too_few = "align_end", too_many = "merge")
-      if(sum(stringi::stri_count_fixed(str = x$name_suffix, pattern = " - "), na.rm=TRUE) > 0) {
+      if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = " - "), na.rm=TRUE) > 0) {
         cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
                       i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
       }
 
     } else cli::cli_abort("Non-string {.arg name_separator} currently not supported.")
-  } else x <- x %>% dplyr::mutate(name_prefix = .data$col_name,
-                                  name_suffix = .data$col_name)
+  } else x <- x %>% dplyr::mutate(.variable_name_prefix = .data$.variable_name,
+                                  .variable_name_suffix = .data$.variable_name)
 
   if(!is.null(label_separator)) {
     if(rlang::is_character(label_separator, n = 1)) {
       x <-
         x %>%
-        tidyr::separate_wider_delim(cols = "col_label",
-                                    names = c("label_prefix", "label_suffix"),
+        tidyr::separate_wider_delim(cols = ".variable_label",
+                                    names = c(".variable_label_prefix", ".variable_label_suffix"),
                                     delim = label_separator,
                                     too_few = "align_end", too_many = "merge")
-      if(sum(stringi::stri_count_fixed(str = x$label_suffix, pattern = " - "), na.rm=TRUE) > 0) {
+      if(sum(stringi::stri_count_fixed(str = x$.variable_label_suffix, pattern = " - "), na.rm=TRUE) > 0) {
         cli::cli_warn(c("{.arg label_separator} matches more than one delimiter, your output is likely ugly.",
                         i="Consider renaming your variable labels with e.g. {.fun labelled::set_variable_labels}."))
       }
 
     }  else cli::cli_abort("Non-string {.arg label_separator} currently not supported.")
   } else {
-    x$label_prefix <- x$col_label
-    x$label_suffix <- x$col_label
-    x$col_label <- NULL
+    x$.variable_label_prefix <- x$.variable_label
+    x$.variable_label_suffix <- x$.variable_label
+    x$.variable_label <- NULL
   }
   grouping_vars <-
-    c(if(!is.null(label_separator)) "label_prefix",
-      if(!is.null(name_separator)) "name_prefix")
+    c(if(!is.null(label_separator)) ".variable_label_prefix",
+      if(!is.null(name_separator)) ".variable_name_prefix")
 
   x %>%
     dplyr::mutate(
 
-      name_prefix = dplyr::if_else(
-        is.na(.data$name_prefix) & !is.na(.data$name_suffix),
-        .data$name_suffix,
-        .data$name_prefix),
+      .variable_name_prefix = dplyr::if_else(
+        is.na(.data$.variable_name_prefix) & !is.na(.data$.variable_name_suffix),
+        .data$.variable_name_suffix,
+        .data$.variable_name_prefix),
 
 
-      name_suffix = dplyr::if_else(
-        is.na(.data$name_suffix) & !is.na(.data$name_prefix),
-        .data$name_prefix,
-        .data$name_suffix),
+      .variable_name_suffix = dplyr::if_else(
+        is.na(.data$.variable_name_suffix) & !is.na(.data$.variable_name_prefix),
+        .data$.variable_name_prefix,
+        .data$.variable_name_suffix),
 
-      label_prefix = dplyr::if_else(
-        is.na(.data$label_prefix) & !is.na(.data$label_suffix),
-        .data$label_suffix,
-        .data$label_prefix),
+      .variable_label_prefix = dplyr::if_else(
+        is.na(.data$.variable_label_prefix) & !is.na(.data$.variable_label_suffix),
+        .data$.variable_label_suffix,
+        .data$.variable_label_prefix),
 
-      label_suffix = dplyr::if_else(
-        is.na(.data$label_suffix) & !is.na(.data$label_prefix),
-        .data$label_prefix,
-        .data$label_suffix),
+      .variable_label_suffix = dplyr::if_else(
+        is.na(.data$.variable_label_suffix) & !is.na(.data$.variable_label_prefix),
+        .data$.variable_label_prefix,
+        .data$.variable_label_suffix),
 
     ) %>%
-    dplyr::relocate(tidyselect::any_of(c("col_pos", "col_name", "name_prefix", "name_suffix",
-                    "label_prefix", "label_suffix", "col_type"))) %>%
-    dplyr::mutate(col_group = dplyr::cur_group_id(),
-                  .by = tidyselect::all_of(if(length(grouping_vars)>0) grouping_vars else "col_pos"))
+    dplyr::relocate(tidyselect::any_of(c(".variable_position", ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
+                    ".variable_label_prefix", ".variable_label_suffix", ".variable_type"))) %>%
+    dplyr::mutate(.variable_group_id = dplyr::cur_group_id(),
+                  .by = tidyselect::all_of(if(length(grouping_vars)>0) grouping_vars else ".variable_position"))
 
   ### Return a grouped data frame with
   ### main question variable name prefix,
@@ -115,37 +115,36 @@ look_for_extended <- function(data,
   ### subquestion variable name suffix,
   ### subquestion variable label (suffix)
   ### var_group,
-  ### col_type,
-  ### designated_role, designated_type, uni_bi_variate,
+  ### .variable_type,
+  ### .variable_role, designated_type, uni_bi_variate,
 }
 #
 
 validate_labels <- function(data) {
-  miss_label_vars <- data[is.na(data$label_prefix), ]
-  if(nrow(miss_label_vars) > 0) cli::cli_warn("Using variable name in place of missing label for {.var {miss_label_vars$col_name}}.")
-  data$label_prefix <- dplyr::if_else(!is.na(data$label_prefix), data$label_prefix, data$col_name)
-  data$label_suffix <- dplyr::if_else(!is.na(data$label_suffix), data$label_suffix, data$col_name)
+  miss_label_vars <- data[is.na(data$.variable_label_prefix), ]
+  if(nrow(miss_label_vars) > 0) cli::cli_warn("Using variable name in place of missing label for {.var {miss_label_vars$.variable_name}}.")
+  data$.variable_label_prefix <- dplyr::if_else(!is.na(data$.variable_label_prefix), data$.variable_label_prefix, data$.variable_name)
+  data$.variable_label_suffix <- dplyr::if_else(!is.na(data$.variable_label_suffix), data$.variable_label_suffix, data$.variable_name)
   data
 }
 
 
-attach_indep <- function(refined_data_overview) {
-  if(!rlang::is_null(refined_data_overview$designated_role)) {
+attach_indep <- function(refined_chapter_overview) {
+  if(!rlang::is_null(refined_chapter_overview$.variable_role)) {
 
-    by_df <-
-      refined_data_overview %>%
-      dplyr::ungroup() %>%
-      dplyr::filter(.data$designated_role == "indep") %>%
-      tidyr::nest(.by = tidyselect::all_of(c("chapter")),
-                  .key = "by_cols_df")
+    indep_df <- refined_chapter_overview
+    indep_df <- dplyr::ungroup(indep_df)
+    indep_df <- dplyr::filter(indep_df, .data$.variable_role == "indep")
+    indep_df <- tidyr::nest(indep_df, .by = tidyselect::all_of("chapter"),
+                  .key = "indep_cols_df")
 
-    dplyr::left_join(x = refined_data_overview,
-                     y = by_df,
+    dplyr::left_join(x = refined_chapter_overview,
+                     y = indep_df,
                      by = dplyr::join_by("chapter"))
 
   } else {
-    cli::cli_warn("No column {.var designated_role} found, no bivariates possible.")
-    dplyr::mutate(refined_data_overview, by_cols_df = list(NULL))
+    cli::cli_warn("No column {.var .variable_role} found, no bivariates possible.")
+    dplyr::mutate(refined_chapter_overview, indep_cols_df = list(NULL))
   }
 }
 
@@ -169,74 +168,74 @@ find_test <- function(y, x) {
 }
 
 remove_non_significant_bivariates <-
-  function(refined_data_overview,
+  function(refined_chapter_overview,
            data,
            hide_bi_entry_if_sig_above = .05,
-           always_show_bi_for_by = c(),
+           always_show_bi_for_indep = c(),
+           progress = TRUE,
            call = rlang::caller_env()) {
 
     check_double(hide_bi_entry_if_sig_above, min = 0, max = 1, call = call)
-    check_string(always_show_bi_for_by, null.ok = TRUE, n = NULL, call = call)
+    check_string(always_show_bi_for_indep, null.ok = TRUE, n = NULL, call = call)
 
     if(hide_bi_entry_if_sig_above < 1) {
-      cli::cli_progress_message("Removing bivariate occurences if {.arg hide_bi_entry_if_sig_above}: {.arg {hide_bi_entry_if_sig_above}}, except {always_show_bi_for_by}.")
+      if(progress) cli::cli_progress_message("Removing bivariate occurences if {.arg hide_bi_entry_if_sig_above}: {.arg {hide_bi_entry_if_sig_above}}, except {always_show_bi_for_indep}.")
 
-      out <-
-        refined_data_overview %>%
-        dplyr::rowwise() %>%
-        dplyr::group_map(.keep = TRUE, .f = function(df_col_row, df_col_key) {
+      out <- refined_chapter_overview
+      out <- dplyr::rowwise(out)
+      out <- dplyr::group_map(out, .keep = TRUE, .f = function(df_col_row, df_col_key) {
 
-          if(rlang::is_null(df_col_row$by_cols_df[[1]]) || nrow(df_col_row$by_cols_df[[1]]) == 0) {
+          if(rlang::is_null(df_col_row$indep_cols_df[[1]]) || nrow(df_col_row$indep_cols_df[[1]]) == 0) {
 
             df_col_row
 
           } else {
 
-          out_by <-
-            df_col_row$by_cols_df[[1]] %>% ### COULD ALSO purrr::map(1:nrow(df_col_row$by_cols_df[[1]])) %>% bind_rows()
+          out_indep <-
+            df_col_row$indep_cols_df[[1]] %>% ### COULD ALSO lapply(1:nrow(df_col_row$indep_cols_df[[1]])) %>% bind_rows()
             dplyr::rowwise() %>%
-            dplyr::group_map(.keep = TRUE, .f = function(df_by_row, by_df_key) {
+            dplyr::group_map(.keep = TRUE, .f = function(df_indep_row, indep_df_key) {
 
-              if(df_by_row$col_name != df_col_row$col_name) {
+              if(df_indep_row$.variable_name != df_col_row$.variable_name) {
 
                 df_chitest <-
-                  data[!is.na(data[[df_col_row$col_name]]) & !is.na(data[[df_by_row$col_name]]),
-                       c(df_col_row$col_name, df_by_row$col_name)]
+                  data[!is.na(data[[df_col_row$.variable_name]]) & !is.na(data[[df_indep_row$.variable_name]]),
+                       c(df_col_row$.variable_name, df_indep_row$.variable_name)]
 
                 count_uniques <- dplyr::count(df_chitest,
-                                              .data[[df_col_row$col_name]],
-                                              .data[[df_by_row$col_name]],
+                                              .data[[df_col_row$.variable_name]],
+                                              .data[[df_indep_row$.variable_name]],
                                               name = ".n_count")
 
-                if(dplyr::n_distinct(df_chitest[[df_col_row$col_name]]) > 1 &&
-                   dplyr::n_distinct(df_chitest[[df_by_row$col_name]]) > 1 &&
+                if(dplyr::n_distinct(df_chitest[[df_col_row$.variable_name]]) > 1 &&
+                   dplyr::n_distinct(df_chitest[[df_indep_row$.variable_name]]) > 1 &&
                    all(count_uniques$.n_count >= 10)) {
 
 
 
-                  stattest <- find_test(y=df_chitest[[df_col_row$col_name]],
-                                        x = df_chitest[[df_by_row$col_name]])
+                  stattest <- find_test(y=df_chitest[[df_col_row$.variable_name]],
+                                        x = df_chitest[[df_indep_row$.variable_name]])
 
-                  df_by_row$chi_p <-
-                    stattest(x=df_chitest[[df_col_row$col_name]],
-                             y=df_chitest[[df_by_row$col_name]])$p.value %>%
+                  df_indep_row$chi_p <-
+                    stattest(x=df_chitest[[df_col_row$.variable_name]],
+                             y=df_chitest[[df_indep_row$.variable_name]])$p.value %>%
                     suppressWarnings()
 
 
-                  return(df_by_row)
+                  return(df_indep_row)
                 }
               }
-              df_by_row$chi_p <- NA_real_
-              return(df_by_row)
+              df_indep_row$chi_p <- NA_real_
+              return(df_indep_row)
 
             }) %>%
             dplyr::bind_rows()
 
-          df_col_row$by_cols_df[[1]] <-
-            vctrs::vec_slice(out_by,
-                             (!is.na(out_by$chi_p) &
-                               out_by$chi_p <= hide_bi_entry_if_sig_above) |
-                               out_by$col_name %in% always_show_bi_for_by,
+          df_col_row$indep_cols_df[[1]] <-
+            vctrs::vec_slice(out_indep,
+                             (!is.na(out_indep$chi_p) &
+                               out_indep$chi_p <= hide_bi_entry_if_sig_above) |
+                               out_indep$.variable_name %in% always_show_bi_for_indep,
                              error_call = call)
           df_col_row
           }
@@ -246,84 +245,132 @@ remove_non_significant_bivariates <-
         dplyr::bind_rows()
 
       out
-    } else refined_data_overview
+    } else refined_chapter_overview
   }
 
 
-#' Processes A 'data_overview' Data Frame
+add_element_names <- function(refined_chapter_overview, element_names) {
+  refined_chapter_overview <- dplyr::group_map(refined_chapter_overview,
+                                               .f = ~tidyr::crossing(.x, .element_name = element_names))
+  refined_chapter_overview <- dplyr::bind_rows(refined_chapter_overview)
+  refined_chapter_overview
+}
+
+#' Processes A 'chapter_overview' Data Frame
 #'
-#' @param data_overview A data frame containing the columns:
-#' @param data Optional full survey data set for which columns can be looked up.
-#' @param groupby Character vector of colnames used for identifying chapters and sections.
-#' @param sort_by Character vector of of colnames used to order pieces within each groupby combination.
-#' @param label_separator Optional string for separating label between main question and sub-item.
-#' @param name_separator Optional string for separating column name between main question and sub-item.
+#' @inheritParams draft_report
+#' @inheritParams gen_qmd_chapters
+#' @param progress *Whether to display progress message*
+#'
+#'    `scalar<logical>` // *default:* `TRUE`
 #'
 #' @return Data frame
 #' @export
 #'
 #' @examples
-#' ref_df <- refine_data_overview(ex_survey_ch_overview)
-#' ref_df2 <- refine_data_overview(ex_survey_ch_overview,
-#'                      data = ex_survey1,
-#'                      label_separator = " - ",
-#'                      hide_bi_entry_if_sig_above = .05,
-#'                      name_separator = "_")
-refine_data_overview <-
-  function(data_overview,
+#' ref_df <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview)
+#' ref_df2 <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview,
+#'                      data = ex_survey1)
+refine_chapter_overview <-
+  function(chapter_overview,
            data = NULL,
-           label_separator = NULL,
-           name_separator = NULL,
            ...,
+           progress = TRUE,
            call = rlang::caller_env()) {
 
-    cli::cli_progress_message(msg = "Refining data_overview...")
+    dots <- update_dots(dots = rlang::list2(...),
+                        allow_unique_overrides = FALSE)
 
-    dots <- rlang::list2(...)
+    if(progress) cli::cli_progress_message(msg = "Refining chapter_overview...\n")
+
 
   col_headers <- c("dep", "indep")
+  if(!any(colnames(chapter_overview) == "dep")) {
+    cli::cli_abort("{.arg chapter_overview} must contain columns `dep` (and optionally `indep`).")
+  }
   data_present <- !is.null(data) && is.data.frame(data)
+
+  delim_regex <- ",|[[:space:]]+"
+  attr(delim_regex, "options") <-
+    list(case_insensitive = FALSE,
+         comments = FALSE,
+         dotall = FALSE,
+         multiline = FALSE)
+  class(delim_regex) <- c("stringr_regex", "stringr_pattern", "character")
+
   out <-
-    data_overview %>%
-    tidyr::pivot_longer(cols = tidyselect::any_of(col_headers), values_to = "col_spec") %>%
-    tidyr::separate_longer_delim(cols = "col_spec",
-                                 delim = stringr::regex(",|[[:space:]]+")) %>%
-    tidyr::separate(col = .data$name, into = c("designated_role"), sep="_") %>%
-    dplyr::mutate(col_spec = dplyr::if_else(!stringi::stri_detect(.data$col_spec, regex = "matches\\(") &
-                                              stringi::stri_detect(.data$col_spec, regex = "\\*"),
-                                            true = stringr::str_c("matches('", .data$col_spec, "')"),
-                                            false = .data$col_spec)) %>%
-    dplyr::distinct(.keep_all = TRUE) %>%
-    dplyr::filter(!.data$col_spec == "" & !is.na(.data$col_spec)) %>%
-    dplyr::arrange(.data$designated_role) %>%
-    dplyr::relocate(tidyselect::all_of(c("designated_role", "col_spec")))
+    tidyr::pivot_longer(chapter_overview,
+                        cols = tidyselect::any_of(col_headers),
+                        values_to = ".variable_selection")
+  out <-
+    tidyr::separate_longer_delim(out,
+                                 cols = ".variable_selection",
+                                 delim = delim_regex)
+  out <-
+    tidyr::separate(out,
+                    col = .data$name,
+                    into = ".variable_role",
+                    sep="_")
+  out <-
+    dplyr::mutate(out,
+                  .variable_selection =
+                    dplyr::if_else(!stringi::stri_detect(.data$.variable_selection,
+                                                         regex = "matches\\(") &
+                                     stringi::stri_detect(.data$.variable_selection,
+                                                          regex = "\\*"),
+                                   true = stringi::stri_c(ignore_null=TRUE,
+                                                          "matches('",
+                                                          .data$.variable_selection,
+                                                          "')"),
+                                   false = .data$.variable_selection))
+  out <-
+    dplyr::distinct(out, .keep_all = TRUE)
+  out <-
+    dplyr::filter(out, !.data$.variable_selection == "" & !is.na(.data$.variable_selection))
+  out <-
+    dplyr::arrange(out, .data$.variable_role)
+  out <-
+    dplyr::relocate(out, tidyselect::all_of(c(".variable_role", ".variable_selection")))
 
 
   if(data_present) {
+    out$cols <- eval_cols(x = out$.variable_selection,
+                          data = data,
+                          call = call)
     out <-
-    out %>%
-    dplyr::mutate(cols = eval_cols(x = .data$col_spec,
-                                 data = .env$data,
-                                 call = call)) %>%
-     tidyr::unnest_longer(col = "cols", values_to = "col_pos", indices_to = "col_name")
-    # check_duplicates_in_data_overview(out)
+      tidyr::unnest_longer(out,
+                           col = "cols",
+                           values_to = ".variable_position",
+                           indices_to = ".variable_name")
+    # check_duplicates_in_chapter_overview(out)
     out <-
-      out %>%
-     dplyr::left_join(y=look_for_extended(data = data,
-                                          label_separator = label_separator,
-                                          name_separator = name_separator),
-                      by = dplyr::join_by("col_pos", "col_name")) %>%
-      dplyr::mutate(label_prefix = stringr::str_trim(.data$label_prefix),
-                    label_prefix = stringr::str_replace_all(.data$label_prefix, pattern = "[[:space:]]+", replacement = " "),
-                    label_suffix = stringr::str_trim(.data$label_suffix),
-                    label_suffix = stringr::str_replace_all(.data$label_suffix, pattern = "[[:space:]]+", replacement = " ")) %>%
-      validate_labels() %>%
-      attach_indep() %>%
-      remove_non_significant_bivariates(data = data,
+     dplyr::left_join(x=out,
+                      y=look_for_extended(data = data,
+                                          label_separator = dots$label_separator,
+                                          name_separator = dots$name_separator),
+                      by = dplyr::join_by(".variable_position", ".variable_name"))
+    out <-
+      dplyr::mutate(out,
+                    .variable_label_prefix = stringi::stri_trim_both(.data$.variable_label_prefix),
+                    .variable_label_prefix = stringi::stri_replace_all_regex(.data$.variable_label_prefix, pattern = "[[:space:]]+", replacement = " "),
+                    .variable_label_suffix = stringi::stri_trim_both(.data$.variable_label_suffix),
+                    .variable_label_suffix = stringi::stri_replace_all_regex(.data$.variable_label_suffix, pattern = "[[:space:]]+", replacement = " "))
+    out <-
+      validate_labels(out)
+    out <-
+      attach_indep(out)
+    out <-
+      remove_non_significant_bivariates(out,
+                                        data = data,
                                         hide_bi_entry_if_sig_above = dots$hide_bi_entry_if_sig_above,
-                                        always_show_bi_for_by = dots$always_show_bi_for_by) %>%
-      dplyr::group_by(dplyr::pick(tidyselect::all_of(dots$groupby))) %>%
-      dplyr::arrange(dplyr::pick(tidyselect::all_of(names(dots$sort_by))))
+                                        always_show_bi_for_indep = dots$always_show_bi_for_indep,
+                                        progress = progress)
+    out <-
+      tidyr::expand_grid(out, .element_name = dots$element_names)
+    out <-
+      dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$groupby)))
+    # out <-
+    #   dplyr::arrange(out, dplyr::pick(tidyselect::any_of(c(dots$groupby, names(dots$sort_by)))))
   }
   if(!rlang::is_null(out$chapter)) out$chapter <- factor(out$chapter, levels=unique(out$chapter))
   out

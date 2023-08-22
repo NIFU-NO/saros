@@ -1,8 +1,10 @@
 #'
 #' Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories
 #'
+#' @inheritParams draft_report
 #' @inheritParams summarize_data
-#' @inheritParams prep_cat_prop_plot_pdf
+#' @inheritParams gen_qmd_chapters
+#' @param inverse Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.
 #'
 #' @importFrom rlang !!!
 #'
@@ -10,17 +12,21 @@
 prep_cat_freq_plot_pdf <-
   function(data,
            ...,
+           inverse = FALSE,
            call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
+    dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
+                              val = dots[!names(dots) %in% c("...")], keep.null = TRUE)
+
+    # check_summary_data_cols(data, call = call)
 
     colour_palette <-
       get_colour_set(
         x = levels(data[[".category"]]),
         user_colour_set = dots$colour_palette,
         colour_na = dots$colour_na,
-        colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
-        call = call)
+        colour_2nd_binary_cat = dots$colour_2nd_binary_cat)
 
     multi <- length(colour_palette) > 2
 
@@ -37,16 +43,18 @@ prep_cat_freq_plot_pdf <-
       ggplot2::ggplot(
         mapping = ggplot2::aes(
           y = .data[[".count"]],
-          x = if(length(by_vars) == 1) .data[[by_vars]] else .data[[".variable_label"]],
+          x = if(length(by_vars) == 1 && isFALSE(inverse)) .data[[by_vars]] else .data[[".variable_label"]],
           fill = .data[[".category"]],
           label = .data[[".data_label"]]),
         cumulative = TRUE) +
-      ggplot2::geom_col(position = ggplot2::position_dodge(width = 0.9)) +
+      ggplot2::geom_col(position = ggplot2::position_dodge(width = 0.9),
+                        na.rm = TRUE) +
       ggplot2::geom_text(
         mapping = ggplot2::aes(group = .data[[".category"]],
                                colour =
                                  ggplot2::after_scale(x = hex_bw(.data$fill))),
-        position = ggplot2::position_dodge(width = 0.9), hjust = 2) +
+        position = ggplot2::position_dodge(width = 0.9), hjust = 2,
+        na.rm = TRUE) +
       ggplot2::scale_y_continuous(limits = c(-.003, NA),
                                   expand = c(0,0)) +
       ggplot2::scale_fill_manual(name="", values = colour_palette, drop = FALSE) +
@@ -67,6 +75,8 @@ prep_cat_freq_plot_pdf <-
       ggplot2::labs(x=NULL, y=NULL)
 
       if(length(by_vars) == 1L) {
+        if(!inverse) {
+
         p <- p +
           ggplot2::facet_grid(
             rows = ggplot2::vars(.data[[".variable_label"]]),
@@ -74,6 +84,15 @@ prep_cat_freq_plot_pdf <-
               .mapping = ggplot2::aes(label = string_wrap(.data$.label, width = dots$x_axis_label_width))),
             switch = "y", scales = "free_y", space = "free_y"
           )
+        } else {
+          p <- p +
+            ggplot2::facet_grid(
+              rows = ggplot2::vars(.data[[by_vars]]),
+              labeller = ggplot2::labeller(
+                .mapping = ggplot2::aes(label = string_wrap(.data$.label, width = dots$x_axis_label_width))),
+              switch = "y", scales = "free_y", space = "free_y"
+            )
+        }
       }
 
     if(!dots$vertical) {

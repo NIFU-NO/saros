@@ -5,34 +5,46 @@
 \title{Generate A Quarto Survey Report}
 \usage{
 gen_qmd_chapters(
-  data_overview,
+  chapter_overview,
   data,
-  tailored_var = NULL,
-  tailored_group = NULL,
-  element_names = NULL,
-  label_separator = NULL,
-  chapter_yaml_file = NULL,
-  translations = .saros.env$defaults$translations,
-  path = getwd(),
+  mesos_group = NULL,
   ...,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data_overview}{A (possibly grouped) tbl with overview of the survey columns in data.}
+\item{chapter_overview}{\emph{What goes in each chapter}
 
-\item{path}{String specifying the path to the working directory. Defaults to the current working directory.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{elements}{A named list of elements used to populate each chapter's section. The names of the list must be one of \code{\link{list_available_element_types}}. Defaults to a list of TRUE values for various elements. Each named element of the list can contain
-\describe{
-\item{\code{NULL}}{(default)}{ no element is inserted.}
-\item{\code{list()}}{A named sublist of already produced objects of the same type. The names must be of }
-\item{\code{character()}}{A character vector of paths to Rds-files containing the objects. These will be read in as needed, saving memory.}
-}}
+Data frame (or tibble, possibly grouped). One row per chapter. Should
+contain the columns 'chapter' and 'dep', Optionally 'indep' (independent
+variables) and other informative columns as needed.}
 
-\item{index_filename}{String specifying the name of the main index Quarto file (and its subfolder) used to collect all the chapters. Defaults to "index.qmd".}
+\item{data}{\emph{Survey data}
 
-\item{report_yaml_file, chapter_yaml_file}{Optional ymlthis-objects. Defaults will be obtained from getOptions("ymlthis.default_options") if NULL. The chapter_yaml_file will be used across all chapters. Authors will always be taken from the data_overview.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
+
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
+
+\item{mesos_group}{\emph{Specific group to compare with}
+
+\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
+
+\item{...}{\emph{Dynamic dots}
+
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+
+Arguments forwarded to the corresponding functions that create the elements.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 A Quarto survey report generated in the specified working directory.
@@ -44,5 +56,5 @@ This function generates a Quarto survey report.
 A report consists of multiple chapters and an index file that merges them together.
 A chapter can contain any user-defined set of dependent, independent or bivariate variable sets.
 A chapter consists of multiple sections.
-A section is defined as a group in the data_overview (ignoring the chapter grouping level) containing variables of the same type, meaning at a minimum that the variables in the section sharing the same response options, the same main question, and being of the same data type.
+A section is defined as a group in the chapter_overview (ignoring the chapter grouping level) containing variables of the same type, meaning at a minimum that the variables in the section sharing the same response options, the same main question, and being of the same data type.
 }

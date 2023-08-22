@@ -1,5 +1,5 @@
 estimate_plot_height <- function(y_col_pos,
-                                 label_prefix,
+                                 .variable_label_prefix,
                                  x_cols = NULL,
                                  vertical = FALSE,
                                  x_axis_label_width = 20,
@@ -19,7 +19,7 @@ estimate_plot_height <- function(y_col_pos,
     if(n_var == 1) {
       max_axis_lines_per_var <- 2
     } else {
-      max_axis_lines_per_var <- stringi::stri_wrap(label_prefix, width = x_axis_label_width, simplify = FALSE)
+      max_axis_lines_per_var <- stringi::stri_wrap(.variable_label_prefix, width = x_axis_label_width, simplify = FALSE)
       max_axis_lines_per_var <- max(lengths(max_axis_lines_per_var), na.rm=TRUE)
     }
 

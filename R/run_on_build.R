@@ -1,8 +1,8 @@
 # tmp <-
 #   list.files(path = here::here("data-raw"),
 #              all.files = TRUE, full.names = TRUE, recursive = TRUE, include.dirs = TRUE) |>
-#   stringr::str_subset(pattern = "\\.R$|[^\\.]") |>
-#   stringr::str_subset(pattern =
+#   stringi::stri_subset(pattern = "\\.R$|[^\\.]") |>
+#   stringi::stri_subset(pattern =
 #                         paste(sep="|",
 #                               "/\\.git",
 #                               "/\\.Rproj\\.user",

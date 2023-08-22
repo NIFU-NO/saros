@@ -1,20 +1,10 @@
 #'
 #' Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories
 #'
+#' @inheritParams draft_report
 #' @inheritParams summarize_data
-#' @param label_font_size [\code{integer(1)}]\cr Font size for data labels
-#' @param main_font_size [\code{integer(1)}]\cr Font size for all other text
-#' Must contain at least the number of unique values (excl. missing) in the data set.
-#' @param colour_palette [\code{character()}]\cr
-#' Must contain at least the number of unique values (incl. missing) in the data set.
-#' @param colour_na [\code{character(1)}]\cr Colour as a single string.
-#' @param colour_2nd_binary_cat [\code{character(1)}]\cr Colour for second category in binary variables. Often useful to hide this.
-#' @param font_family Word font family. See officer::fp_text
-#' @param vertical [\code{logical(1)}] Logical. If FALSE (default), then horizontal.
-#' @param x_axis_label_width [\code{integer(1)}] Width of the labels used for the categorical column names.
-#' @param seed [\code{integer(1)}] Optional random seed for selection of colours in blender.
-#' @param ... Optional parameters forwarded from above.
-#' @param call For internal use
+#' @inheritParams gen_qmd_chapters
+#' @param inverse Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.
 #'
 #' @importFrom rlang !!!
 #'
@@ -22,27 +12,33 @@
 prep_cat_prop_plot_html <-
   function(data,
            ...,
+           inverse = FALSE,
            call = rlang::caller_env()) {
 
+
     dots <- rlang::list2(...)
+    dots <- utils::modifyList(
+      x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
+      val = dots[!names(dots) %in% c("...")], keep.null = TRUE
+    )
 
     colour_palette <-
       get_colour_set(
         x = levels(data[[".category"]]),
         user_colour_set = dots$colour_palette,
         colour_na = dots$colour_na,
-        colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
-        call = call)
+        colour_2nd_binary_cat = dots$colour_2nd_binary_cat
+      )
 
     multi <- length(colour_palette) > 2
 
-    by_vars <- colnames(data)[!colnames(data) %in%
-                                .saros.env$summary_data_sort2]
+    indep_vars <- colnames(data)[!colnames(data) %in%
+      .saros.env$summary_data_sort2]
 
-    hide_axis_text <- length(by_vars) == 0 && dplyr::n_distinct(data[[".variable_label"]]) == 1
+    hide_axis_text <- length(indep_vars) == 0 && dplyr::n_distinct(data[[".variable_label"]]) == 1
     hide_legend <-
       dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
-      !rlang::is_null(dots$colour_2nd_binary_cat)
+        !rlang::is_null(dots$colour_2nd_binary_cat)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
@@ -50,74 +46,113 @@ prep_cat_prop_plot_html <-
     p <-
       data %>%
       dplyr::mutate(
-        Tooltip =     # Tooltip is opposite of the regular display
-          if(prop_family) {
+        Tooltip = # Tooltip is opposite of the regular display
+          if (prop_family) {
             sprintf(fmt = "%s: %.0f", .data[[".category"]], .data[[".count"]])
-            } else {
-            sprintf(fmt = stringr::str_c("%s: %.", dots$digits, "f%%"),
-                    .data[[".category"]], .data[[".proportion"]]*100)
-            }) %>%
+          } else {
+            sprintf(
+              fmt = stringi::stri_c(ignore_null=TRUE, "%s: %.", dots$digits, "f%%"),
+              .data[[".category"]], .data[[".proportion"]] * 100
+            )
+          },
+        onclick = paste0('alert(\"variable: ', .data[['.variable_name']], '\")')
+      ) %>%
       ggplot2::ggplot(
         mapping = ggplot2::aes(
-          y = .data[[if(prop_family) ".proportion" else stringr::str_c(".", dots$data_label)]],
-          x = if(length(by_vars) == 1) .data[[by_vars]] else .data[[".variable_label"]],
+          y = .data[[if (prop_family) ".proportion" else stringi::stri_c(ignore_null=TRUE, ".", dots$data_label)]],
+          x = if(length(indep_vars) == 1 && isFALSE(inverse)) .data[[indep_vars]] else .data[[".variable_label"]],
           fill = .data[[".category"]],
-          label = .data[[".data_label"]]),
-        cumulative = TRUE) +
+          group = .data[[".category"]],
+          label = .data[[".data_label"]],
+          data_id = .data[[".category"]],
+          onclick = .data[["onclick"]]
+        ),
+        cumulative = TRUE
+      ) +
       ggiraph::geom_col_interactive(
-        # mapping = ggplot2::aes(tooltip = .data[["Tooltip"]]), # BUG: Messes up order of categories if enabled.
-        position = ggplot2::position_stack(reverse = TRUE)) +
+        mapping = ggplot2::aes(tooltip = .data[["Tooltip"]]), # BUG: Messes up order of categories if enabled.
+        position = ggplot2::position_stack(reverse = TRUE),
+        na.rm = TRUE
+      ) +
       ggiraph::geom_text_interactive(
-        mapping = ggplot2::aes(colour =
-                                 ggplot2::after_scale(x = hex_bw(.data$fill,
-                                                                 colour_2nd_binary_cat = if(!multi) dots$colour_2nd_binary_cat))),
-                                     position = ggplot2::position_stack(vjust = .5, reverse = TRUE)) +
-      ggplot2::scale_y_continuous(limits = c(-.003, if(prop_family) 1.015 else NA),
-                                  expand = c(0,0),
-                                  labels = if(percentage) function(x) stringr::str_c(x*100, "%") else ggplot2::waiver()) +
-      ggiraph::scale_fill_manual_interactive(name="",
-                                             values = colour_palette,
-                                             data_id = function(x) x,
-                                             tooltip = function(x) x, drop = FALSE) +
+        mapping = ggplot2::aes(
+          colour =
+            ggplot2::after_scale(x = hex_bw(.data$fill,
+              colour_2nd_binary_cat = if (!multi) dots$colour_2nd_binary_cat
+            ))
+        ),
+        position = ggplot2::position_stack(vjust = .5, reverse = TRUE),
+        show.legend = FALSE, na.rm = TRUE
+      ) +
+      ggplot2::scale_y_continuous(
+        limits = c(-.003, if (prop_family) 1.015 else NA),
+        expand = c(0, 0),
+        labels = if (percentage) function(x) stringi::stri_c(ignore_null=TRUE, x * 100, "%") else ggplot2::waiver()
+      ) +
+      ggiraph::scale_fill_manual_interactive(
+        name = "",
+        values = colour_palette,
+        data_id = function(x) x,
+        tooltip = function(x) x, drop = FALSE
+      ) +
       ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white")) +
       ggplot2::scale_x_discrete(limits = rev, labels = function(x) string_wrap(x, width = dots$x_axis_label_width)) +
-      ggplot2::guides(fill = if(hide_legend) "none" else ggiraph::guide_legend_interactive(data_id="fill.guide", byrow = TRUE),
-                      colour = "none") +
+      ggplot2::guides(
+        fill = if (hide_legend) "none" else ggiraph::guide_legend_interactive(data_id = "fill.guide", byrow = TRUE),
+        colour = "none"
+      ) +
       ggplot2::theme_classic() +
-      ggplot2::theme(text = ggiraph::element_text_interactive(family = dots$font_family),
-                     axis.text.y = if(hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y"),
-                     plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
-                     legend.position = "bottom",
-                     legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
-                     strip.placement = "outside",
-                     strip.text = ggiraph::element_text_interactive(data_id = "strip.text", angle=0, hjust = .5, size = dots$main_font_size), #if(length(by_vars)>0) ggplot2::element_blank() else
-                     strip.background = ggiraph::element_rect_interactive(colour = NA)) +
-      ggplot2::labs(x=NULL, y=NULL)
+      ggplot2::theme(
+        text = ggiraph::element_text_interactive(family = dots$font_family),
+        axis.text.y = if (hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y"),
+        plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
+        legend.position = "bottom",
+        legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
+        strip.placement = "outside",
+        strip.text = ggiraph::element_text_interactive(data_id = "strip.text", angle = 0, hjust = .5, size = dots$main_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
+        strip.background = ggiraph::element_rect_interactive(colour = NA)
+      ) +
+      ggplot2::labs(x = NULL, y = NULL)
 
-      if(length(by_vars) > 1L || (length(by_vars) >= 1L && dplyr::n_distinct(data[[".variable_label"]]) > 1)) {
+    if (length(indep_vars) > 1L || (length(indep_vars) >= 1L && dplyr::n_distinct(data[[".variable_label"]]) > 1)) {
+      if(!inverse) {
+      p <- p +
+        ggiraph::facet_grid_interactive(
+          rows = ggplot2::vars(.data[[".variable_label"]]),
+          labeller = ggiraph::labeller_interactive(
+            .mapping = ggplot2::aes(
+              tooltip = .data[[".variable_label"]],
+              label = string_wrap(.data$.variable_label,
+                width = dots$x_axis_label_width
+              )
+            )
+          ),
+          interactive_on = "text",
+          switch = "y", scales = "free_y", space = "free_y"
+        )
+      } else {
         p <- p +
           ggiraph::facet_grid_interactive(
-            rows = ggplot2::vars(.data[[".variable_label"]]),
+            rows = ggplot2::vars(.data[[indep_vars]]),
             labeller = ggiraph::labeller_interactive(
-              .mapping = ggplot2::aes(tooltip = .data[[".variable_label"]],
-                                      label = string_wrap(.data$.variable_label,
-                                                          width = dots$x_axis_label_width))),
+              .mapping = ggplot2::aes(
+                tooltip = .data[[indep_vars]],
+                label = string_wrap(.data[[indep_vars]],
+                                    width = dots$x_axis_label_width
+                )
+              )
+            ),
             interactive_on = "text",
             switch = "y", scales = "free_y", space = "free_y"
           )
-      #} else {
-        # p <- p +
-        #   ggiraph::facet_grid_interactive(
-        #     rows = ggplot2::vars(.data$.by_group),
-        #     labeller = ggiraph::labeller_interactive(
-        #       .mapping = ggplot2::aes(tooltip = "Tooltip")),
-        #     interactive_on = "text",
-        #     switch = "y", scales = "free_y", space = "free_y")
       }
+    }
 
-    if(!dots$vertical) {
+    if (!dots$vertical) {
       p + ggplot2::coord_flip()
-    } else p
+    } else {
+      p
+    }
   }
 
 
@@ -125,83 +160,86 @@ prep_cat_prop_plot_html <-
 #' Embed Interactive Categorical Plot
 #'
 #'
+#' @inheritParams draft_report
 #' @inheritParams summarize_data
-#' @inheritParams prep_cat_prop_plot_html
-#' @inheritParams add_caption_attribute
-#' @param plot_height_multiplier [\code{numeric(1)>0}]\cr Height in cm per chart entry.
-#' @param plot_height_fixed_constant [\code{numeric(1)>0}]\cr Fixed height in cm.
-#' @param return_raw [\code{logical(1)}] Whether to return the raw static chart. Defaults to FALSE.
-#' @param ... Optional parameters forwarded from above.
+#' @inheritParams gen_qmd_chapters
+#' @param inverse Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.
+#' @param html_interactive *Toggle interactive plot*
+#'
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
+#'
+#'   Whether plot is to be interactive (ggiraph) or static (ggplot2).
+#'
 #' @return ggplot
 #' @importFrom rlang !!!
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' embed_cat_prop_plot(data = ex_survey1, cols = b_1:b_3)
+#' embed_cat_prop_plot(data = ex_survey1, dep = b_1:b_3)
 #' }
 embed_cat_prop_plot <-
   function(data,
-         ...,
-         cols = tidyselect::everything(),
-         by = NULL,
-         summarized_data = NULL,
-         label_separator = NULL,
-         tailored_group = NULL,
-         html_interactive = TRUE,
-         translations = .saros.env$defaults$translations,
-         call = rlang::caller_env()) {
+           ...,
+           dep = tidyselect::everything(),
+           indep = NULL,
+           mesos_group = NULL,
+           html_interactive = TRUE,
+           inverse = FALSE,
+           call = rlang::caller_env()) {
 
+    dots <- update_dots(dots = rlang::list2(...),
+                        caller_function = "cat_prop_plot")
 
-    dots <- rlang::list2(...)
-    check_multiple_by(data, by = {{by}}, call = call)
+    check_multiple_indep(data, indep = {{ indep }}, call = call)
 
-    cols_enq <- rlang::enquo(arg = cols)
-    cols_pos <- tidyselect::eval_select(cols_enq, data = data, error_call = call)
-    by_enq <- rlang::enquo(arg = by)
-    by_pos <- tidyselect::eval_select(by_enq, data = data, error_call = call)
+    dep_enq <- rlang::enquo(arg = dep)
+    dep_pos <- tidyselect::eval_select(dep_enq, data = data, error_call = call)
+    indep_enq <- rlang::enquo(arg = indep)
+    indep_pos <- tidyselect::eval_select(indep_enq, data = data, error_call = call)
 
-    check_category_pairs(data = data, cols_pos = c(cols_pos))
+    check_category_pairs(data = data, cols_pos = c(dep_pos))
 
     data_out <-
       rlang::exec(
         summarize_data,
         data = data,
-        cols = names(cols_pos),
-        by = names(by_pos),
-        label_separator = label_separator,
-        add_n_to_bygroup = TRUE,
-        translations = translations,
-        call = call,
-        !!!dots)
+        dep = names(dep_pos),
+        indep = names(indep_pos),
+        # add_n_to_bygroup = TRUE,
+        !!!dots
+      )
 
-    if(length(by_pos)>0) {
-      data_out[[names(by_pos)]] <- forcats::fct_rev(data_out[[names(by_pos)]])
+    if (length(indep_pos) > 0) {
+      data_out[[names(indep_pos)]] <- forcats::fct_rev(data_out[[names(indep_pos)]])
     }
 
-    if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
-       !rlang::is_null(dots$colour_2nd_binary_cat)) {
+    if (dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
+      !rlang::is_null(dots$colour_2nd_binary_cat)) {
       data_out$.category <- forcats::fct_rev(data_out$.category)
     }
 
     chart <-
       rlang::exec(
-        if(html_interactive) prep_cat_prop_plot_html else prep_cat_prop_plot_pdf,
+        if (html_interactive) prep_cat_prop_plot_html else prep_cat_prop_plot_pdf,
         data = data_out,
-        call = call,
-        !!!dots)
+        inverse = inverse,
+        !!!dots
+      )
 
-    if(!rlang::is_null(label_separator)) {
-      by_label <- unname(get_raw_labels(data = data, cols_pos = by_pos))
+    if(!rlang::is_null(dots$label_separator)) {
+      indep_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))
       attr(chart, "saros_caption") <-
-        get_raw_labels(data = data, cols_pos = cols_pos) %>%
-        get_main_question2(label_separator = label_separator) %>%
-        add_caption_attribute(data_out = data_out, by_pos = by_label,
-                              tailored_group = tailored_group,
-                              translations = translations)
+        get_raw_labels(data = data, col_pos = dep_pos) %>%
+        get_main_question2(label_separator = dots$label_separator) %>%
+        create_caption(
+          data_out = data_out,
+          indep_pos = indep_label,
+          mesos_group = mesos_group,
+          filepath = NULL,
+          translations = dots$translations
+        )
     }
 
-      chart
+    chart
   }
-
-

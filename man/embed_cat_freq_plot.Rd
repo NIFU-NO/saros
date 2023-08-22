@@ -7,36 +7,49 @@
 embed_cat_freq_plot(
   data,
   ...,
-  cols = tidyselect::everything(),
-  by = NULL,
-  summarized_data = NULL,
-  label_separator = NULL,
-  tailored_group = NULL,
-  translations = .saros.env$defaults$translations,
+  dep = tidyselect::everything(),
+  indep = NULL,
+  mesos_group = NULL,
   html_interactive = TRUE,
+  inverse = FALSE,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{...}{Optional parameters forwarded from above.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
-\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
+\item{...}{\emph{Dynamic dots}
 
-\item{summarized_data}{Currently not in use}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
 
-\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+Arguments forwarded to the corresponding functions that create the elements.}
 
-\item{tailored_group}{String, indicating name of tailored group.}
+\item{dep, indep}{\emph{Variable selections}
 
-\item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
+<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
+
+Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
+
+\item{mesos_group}{\emph{Specific group to compare with}
+
+\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 
 \item{html_interactive}{Flag, defaults to TRUE}
 
-\item{call}{Error call function, usually not needed.}
+\item{inverse}{Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 ggplot
@@ -46,6 +59,6 @@ Embed Interactive Categorical Plot
 }
 \examples{
 \dontrun{
-embed_cat_freq_plot(data = ex_survey1, cols = b_1:b_3)
+embed_cat_freq_plot(data = ex_survey1, dep = b_1:b_3)
 }
 }

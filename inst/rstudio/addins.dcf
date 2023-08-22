@@ -1,0 +1,4 @@
+Name: Column selection by clicking
+Description: Select data columns by clicking on them in a menu, returning as syntax. Can also use as function `handpick()`
+Binding: handpick
+Interactive: true
