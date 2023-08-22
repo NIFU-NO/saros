@@ -12,7 +12,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0 (Spørringene)
-
+- oppdatere DESCRIPTION
+    - Fjerne:  Using Tidyverse Syntax
+    - 
 
 # Structure
 -   single_y_bivariate_elements?
