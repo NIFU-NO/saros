@@ -9,6 +9,7 @@
 #'
 #' @return mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
 #'
+#' @keywords internal
 prep_cat_freq_plot_docx <-
   function(data,
            ...,

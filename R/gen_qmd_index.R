@@ -10,6 +10,7 @@
 #' @param call Internal call argument. Not to be fiddled with by the user.
 #'
 #' @return A string containing the filepath to the generated Quarto index file.
+#' @keywords internal
 #' @examples
 #' filepath <- tempfile(pattern = "index", fileext = ".qmd")
 #' index_file <-

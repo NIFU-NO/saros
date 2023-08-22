@@ -36,6 +36,9 @@ reference:
   - center_string
   - combn_upto
   - create_caption
+  - get_colour_set
+  - hex_bw
+  - is_colour
 - title: "Useful website management tools"
   contents:
   - create_htaccess

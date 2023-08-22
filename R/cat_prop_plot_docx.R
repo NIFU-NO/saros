@@ -6,6 +6,7 @@
 #' @param inverse Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.
 #'
 #' @return mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
+#' @keywords internal
 prep_cat_prop_plot_docx <-
   function(data,
            ...,

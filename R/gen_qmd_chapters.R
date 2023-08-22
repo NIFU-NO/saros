@@ -18,6 +18,8 @@
 #'
 #'
 #' @return A Quarto survey report generated in the specified working directory.
+#' @keywords internal
+#'
 gen_qmd_chapters <-
   function(chapter_overview,
            data,

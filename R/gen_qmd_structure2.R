@@ -1,3 +1,4 @@
+#' @keywords internal
 gen_qmd_structure2 <-
   function(chapter_overview,
            data,
