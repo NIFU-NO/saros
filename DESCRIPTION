@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys Using Tidyverse Syntax
-Version: 0.9.2
+Version: 0.9.2.1000
 Authors@R: 
     person(given = "Stephan", 
            family = "Daus", 
@@ -13,8 +13,7 @@ Description: Produces highly customizable figures, text, analyses and
     reports for a batch of possible dependent-independent relations of
     possible interest.
 License: MIT + file LICENSE
-URL: https://github.com/NIFU-NO/saros,
-    https://expert-adventure-7vzn177.pages.github.io/
+URL: https://github.com/NIFU-NO/saros, https://expert-adventure-7vzn177.pages.github.io/, https://nifu-no.github.io/saros/
 BugReports: https://github.com/NIFU-NO/saros/issues
 Depends:
     R (>= 4.2.0)

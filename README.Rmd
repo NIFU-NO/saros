@@ -67,8 +67,7 @@ output_index_qmd <-
   draft_report(chapter_overview = ex_survey_ch_overview, 
              data = ex_survey1, 
              mesos_var = "f_uni",
-             path = "C:/saros"
-             # path = tempdir()
+             path = tempdir()
              )
 quarto::quarto_render(output_index_qmd, as_job = FALSE)
 if(interactive()) {
