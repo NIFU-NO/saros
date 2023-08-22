@@ -24,7 +24,13 @@ process_yaml <- function(yaml_file = NULL,
 
   }
 
-  yml_section <- yaml::as.yaml(yml_section)
+  yml_section <- yaml::as.yaml(yml_section,
+                               handlers = list(
+    logical = function(x) {
+      result <- ifelse(x, "true", "false")
+      class(result) <- "verbatim"
+      result
+    }))
 
   if(add_fences) {
     yml_section <- stringi::stri_c("---",

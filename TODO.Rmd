@@ -13,9 +13,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Version 1.0 (Spørringene)
 
-# Flexi
--   lenke i index.qmd til shinyapps.io/...
--   
 
 # Structure
 -   single_y_bivariate_elements?
@@ -68,7 +65,6 @@ knitr::opts_chunk$set(echo = TRUE)
 -   cli_inform rows removed with hide_bi_entry_if_sig_above
 
 # YAML, config, etc
--   must store report_gen settings with rendered project, to be called by flexi
 -   move some parameters from \_report_generation_setup.yml to \_quarto.yml file and perform modifications in a R-script loaded in the beginning of index.qmd
     -   decimal marker?
     -   colour_palette?
