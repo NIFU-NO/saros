@@ -9,6 +9,7 @@
 #' @importFrom rlang !!!
 #'
 #' @return ggiraph object, plottable with plot()
+#' @keywords internal
 prep_cat_prop_plot_html <-
   function(data,
            ...,

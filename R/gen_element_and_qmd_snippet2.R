@@ -38,6 +38,7 @@ compare_many <- function(x) {
 #'
 #' @return Named list of elements, where each element can UNFINISHED.
 #' @importFrom rlang !!!
+#' @keywords internal
 #'
 gen_element_and_qmd_snippet2 <-
   function(chapter_overview_section,
