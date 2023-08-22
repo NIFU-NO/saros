@@ -49,7 +49,8 @@
 
 #' Stopwords
 #' @format Stopwords as list of character vectors
-"stopwords"
+#' @keywords internal
+#' "stopwords"
 
 #' ex_survey_ch_overview: Mock overview of chapter structure
 #'

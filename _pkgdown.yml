@@ -48,3 +48,6 @@ reference:
   - starts_with("embed")
   - sigtest
   - summarize_data
+- title: "Internal functions"
+  contents:
+  - matches("^prep_|process_yaml|^gen_|stopwords")
