@@ -7,38 +7,53 @@
 embed_cat_prop_plot(
   data,
   ...,
-  cols = tidyselect::everything(),
-  by = NULL,
-  summarized_data = NULL,
-  label_separator = NULL,
-  tailored_group = NULL,
+  dep = tidyselect::everything(),
+  indep = NULL,
+  mesos_group = NULL,
   html_interactive = TRUE,
-  translations = .saros.env$defaults$translations,
+  inverse = FALSE,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{...}{Optional parameters forwarded from above.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
-\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
+\item{...}{\emph{Dynamic dots}
 
-\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
 
-\item{tailored_group}{String, indicating the name of the tailored group}
+Arguments forwarded to the corresponding functions that create the elements.}
 
-\item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
+\item{dep, indep}{\emph{Variable selections}
 
-\item{call}{Error call function, usually not needed.}
+<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
 
-\item{plot_height_multiplier}{[\code{numeric(1)>0}]\cr Height in cm per chart entry.}
+Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
 
-\item{plot_height_fixed_constant}{[\code{numeric(1)>0}]\cr Fixed height in cm.}
+\item{mesos_group}{\emph{Specific group to compare with}
 
-\item{return_raw}{[\code{logical(1)}] Whether to return the raw static chart. Defaults to FALSE.}
+\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
+
+\item{html_interactive}{\emph{Toggle interactive plot}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether plot is to be interactive (ggiraph) or static (ggplot2).}
+
+\item{inverse}{Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 ggplot
@@ -48,6 +63,6 @@ Embed Interactive Categorical Plot
 }
 \examples{
 \dontrun{
-embed_cat_prop_plot(data = ex_survey1, cols = b_1:b_3)
+embed_cat_prop_plot(data = ex_survey1, dep = b_1:b_3)
 }
 }

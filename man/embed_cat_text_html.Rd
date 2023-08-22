@@ -6,40 +6,44 @@
 \usage{
 embed_cat_text_html(
   data,
+  dep = NULL,
+  indep = NULL,
   ...,
-  cols = NULL,
-  by = NULL,
-  summarized_data = NULL,
-  label_separator = NULL,
-  translations = .saros.env$defaults$translations,
-  tailored_group = NULL,
+  mesos_group = NULL,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{...}{Optional parameters forwarded from above.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
-\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
+\item{dep, indep}{\emph{Variable selections}
 
-\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
 
-\item{translations}{A list of translations for the template text. See .saros.env$defaults.}
+Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
 
-\item{tailored_group}{String, indicating the name of the tailored group}
+\item{...}{\emph{Dynamic dots}
 
-\item{call}{Error call function, usually not needed.}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
 
-\item{contents}{The type of text interpretations to return, multiple allowed. Defaults to all.}
+Arguments forwarded to the corresponding functions that create the elements.}
 
-\item{include_numbers}{Whether or not to include the actual numbers (percentages, means) in parentheses.}
+\item{mesos_group}{\emph{Specific group to compare with}
 
-\item{require_common_categories}{Whether to check if all questions share common categories.}
+\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
 
-\item{n_top_bottom}{The number of top and bottom entries to report.}
+Both the absolute and relative folderpaths are required, as strings.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 List
@@ -49,7 +53,7 @@ Creates a structured list with text interpretations for a set of variables.
 }
 \examples{
 embed_cat_text_html(ex_survey1,
-cols = tidyselect::matches("e_"),
+dep = tidyselect::matches("e_"),
 contents = c("intro", "mode_max", "value_max",
 "value_min", "not_used_category", "mean_max", "mean_min"),
 label_separator = " - ",

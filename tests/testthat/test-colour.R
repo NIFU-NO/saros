@@ -19,10 +19,10 @@ testthat::test_that("get_colour_set", {
                      user_colour_set = c("#444444", "#dddddd", "#123414")),
     regexp = "Fewer colours in user-provided colour palette than needed.")
   testthat::expect_equal(x,
-                         c(`1` = "#440154FF", `2` = "#481D6FFF", `3` = "#453581FF", `4` = "#3D4D8AFF",
-                           `5` = "#34618DFF", `6` = "#2B748EFF", `7` = "#24878EFF", `8` = "#1F998AFF",
-                           `9` = "#25AC82FF", `10` = "#40BC72FF", `11` = "#67CC5CFF", `12` = "#97D83FFF",
-                           `13` = "#CBE11EFF", `14` = "#FDE725FF"))
+                         c(`1` = "#F8766D", `2` = "#E38900", `3` = "#C49A00", `4` = "#99A800",
+                           `5` = "#53B400", `6` = "#00BC56", `7` = "#00C094", `8` = "#00BFC4",
+                           `9` = "#00B6EB", `10` = "#06A4FF", `11` = "#A58AFF", `12` = "#DF70F8",
+                           `13` = "#FB61D7", `14` = "#FF66A8"))
 
   x <-
     get_colour_set(x = 1:2,

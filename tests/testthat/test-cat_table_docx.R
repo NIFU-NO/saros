@@ -1,5 +1,5 @@
-testthat::test_that("crosstable_to_apa", {
-  suppressMessages(library(dplyr))
+# testthat::test_that("crosstable_to_apa", {
+  # suppressMessages(library(dplyr))
 
   # testthat::expect_s3_class(object = {
   #
@@ -33,4 +33,4 @@ testthat::test_that("crosstable_to_apa", {
   #                          topcaption = FALSE, return_docx = FALSE)
   # }, class = "flextable", exact = TRUE)
   #
-})
+# })

@@ -6,32 +6,48 @@
 \usage{
 embed_uni_sigtest(
   data,
-  cols,
+  dep,
   ...,
-  by = NULL,
-  col_type = NULL,
-  by_type = NULL,
-  label_separator = NULL,
-  translations = .saros.env$defaults$translations,
+  indep = NULL,
+  .variable_type = NULL,
+  indep_type = NULL,
+  mesos_group = NULL,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{...}{Optional parameters forwarded from above.}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
-\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
+\item{dep, indep}{\emph{Variable selections}
 
-\item{col_type, by_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
 
-\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
 
-\item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
+\item{...}{\emph{Dynamic dots}
 
-\item{call}{Error call function, usually not needed.}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+
+Arguments forwarded to the corresponding functions that create the elements.}
+
+\item{.variable_type, indep_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+
+\item{mesos_group}{\emph{Specific group to compare with}
+
+\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 Data frame
@@ -41,10 +57,10 @@ Title
 }
 \examples{
 embed_uni_sigtest(data=ex_survey1,
-                  cols = a_1:a_9, reps=10, hide_test_if_n_below=10)
+                  dep = a_1:a_9, reps=10, hide_test_if_n_below=10)
 embed_uni_sigtest(data=ex_survey1,
-                  cols = b_1:b_3, reps=10, hide_test_if_n_below=10,
+                  dep = b_1:b_3, reps=10, hide_test_if_n_below=10,
                   label_separator=" - ")
 embed_uni_sigtest(data=ex_survey1,
-                  cols = c_1:c_2, reps=10, hide_test_if_n_below=10)
+                  dep = c_1:c_2, reps=10, hide_test_if_n_below=10)
 }

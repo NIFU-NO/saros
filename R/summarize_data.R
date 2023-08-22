@@ -20,10 +20,10 @@ mutate_data_label <-
 
     percent_siblings <- any(c("percentage", "percentage_bare") == data_label)
     prop_family <- any(c("percentage", "percentage_bare", "proportion") == data_label)
-    stat_col <- if(prop_family) ".proportion" else stringr::str_c(".", data_label)
+    stat_col <- if(prop_family) ".proportion" else stringi::stri_c(ignore_null=TRUE, ".", data_label)
 
     fmt <-
-      stringr::str_c("%.", if(data_label == "count") 0 else digits, "f",
+      stringi::stri_c(ignore_null=TRUE, "%.", if(data_label == "count") 0 else digits, "f",
                      if(data_label == "percentage") "%%")
 
 
@@ -56,7 +56,7 @@ add_collapsed_categories <-
     lvls <- levels(data_summary$.category)
     lvls <- lvls[!lvls %in% categories_treated_as_na]
     if(length(sort_by)==1 &&
-       any(.saros.env$summary_data_sort1==sort_by)) {
+       any(.saros.env$summary_data_sort1 == sort_by)) {
       sort_by <- subset_vector(vec = lvls, set = sort_by)
     }
 
@@ -85,7 +85,7 @@ keep_subitem <- function(fct, label_separator = NULL,
   lbls <-
     if(!is.null(label_separator)) {
       stringi::stri_replace(str = lvls,
-                            regex = stringr::str_c("^(.*)", label_separator, "(.*)$"), # Assumes that the main question always comes first, and subitem always last
+                            regex = stringi::stri_c(ignore_null=TRUE, "^(.*)", label_separator, "(.*)$"), # Assumes that the main question always comes first, and subitem always last
                             replacement = "$2")
     } else lvls
 
@@ -95,7 +95,9 @@ keep_subitem <- function(fct, label_separator = NULL,
          ordered = TRUE)
 }
 
-add_n_to_bygroups <- function(data_summary, add_n_to_bygroup = FALSE, by_names = NULL) {
+add_n_to_bygroups <- function(data_summary,
+                              add_n_to_bygroup = FALSE,
+                              by_names = NULL) {
 
   # if(!(add_n_to_bygroup && length(by_names) > 0)) {
   return(data_summary)
@@ -107,7 +109,7 @@ add_n_to_bygroups <- function(data_summary, add_n_to_bygroup = FALSE, by_names =
   #   dplyr::summarize(n_per_category = sum(.data$.count, na.rm = TRUE)) %>%
   #   dplyr::pull(.data$n_per_category)
   # data_summary$.category <- factor(data_summary$.category,
-  #                                  labels = stringr::str_c(levels(data_summary$.category),
+  #                                  labels = stringi::stri_c(ignore_null=TRUE, levels(data_summary$.category),
   #                                                          " (N=", n_per_category, ")"))
   # }
 }
@@ -119,7 +121,7 @@ flip_exception_categories <- function(data_summary,
                                       call = rlang::caller_env()) {
   if(rlang::is_null(sort_by) ||
      length(categories_treated_as_na) == 0 ||
-     !sort_by %in% .saros.env$summary_data_sort1 ||
+     !all(sort_by %in% .saros.env$summary_data_sort1) ||
      !any(unique(data_summary$.category) %in% categories_treated_as_na)) {
 
     return(data_summary)
@@ -142,7 +144,7 @@ flip_exception_categories <- function(data_summary,
 # Helper function that sorts output (if !is.null(sort_by)), optionally in descending order
 sort_data <- function(data_summary,
                       ...,
-                      by_names = character(0),
+                      indep_names = character(0),
                       call = rlang::caller_env()) {
 
 
@@ -157,7 +159,7 @@ sort_data <- function(data_summary,
   } else if((length(dots$sort_by) == 1 &&
              dots$sort_by %in% .saros.env$summary_data_sort1) ||
             all(dots$sort_by %in% unique(data_summary$.category))) {
-    sort_col <- c(".comb_categories", ".sum_value", by_names, ".category")
+    sort_col <- c(".comb_categories", ".sum_value", indep_names, ".category")
   }
 
   if(dots$descend) {
@@ -177,18 +179,22 @@ sort_data <- function(data_summary,
                                                        variables_always_at_bottom, after = length(uniques))
 
   variables_always_at_top <- dots$variables_always_at_top[dots$variables_always_at_top %in% uniques]
-  data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label, variables_always_at_top, after = 0)
+  data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
+                                                       variables_always_at_top, after = 0)
 
-  if(length(by_names) > 0) {
+  if(length(indep_names) > 0) {
 
-    for(by_name in by_names) {
-      if(is.factor(data_summary[[by_name]])) {
-        uniques <- rev(levels(data_summary[[by_name]]))
+    for(indep_name in indep_names) {
+      if(is.factor(data_summary[[indep_name]])) {
+        uniques <- rev(levels(data_summary[[indep_name]]))
       } else {
-        uniques <- rev(as.character(unique(data_summary[[by_name]])))
+        uniques <- rev(as.character(unique(data_summary[[indep_name]])))
       }
-      data_summary[[by_name]] <- forcats::fct_relevel(data_summary[[by_name]], uniques)
-      data_summary[[by_name]] <- forcats::fct_relevel(data_summary[[by_name]], dots$translations$tailored_label_all_others, after = length(uniques))
+      data_summary[[indep_name]] <- forcats::fct_relevel(data_summary[[indep_name]], uniques)
+      if(any(levels(data_summary[[indep_name]]) == dots$translations$mesos_label_all_others)) {
+        data_summary[[indep_name]] <- forcats::fct_relevel(data_summary[[indep_name]],
+                                                        dots$translations$mesos_label_all_others, after = length(uniques))
+      }
     }
   }
   data_summary
@@ -197,63 +203,70 @@ sort_data <- function(data_summary,
 
 #' Summarize a survey dataset for use in tables and graphs
 #'
-#' @param data Data frame.
-#' @param cols Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.
-#' @param by \code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.
-#' @param data_label [\code{character(1)}] What to display, one of "proportion", "percentage", "percentage_bare" (which is without the percentage symbol), "count", "mean", or "median". Defaults to "proportion".
-#' @param showNA [\code{logical(1)}]\cr Whether to show NA in categorical variables (one of c("ifany", "always", "never"), like in table()).
-#' @param digits [\code{integer(1)}]\cr Number of decimal places as integer.
-#' @param data_label_decimal_symbol [\code{character(1)}] Although the English speaking world uses the dot '.' as decimal marker, some might prefer a comma ',' or something else entirely.
-#' @param sort_by [\code{character(1)}] Sort output (and collapse if requested). Defaults to none (NULL).
-#' \itemize{
-#' \item{".top"}{The proportion for the highest category available in the variable.}
-#' \item{".upper"}{The sum of the proportions for the categories above the middle category.}
-#' \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
-#' \item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
-#' \item{".lower"}{The sum of the proportions for the categories below the middle category.}
-#' \item{".bottom"}{The proportions for the lowest category available in the variable.}
-#' \item{".variable_label"}{Sort by the variable labels.}
-#' \item{".id"}{Sort by the variable names.}
-#' \item{".by_group"}{The groups of the by argument.}
-#' \item{[\code{character(1)}]}{Character vector of category labels to sum together.}
-#' }
-#' @param descend [\code{logical(1)}]\cr Reverse sorting of sort_by. Defaults to ascending order (FALSE).
-#' @param hide_label_if_prop_below [\code{numeric(1)}] Whether to hide label if below this value.
-#' @param label_separator [\code{character(1)}]\cr Split pattern.
-#' @param ... Optional parameters forwarded from above.
-#' @param call Error call function, usually not needed.
+#' @inheritParams draft_report
+#' @inheritParams gen_qmd_chapters
+#' @param dep,indep *Variable selections*
 #'
+#'  <`tidyselect`> // *Default:* `NULL`, meaning everything for dep, nothing for indep.
+#'
+#'  Columns in `data`. Currently allows tidyselect-syntax, which will be removed.
+#'
+#' @param call *Internal call*
+#'
+#'   `obj:<call>` // *Default:* `rlang::caller_env()` (`optional`)
+#'
+#'   Both the absolute and relative folderpaths are required, as strings.
+
 #' @importFrom rlang !!!
-#'
+#' @export
 #' @return Dataset
 #'
 summarize_data <-
   function(data,
            ...,
-           cols = colnames(data),
-           by = NULL,
-           label_separator = NULL,
-           add_n_to_bygroup = FALSE,
-           translations = .saros.env$defaults$translations,
+           dep = colnames(data),
+           indep = NULL,
            call = rlang::caller_env()) {
 
-    dots <- rlang::list2(...)
-    inherited_args <- formals(render_saros_report)
-    dots <- utils::modifyList(inherited_args, dots)
-    if(any(cols %in% by)) return()
+    dots <- update_dots(dots = rlang::list2(...),
+                        allow_unique_overrides = FALSE)
+    # dots_nms <- names(dots)
+    # dots <- lapply(seq_along(dots), function(i) {
+    #   if(!any(c("data", "call", "...", "chapter_overview") == names(dots)[i])) {
+    #     eval(dots[[i]])
+    #   } else {
+    #     dots[[i]]
+    #     }
+    # })
+    # names(dots) <- dots_nms
+    if(!(inherits(data, what = "data.frame") || !inherits(data, what = "survey"))) {
+      cli::cli_abort("{.arg data} should be a data.frame/tibble or survey object, not {.obj_type_friendly {data}}.")
+    }
+
+    if(any(dep %in% indep)) return()
 
 
-    fct_unions <- if(!inherits(data, "survey.design")) data[, cols] else data$variables[, cols]
+    fct_unions <- if(!inherits(data, "survey.design")) data[, dep] else data$variables[, dep]
     fct_unions <- forcats::fct_unify(fs = fct_unions)[[1]]
     fct_unions <- levels(fct_unions)
 
-    tmp <-
-    crosstable3(data,
-                cols = cols,
-                by = by,
-                showNA = dots$showNA,
-                totals = dots$totals,
-                translations = translations) %>%
+    cross_table_output <-
+      crosstable3(data,
+                  dep = dep,
+                  indep = indep,
+                  showNA = dots$showNA,
+                  totals = dots$totals,
+                  translations = dots$translations)
+
+    valid_values <- c(.saros.env$summary_data_sort1,
+                      .saros.env$summary_data_sort2,
+                      unique(as.character(cross_table_output$.category)))
+    if(!all(dots$sort_by %in% valid_values)) {
+      cli::cli_abort(c(x="Not all {.arg sort_by} are valid: {dots$sort_by}.",
+                       i="Valid values are {valid_values}"))
+    }
+
+    cross_table_output %>%
       mutate_data_label(data_label = dots$data_label,
                         digits = dots$digits,
                         hide_label_if_prop_below = dots$hide_label_if_prop_below,
@@ -263,10 +276,10 @@ summarize_data <-
                                categories_treated_as_na = dots$categories_treated_as_na,
                                data_label = dots$data_label) %>%
       dplyr::mutate(.variable_label = keep_subitem(fct = .data$.variable_label,
-                                                   label_separator = label_separator)) %>%
-      add_n_to_bygroups(add_n_to_bygroup = add_n_to_bygroup, by_names = by) %>%
+                                                   label_separator = dots$label_separator)) %>%
+      # add_n_to_bygroups(add_n_to_bygroup = add_n_to_bygroup, indep_names = indep) %>%
       flip_exception_categories(categories_treated_as_na = dots$categories_treated_as_na,
                                 sort_by = dots$sort_by) %>%
-      sort_data(by_names = by, !!!dots)
+      sort_data(indep_names = indep, !!!dots)
   }
 

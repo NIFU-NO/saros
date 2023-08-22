@@ -11,15 +11,21 @@ replace_stata_labels <- function(data, df_new_labels,
                                  var_name_col = "name",
                                  var_label_col = "vallab_full",
                                  trim = "both") {
-  labelled::var_label(data) <-
-    labelled::var_label(data) %>%
-    purrr::map2(.y = names(.), .f = ~{
+  new_labels <- get_raw_labels(data, return_as_list = TRUE)
+  new_labels <-
+    lapply(X = seq_along(new_labels), FUN = function(i) {
+      .x <- new_labels[[i]]
+      .y <- names(new_labels)[[i]]
+
       if(any(df_new_labels[[var_name_col]] == .y)) {
         x <- df_new_labels[df_new_labels[[var_name_col]] == .y, var_label_col]
-        if(trim %in% c("left", "right", "both")) x <- stringr::str_trim(x, side = trim)
-        if(trim == "all") x <- stringr::str_replace_all(x, pattern = "[[:space:]]{2,}", " ")
+        if(trim %in% c("left", "right", "both")) x <- stringi::stri_trim(x, side = trim)
+        if(trim == "all") x <- stringi::stri_replace_all_regex(x, pattern = "[[:space:]]{2,}", replacement = " ")
         x
       }  else .y
     })
+  for(i in seq_len(ncol(data))) {
+    attr(data[[i]], "label") <- new_labels[[i]]
+  }
   data
 }

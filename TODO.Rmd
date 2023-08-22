@@ -11,233 +11,228 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Version 1.5 (Spørringene)
-- Unngå dots i alt... Bruk 
-dots <- rlang::list2(...)
-args_inherited <- formals(main_function)
-dots <- modifyList(args_inherited, dots)
+# Version 1.0 (Spørringene)
 
-- single_y_bivariate_elements
+# Flexi
+-   lenke i index.qmd til shinyapps.io/...
+-   
+
+# Structure
+-   single_y_bivariate_elements?
 
 
 # Ønsker fra andre:
-- Litt mer interaktivitet i figurer (få opp N når man holder markøren over en prosentandel, og motsatt)
-- Trivariater/stratifiserte figurer/tabeller: Ser ut som at det ikke bare er Spørringene som har en variabel som man alltid ønsker å bryte ned på (resp). I KU er det fagfelt og institusjon, i AGU er det sektor. Da bør man kunne få ut tabell/figur for et spørsmål som er brutt ned på både resp og sentralitet (Karl har allerede lagd noen slike kryssede variabler, men det kan gjøres enda litt mer tilpasset).
-- Laste ned bakgrunnsdata for figurene som Excel-fil - både for hele rapporten og for ev. deltakende institusjoner. Da kan oppdragsgivere og andre deltakere lage sine egne figurer om de ønsker det. Dette blir også ganske tilsvarende det Karl gjør i dag, bare satt opp på en litt annen måte.
 
 
+# bi_sigtest
 
+-   overkill with main_question in label + as label-column header
 
-# docx (NIFU stil?):
-    - tables should be centered by default
-    - tables are not having right style?
-    - more air between elements?
-
-# sigtest
-  + overkill with main_question in label + as label-column header.
-  - Caption should contain translations$sigtest_caption_stub
+# mesos
+-   some progress bar seems incorrect
 
 # plots
-- estimate_plot_height: consider totals=TRUE
-- colour_2nd_binary_cat is not working consistently with data$s_43 (gender) and when tailored
-    - legend is missing when there are two categories in cat_prop, but n
-    - unused levels seem to cause confusion in hide_legend and colours. and tables
-        - all should be displayed 
-    - transpose plots (at least two different orientations of prop_plot available)
-        current prop_plot for bivariates: y-axis=by-variable categories. 
-    - interactivity...
-    - N in legend for each by group
-    - add_n_to_bygroup => yaml
-    - implement uni_plot_int_* bi_plot_intint_* bi_plot_intcat_* 
-- colours
-	- if .categories %in% yml$params$colour, use associated colour
-		- Bruk så fargepalett på resten
-	- colour_palette_ordinal, colour_palette_nominal
-	colour_palette <- if(class(data[[col_pos]]) == "ordered" && !is.null(colour_palette_ordinal)) colour_palette_ordinal else if(!is.null(colour_palette_nominal)) colour_palette_nominal
-	- separate colour_palette for different needs: chapter, designated_type, designated_role, ...
-		- which also allows paletter
-		- if is.colour => as colours, else if in paletter list, use that
-		- if colour_2nd_binary is applicable, should forcats::fct_rev(.x)
-- prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable
+-   tri_catcatcat_plot (z)
+    - Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys. 
+- estimate_plot_height: consider totals=TRUE 
+-   colour_2nd_binary_cat is not working consistently with data$s_43 (gender) and when mesos  - legend is missing when there are two categories in cat_prop, but n  
+-   unused levels seem to cause confusion in hide_legend and colours. and tables  
+-     all should be displayed  
+-   N in legend for each by group  
+-   add_n_to_bygroup => yaml  
+-   implement uni_plot_int_* bi_plot_intint_* bi_plot_intcat_* 
+- colours  
+    - if .categories %in% yml$params\$colour, use associated colour 
+    - Bruk så fargepalett på resten 
+    - colour_palette_ordinal, colour_palette_nominal colour_palette \<- if(class(data[[col_pos]]) == "ordered" && !is.null(colour_palette_ordinal)) colour_palette_ordinal else if(!is.null(colour_palette_nominal)) colour_palette_nominal 
+    - separate colour_palette for different needs: chapter, designated_type, .variable_role, ...     - which also allows paletter 
+        - if is.colour =\> as colours, else if in paletter list, use that 
+        - if colour_2nd_binary is applicable, should forcats::fct_rev(.x) 
+- prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable 
 - can label_font_size, main_font_size, font_family, data_label_decimal_symbol be set later through CSS/YAML?
 
-
-# cat_text
-  - incorrect numbers?
-  - If only single question, simplify output!
-  - respecting data_label
-  - long batteries not respecting n_top_bottom?
-  - must explain that it is sum of upper categories
-  - bool: str_to_sentence, asis
-
 # summarize_data
-- sorting of by should only occur if is.ordered(data[[by_name]]), otherwise ignore it and just sort by .sum_value
-- only call summarize_data once and reuse.
 
+-   sorting of indep should only occur if is.ordered(data[[by_name]]), otherwise ignore it and just sort by .sum_value
+-   only call summarize_data once and reuse.
 
-# refine_data_overview
-+ not keeping significant relationships!
-- simpler data_overview dep/indep notation: allow spaces, not having to use matches?
-- No var label will cause entire chapter to be NA...
-    + NA labels should be replaced with variable name in refine_data_overview
-    - Functions should not return NA to stringr::str_c()
-    - Any group_by set of variables in data_overview should not have NA (or deal appropriately with them)
-- cleaner error message if variable does not exist in data:
-     Error in `dplyr::mutate()`:es if `hide_bi_entry_if_sig_above`: `0.05`, except .
- ℹ In argument: `cols = eval_cols(x = .data$col_spec, data = .env$data, call = call)`.
- Caused by error in `purrr::map()`:
-  ℹ In index: 1.
-  Caused by error in `render_saros_report()`:
-   ! Column `svarp` does not exist in data.
-- Check early on if multiple variables have identical labels and warn imemdiately
-- cli_inform rows removed with hide_bi_entry_if_sig_above
+# refine_chapter_overview
+
+-   not keeping significant relationships!
+-   simpler chapter_overview dep/indep notation: allow spaces, not having to use matches?
+-   No var label will cause entire chapter to be NA...
+    -   NA labels should be replaced with variable name in refine_chapter_overview
+    -   Functions should not return NA to stringr::str_c()
+    -   Any group_by set of variables in chapter_overview should not have NA (or deal appropriately with them)
+-   Check early on if multiple variables have identical labels and warn imemdiately
+-   cli_inform rows removed with hide_bi_entry_if_sig_above
 
 # YAML, config, etc
-- extract gen_yaml_default stuff from render_saros_report
-- separate settings for each element type
-- rewrite dots so that each function works independently (easier for testing, documentation, etc)
-- move some parameters from _report_generation_setup.yml to _quarto.yml file and perform modifications in a R-script loaded in the beginning of index.qmd
-- descend is currently global across all variables...
-- showNA "always" and "ifany" are identical? Simplify to TRUE/FALSE?
-
+-   must store report_gen settings with rendered project, to be called by flexi
+-   move some parameters from \_report_generation_setup.yml to \_quarto.yml file and perform modifications in a R-script loaded in the beginning of index.qmd
+    -   decimal marker?
+    -   colour_palette?
+-   descend is currently global across all variables...
 
 # Folder structure
-- Chapter files and subfolders should be placed in subfolders, and these should be nested in author-folders
-- folder structure: all png in separate folder, etc.
-- Preclean folder names: The name of the input file cannot contain the special shell characters: [ <>()|\:&;#?*']
-
+-   folder structure: all png in separate folder, etc.
+-   Preclean folder names: The name of the input file cannot contain the special shell characters: [ \<\>()\|:&;#?\*']
 
 # tables
-- vertical argument in tables are a pivot-string similar to SSB: 1,2,3
-    - As any element_type so one can get all at once. OR, let reader decide?
+-   tri_catcatcat_table
+-   vertical argument in tables are a pivot-string similar to SSB: 1,2,3
+    -   As any element_type so one can get all at once. OR, let reader decide?
 
 # nifutheme
-	- all yaml-files
-  - doc-reference template for quarto
-  - https://quarto.org/docs/extensions/project-types.html
-- css: nifustil.css
-    ```{=html}
-<style type="text/css">
-caption, .table-caption {
-  text-align: left;
-}
-</style>
-```
-- sub-groups, interaction terms or "stratification" (resp in Spørringene, etc.)
-- avoid copying main report when rlang::is_string(tailored_group)
+-   all yaml-files
+-   doc-reference template for quarto
+-   <https://quarto.org/docs/extensions/project-types.html>
+-   css: nifustil.css `{=html} <style type="text/css"> caption, .table-caption {   text-align: left; } </style>`
+-   sub-groups, interaction terms or "stratification" (resp in Spørringene, etc.)
+-   avoid copying main report when rlang::is_string(mesos_group)
 
+# PDF
+-   Verify that numbering of chapters, tables, etc is now correct
+-   Find a way to exclude title page or divert into maketitle
+-   Insert TOC at right location
+-   TOC in correct NIFU style
 
-## Stuff partially out of my control:
-- Issue at https://github.com/tidymodels/infer about annoying warning.
-- Report to quarto-cli that not possible to do both comments: and TOC. in website.
-- report to quarto-cli that tbl-cap: '' results in error "attempt to index a nil value (field 'integer index')"
-- report to Rstudio that when previewing/showing a rendered html, building a package should stop this connection - otherwise hangs.
-- Waiting for Quarto feature: download figure data as xlsx (priority in KU)
-- - Issue at Quarto-cli for: The name of the input file cannot contain the special shell characters: [ <>()|\:&;#?*']
-- officer::body_add(doc_1, officer::block_pour_docx("graph.docx"))
-- Local URLs should be integrated into index_files-folder
+# DOCX (NIFU stil/saros.template):
+- tables should be centered by default
+- tables are not having right style?
+- more air between elements?
+- officer::body_add(doc_1, officer::block_pour_docx("graph.docx")) // nt working?
 
-- Figure out project website structure and location
+# cat_text
+
+-   incorrect numbers?
+-   If only single question, simplify output!
+-   respecting data_label
+-   long batteries not respecting n_top_bottom?
+-   must explain that it is sum of upper categories
+-   bool: str_to_sentence, asis
+
+# FTP/web part
+
+-   get help to ensure function can upload multiple files at once in one session
+-   follow up Ingvar
+-   automate creation of hashed passwords
+-   automate copying of .htaccess and .htpasswd files to subfolders
+
+# Stuff partially out of my control:
+
+-   Issue at <https://github.com/tidymodels/infer> about annoying warning.
+-   Issue at Quarto-cli for: If processing fails, it leaves a temporary .rmarkdown file which if not manually deleted will cause the following error on the next rendering: "The name of the input file cannot contain the special shell characters: [ \<\>()\|:&;#?\*']"
 
 # Version 3.0
-- @keywords internal for all internal functions having documentation.
-- multiple levels of by
+
+-   @keywords internal for all internal functions having documentation.
+-   multiple levels of by
 -   S3 class-based objects, or just lists for now? input/output as list of df, var_frame and design_frame. Single input, single output.
 -   If you return the same type of output from multiple functions, you should create a function that consistently creates exact the same format (to avoid accidental inconsistency), and consider making it an S3 class (so you can have a custom print method).
-- Generalize the element creator switch function and helper function so that user could create own element types. A function factory.
+-   Generalize the element creator switch function and helper function so that user could create own element types. A function factory.
 -   Replace separators with patterns? Or character vector patterns? First letters before numbers? Similar to the new splitters in {tidyr}
-- Convenience argument: drop_if_single_item (to ease automated psychometric analyses and unnecessary tables and plots). This could be done at the data_overview-stage though. So just a simple wrapper around group_by and filter?
-- Tests for graphs using snapshots and data in ggplot object
-- target and renv initialization with menu selection. => {saros.template}
-- Replace ymlthis with yaml-package.
-- Split off rename_variables into either janitor or a vctrs::vec_as_names() extension
-
+-   Convenience argument: drop_if_single_item (to ease automated psychometric analyses and unnecessary tables and plots). This could be done at the chapter_overview-stage though. So just a simple wrapper around group_by and filter?
+-   Tests for graphs using snapshots and data in ggplot object
+-   target and renv initialization with menu selection. =\> {saros.template}
+-   Replace ymlthis with yaml-package.
+-   Split off rename_variables into either janitor or a vctrs::vec_as_names() extension
+-   Extract the atributes-setter function for the elements
+    -   caption (element_name, .variable_label\_\*, mesos_group, )
+    -   vanskelig ettersom create_caption krever data_out
 
 # General improvements
-- speed performance
-    - early fails
-    - replace all stringr::str_c with stringi::stri_na2empty() and stringi::stri_c
-  - replace all cols/by, enquos, etc with y_var, x_var
-  - normalization with hash/ID lookup:
-      - chapter overview (input only)
-      - data frame (or string matrix?) of variables and their fixed information (labels, variable names, univariates?)
-      - data frame (or string matrix?) of bivariate combinations with sigtest info (long format)
-      - data frame (or numeric matrix?) of all summary_data stuff for univariates
-      - data frame (or numeric matrix?) of all summary_data stuff for bivariates
-      - NB: Matrices are hard to work with and do not allow grouping storage
-	- vectorization, avoid looping (can be parallellized in outer loop)
-	- profiling
-	- avoid copying
-	- vctrs, rlang, base
-	- premake summarized_data and reuse it across elements, filtering as needed
-	- pipe => no pipe
-	- if not grouping:
-    	- dplyr::filter => vctrs::vec_slice()
-	    - dplyr::mutate => base
-	    - dplyr::select => base
-	    - dplyr::pull => base
-	    - bind_rows => vctrs::vec_rbind
-	    - remove tidyselect/data masking: all using strings for columns names internally
-	    - dtplyr?
-- refactoring
-- more memorable and logical naming of functions, arguments, etc.
-- rename files so they are logical for developers
-    - alphabetical order of operations
-- documentation and examples
-    - inheritParams
-    - exemplify all non-trivial argument inputs (lists, vectors, objects)
-    - better hints in error/warning messages
-    - progress bars
-- more robustness
-    - increase test coverage
-    - moduling / code refactoring
-    - target package / renv
-    - argument checks
-- flexible arguments
-- reduce size of package (in MB)
-- reduce dependencies
-	- find upstream packages
-	- copy code when applicable
-	- split functions into smaller and more robust packages
-		- analyze co-dependencies
-- simplify to reduce build/install time
-    - Examples, tests, data, inst-folder templates/attachments
 
+-   speed performance
+    -   early fails
+    -   replace all stringr::str_c with stringi::stri_na2empty() and stringi::stri_c
+    -   replace all cols/by, enquos, etc with y_var, x_var
+    -   normalization with hash/ID lookup:
+        -   chapter overview (input only)
+        -   data frame (or string matrix?) of variables and their fixed information (labels, variable names, univariates?)
+        -   data frame (or string matrix?) of bivariate combinations with sigtest info (long format)
+        -   data frame (or numeric matrix?) of all summary_data stuff for univariates
+        -   data frame (or numeric matrix?) of all summary_data stuff for bivariates
+        -   NB: Matrices are hard to work with and do not allow grouping storage
+        -   vectorization, avoid looping (can be parallellized in outer loop)
+        -   profiling
+        -   avoid copying
+        -   vctrs, rlang, base
+        -   premake summarized_data and reuse it across elements, filtering as needed
+        -   pipe =\> no pipe
+        -   if not grouping:
+            -   dplyr::filter =\> vctrs::vec_slice()
+            -   dplyr::mutate =\> base
+            -   dplyr::select =\> base
+            -   dplyr::pull =\> base
+            -   bind_rows =\> vctrs::vec_rbind
+            -   remove tidyselect/data masking: all using strings for columns names internally
+            -   dtplyr?
+-   refactoring
+-   more memorable and logical naming of functions, arguments, etc.
+-   rename files so they are logical for developers
+    -   alphabetical order of operations
+-   documentation and examples
+    -   inheritParams
+    -   exemplify all non-trivial argument inputs (lists, vectors, objects)
+    -   better hints in error/warning messages
+    -   progress bars
+-   more robustness
+    -   increase test coverage
+    -   moduling / code refactoring
+    -   target package / renv
+    -   argument checks
+-   flexible arguments
+-   reduce size of package (in MB)
+-   reduce dependencies
+    -   find upstream packages
+    -   copy code when applicable
+    -   split functions into smaller and more robust packages
+        -   analyze co-dependencies
+-   simplify to reduce build/install time
+    -   Examples, tests, data, inst-folder templates/attachments
 
-# Split into packages
-- Should consider which -verses are connected, and also which are more likely to not be maintained.
-    - clipr, tidySEM, RColorBrewer, viridisLite, ymlthis, srvyr, reactable openai, officeverse
-- saros.office: pkgs: officer, mschart, flextable
-- saros.interactive: pkgs: ggplot2, ggiraph, scales, ggfittext?
-- saros.graphic: pkgs: viridis, RColorBrewer
-- saros.modelsig: pkgs: infer,  
-- saros.text: pkgs: openai, qualitative?, 
-- saros.psych: psych, tidySEM, lavaan, tidySEM,
-- saros: Move handpick there, reducing the clipr dependency.
+# sarosverse structure
 
+-   sarosverse imports: - saros.docx - saros.html - saros.folders - saros.text - saros.psych - saros.effect - saros.qual those in turn import - saros.base - saros.graphic - saros.utils
+-   Should consider which -verses are connected, and also which are more likely to not be maintained.
+    -   clipr, tidySEM, RColorBrewer, viridisLite, ymlthis, srvyr, reactable openai, officeverse
+-   saros.office: pkgs: officer, mschart, flextable
+-   saros.interactive: pkgs: ggplot2, ggiraph, scales, ggfittext?
+-   saros.graphic: pkgs: viridis, RColorBrewer
+-   saros.modelsig: pkgs: infer,\
+-   saros.text: pkgs: openai, qualitative?,
+-   saros.psych: psych, tidySEM, lavaan, tidySEM,
+-   saros: Move handpick there, reducing the clipr dependency.
 
-##############################################################
+############################################################## 
+
 # OLD STUFF, IGNORE
 
-
 ## saros.instruments
-	Improvement over time (p1-p0)
-	IRT parameters (a, b, c), with low discriminators, and extremely hard/easy items flagged
-	Items with responses above/below 95/5 percentage flagged
-	Low CFA loadings
-	Loadings improved if item removed
--	Make generalisert TIC, theta, item thresholds-grafmaker som tar mirt, MplusAutomation, lavaan, TAM, etc)
-	
-# Overall design
--	https://github.com/tidymodels/model-implementation-principles/blob/master/06-arguments.Rmd
 
+```         
+Improvement over time (p1-p0)
+IRT parameters (a, b, c), with low discriminators, and extremely hard/easy items flagged
+Items with responses above/below 95/5 percentage flagged
+Low CFA loadings
+Loadings improved if item removed
+```
+
+-   Make generalisert TIC, theta, item thresholds-grafmaker som tar mirt, MplusAutomation, lavaan, TAM, etc)
+
+# Overall design
+
+-   <https://github.com/tidymodels/model-implementation-principles/blob/master/06-arguments.Rmd>
 
 # saros.model
 
 ## step_auto_tick_recode
+
 -   Some form of automatic recode of multiple tick-box items where no cross is missing? Or perhaps strongly advice people not to use them?
 
 ## add_regression
+
 -   Extract dummy recoder?
 -   loading_cutoff =\> move to add_fit?
 -   V2: How to distinguish x_var as single latent variable from set of manifest variables?
@@ -248,31 +243,34 @@ caption, .table-caption {
 ## prepare_mplus_model
 
 ## extract_mplus_model
+
 -   Make into broom tidier? Though will be of limited use.
 -   cronbach, mcdonald_omega? Or using psych::alpha
 
 ## prepare_lavaan_model
 
 # add_meaning
--	Incorporate all the below as glue strings. 
--	latent_diff, construct_fit, effect, percent, univariate
--	instead of tolower, only change first letter of sentence.
--	V1: Template sentences for fit.
+
+-   Incorporate all the below as glue strings.
+-   latent_diff, construct_fit, effect, percent, univariate
+-   instead of tolower, only change first letter of sentence.
+-   V1: Template sentences for fit.
 -   V2: Text reporting: Adding adverbial clauses to spice up: If contrast to previous finding.
 -   V2: Text reporting: Summarize findings if all of the same regex (X positively correlated with all of Y1, Y2, Y3, ... and detailed=FALSE)
 -   V2: Distinguish between first-time mention of a variable within a section (where full x_label is mentioned "Vi finner for x_label at...)
--	V2: What to do for the "else"-category, those not matched? Leave to user to specify a catch-all regex?
+-   V2: What to do for the "else"-category, those not matched? Leave to user to specify a catch-all regex?
 -   V2: Get someone to translate template sentences to English, German, Nynorsk, etc.
-
 
 # add_rangeplot_chart, add_forest_chart, add_bivariate_chart
 
 # omitted_recoder_df
--	return tibble if input tibble
--	keep labels
 
+-   return tibble if input tibble
+
+-   keep labels
 
 -   Scatter+trend line plots for linear/binary logistic regression models where x_focus is specified
+
 -   Forest plot for regression model results
 
 ### Modify xml-files:
@@ -299,7 +297,6 @@ caption, .table-caption {
 -   Crashes if file is open (<https://github.com/davidgohel/officer/issues/349>)
 -   Also file doesn't open if a crashed Word app is open...
 -   Non-ASCII letters (<https://github.com/ardata-fr/mschart/issues/57>), but workaround works.
-
 
 # create_psychometrics_report
 
@@ -340,67 +337,58 @@ caption, .table-caption {
 
 parsnip, broom, yardstick extensions for SEM models: <https://www.tidymodels.org/learn/develop/models/> and <https://www.tidymodels.org/learn/develop/broom/> and <https://www.tidymodels.org/learn/develop/metrics/> easystats extensions (or not, as they don't yet support tidymodels) workflow-package extensions parsnip, and returns broom, yardstick)
 
-
-
 # Gamle notater, kan være noen ideer verdt å beholde her
-#############################################################################
-#### Sett med funksjoner for rask høykvalitetsanalyse av spørreskjemadata ####
-2	Få Rambøll til å legge til kolonnenavn på Labels.csv
+
+############################################################################# 
+
+#### Sett med funksjoner for rask høykvalitetsanalyse av spørreskjemadata
+
+2 Få Rambøll til å legge til kolonnenavn på Labels.csv
 
 # NIFUstolper: Produksjon (direkte lagring til disk) av stolpediagrammer for spørsmålsbatterier gruppert etter supergrupper, grupper, osv og brutt ned på liste med brytningsvariabler
-1	Unngå overskriving: Legg til siffer, sjekk på nytt, etc.
-1	Algoritme for høyden (minste størrelse når strip-tekst går over flere linjer)
-2	SVG eller vektorgrafikk i Word
-2	facet-tekst justeres slik at den aldri forsvinner om den blir for mange linjer
-2	Sjekk at det er færre verdier enn farger
+
+1 Unngå overskriving: Legg til siffer, sjekk på nytt, etc. 1 Algoritme for høyden (minste størrelse når strip-tekst går over flere linjer) 2 SVG eller vektorgrafikk i Word 2 facet-tekst justeres slik at den aldri forsvinner om den blir for mange linjer 2 Sjekk at det er færre verdier enn farger
 
 # Produksjon av alle mulige tabeller for sett med variabler brutt ned på liste med brytningsvariabler, fordelt på batteri
-1	function(. data, .outcome_vars=TIDY SELECT list.vars_break=NULL, .vars_break2=null, brytning_ved_rader=T,  batteri_var="")
+
+1 function(. data, .outcome_vars=TIDY SELECT list.vars_break=NULL, .vars_break2=null, brytning_ved_rader=T, batteri_var="")
 
 # Tekstgenerering av signifikanstester for sett med ordinale variabler brutt ned på liste med brytningsvariabler.
-1	Fikse feil når det er flere grupper som sammenlignes (N og m= synes å være samme for 1. og 3. oppføring?
-1	Lagre analysen per variableGroup - altså en ytterloop - kontinuerlig
-1	Raskere, går tregt
-2	Sortere gruppene etter faktor-levels, eller etter hva som er høyest.
-1	Lagre krysstabeller i samme slengen. Setningen kan legges umiddelbart under tabellen.
-2	Legge til totalen for å sammenligne gruppene med totalen, men er dette fortsatt uavhengige grupper? (add_total=T)
-1	ta sjekk på om ordinalvariabel er ordered factor, gi informativ feilmelding
-1	Sjekk om variabler inneholder NA, fjerne med advarsel
-2	unngå coin-pakken, finne referanser til metoden (Agresti, 2007)
-3	Hvilke grupper har høyest/lavest verdi, på hver variabel?
-2	Andre ikke-parametriske distribusjoner (nominal-nominal, binær, interval, etc)
-3	Omnibus-tester?
-3	Ulike type fraser for ulike batterier (enten character vector of length 1 or character vector =length(unique(variableGroup)
-3	Randomisere mellom fraser
-	compareGroups-pakken?
-	Bør også eksportere som CSV-fil resultatene da det kan være letter eå lese. "mer enig enn" kan da bli > eller <.
+
+1 Fikse feil når det er flere grupper som sammenlignes (N og m= synes å være samme for 1. og 3. oppføring? 1 Lagre analysen per variableGroup - altså en ytterloop - kontinuerlig 1 Raskere, går tregt 2 Sortere gruppene etter faktor-levels, eller etter hva som er høyest. 1 Lagre krysstabeller i samme slengen. Setningen kan legges umiddelbart under tabellen. 2 Legge til totalen for å sammenligne gruppene med totalen, men er dette fortsatt uavhengige grupper? (add_total=T) 1 ta sjekk på om ordinalvariabel er ordered factor, gi informativ feilmelding 1 Sjekk om variabler inneholder NA, fjerne med advarsel 2 unngå coin-pakken, finne referanser til metoden (Agresti, 2007) 3 Hvilke grupper har høyest/lavest verdi, på hver variabel? 2 Andre ikke-parametriske distribusjoner (nominal-nominal, binær, interval, etc) 3 Omnibus-tester? 3 Ulike type fraser for ulike batterier (enten character vector of length 1 or character vector =length(unique(variableGroup) 3 Randomisere mellom fraser compareGroups-pakken? Bør også eksportere som CSV-fil resultatene da det kan være letter eå lese. "mer enig enn" kan da bli \> eller \<.
 
 # NIFU_efa: EFA av alle utfallsvariabler
-	Finner selv ut hvor mange faktorer er teoretisk mulige
-	Fjerner iterativt variabler med missing over 20%, forenkler variabler med mindre enn 10% per kategori 
-	en egen variabel i Structure forteller hvilke som skal snus i faktoranalyser
-	om ikke MplusAutomation oppdateres: kjører ESEM for å hente ut faktorladningene
-	Kobler på variableQuestion og variableGroup
-	Sorterer slik at sterkeste faktorladningene kommer først
-	Fjerner alt mellom -.4-.4 og omrokkerer faktorene
-	Printer ut i Excel, fargelegger
-	Legger ved rå (Spearman) korrelasjoner i eget regneark
+
+```         
+Finner selv ut hvor mange faktorer er teoretisk mulige
+Fjerner iterativt variabler med missing over 20%, forenkler variabler med mindre enn 10% per kategori 
+en egen variabel i Structure forteller hvilke som skal snus i faktoranalyser
+om ikke MplusAutomation oppdateres: kjører ESEM for å hente ut faktorladningene
+Kobler på variableQuestion og variableGroup
+Sorterer slik at sterkeste faktorladningene kommer først
+Fjerner alt mellom -.4-.4 og omrokkerer faktorene
+Printer ut i Excel, fargelegger
+Legger ved rå (Spearman) korrelasjoner i eget regneark
+```
 
 # analyze_psych: Psykometriske analyser av konstrukter
-	CFA for hvert spørsmålsbatteri og spørsmålsoverbatteri, m/alpha, CFA, TLI, RMSEA, SRMR, faktorladningsspredning, osv
-	Measurement invariance for hver av brytningsvariablene
-	Lager en samletabell for alle variableGroup
-	Optional item-nivå info, DIF, etc
 
-Rapportere bug til Mplus om at $1 blir kuttet vekk fra CI-output.
-Rapportere bug til MplusAutomation: LOGISTIC REGRESSION ODDS RATIO RESULTS kommer ikke med 
+```         
+CFA for hvert spørsmålsbatteri og spørsmålsoverbatteri, m/alpha, CFA, TLI, RMSEA, SRMR, faktorladningsspredning, osv
+Measurement invariance for hver av brytningsvariablene
+Lager en samletabell for alle variableGroup
+Optional item-nivå info, DIF, etc
+```
+
+Rapportere bug til Mplus om at \$1 blir kuttet vekk fra CI-output. Rapportere bug til MplusAutomation: LOGISTIC REGRESSION ODDS RATIO RESULTS kommer ikke med
 
 # Tekstgenerering av Mplusmodeller
-	Total, så hver spesifikk indirekte, innenfor disse vise deleffektene, så total indirekte, så direkte.
-	Benytter STDYX og STDY avhengig av type variabel
 
-# Automatisk generering av hvert av det ovenstående for hvert batteri (samlefunksjon) i et Word-dokument med NIFU-template, gruppert etter headings, 
-3	Legger inn grafene, tabellene, signifikanstester, m.m. under korrekt overskrift.
-	Må sortere riktig. Hm
-	Må ha et register i CSV-fil eller lignende med fraser man kan benytte til variasjon, for introduksjon av grafer, tabeller, osv.
-	
+```         
+Total, så hver spesifikk indirekte, innenfor disse vise deleffektene, så total indirekte, så direkte.
+Benytter STDYX og STDY avhengig av type variabel
+```
+
+# Automatisk generering av hvert av det ovenstående for hvert batteri (samlefunksjon) i et Word-dokument med NIFU-template, gruppert etter headings,
+
+3 Legger inn grafene, tabellene, signifikanstester, m.m. under korrekt overskrift. Må sortere riktig. Hm Må ha et register i CSV-fil eller lignende med fraser man kan benytte til variasjon, for introduksjon av grafer, tabeller, osv.

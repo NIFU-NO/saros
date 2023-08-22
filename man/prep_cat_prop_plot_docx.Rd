@@ -4,14 +4,29 @@
 \alias{prep_cat_prop_plot_docx}
 \title{Create Categorical Data Chart from Summarized Data}
 \usage{
-prep_cat_prop_plot_docx(data, ..., call = rlang::caller_env())
+prep_cat_prop_plot_docx(data, ..., inverse = FALSE, call = rlang::caller_env())
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{...}{Optional parameters forwarded from above.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{call}{For internal use}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
+
+\item{...}{\emph{Dynamic dots}
+
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+
+Arguments forwarded to the corresponding functions that create the elements.}
+
+\item{inverse}{Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 mschart-object. Can be added to an rdocx, rpptx or rxlsx object.

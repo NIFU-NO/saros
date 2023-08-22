@@ -6,33 +6,41 @@
 \usage{
 sigtest(
   data,
-  cols,
+  dep,
   ...,
-  by = NULL,
-  col_type = NULL,
-  by_type = NULL,
-  label_separator = NULL,
+  indep = NULL,
+  .variable_type = NULL,
+  indep_type = NULL,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{...}{Optional parameters forwarded from above.}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
-\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
+\item{dep, indep}{\emph{Variable selections}
 
-\item{col_type, by_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
 
-\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
 
-\item{call}{Error call function, usually not needed.}
+\item{...}{\emph{Dynamic dots}
 
-\item{reps}{Integer, number of permutations.}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
 
-\item{hide_test_if_n_below}{Integer, if N is below this value, pvalue will not be shown.}
+Arguments forwarded to the corresponding functions that create the elements.}
+
+\item{.variable_type, indep_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 Data frame
@@ -45,17 +53,17 @@ Test Significance Based on Randomization Theory
 set.seed(1)
 library(dplyr)
 bind_rows(
-sigtest(data=ex_survey1, cols = a_1) # t-test of proportions (.5): p=.98
-sigtest(data=ex_survey1, cols = b_1), # Chi-square (all=.333): p=<.001
-sigtest(data=ex_survey1, cols = c_1), # one-sample t-test p<.001
-sigtest(data=ex_survey1, cols = b_1, by = x1_sex), # Chi-square: p = .548
-sigtest(data=ex_survey1, cols = b_1, by = f_uni), # Chi-square: p = .102
-sigtest(data=ex_survey1, cols = c_1, by = x1_sex), # two-sample t-test: p = .97
-sigtest(data=ex_survey1, cols = c_1, by = f_uni), # ANOVA/F-test: p = .22
-sigtest(data=ex_survey1, cols = c_1, by = c_2)) # correlation: p = .976
+sigtest(data=ex_survey1, dep = a_1) # t-test of proportions (.5): p=.98
+sigtest(data=ex_survey1, dep = b_1), # Chi-square (all=.333): p=<.001
+sigtest(data=ex_survey1, dep = c_1), # one-sample t-test p<.001
+sigtest(data=ex_survey1, dep = b_1, indep = x1_sex), # Chi-square: p = .548
+sigtest(data=ex_survey1, dep = b_1, indep = f_uni), # Chi-square: p = .102
+sigtest(data=ex_survey1, dep = c_1, indep = x1_sex), # two-sample t-test: p = .97
+sigtest(data=ex_survey1, dep = c_1, indep = f_uni), # ANOVA/F-test: p = .22
+sigtest(data=ex_survey1, dep = c_1, indep = c_2)) # correlation: p = .976
 
-sigtest(data=ex_survey1, cols = a_1, by = c_1) # NA
-sigtest(data=ex_survey1, cols = b_1, by = c_1) # NA
+sigtest(data=ex_survey1, dep = a_1, indep = c_1) # NA
+sigtest(data=ex_survey1, dep = b_1, indep = c_1) # NA
 }
 
 }

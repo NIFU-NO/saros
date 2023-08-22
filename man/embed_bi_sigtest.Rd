@@ -2,48 +2,57 @@
 % Please edit documentation in R/sigtest.R
 \name{embed_bi_sigtest}
 \alias{embed_bi_sigtest}
-\title{Title}
+\title{Bivariate significance tests}
 \usage{
 embed_bi_sigtest(
   data,
-  cols,
-  by,
+  dep,
+  indep,
   ...,
-  col_type = NULL,
-  by_type = NULL,
-  translations = .saros.env$defaults$translations,
-  label_separator = NULL,
+  .variable_type = NULL,
+  indep_type = NULL,
   call = rlang::caller_env()
 )
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{cols}{Columns to select for reporting. Supports \code{\link[dplyr:dplyr_tidy_select]{tidy-select}}.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{by}{\code{\link[dplyr:dplyr_data_masking]{data-masking}}\cr. Optional column used to break output by.}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
-\item{...}{Optional parameters forwarded from above.}
+\item{dep, indep}{\emph{Variable selections}
 
-\item{col_type, by_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
 
-\item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
+Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
 
-\item{label_separator}{[\code{character(1)}]\cr Split pattern.}
+\item{...}{\emph{Dynamic dots}
 
-\item{call}{Error call function, usually not needed.}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+
+Arguments forwarded to the corresponding functions that create the elements.}
+
+\item{.variable_type, indep_type}{Optional string specifying data type ("int", "fct", "character", "factor", "numeric", "integer"). Can be obtained from data lookup.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 Data frame
 }
 \description{
-Title
+Bivariate significance tests
 }
 \examples{
-embed_bi_sigtest(data=ex_survey1, cols = a_1:a_9, by = x1_sex,
+embed_bi_sigtest(data=ex_survey1, dep = a_1:a_9, indep = x1_sex,
                  reps=10, hide_test_if_n_below=1)
-embed_bi_sigtest(data=ex_survey1, cols = b_1:b_3, by = x1_sex,
+embed_bi_sigtest(data=ex_survey1, dep = b_1:b_3, indep = x1_sex,
                  reps=10, hide_test_if_n_below=1, label_separator=" - ")
-embed_bi_sigtest(data=ex_survey1, cols = c_1:c_2, by = x1_sex,
+embed_bi_sigtest(data=ex_survey1, dep = c_1:c_2, indep = x1_sex,
                  reps=10, hide_test_if_n_below=1)
 }

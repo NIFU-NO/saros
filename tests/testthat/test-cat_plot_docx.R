@@ -7,7 +7,7 @@ testthat::test_that("chart cat_docx", {
   testthat::expect_s3_class(object = {
   test <-
     ex_survey1 |>
-    embed_cat_prop_plot_docx(cols = b_1:b_3,
+    embed_cat_prop_plot_docx(dep = b_1:b_3,
                         font_family = "Calibri",
                         label_font_size = 9,
                         main_font_size = 9,
@@ -33,17 +33,17 @@ testthat::test_that("chart cat_docx", {
 
 
   testthat::expect_error(object = embed_cat_prop_plot_docx(mtcars,
-                                                           cols = c(cyl, vs, gear, carb),
+                                                           dep = c(cyl, vs, gear, carb),
                                                       return_raw = FALSE),
                          regexp = "Column `cyl` and column `vs` lack common categories")
-  testthat::expect_error(object = embed_cat_prop_plot_docx(ex_survey1, cols = tidyselect::matches("^[ab]"),
+  testthat::expect_error(object = embed_cat_prop_plot_docx(ex_survey1, dep = tidyselect::matches("^[ab]"),
                                                       return_raw = FALSE),
                          regexp = "Column `a_1` and column `b_1` lack common categories")
 
   testthat::expect_s3_class(object = {
   test <-
     ex_survey1 |>
-    embed_cat_prop_plot_docx(cols = a_1:a_9,
+    embed_cat_prop_plot_docx(dep = a_1:a_9,
                              font_family = "Calibri",
                              label_font_size = 9,
                              main_font_size = 9,
@@ -68,7 +68,7 @@ testthat::test_that("chart cat_docx", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_cat_prop_plot_docx(cols = a_1:a_9,
+      embed_cat_prop_plot_docx(dep = a_1:a_9,
                                showNA = "never",
                                font_family = "Calibri",
                                label_font_size = 9,
@@ -97,7 +97,7 @@ testthat::test_that("chart cat_docx", {
       ex_survey1 |>
       dplyr::mutate(across(p_4, ~forcats::fct_recode(.x, NULL = "Strongly disagree"))) |>
       labelled::copy_labels_from(from = ex_survey1) |>
-      embed_cat_prop_plot_docx(cols = p_1:p_4,
+      embed_cat_prop_plot_docx(dep = p_1:p_4,
                                showNA = "never",
                                font_family = "Calibri",
                                label_font_size = 9,
@@ -127,7 +127,7 @@ testthat::test_that("chart cat_docx", {
       ex_survey1 |>
       dplyr::mutate(across(p_1, ~forcats::fct_recode(.x, NULL = "Somewhat disagree"))) |>
       labelled::copy_labels_from(from = ex_survey1) |>
-      embed_cat_prop_plot_docx(cols = p_1:p_4,
+      embed_cat_prop_plot_docx(dep = p_1:p_4,
                           height_per_col = .3,
                           height_fixed = 1,
                           showNA = "never",
@@ -157,7 +157,7 @@ testthat::test_that("chart cat_docx", {
       ex_survey1 |>
       dplyr::mutate(across(p_4, ~forcats::fct_recode(.x, NULL = "Strongly agree"))) |>
       labelled::copy_labels_from(from = ex_survey1) |>
-      embed_cat_prop_plot_docx(cols = p_1:p_4,
+      embed_cat_prop_plot_docx(dep = p_1:p_4,
                                showNA = "never",
                                font_family = "Calibri",
                                label_font_size = 9,
@@ -187,7 +187,7 @@ testthat::test_that("chart cat_docx", {
       ex_survey1 |>
       dplyr::mutate(dplyr::across(p_1, ~forcats::fct_recode(.x, NULL = "Strongly agree"))) |>
       labelled::copy_labels_from(from = ex_survey1) |>
-      embed_cat_prop_plot_docx(cols = p_1:p_4,
+      embed_cat_prop_plot_docx(dep = p_1:p_4,
                                showNA = "never",
                                font_family = "Calibri",
                                label_font_size = 9,
@@ -215,7 +215,7 @@ testthat::test_that("chart cat_docx", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_cat_prop_plot_docx(cols = a_1:a_9, digits = 0L,
+      embed_cat_prop_plot_docx(dep = a_1:a_9, digits = 0L,
                                data_label = "percentage_bare",
                                font_family = "Calibri",
                                showNA = "never",
@@ -243,7 +243,7 @@ testthat::test_that("chart cat_docx", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_cat_prop_plot_docx(cols = a_1:a_9, sort_by = ".count",
+      embed_cat_prop_plot_docx(dep = a_1:a_9, sort_by = ".count",
                           descend = FALSE,
                           vertical=FALSE,
                           showNA = "never",
@@ -272,7 +272,7 @@ testthat::test_that("chart cat_docx", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_cat_prop_plot_docx(cols = a_1:a_9,
+      embed_cat_prop_plot_docx(dep = a_1:a_9,
                                sort_by = ".count",
                           descend = TRUE,
                           vertical=FALSE,
@@ -302,7 +302,7 @@ testthat::test_that("chart cat_docx", {
     testthat::expect_s3_class(object = {
     test <-
       ex_survey1 |>
-      embed_cat_prop_plot_docx(cols = b_1:b_3,
+      embed_cat_prop_plot_docx(dep = b_1:b_3,
                                sort_by = ".count",
 
                                showNA = "never",
@@ -334,9 +334,10 @@ testthat::test_that("chart cat_docx", {
     testthat::expect_error(object = {
       test <-
         ex_survey1 |>
-        embed_cat_prop_plot_docx(cols = b_1, by = x1_sex:x2_human,
+        embed_cat_prop_plot_docx(dep = b_1,
+                                 indep = x1_sex:x2_human,
                             return_raw = FALSE)
-    }, regexp = "Too many columns provided for `by`")
+    }, regexp = "Too many columns provided for `indep`")
 
 
 

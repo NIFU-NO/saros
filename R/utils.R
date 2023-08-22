@@ -9,23 +9,23 @@
 #'
 list_available_element_types <-
   function(valid_only = TRUE) {
-    names(.saros.env$defaults$element_names[if(valid_only) unname(.saros.env$defaults$element_names) else TRUE])
+    names(eval(formals(draft_report)$element_names)[if(valid_only) unname(eval(formals(draft_report)$element_names)) else TRUE])
   }
 
 
-get_authors <- function(data, col_name) {
-  if(!rlang::is_null(data[[col_name]]) &&
-     !all(is.na(data[[col_name]]))) {
+get_authors <- function(data, col) {
+  if(!rlang::is_null(data[[col]]) &&
+     !all(is.na(data[[col]]))) {
 
-    if(is.factor(data[[col_name]])) {
+    if(is.factor(data[[col]])) {
 
-      return(levels(data[[col_name]]))
+      return(levels(data[[col]]))
 
-    } else if(is.character(data[[col_name]])) {
+    } else if(is.character(data[[col]])) {
 
-      return(unique(data[[col_name]]))
+      return(unique(data[[col]]))
 
-    } else cli::cli_abort("{.arg {col_name}} must be factor or character, not {.obj_type_friendly {data[[col_name]]}}.")
+    } else cli::cli_abort("{.arg {col}} must be factor or character, not {.obj_type_friendly {data[[col]]}}.")
   } else ''
 }
 
@@ -152,7 +152,7 @@ subset_vector <-
 #' 	1,0,1,NA,NA, # Last two missing
 #' 	1,0,NA,NA,NA, # Last three missing
 #' 	NA,NA,NA,NA,NA # All missing
-#' ), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
+#' ), nrow = 9, byrow = TRUE)), nm=stringi::stri_c(ignore_null=TRUE, "X", 1:5))
 #' # What should be the output for item estimation according to Mislevy
 #' # Skipped=> 0, not_administered=>NA, all_missing=>NA
 #' y_i <-  stats::setNames(as.data.frame(matrix(c(
@@ -165,7 +165,7 @@ subset_vector <-
 #' 	1,0,1,0,NA, # Last two missing
 #' 	1,0,0,NA,NA, # Last three missing
 #' 	NA,NA,NA,NA,NA # All missing
-#' ), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
+#' ), nrow = 9, byrow = TRUE)), nm=stringi::stri_c(ignore_null=TRUE, "X", 1:5))
 #'
 #' # What should be the output for person estimation according to Mislevy
 #' # Skipped=> 0, not_administered=>NA, all_missing=>NA
@@ -179,7 +179,7 @@ subset_vector <-
 #' 	1,0,1,0,0, # Last two missing
 #' 	1,0,0,0,0, # Last three missing
 #' 	0,0,0,0,0 # All missing
-#' ), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
+#' ), nrow = 9, byrow = TRUE)), nm=stringi::stri_c(ignore_null=TRUE, "X", 1:5))
 #' # Recoding for counting skipped, not_administered, all_missing, etc
 #' # Skipped=> 99, not_administered=>999, all_missing=>9999
 #' y_info <- stats::setNames(as.data.frame(matrix(c(
@@ -192,7 +192,7 @@ subset_vector <-
 #' 	1,0,1,99,999, # Last two missing
 #' 	1,0,99,999,999, # Last three missing
 #' 	9999,9999,9999,9999,9999 # All missing
-#' ), nrow = 9, byrow = TRUE)), nm=stringr::str_c("X", 1:5))
+#' ), nrow = 9, byrow = TRUE)), nm=stringi::stri_c(ignore_null=TRUE, "X", 1:5))
 #'
 #' y_i2 <- omitted_recoder_df(input) #Mislevy item estimation
 #' y_p2 <- omitted_recoder_df(input, skipped = 0L, #Mislevy person estimation
@@ -315,41 +315,44 @@ center_string <- function(string, maxwidth=50) {
 
 ###  Check that all pairs of cols share at least one observed response category
 check_category_pairs <-
-  function(data, cols_pos, call = rlang::caller_env()) {
-    purrr::walk2(.x = unname(cols_pos),
-                 .y = names(cols_pos),
-                 .f = function(x, y) {
-                   cols_rest <-
-                     cols_pos[-c(1:match(y, names(cols_pos)))]
-                   purrr::walk2(.x = unname(cols_rest),
-                                .y = names(cols_rest),
-                                .f = function(x2, y2) {
-                                  val_y <- if(is.factor(data[[y]])) levels(data[[y]]) else unique(data[[y]])
-                                  val_y2 <- if(is.factor(data[[y2]])) levels(data[[y2]]) else unique(data[[y2]])
-                                  common <- dplyr::intersect(val_y, val_y2)
-                                  if(length(common) == 0L) {
-                                    cli::cli_abort(
-                                      c("Unequal variables.",
-                                        "!" = "All variables must share at least one common category.",
-                                        "i" = "Column {.var {y}} and column {.var {y2}} lack common categories."
-                                      ),
-                                      call = call)
-                                  }
-                                })
-                 })
+  function(data, cols_pos, call = rlang::caller_env(), return_error=TRUE) {
+    lapply(X = seq_along(cols_pos), FUN = function(i) {
+      x <- unname(cols_pos)[[i]]
+      y <- names(cols_pos)[[i]]
+
+      cols_rest <-
+        cols_pos[-c(1:match(y, names(cols_pos)))]
+      lapply(X = seq_along(cols_rest), FUN = function(e) {
+        x2 <- unname(cols_rest)[[e]]
+        y2 <- names(cols_rest)[[e]]
+
+                     val_y <- if(is.factor(data[[y]])) levels(data[[y]]) else unique(data[[y]])
+                     val_y2 <- if(is.factor(data[[y2]])) levels(data[[y2]]) else unique(data[[y2]])
+                     common <- dplyr::intersect(val_y, val_y2)
+                     if(length(common) == 0L) {
+                       cli::cli_abort(
+                         c("Unequal variables.",
+                           "!" = "All variables must share at least one common category.",
+                           "i" = "Column {.var {y}} and column {.var {y2}} lack common categories."
+                         ),
+                         call = call)
+                     }
+                   })
+    })
+    TRUE
   }
 
 # get_main_question <-
 #   function(data, cols_pos, label_separator) {
-#   x <- purrr::map_chr(data[, cols_pos], ~attr(.x, "label"))
+#   x <- unlist(lapply(data[, cols_pos], FUN = function(.x) attr(.x, "label")))
 #   x <- unname(x)
 #   x <-
 #     stringi::stri_replace(string = x,
-#                          regex = stringr::str_c("(^.*)", label_separator, "(.*$)"),
+#                          regex = stringi::stri_c(ignore_null=TRUE, "(^.*)", label_separator, "(.*$)"),
 #                          replacement = "$1")
 #   x <- unique(x)
 #   x <-
-#     stringr::str_c(x, collapse="\n")
+#     stringi::stri_c(ignore_null=TRUE, x, collapse="\n")
 #   x
 # }
 
@@ -359,16 +362,27 @@ check_category_pairs <-
 #' @description Easily mutate a single column into multiple columns (~dummies+1),
 #' while retaining variable labels and order of the original factor variable.
 #'
-#' @param data Data frame.
+#' @inheritParams draft_report
 #' @param col Single column. Tidy-select.
-#' @param var_separator [\code{character(1)>0}]\cr Separator between old variable name and categories.
-#' @param label_separator  [\code{character(1)>0}]\cr Separator between old label name and new label part.
+#' @param var_separator *Variable separator*
+#'
+#'   `scalar<character>` // *default:* `NULL` (`optional`)
+#'
+#'   Separator between old variable name and categories.
+#'
+#' @param label_separator
+#'
+#'   `scalar<character>` // *default:* `NULL` (`optional`)
+#'
+#'   Separator between old label name and new label part.
 #'
 #' @return Original data frame with the binary columns attached, containing new labels.
 #' @export
 #'
 #' @examples col_to_binaries(ex_survey1, col = b_3, label_separator = "  -  ")
-col_to_binaries <- function(data, col, var_separator = "___", label_separator = " - ") {
+col_to_binaries <- function(data, col,
+                            var_separator = "___",
+                            label_separator = " - ") {
   if(length(dplyr::select(data, {{col}}))>1L) {
     cli::cli_abort(c("Only 1 column is currently allowed, for your protection.",
                      i="You have provided {length(dplyr::select(data, {{col}})} columns."))
@@ -396,19 +410,25 @@ col_to_binaries <- function(data, col, var_separator = "___", label_separator = 
     tidyr::pivot_wider(names_from = {{col}},
                        values_from = tidyselect::all_of("_dummy"),
                        values_fill = 0L,
-                       names_glue = stringr::str_c(col_nm, var_separator, "{.name}")) |> #
+                       names_glue = stringi::stri_c(ignore_null=TRUE, col_nm, var_separator, "{.name}")) |> #
     dplyr::select(!tidyselect::all_of("_id"))
 
 
-  labelled::var_label(x = data3) <-
-    stringr::str_c(col_label, label_separator, unique(data2[[col_pos]]))
+  new_labels <-
+    stringi::stri_c(ignore_null=TRUE, col_label, label_separator, unique(data2[[col_pos]]))
+
+  for(i in seq_len(ncol(data3))) {
+    attr(data3[[i]], "label") <- new_labels[i]
+  }
   dplyr::bind_cols(data2, data3)
   }
 
 
 create_text_collapse <-
   function(text = NULL,
-           last_sep = .saros.env$defaults$translations$last_sep) {
+           last_sep = NULL) {
+    if(rlang::is_null(last_sep)) last_sep <-
+        eval(formals(draft_report)$translations)$last_sep
     cli::ansi_collapse(text, last = last_sep)
   }
 

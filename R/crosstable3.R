@@ -2,27 +2,27 @@ crosstable3 <- function(x, ...) UseMethod("crosstable3", x)
 
 crosstable3.data.frame <-
   function(data,
-           cols = colnames(data),
-           by = NULL,
-           showNA = .saros.env$defaults$element_args$showNA,
-           totals = .saros.env$defaults$element_args$totals,
-           translations = .saros.env$defaults$translations,
+           dep = colnames(data),
+           indep = NULL,
+           showNA = eval(formals(draft_report)$showNA),
+           totals = eval(formals(draft_report)$totals),
+           translations = eval(formals(draft_report)$translations),
            call = rlang::caller_env()) {
 
-    showNA <- rlang::arg_match(showNA, values = .saros.env$defaults$element_args$showNA, error_call = call)
+    showNA <- rlang::arg_match(showNA, values = eval(formals(draft_report)$showNA), error_call = call)
 
-    # by_names <- colnames(data[, by, drop = FALSE])
-    by_labels <- get_raw_labels(data, cols_pos = by)
-    col_names <- colnames(data[, cols, drop = FALSE])[!(colnames(data[, cols, drop = FALSE]) %in% by)]
+    # indep_names <- colnames(data[, indep, drop = FALSE])
+    indep_labels <- get_raw_labels(data = data, col_pos = indep)
+    col_names <- colnames(data[, dep, drop = FALSE])[!(colnames(data[, dep, drop = FALSE]) %in% indep)]
 
     if(length(col_names)==0) return()
 
-    if(length(by) > 0 && rlang::is_true(totals)) {
-      for(by_var in by) {
+    if(length(indep) > 0 && rlang::is_true(totals)) {
+      for(indep_var in indep) {
         data_duplicate <- data
-        data_duplicate[[by_var]] <- forcats::fct_na_value_to_level(data_duplicate[[by_var]], level = translations$by_total)
-        levels(data_duplicate[[by_var]]) <- rep(translations$by_total,
-                                                length=length(levels(data_duplicate[[by_var]])))
+        data_duplicate[[indep_var]] <- forcats::fct_na_value_to_level(data_duplicate[[indep_var]], level = translations$by_total)
+        levels(data_duplicate[[indep_var]]) <- rep(translations$by_total,
+                                                length=length(levels(data_duplicate[[indep_var]])))
         data <- dplyr::bind_rows(data, data_duplicate)
         for(i in seq_len(ncol(data))) {
           attr(data[[i]], "label") <- attr(data_duplicate[[i]], "label")
@@ -32,7 +32,7 @@ crosstable3.data.frame <-
 
     output <-
       lapply(stats::setNames(col_names, col_names), function(.x) {
-        if(!any(by == .x)) {
+        if(!any(indep == .x)) {
 
       out <- data
       names(out)[names(out) == .x] <- ".category"
@@ -53,14 +53,14 @@ crosstable3.data.frame <-
       }
 
 
-      for(by_var in by) {
-        by_col <- out[[by_var]]
+      for(indep_var in indep) {
+        indep_col <- out[[indep_var]]
 
         if(showNA == "always" ||
-           (showNA == "ifany" && any(is.na(by_col)))) {
-          out[[by_var]] <- forcats::fct_na_value_to_level(f = by_col, level = "NA")
+           (showNA == "ifany" && any(is.na(indep_col)))) {
+          out[[indep_var]] <- forcats::fct_na_value_to_level(f = indep_col, level = "NA")
         } else {
-          out <- out[!is.na(out[[by_var]]), ]
+          out <- out[!is.na(out[[indep_var]]), ]
         }
       }
 
@@ -75,35 +75,35 @@ crosstable3.data.frame <-
         cli::cli_warn("{.arg {.x}} is {.obj_type_friendly {out$.category}}. Taking its mean is meaningless and results in NAs.",
                       call = call)
       }
-      out <- out[rlang::inject(order(!!!out[, c(by, ".category")])), ]
+      out <- out[rlang::inject(order(!!!out[, c(indep, ".category")])), ]
       summary_mean <- out
       summary_mean$.mean <- suppressWarnings(as.numeric(summary_mean$.category))
-      summary_mean <- stats::aggregate(x = .mean ~ ., data = summary_mean[, c(by, ".mean"), drop = FALSE], FUN = mean, na.rm = TRUE)
+      summary_mean <- stats::aggregate(x = .mean ~ ., data = summary_mean[, c(indep, ".mean"), drop = FALSE], FUN = mean, na.rm = TRUE)
 
       summary_prop <- out
       summary_prop$.count <- 1L
-      summary_prop <- stats::aggregate(x = summary_prop$.count, by = summary_prop[, c(by, ".category"), drop = FALSE], FUN = length, simplify = TRUE)
+      summary_prop <- stats::aggregate(x = summary_prop$.count, by = summary_prop[, c(indep, ".category"), drop = FALSE], FUN = length, simplify = TRUE)
       names(summary_prop)[names(summary_prop) == "x"] <- ".count" ## FAKE SOLUTION, A VARIABLE CALLED x will break it all
-      grouped_count <- stats::aggregate(x = summary_prop$.count, by = summary_prop[, by, drop = FALSE], FUN = sum, na.rm=TRUE, simplify = TRUE)
+      grouped_count <- stats::aggregate(x = summary_prop$.count, by = summary_prop[, indep, drop = FALSE], FUN = sum, na.rm=TRUE, simplify = TRUE)
 
-      summary_prop <- merge(summary_prop, grouped_count, by = by)
+      summary_prop <- merge(summary_prop, grouped_count, by = indep)
       summary_prop$.proportion <- summary_prop$.count / summary_prop$x
       summary_prop$.category <- factor(x = summary_prop$.category,
                                        levels = fct_lvls,
                                        labels = fct_lvls)
-      summary_prop$.variable_label <- unname(get_raw_labels(data, cols_pos = .x))
+      summary_prop$.variable_label <- unname(get_raw_labels(data = data, col_pos = .x))
       # summary_prop$.mean_base <- as.integer(summary_prop$.category) * summary_prop$.count
       summary_prop$.count_se <- NA_real_
       summary_prop$.proportion_se <- NA_real_
       summary_prop$.mean_se <- NA_real_
 
-      if(length(by) > 0) {
+      if(length(indep) > 0) {
         out <- dplyr::left_join(summary_prop, summary_mean,
                          by = intersect(names(summary_prop), names(summary_mean)))
       } else {
         out <- cbind(summary_prop, summary_mean)
       }
-      # if(length(by) > 0) {
+      # if(length(indep) > 0) {
       #   merge(summary_prop, summary_mean, by = intersect(names(summary_prop), names(summary_mean)), all.x = TRUE)
       # } else {
       #   cbind(summary_prop, summary_mean)
@@ -116,19 +116,19 @@ crosstable3.data.frame <-
     })
     out <- do.call(rbind, output)
     out <-
-      out[#do.call(order, out[c(".variable_name", by, ".category", ".proportion")]),
+      out[#do.call(order, out[c(".variable_name", indep, ".category", ".proportion")]),
         c(".variable_name", ".variable_label",
           ".category",
           ".count", ".count_se",
           ".proportion", ".proportion_se",
           ".mean", ".mean_se",
           # ".mean_base",
-          by)]
+          indep)]
 
-    # # Add totals when 'by' is not NULL and 'totals' is TRUE
-    # if(length(by)>0 && isTRUE(totals)) {
-    #   # Combine the by_names and .variable_name into a single factor for aggregating
-    #   out$group <- rlang::exec(interaction, !!!as.list(out[, c(".variable_name", by)]), drop = TRUE)
+    # # Add totals when 'indep' is not NULL and 'totals' is TRUE
+    # if(length(indep)>0 && isTRUE(totals)) {
+    #   # Combine the indep_names and .variable_name into a single factor for aggregating
+    #   out$group <- rlang::exec(interaction, !!!as.list(out[, c(".variable_name", indep)]), drop = TRUE)
     #
     #   # Calculate totals using aggregate function
     #   total_counts <- stats::aggregate(.count,  ~ group, data = out, FUN = sum)
@@ -156,13 +156,13 @@ crosstable3.data.frame <-
     #   out <- rbind(out, totals)
     # }
 
-    for(by_var in by) {
-      # if(is.null(out[[by_var]])) browser()
-      attr(out[[by_var]], "label") <- by_labels[[by_var]]
+    for(indep_var in indep) {
+      # if(is.null(out[[indep_var]])) browser()
+      attr(out[[indep_var]], "label") <- indep_labels[[indep_var]]
     }
 
     out <- dplyr::arrange(out, dplyr::pick(tidyselect::all_of(c(
-      ".variable_name", by, ".category", ".proportion"))))
+      ".variable_name", indep, ".category", ".proportion"))))
 
     rownames(out) <- NULL
     out
@@ -172,21 +172,21 @@ crosstable3.data.frame <-
 
 crosstable3.tbl_svy <-
   function(data,
-           cols = colnames(data),
-           by = NULL,
-           showNA = .saros.env$defaults$element_args$showNA,
-           totals = .saros.env$defaults$element_args$totals,
-           translations = .saros.env$defaults$translations,
+           dep = colnames(data),
+           indep = NULL,
+           showNA = eval(formals(draft_report)$showNA),
+           totals = eval(formals(draft_report)$totals),
+           translations = eval(formals(draft_report)$translations),
            call = rlang::caller_env()) {
 
-    showNA <- rlang::arg_match(showNA, error_call = call)
+    showNA <- rlang::arg_match(showNA, values = eval(formals(draft_report)$showNA), error_call = call)
 
-    # by_names <- colnames(data[, by, drop = FALSE])
-    by_labels <- get_raw_labels(data$variables, cols_pos = by)
-    col_names <- colnames(data[, cols, drop = FALSE])[!(colnames(data[, cols, drop = FALSE]) %in% by)]
+    # indep_names <- colnames(data[, indep, drop = FALSE])
+    indep_labels <- get_raw_labels(data = data$variables, col_pos = indep)
+    col_names <- colnames(data[, dep, drop = FALSE])[!(colnames(data[, dep, drop = FALSE]) %in% indep)]
 
-    # by_names <- colnames(srvyr::select(data, by))
-    # col_names <- colnames(srvyr::select(data, cols)) %>% .[!. %in% by_names]
+    # indep_names <- colnames(srvyr::select(data, indep))
+    # col_names <- colnames(srvyr::select(data, dep)) %>% .[!. %in% indep_names]
 
     output <- lapply(stats::setNames(col_names, col_names), function(.x) {
 
@@ -207,39 +207,39 @@ crosstable3.tbl_svy <-
 
       fct_lvls <- if (is.factor(col)) levels(col) else sort(unique(col))
 
-      # by_vars <- colnames(srvyr::select(data, by))
+      # indep_vars <- colnames(srvyr::select(data, indep))
 
-      for(by_var in by) {
+      for(indep_var in indep) {
 
-        by_col <- srvyr::pull(out, .data[[by_var]])
+        indep_col <- srvyr::pull(out, .data[[indep_var]])
 
-        if (showNA == "always" || (showNA == "ifany" && any(is.na(by_col)))) {
-          out <- srvyr::mutate(out, srvyr::across(.cols = tidyselect::all_of(by_var),
+        if (showNA == "always" || (showNA == "ifany" && any(is.na(indep_col)))) {
+          out <- srvyr::mutate(out, srvyr::across(.cols = tidyselect::all_of(indep_var),
                                            .fns = ~forcats::fct_na_value_to_level(f = .x, level = "NA")))
         } else {
-          out <- srvyr::filter(out, dplyr::if_all(.cols = tidyselect::all_of(by_var),
+          out <- srvyr::filter(out, dplyr::if_all(.cols = tidyselect::all_of(indep_var),
                                            .fns = ~!is.na(.x)))
         }
       }
 
-      summary_mean <- srvyr::group_by(out, srvyr::across(tidyselect::all_of(by)))
+      summary_mean <- srvyr::group_by(out, srvyr::across(tidyselect::all_of(indep)))
       summary_mean <- srvyr::summarize(summary_mean, .mean = srvyr::survey_mean(as.numeric(.data$.category)))
       summary_mean <- srvyr::ungroup(summary_mean)
       summary_mean <- srvyr::as_tibble(summary_mean)
 
-      summary_prop <- srvyr::group_by(out, srvyr::across(tidyselect::all_of(c(by, ".category"))))
+      summary_prop <- srvyr::group_by(out, srvyr::across(tidyselect::all_of(c(indep, ".category"))))
       summary_prop <- srvyr::summarize(summary_prop, .count = srvyr::survey_total(na.rm = TRUE),
                                        .proportion = srvyr::survey_prop(proportion = TRUE))
       summary_prop <- srvyr::ungroup(summary_prop)
       summary_prop <- srvyr::as_tibble(summary_prop)
-      # print(get_raw_labels(srvyr::as_tibble(data), cols_pos = .x))
+      # print(get_raw_labels(data = srvyr::as_tibble(data), col_pos = .x))
       summary_prop <- dplyr::mutate(summary_prop,
                              .category = factor(x = .data$.category, levels = fct_lvls, labels = fct_lvls),
-                             .variable_label = get_raw_labels(srvyr::as_tibble(data), cols_pos = .x)
+                             .variable_label = get_raw_labels(data = srvyr::as_tibble(data), col_pos = .x)
                              # .mean_base = as.integer(.category) * .count
                              )
 
-      if (length(by) > 0) {
+      if (length(indep) > 0) {
         out <- dplyr::left_join(summary_prop, summary_mean, by = intersect(names(summary_prop), names(summary_mean)))
       } else {
         out <- cbind(summary_prop, summary_mean)
@@ -251,19 +251,19 @@ crosstable3.tbl_svy <-
 
     out <- do.call(rbind, output)
     out <-
-      out[#do.call(order, out[c(".variable_name", by, ".category", ".proportion")]),
+      out[#do.call(order, out[c(".variable_name", indep, ".category", ".proportion")]),
         c(".variable_name", ".variable_label",
           ".category",
           ".count", ".count_se",
           ".proportion", ".proportion_se",
           ".mean", ".mean_se",
           # ".mean_base",
-          by)]
+          indep)]
 
-    # # Add totals when 'by' is not NULL and 'totals' is TRUE
-    # if(length(by)>0 && isTRUE(totals)) {
-    #   # Combine the by_names and .variable_name into a single factor for aggregating
-    #   out$group <- rlang::exec(interaction, !!!as.list(out[, c(".variable_name", by)]), drop = TRUE)
+    # # Add totals when 'indep' is not NULL and 'totals' is TRUE
+    # if(length(indep)>0 && isTRUE(totals)) {
+    #   # Combine the indep_names and .variable_name into a single factor for aggregating
+    #   out$group <- rlang::exec(interaction, !!!as.list(out[, c(".variable_name", indep)]), drop = TRUE)
     #
     #   # Calculate totals using aggregate function
     #   total_counts <- stats::aggregate(.count,  ~ group, data = out, FUN = sum)
@@ -291,13 +291,13 @@ crosstable3.tbl_svy <-
     #   out <- rbind(out, totals)
     # }
 
-    for(by_var in by) {
-      # if(is.null(out[[by_var]])) browser()
-      attr(out[[by_var]], "label") <- by_labels[[by_var]]
+    for(indep_var in indep) {
+      # if(is.null(out[[indep_var]])) browser()
+      attr(out[[indep_var]], "label") <- indep_labels[[indep_var]]
     }
 
     out <- dplyr::arrange(out, dplyr::pick(tidyselect::all_of(c(
-      ".variable_name", by, ".category", ".proportion"))))
+      ".variable_name", indep, ".category", ".proportion"))))
 
     rownames(out) <- NULL
     out

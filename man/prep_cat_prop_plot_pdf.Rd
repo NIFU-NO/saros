@@ -4,34 +4,29 @@
 \alias{prep_cat_prop_plot_pdf}
 \title{Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories}
 \usage{
-prep_cat_prop_plot_pdf(data, ..., call = rlang::caller_env())
+prep_cat_prop_plot_pdf(data, ..., inverse = FALSE, call = rlang::caller_env())
 }
 \arguments{
-\item{data}{Data frame.}
+\item{data}{\emph{Survey data}
 
-\item{...}{Optional parameters forwarded from above.}
+\verb{obj:<data.frame>|obj:<tbl_df>} // Required
 
-\item{call}{For internal use}
+A data frame (or a srvyr-object) with the columns specified in the
+chapter_overview 'dep_cat', etc columns.}
 
-\item{label_font_size}{[\code{integer(1)}]\cr Font size for data labels}
+\item{...}{\emph{Dynamic dots}
 
-\item{main_font_size}{[\code{integer(1)}]\cr Font size for all other text
-Must contain at least the number of unique values (excl. missing) in the data set.}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
 
-\item{colour_palette}{[\code{character()}]\cr
-Must contain at least the number of unique values (incl. missing) in the data set.}
+Arguments forwarded to the corresponding functions that create the elements.}
 
-\item{colour_na}{[\code{character(1)}]\cr Colour as a single string.}
+\item{inverse}{Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.}
 
-\item{colour_2nd_binary_cat}{[\code{character(1)}]\cr Colour for second category in binary variables. Often useful to hide this.}
+\item{call}{\emph{Internal call}
 
-\item{font_family}{Word font family. See officer::fp_text}
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
 
-\item{vertical}{[\code{logical(1)}] Logical. If FALSE (default), then horizontal.}
-
-\item{x_axis_label_width}{[\code{integer(1)}] Width of the labels used for the categorical column names.}
-
-\item{seed}{[\code{integer(1)}] Optional random seed for selection of colours in blender.}
+Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
 ggiraph object, plottable with plot()

@@ -4,18 +4,20 @@
 \alias{handpick}
 \title{Return character vector of manually picked data columns.}
 \usage{
-handpick(data, to_clipboard = FALSE)
+handpick(data, to_clipboard = FALSE, bare = FALSE)
 }
 \arguments{
 \item{data}{A dataset; data frame.}
 
 \item{to_clipboard}{Boolean. Defaults to FALSE. If TRUE, overwrites what you already have copied. Use with caution.}
+
+\item{bare}{Flag, defaults to FALSE. If TRUE, returns a tidyselect-style bare list of columns, without quotation marks.}
 }
 \value{
 Character vector. Prints to console.
 }
 \description{
-Only works if in interactive session. Copies to the clipboard if to_clipboard = TRUE, and if clipboard is available on system.
+Only works in an interactive session. Copies to the clipboard if to_clipboard = TRUE, and if clipboard is available on system.
 }
 \examples{
 \dontrun{if(interactive()) handpick(mtcars)}

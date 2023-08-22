@@ -5,9 +5,6 @@
 \title{Generate Quarto Index File That Merges All Chapters}
 \usage{
 gen_qmd_index(
-  yaml_file = NULL,
-  title = NULL,
-  authors = NULL,
   index_filepath = "complete_report.qmd",
   ...,
   chapter_filepaths = NULL,
@@ -15,11 +12,13 @@ gen_qmd_index(
 )
 }
 \arguments{
-\item{yaml_file}{A ymlthis-object. Defaults will be obtained from getOptions("ymlthis.default_options") if NULL.}
+\item{index_filepath}{Path to the output index.qmd file. Defaults to "complete_report.qmd"}
 
-\item{authors}{A character vector listing the authors of the Quarto document. If not provided, the author information will be omitted.}
+\item{...}{\emph{Dynamic dots}
 
-\item{index_filepath}{A string specifying the name of the Quarto index file to be created. Defaults to "complete_report.qmd".}
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+
+Arguments forwarded to the corresponding functions that create the elements.}
 
 \item{chapter_filepaths}{A character vector containing the filepaths of the chapter files to be included in the index, in the desired order.}
 

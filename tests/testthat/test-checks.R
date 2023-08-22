@@ -223,47 +223,47 @@ testthat::test_that("check_autonum", {
   )
 })
 
-testthat::test_that("check_multiple_by", {
+testthat::test_that("check_multiple_indep", {
 
   data <- data.frame(a = 1:5, b = 6:10, c = 11:15, d = 16:20, e = 21:25)
 
-  # Test 1: One column provided for 'by', expect no error
+  # Test 1: One column provided for 'indep', expect no error
   testthat::expect_no_error(
-    object = saros:::check_multiple_by(data, a)
+    object = saros:::check_multiple_indep(data, a)
   )
 
-  # Test 2: Two columns provided for 'by', expect an error
+  # Test 2: Two columns provided for 'indep', expect an error
   testthat::expect_error(
-    object = saros:::check_multiple_by(data, c(a, b)),
-    regexp = "Too many columns provided for `by`"
+    object = saros:::check_multiple_indep(data, c(a, b)),
+    regexp = "Too many columns provided for `indep`"
   )
 
   # Test 3: Empty data frame, expect no error here.
   data_no_col <- data.frame()
   testthat::expect_no_error(
-    object = saros:::check_multiple_by(data_no_col, NULL)
+    object = saros:::check_multiple_indep(data_no_col, NULL)
   )
 
   # Test 4: Select no column, expect no error
   testthat::expect_no_error(
-    object = saros:::check_multiple_by(data, NULL))
+    object = saros:::check_multiple_indep(data, NULL))
 
 })
 
 
-testthat::test_that("check_multiple_cols_and_one_by", {
+testthat::test_that("check_multiple_dep_and_one_indep", {
 
   data <- data.frame(a = 1:5, b = 6:10, c = 11:15, d = 16:20, e = 21:25)
 
-  # Test 1: One column for 'cols' and one column for 'by', expect no error
+  # Test 1: One column for 'dep' and one column for 'indep', expect no error
   testthat::expect_no_error(
-    object = saros:::check_multiple_cols_and_one_by(data, a, b)
+    object = saros:::check_multiple_dep_and_one_indep(data, a, b)
   )
 
-  # Test 2: Two columns for 'cols' and one column for 'by', expect an error
+  # Test 2: Two columns for 'dep' and one column for 'indep', expect an error
   testthat::expect_error(
-    object = saros:::check_multiple_cols_and_one_by(data, c(a, b), c),
-    regexp = "Multiple columns for `cols` and `by` are not allowed.*You provided cols = \\^c\\(a, b\\)"
+    object = saros:::check_multiple_dep_and_one_indep(data, c(a, b), c),
+    regexp = "Multiple columns for `dep` and `indep` are not allowed.*You provided dep = \\^c\\(a, b\\)"
   )
 
 })
