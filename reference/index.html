@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2.1000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2.4100</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,9 +44,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="main-use">Main use<a class="anchor" aria-label="anchor" href="#main-use"></a></h2>
       
-      
+      <p class="section-desc"></p><p>The only functions you will probably use</p>
 
       
     </div><div id="" class="section level2">
@@ -56,14 +56,133 @@
 
       <dl><dt>
           
-          <code><a href="center_string.html">center_string()</a></code> 
+          <code><a href="draft_report.html">draft_report()</a></code> 
         </dt>
-        <dd>Center String Vector</dd>
+        <dd>Automatically Draft a Quarto Report</dd>
+      </dl></div><div class="section level2">
+      <h2 id="example-data-and-metadata">Example data and metadata<a class="anchor" aria-label="anchor" href="#example-data-and-metadata"></a></h2>
+      
+      <p class="section-desc"></p><p>You would need to create these two types of data frames.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="ex_survey1.html">ex_survey1</a></code> 
+        </dt>
+        <dd>ex_survey1: Mockup dataset of a survey.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="ex_survey_ch_overview.html">ex_survey_ch_overview</a></code> 
+        </dt>
+        <dd>ex_survey_ch_overview: Mock overview of chapter structure</dd>
+      </dl></div><div class="section level2">
+      <h2 id="handling-the-overwhelming-amount-of-settings-for-non-r-users">Handling the overwhelming amount of settings for non-R users<a class="anchor" aria-label="anchor" href="#handling-the-overwhelming-amount-of-settings-for-non-r-users"></a></h2>
+      
+      <p class="section-desc"></p><p>By using YAML, settings can be stored in a file that is human-readable and machine-readable. These functions allow easy reading and writing such files and using these in draft_report()</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="write_default_draft_report_args.html">write_default_draft_report_args()</a></code> 
+        </dt>
+        <dd>Write Default Arguments for <code><a href="../reference/draft_report.html">draft_report()</a></code> to YAML-file</dd>
+      </dl><dl><dt>
+          
+          <code><a href="read_default_draft_report_args.html">read_default_draft_report_args()</a></code> 
+        </dt>
+        <dd>Read Default Arguments for <code><a href="../reference/draft_report.html">draft_report()</a></code> from YAML-file</dd>
+      </dl></div><div class="section level2">
+      <h2 id="access-to-draft-report-options">Access to draft_report() options<a class="anchor" aria-label="anchor" href="#access-to-draft-report-options"></a></h2>
+      
+      <p class="section-desc"></p><p>Allows quick reference of possible options for certain arguments in <code><a href="../reference/draft_report.html">draft_report()</a></code></p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="get_data_label_opts.html">get_data_label_opts()</a></code> 
+        </dt>
+        <dd>Get Valid Data Labels for Figures and Tables</dd>
+      </dl><dl><dt>
+          
+          <code><a href="list_available_element_types.html">list_available_element_types()</a></code> 
+        </dt>
+        <dd>List All Valid Names of The Elements Argument</dd>
+      </dl></div><div class="section level2">
+      <h2 id="useful-data-preparation-tools">Useful data preparation tools<a class="anchor" aria-label="anchor" href="#useful-data-preparation-tools"></a></h2>
+      
+      <p class="section-desc"></p><p>These functions will hopefully be moved to another package</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="refine_chapter_overview.html">refine_chapter_overview()</a></code> 
+        </dt>
+        <dd>Processes A 'chapter_overview' Data Frame</dd>
       </dl><dl><dt>
           
           <code><a href="col_to_binaries.html">col_to_binaries()</a></code> 
         </dt>
         <dd>Mutate a (factor, character, integer, etc) column into multiple columns,</dd>
+      </dl><dl><dt>
+          
+          <code><a href="swap_label_colnames.html">swap_label_colnames()</a></code> <code><a href="swap_label_colnames.html">swap_label_colnames()</a></code> 
+        </dt>
+        <dd>Swap Dataset Columns and Labels</dd>
+      </dl><dl><dt>
+          
+          <code><a href="replace_stata_labels.html">replace_stata_labels()</a></code> 
+        </dt>
+        <dd>Replace Stata Labels</dd>
+      </dl><dl><dt>
+          
+          <code><a href="rename_by_labels.html">rename_by_labels()</a></code> <code><a href="rename_by_labels.html">rename_by_labels()</a></code> 
+        </dt>
+        <dd>Rename Dataset Columns by Labels.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="remove_special_chars_in_labels.html">remove_special_chars_in_labels()</a></code> 
+        </dt>
+        <dd>Remove Special Characters (&lt;,&gt;) in Variable Labels</dd>
+      </dl><dl><dt>
+          
+          <code><a href="handpick.html">handpick()</a></code> 
+        </dt>
+        <dd>Return character vector of manually picked data columns.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="omitted_recoder_df.html">omitted_recoder_df()</a></code> 
+        </dt>
+        <dd>Recode Missing By Type of Missingness</dd>
+      </dl><dl><dt>
+          
+          <code><a href="subset_vector.html">subset_vector()</a></code> 
+        </dt>
+        <dd>Given Ordered Integer Vector, Return Requested Set.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="center_string.html">center_string()</a></code> 
+        </dt>
+        <dd>Center String Vector</dd>
       </dl><dl><dt>
           
           <code><a href="combn_upto.html">combn_upto()</a></code> 
@@ -77,15 +196,52 @@ Maximum B.</dd>
         <dd>Adds caption attribute</dd>
       </dl><dl><dt>
           
+          <code><a href="get_colour_set.html">get_colour_set()</a></code> 
+        </dt>
+        <dd>Provide A Colour Set for A Number of Requested Colours</dd>
+      </dl><dl><dt>
+          
+          <code><a href="hex_bw.html">hex_bw()</a></code> 
+        </dt>
+        <dd>Identify Suitable Font Given Background Hex Colour</dd>
+      </dl><dl><dt>
+          
+          <code><a href="is_colour.html">is_colour()</a></code> 
+        </dt>
+        <dd>Are All Colours in Vector Valid Colours</dd>
+      </dl></div><div class="section level2">
+      <h2 id="useful-website-management-tools">Useful website management tools<a class="anchor" aria-label="anchor" href="#useful-website-management-tools"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
           <code><a href="create_htaccess.html">create_htaccess()</a></code> 
         </dt>
         <dd>Create Bulk of .htaccess files in local folders, having valid AuthUserFile when uploaded to ftp-server at remote_basepath</dd>
       </dl><dl><dt>
           
-          <code><a href="draft_report.html">draft_report()</a></code> 
+          <code><a href="upload_to_ftp.html">upload_to_ftp()</a></code> 
         </dt>
-        <dd>Automatically Draft a Quarto Report</dd>
-      </dl><dl><dt>
+        <dd>Easily upload folder to ftp-server, with safe storage of credentials</dd>
+      </dl></div><div class="section level2">
+      <h2 id="create-individual-elements-usually-called-automatically-">Create individual elements (usually called automatically)<a class="anchor" aria-label="anchor" href="#create-individual-elements-usually-called-automatically-"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="embed_bi_sigtest.html">embed_bi_sigtest()</a></code> 
         </dt>
@@ -132,161 +288,33 @@ Maximum B.</dd>
         <dd>Title</dd>
       </dl><dl><dt>
           
-          <code><a href="ex_survey1.html">ex_survey1</a></code> 
-        </dt>
-        <dd>ex_survey1: Mockup dataset of a survey.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="ex_survey_ch_overview.html">ex_survey_ch_overview</a></code> 
-        </dt>
-        <dd>ex_survey_ch_overview: Mock overview of chapter structure</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gen_element_and_qmd_snippet.html">gen_element_and_qmd_snippet()</a></code> 
-        </dt>
-        <dd>Mass Create Elements of A Certain Type</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gen_element_and_qmd_snippet2.html">gen_element_and_qmd_snippet2()</a></code> 
-        </dt>
-        <dd>Mass Create Elements of A Certain Type</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gen_qmd_chapters.html">gen_qmd_chapters()</a></code> 
-        </dt>
-        <dd>Generate A Quarto Survey Report</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gen_qmd_index.html">gen_qmd_index()</a></code> 
-        </dt>
-        <dd>Generate Quarto Index File That Merges All Chapters</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_colour_set.html">get_colour_set()</a></code> 
-        </dt>
-        <dd>Provide A Colour Set for A Number of Requested Colours</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_data_label_opts.html">get_data_label_opts()</a></code> 
-        </dt>
-        <dd>Get Valid Data Labels for Figures and Tables</dd>
-      </dl><dl><dt>
-          
-          <code><a href="handpick.html">handpick()</a></code> 
-        </dt>
-        <dd>Return character vector of manually picked data columns.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="hex_bw.html">hex_bw()</a></code> 
-        </dt>
-        <dd>Identify Suitable Font Given Background Hex Colour</dd>
-      </dl><dl><dt>
-          
-          <code><a href="is_colour.html">is_colour()</a></code> 
-        </dt>
-        <dd>Are All Colours in Vector Valid Colours</dd>
-      </dl><dl><dt>
-          
-          <code><a href="list_available_element_types.html">list_available_element_types()</a></code> 
-        </dt>
-        <dd>List All Valid Names of The Elements Argument</dd>
-      </dl><dl><dt>
-          
-          <code><a href="omitted_recoder_df.html">omitted_recoder_df()</a></code> 
-        </dt>
-        <dd>Recode Missing By Type of Missingness</dd>
-      </dl><dl><dt>
-          
-          <code><a href="prep_cat_freq_plot_docx.html">prep_cat_freq_plot_docx()</a></code> 
-        </dt>
-        <dd>Create Categorical Data Chart from Summarized Data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="prep_cat_freq_plot_html.html">prep_cat_freq_plot_html()</a></code> 
-        </dt>
-        <dd>Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories</dd>
-      </dl><dl><dt>
-          
-          <code><a href="prep_cat_freq_plot_pdf.html">prep_cat_freq_plot_pdf()</a></code> 
-        </dt>
-        <dd>Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories</dd>
-      </dl><dl><dt>
-          
-          <code><a href="prep_cat_prop_plot_docx.html">prep_cat_prop_plot_docx()</a></code> 
-        </dt>
-        <dd>Create Categorical Data Chart from Summarized Data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="prep_cat_prop_plot_html.html">prep_cat_prop_plot_html()</a></code> 
-        </dt>
-        <dd>Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories</dd>
-      </dl><dl><dt>
-          
-          <code><a href="prep_cat_prop_plot_pdf.html">prep_cat_prop_plot_pdf()</a></code> 
-        </dt>
-        <dd>Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories</dd>
-      </dl><dl><dt>
-          
-          <code><a href="read_default_draft_report_args.html">read_default_draft_report_args()</a></code> 
-        </dt>
-        <dd>Read Default Arguments for <code><a href="../reference/draft_report.html">draft_report()</a></code> from YAML-file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="refine_chapter_overview.html">refine_chapter_overview()</a></code> 
-        </dt>
-        <dd>Processes A 'chapter_overview' Data Frame</dd>
-      </dl><dl><dt>
-          
-          <code><a href="remove_special_chars_in_labels.html">remove_special_chars_in_labels()</a></code> 
-        </dt>
-        <dd>Remove Special Characters (&lt;,&gt;) in Variable Labels</dd>
-      </dl><dl><dt>
-          
-          <code><a href="rename_by_labels.html">rename_by_labels()</a></code> <code><a href="rename_by_labels.html">rename_by_labels()</a></code> 
-        </dt>
-        <dd>Rename Dataset Columns by Labels.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="replace_stata_labels.html">replace_stata_labels()</a></code> 
-        </dt>
-        <dd>Replace Stata Labels</dd>
-      </dl><dl><dt>
-          
           <code><a href="sigtest.html">sigtest()</a></code> 
         </dt>
         <dd>Test Significance Based on Randomization Theory</dd>
       </dl><dl><dt>
           
-          <code><a href="stopwords.html">stopwords</a></code> 
-        </dt>
-        <dd>Stopwords</dd>
-      </dl><dl><dt>
-          
-          <code><a href="subset_vector.html">subset_vector()</a></code> 
-        </dt>
-        <dd>Given Ordered Integer Vector, Return Requested Set.</dd>
-      </dl><dl><dt>
-          
           <code><a href="summarize_data.html">summarize_data()</a></code> 
         </dt>
         <dd>Summarize a survey dataset for use in tables and graphs</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="internal-functions">Internal functions<a class="anchor" aria-label="anchor" href="#internal-functions"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
-          <code><a href="swap_label_colnames.html">swap_label_colnames()</a></code> <code><a href="swap_label_colnames.html">swap_label_colnames()</a></code> 
+          <code><a href="stopwords.html">stopwords</a></code> 
         </dt>
-        <dd>Swap Dataset Columns and Labels</dd>
-      </dl><dl><dt>
-          
-          <code><a href="upload_to_ftp.html">upload_to_ftp()</a></code> 
-        </dt>
-        <dd>Easily upload folder to ftp-server, with safe storage of credentials</dd>
-      </dl><dl><dt>
-          
-          <code><a href="write_default_draft_report_args.html">write_default_draft_report_args()</a></code> 
-        </dt>
-        <dd>Write Default Arguments for <code><a href="../reference/draft_report.html">draft_report()</a></code> to YAML-file</dd>
+        <dd>Stopwords</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
