@@ -92,7 +92,7 @@ output_index_qmd <-
                mesos_var = "f_uni",
                label_separator = " - ",
                name_separator = "_",
-              groupby = c("chapter", ".variable_label_prefix"),
+              groupby = c("chapter", ".element_name", ".variable_label_prefix"),
                index_filename = "main_index.qmd",
                data_label = "percentage_bare",
                always_show_bi_for_by = "x1_sex",
