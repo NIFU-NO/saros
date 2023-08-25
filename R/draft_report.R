@@ -419,7 +419,7 @@
 #' }
 draft_report <-
   function(data,
-           chapter_overview,
+           chapter_overview = NULL,
            ...,
            path = "testreport",
            title = "Report",
