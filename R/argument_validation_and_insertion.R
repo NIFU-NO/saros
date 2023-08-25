@@ -17,7 +17,7 @@ argument_validation_and_insertion <- function(params) {
   arg_params <-
     list(
       data = list(fun = function(x) inherits(x, "data.frame") || inherits(x, "survey")),
-      chapter_overview = list(fun = function(x) inherits(x, "data.frame")),
+      chapter_overview = list(fun = function(x) is.null(x) || inherits(x, "data.frame")),
 
       label_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
       name_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
@@ -87,6 +87,10 @@ argument_validation_and_insertion <- function(params) {
   if(!all(c("chapter", ".element_name") %in% params$groupby)) {
     cli::cli_abort(c("{.arg groupby} must contain both {.var {c('chapter', '.element_name')}}.",
                      i = "You provided {.arg {params$groupby}}."))
+  }
+  if(rlang::is_null(params$chapter_overview)) {
+    params$chapter_overview <-
+      data.frame(chapter = "", dep = "everything()")
   }
 
 

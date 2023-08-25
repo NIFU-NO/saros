@@ -1,6 +1,8 @@
-# MIT License
+# Modified MIT License
 
 Copyright (c) 2023 saros authors
+
+In contrast to many R packages, this package is NOT free to use for any Norwegian institution or person unless explicit written permission has been given by the author, or NIFU. For anyone else in the world, it is free to use for commercial and non-commercial purposes. However, reproduction is not allowed.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

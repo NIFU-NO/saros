@@ -12,7 +12,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0 (Spørringene)
-
+- Allow empty chapter_overview
+[WARNING] This document format requires a nonempty <title> element.
+#>   Defaulting to 'quarto-input0c68d3c9' as the title.
+#>   To specify a title, use 'title' in metadata or --metadata title="...".
 # Structure
 -   single_y_bivariate_elements?
 
