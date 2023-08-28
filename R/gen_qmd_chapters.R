@@ -79,13 +79,13 @@ gen_qmd_chapters <-
           cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
 
 
-          chapter_folderpath_absolute <- fs::path(path, chapter_foldername)
+          chapter_folderpath_absolute <- file.path(path, chapter_foldername)
 
           fs::dir_create(path = chapter_folderpath_absolute, recurse = TRUE)
 
           chapter_filepath_relative <- stringi::stri_c(ignore_null=TRUE, chapter_foldername, ".qmd")
 
-          chapter_filepath_absolute <- fs::path(path, chapter_filepath_relative)
+          chapter_filepath_absolute <- file.path(path, chapter_filepath_relative)
 
 
           authors <- get_authors(data = chapter_overview_chapter, col = "authors")
@@ -135,7 +135,7 @@ gen_qmd_chapters <-
                   chapter_overview = chapter_overview_chapter_groups,
                   !!!dots)
       flexi_filepath <- "_flexi/_zzz_flexi.qmd"
-      cat(out, file = fs::path(dots$path, flexi_filepath), sep="\n")
+      cat(out, file = file.path(dots$path, flexi_filepath), sep="\n")
 
       # chapter_filepaths <- c(chapter_filepaths, flexi_filepath)
     }

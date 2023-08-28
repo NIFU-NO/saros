@@ -20,6 +20,7 @@ process_yaml <- function(yaml_file = NULL,
                                  title, ignore_null=TRUE)
 
     if(length(new_title)>0)  yml_section$title <- new_title
+    if(is.null(yml_section$title)) yml_section$title <- NULL
     if(rlang::is_character(authors)) yml_section$authors <- authors
 
   }

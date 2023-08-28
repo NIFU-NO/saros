@@ -92,8 +92,8 @@ gen_qmd_structure <-
                         mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
                         element_name = dots$element_names[.x],
                         grouping_structure = grouping_structure,
-                        element_folderpath_absolute = fs::path(chapter_folderpath_absolute, dots$element_names[.x]),
-                        element_folderpath_relative = fs::path(chapter_foldername, dots$element_names[.x]),
+                        element_folderpath_absolute = file.path(chapter_folderpath_absolute, dots$element_names[.x]),
+                        element_folderpath_relative = file.path(chapter_foldername, dots$element_names[.x]),
                         # translations = translations,
                         !!!dots#[!names(dots) %in% c("chapter_overview", "mesos_var", "data", "call")]
                         )
@@ -112,8 +112,8 @@ gen_qmd_structure <-
                       mesos_group = mesos_group,
                       element_name = dots$element_names[.x],
                       grouping_structure = grouping_structure,
-                      element_folderpath_absolute = fs::path(chapter_folderpath_absolute, dots$element_names[.x]),
-                      element_folderpath_relative = fs::path(chapter_foldername, dots$element_names[.x]),
+                      element_folderpath_absolute = file.path(chapter_folderpath_absolute, dots$element_names[.x]),
+                      element_folderpath_relative = file.path(chapter_foldername, dots$element_names[.x]),
                       # translations = translations,
                       !!!dots#[!names(dots) %in% c("chapter_overview", "data", "call")]
                       )
@@ -164,8 +164,8 @@ gen_qmd_structure <-
                                          rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
                         element_name = dots$element_names[.x],
                         grouping_structure = grouping_structure,
-                        element_folderpath_absolute = fs::path(chapter_folderpath_absolute, dots$element_names[.x]),
-                        element_folderpath_relative = fs::path(chapter_foldername, dots$element_names[.x]),
+                        element_folderpath_absolute = file.path(chapter_folderpath_absolute, dots$element_names[.x]),
+                        element_folderpath_relative = file.path(chapter_foldername, dots$element_names[.x]),
                         # translations = dots$translations,
                         !!!dots#[!names(dots) %in% c("chapter_overview", "mesos_var", "mesos_group", "data", "call")]
                         )
@@ -184,8 +184,8 @@ gen_qmd_structure <-
                       mesos_group = mesos_group,
                       element_name = dots$element_names[.x],
                       grouping_structure = grouping_structure,
-                      element_folderpath_absolute = fs::path(chapter_folderpath_absolute, dots$element_names[.x]),
-                      element_folderpath_relative = fs::path(chapter_foldername, dots$element_names[.x]),
+                      element_folderpath_absolute = file.path(chapter_folderpath_absolute, dots$element_names[.x]),
+                      element_folderpath_relative = file.path(chapter_foldername, dots$element_names[.x]),
                       # translations = dots$translations,
                       !!!dots#[!names(dots) %in% c("chapter_overview", "data", "call")]
                       )

@@ -6,7 +6,7 @@
 \usage{
 draft_report(
   data,
-  chapter_overview,
+  chapter_overview = NULL,
   ...,
   path = "testreport",
   title = "Report",

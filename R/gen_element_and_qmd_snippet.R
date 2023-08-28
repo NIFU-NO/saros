@@ -119,16 +119,16 @@ gen_element_and_qmd_snippet <-
     if(stringi::stri_detect(element_name, regex="^uni_.*")) {
 
       # filename_prefix <- obj_name
-      filepath_rel_rds <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-      filepath_rel_png <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-      filepath_rel_xlsx <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-      filepath_rel_txt <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-      filepath_rel_docx <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
-      filepath_abs_rds <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-      filepath_abs_png <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-      filepath_abs_xlsx <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-      filepath_abs_txt <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-      filepath_abs_docx <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
+      filepath_rel_rds <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
+      filepath_rel_png <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
+      filepath_rel_xlsx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
+      filepath_rel_txt <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
+      filepath_rel_docx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
+      filepath_abs_rds <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
+      filepath_abs_png <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
+      filepath_abs_xlsx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
+      filepath_abs_txt <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
+      filepath_abs_docx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
 
       plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
                                           vertical = dots$vertical,
@@ -147,7 +147,7 @@ gen_element_and_qmd_snippet <-
       ######################################################################
 
       if(element_name == "uni_cat_text" &&
-         all(chapter_overview_section$.variable_type == "fct")) {
+         all(chapter_overview_section$.variable_type %in% c("fct", "ord"))) {
         out <-
           rlang::exec(
             embed_cat_text_html,
@@ -180,7 +180,7 @@ gen_element_and_qmd_snippet <-
 
 
       if(element_name == "uni_cat_prop_plot" &&
-         all(chapter_overview_section$.variable_type == "fct")) {
+         all(chapter_overview_section$.variable_type %in% c("fct", "ord"))) {
         out_docx <-
           rlang::exec(
             embed_cat_prop_plot_docx,
@@ -246,7 +246,7 @@ gen_element_and_qmd_snippet <-
       ######################################################################
 
       if(element_name == "uni_cat_freq_plot" &&
-         all(chapter_overview_section$.variable_type == "fct")) {
+         all(chapter_overview_section$.variable_type %in% c("fct", "ord"))) {
         out_docx <-
           rlang::exec(
             embed_cat_freq_plot_docx,
@@ -303,7 +303,7 @@ gen_element_and_qmd_snippet <-
 
 
       if(element_name == "uni_cat_table" &&
-         all(chapter_overview_section$.variable_type == "fct")) {
+         all(chapter_overview_section$.variable_type %in% c("fct", "ord"))) {
         out <-
           rlang::exec(
             embed_cat_table,
@@ -372,10 +372,10 @@ gen_element_and_qmd_snippet <-
         if(stringi::stri_detect(str = element_name, fixed = "bi_sigtest")) {
 
           filename_prefix <- stringi::stri_c(ignore_null=TRUE, filename_prefix, "_BY_ALL_INDEP")
-          filepath_rel_rds <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepath_rel_xlsx <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          filepath_abs_rds <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepath_abs_xlsx <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
+          filepath_rel_rds <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
+          filepath_rel_xlsx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
+          filepath_abs_rds <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
+          filepath_abs_xlsx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
 
 
         out <-
@@ -440,16 +440,16 @@ gen_element_and_qmd_snippet <-
           indep_type <- indep_type$.variable_type
 
           filename_prefix <- stringi::stri_c(ignore_null=TRUE, .y, collapse = "_")
-          filepath_rel_rds <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepath_rel_png <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-          filepath_rel_xlsx <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          filepath_rel_txt <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-          filepath_rel_docx <- fs::path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
-          filepath_abs_rds <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepath_abs_xlsx <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          filepath_abs_png <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-          filepath_abs_txt <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-          filepath_abs_docx <- fs::path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
+          filepath_rel_rds <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
+          filepath_rel_png <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
+          filepath_rel_xlsx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
+          filepath_rel_txt <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
+          filepath_rel_docx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
+          filepath_abs_rds <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
+          filepath_abs_xlsx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
+          filepath_abs_png <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
+          filepath_abs_txt <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
+          filepath_abs_docx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
 
           plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
                                               x_cols = indep_pos,
@@ -471,8 +471,8 @@ gen_element_and_qmd_snippet <-
 
 
           # if(element_name == "bi_catcat_text" &&
-          #    all(chapter_overview_section$.variable_type == "fct") &&
-          #    all(indep_type == "fct")) {
+          #    all(chapter_overview_section$.variable_type %in% c("fct", "ord")) &&
+          #    all(indep_type %in% c("fct", "ord"))) {
           #   out <-
           #     rlang::exec(
           #       embed_cat_text_html,
@@ -486,8 +486,8 @@ gen_element_and_qmd_snippet <-
 
 
           if(element_name == "bi_catcat_prop_plot" &&
-             all(chapter_overview_section$.variable_type == "fct") &&
-             all(indep_type == "fct")) {
+             all(chapter_overview_section$.variable_type %in% c("fct", "ord")) &&
+             all(indep_type %in% c("fct", "ord"))) {
 
             out_docx <-
               rlang::exec(
@@ -541,8 +541,8 @@ gen_element_and_qmd_snippet <-
           }
 
           if(element_name == "bi_catcat_freq_plot" &&
-             all(chapter_overview_section$.variable_type == "fct") &&
-             all(indep_type == "fct")) {
+             all(chapter_overview_section$.variable_type %in% c("fct", "ord")) &&
+             all(indep_type %in% c("fct", "ord"))) {
             out_docx <-
               rlang::exec(
                 embed_cat_freq_plot_docx,
@@ -596,8 +596,8 @@ gen_element_and_qmd_snippet <-
 
 
           if(element_name == "bi_catcat_prop_plot2" &&
-             all(chapter_overview_section$.variable_type == "fct") &&
-             all(indep_type == "fct")) {
+             all(chapter_overview_section$.variable_type %in% c("fct", "ord")) &&
+             all(indep_type %in% c("fct", "ord"))) {
 
             out_docx <-
               rlang::exec(
@@ -653,8 +653,8 @@ gen_element_and_qmd_snippet <-
           }
 
           if(element_name == "bi_catcat_freq_plot2" &&
-             all(chapter_overview_section$.variable_type == "fct") &&
-             all(indep_type == "fct")) {
+             all(chapter_overview_section$.variable_type %in% c("fct", "ord")) &&
+             all(indep_type %in% c("fct", "ord"))) {
             out_docx <-
               rlang::exec(
                 embed_cat_freq_plot_docx,
@@ -709,8 +709,8 @@ gen_element_and_qmd_snippet <-
 
 
           if(element_name == "bi_catcat_table" &&
-             all(chapter_overview_section$.variable_type == "fct") &&
-             all(indep_type == "fct")) {
+             all(chapter_overview_section$.variable_type %in% c("fct", "ord")) &&
+             all(indep_type %in% c("fct", "ord"))) {
 
             out <-
               rlang::exec(

@@ -111,8 +111,8 @@ gen_qmd_structure2 <-
                         mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
                         element_name = as.character(.y$.element_name),
                         grouping_structure = grouping_structure,
-                        element_folderpath_absolute = fs::path(chapter_folderpath_absolute, as.character(.y$.element_name)),
-                        element_folderpath_relative = fs::path(chapter_foldername, as.character(.y$.element_name)),
+                        element_folderpath_absolute = file.path(chapter_folderpath_absolute, as.character(.y$.element_name)),
+                        element_folderpath_relative = file.path(chapter_foldername, as.character(.y$.element_name)),
                         !!!dots
                       )
                   }
@@ -129,8 +129,8 @@ gen_qmd_structure2 <-
                       mesos_group = mesos_group,
                       element_name = as.character(.y$.element_name),
                       grouping_structure = grouping_structure,
-                      element_folderpath_absolute = fs::path(chapter_folderpath_absolute, as.character(.y$.element_name)),
-                      element_folderpath_relative = fs::path(chapter_foldername, as.character(.y$.element_name)),
+                      element_folderpath_absolute = file.path(chapter_folderpath_absolute, as.character(.y$.element_name)),
+                      element_folderpath_relative = file.path(chapter_foldername, as.character(.y$.element_name)),
                       !!!dots
                       )
                 }

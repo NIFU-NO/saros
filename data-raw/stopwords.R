@@ -1,6 +1,5 @@
 ## code to prepare `stopwords` dataset goes here
 
-#' @keywords internal
 stopwords <-
   jsonlite::read_json(path =
 								 	system.file("extdata", "stopwords-iso.json", package = "saros", mustWork = TRUE),

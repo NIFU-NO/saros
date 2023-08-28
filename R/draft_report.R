@@ -652,7 +652,7 @@ draft_report <-
         rlang::exec(
           gen_qmd_index,
           authors = all_authors,
-          index_filepath = fs::path(path, index_filename),
+          index_filepath = file.path(path, index_filename),
           chapter_filepaths = chapter_filepaths,
           !!!args[!names(args) %in% c("authors")],
           call = rlang::caller_env())
@@ -684,7 +684,7 @@ draft_report <-
           chapter_overview = chapter_overview,
           data = data,
           mesos_group = uniques[.x],
-          path = fs::path(path, uniques[.x]),
+          path = file.path(path, uniques[.x]),
           !!!args[!names(args) %in% c("chapter_overview", "path", "data")])
 
 
@@ -693,7 +693,7 @@ draft_report <-
           gen_qmd_index,
           title = stringi::stri_c(ignore_null=TRUE, title, uniques[.x]),
           authors = all_authors,
-          index_filepath = fs::path(path, uniques[.x],
+          index_filepath = file.path(path, uniques[.x],
                                     stringi::stri_c(ignore_null=TRUE, uniques[.x], "_", index_filename)),
           chapter_filepaths = chapter_filepaths,
           !!!args[!names(args) %in% c("title", "authors")],

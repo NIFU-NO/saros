@@ -4,7 +4,6 @@
 ^TODO\.html$
 ^README\.Rmd$
 ^README\.md$
-^README\.html$
 ^data-raw$
 ^LICENSE\.md$
 ^codecov\.yml$

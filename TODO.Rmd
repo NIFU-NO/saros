@@ -12,13 +12,21 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0 (Spørringene)
+- saros::use_saros() function that 
+    - asserts being in a project
+    - if so, copies files from an argument package (nifutheme)
+  - alternatively, a function in nifutheme::use_saros()
+  - dumps these files in a resources folder?
 - Allow empty chapter_overview
-[WARNING] This document format requires a nonempty <title> element.
-#>   Defaulting to 'quarto-input0c68d3c9' as the title.
-#>   To specify a title, use 'title' in metadata or --metadata title="...".
+
 # Structure
 -   single_y_bivariate_elements?
 
+# Documentation:
+- for_editor article
+- for_data_cleaner article
+- for_end_user article
+- 
 
 # Ønsker fra andre:
 
@@ -192,7 +200,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # sarosverse structure
 
--   sarosverse imports: - saros.docx - saros.html - saros.folders - saros.text - saros.psych - saros.effect - saros.qual those in turn import - saros.base - saros.graphic - saros.utils
+-   sarosverse imports: 
+    - saros.docx - saros.html - saros.folders - saros.text - saros.psych - saros.effect - saros.qual those in turn import - saros.base - saros.graphic - saros.utils
 -   Should consider which -verses are connected, and also which are more likely to not be maintained.
     -   clipr, tidySEM, RColorBrewer, viridisLite, ymlthis, srvyr, reactable openai, officeverse
 -   saros.office: pkgs: officer, mschart, flextable
