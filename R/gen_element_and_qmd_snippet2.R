@@ -157,6 +157,7 @@ gen_element_and_qmd_snippet2 <-
 
       if(element_name == "uni_cat_text" &&
          all(chapter_overview_section$.variable_type %in% c("fct", "ord"))) {
+
         out <-
           rlang::exec(
             embed_cat_text_html,
@@ -165,7 +166,7 @@ gen_element_and_qmd_snippet2 <-
             mesos_group = mesos_group,
             !!!dots)
         saveRDS(out, file = filepath_abs_rds)
-        writeLines(text = stringi::stri_c(ignore_null=TRUE, out, collapse=""),
+        writeLines(text = stringi::stri_c(out, ignore_null=TRUE, collapse=""),
                    con = filepath_abs_txt)
       }
 

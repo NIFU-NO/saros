@@ -424,10 +424,20 @@
 #'
 #' @examples
 #' \donttest{
-#' draft_report(
+#' index_filepath <-
+#'   draft_report(
 #'     chapter_overview = ex_survey_ch_overview,
 #'     data = ex_survey1,
 #'     path = tempdir())
+#' #quarto::quarto_render(index_filepath)
+#' #index_filepaths <-
+#'#   draft_report(
+#' #    chapter_overview = ex_survey_ch_overview,
+#'  #   data = ex_survey1,
+#'   #  mesos_report = TRUE,
+#'    # mesos_var = "f_uni",
+#'     #path = tempdir())
+#' #lapply(index_filepaths, quarto::quarto_render)
 #' }
 draft_report <-
   function(data,
@@ -701,7 +711,7 @@ draft_report <-
 
                  mesos_group <- NULL
                  path <- path
-                 title <- args$title
+                 args$title <- args$title
                  index_filepath <- file.path(path,
                                              args$index_filename)
 
@@ -709,11 +719,10 @@ draft_report <-
 
                  mesos_group <- uniques[.x]
                  path <- file.path(path, uniques[.x])
-                 title <- stringi::stri_c(args$title,
+                 args$title <- stringi::stri_c(args$title,
                                           uniques[.x],
                                           ignore_null=TRUE)
                  index_filepath <- file.path(path,
-                                             uniques[.x],
                                              stringi::stri_c(uniques[.x], # Omit this?
                                                              "_",
                                                              args$index_filename,
@@ -734,7 +743,7 @@ draft_report <-
                report_filepath <-
                  rlang::exec(
                    gen_qmd_index,
-                   title = title,
+                   title = args$title,
                    authors = all_authors,
                    index_filepath = index_filepath,
                    chapter_filepaths = chapter_filepaths,

@@ -78,14 +78,10 @@ gen_qmd_chapters <-
 
           # Paths
           chapter_foldername <-
-            chapter_overview_chapter[[grouping_structure[1]]] %>%
-            unique() #%>%
-            # fix_path_spaces()
-          chapter_foldername_clean <-
-            stringi::stri_replace_all_regex(chapter_foldername,
-                                            pattern = "[^a-zA-Z0-9]", replacement = "_")
-          chapter_foldername_clean <-
-            make.names(chapter_foldername_clean)
+            unique(chapter_overview_chapter[[grouping_structure[1]]])
+          chapter_foldername <- as.character(chapter_foldername)
+
+          chapter_foldername_clean <- filename_sanitizer(chapter_foldername)
 
           cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
 
@@ -93,14 +89,14 @@ gen_qmd_chapters <-
           chapter_folderpath_absolute <- file.path(path, chapter_foldername)
           fs::dir_create(path = chapter_folderpath_absolute, recurse = TRUE)
 
-          chapter_filepath_relative <- stringi::stri_c(ignore_null=TRUE, chapter_foldername, ".qmd")
+          chapter_filepath_relative <- stringi::stri_c(chapter_foldername_clean, ".qmd", ignore_null=TRUE)
           chapter_filepath_absolute <- file.path(path, chapter_filepath_relative)
 
 
           authors <- get_authors(data = chapter_overview_chapter, col = "authors")
             # if(!rlang::is_null(chapter_overview_chapter$author) &&
             #    !all(is.na(unique(chapter_overview_chapter$author)))) unique(chapter_overview_chapter$author) else ""
-          chapter_yml <- process_yaml(yaml_file = dots$chapter_yaml_file,
+          chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
                                       title = chapter_foldername,
                                       authors = authors,
                                       chapter_number = match(chapter_foldername,
@@ -146,7 +142,7 @@ gen_qmd_chapters <-
 
           out <-
           stringi::stri_c(ignore_null=TRUE,
-                          chapter_yml,
+                          chapter_yaml,
                           load_dataset,
                          qmd_start_section,
                          chapter_contents,
@@ -155,6 +151,7 @@ gen_qmd_chapters <-
           out <- stringi::stri_replace_all_regex(out,
                                                  pattern = "\n{3,}",
                                                  replacement = "\n\n\n")
+
           cat(out, file = chapter_filepath_absolute)
 
           chapter_filepath_relative
