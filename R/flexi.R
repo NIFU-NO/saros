@@ -15,11 +15,13 @@ embed_flexi <- function(data,
                                       .keep_all = FALSE)
   chapter_overview$chapter <- as.character(chapter_overview$chapter)
   indeps <- tidyr::unchop(chapter_overview, cols = "indep_cols_df")
-  indeps <- unique(indeps$indep_cols_df$.variable_name)
+  if(nrow(indeps)>0) {
+    indeps <- unique(indeps[["indep_cols_df"]][[".variable_name"]])
+  }
   data <- data[, names(data) %in% c(chapter_overview$.variable_name, indeps, dots$mesos_var)]
 
-  fs::dir_create(fs::path(dots$path, "_flexi"))
-  filepath_rds_data <- fs::path(dots$path, "_flexi", "flexi_data.RDs")
+  fs::dir_create(file.path(dots$path, "_flexi"))
+  filepath_rds_data <- file.path(dots$path, "_flexi", "flexi_data.RDs")
   save(list=c("data", "dots", "chapter_overview"), file = filepath_rds_data)
 
   template <- system.file("template", "telescope.qmd", package = "saros")

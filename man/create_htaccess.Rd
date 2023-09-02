@@ -6,7 +6,7 @@
 \usage{
 create_htaccess(
   remote_basepath = "/home/",
-  local_basepath = "rapporter/2023V/org",
+  local_basepath = "reports/2023V/org",
   local_subfolders = basename(fs::dir_ls(local_basepath, all = FALSE, recurse = FALSE,
     type = "directory")),
   local_main_htpasswd_path = ".main_htpasswd_public",

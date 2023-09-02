@@ -6,6 +6,7 @@ insert_obj_in_qmd_inner <-
            filepath,
            caption = NULL,
            figure_height = 10,
+           max_width_file = 32,
            # translations = .saros.env$defaults$translations,
            call = rlang::caller_env()) {
 
@@ -56,7 +57,9 @@ insert_obj_in_qmd_inner <-
                    ' <- \n  readRDS("', filepath, '")\n',
                    function_call_prefix, obj_name, function_call_suffix) %>%
       stringi::stri_c(if(stringi::stri_length(qmd_format) > 0) conditional_start,
-                     stringi::stri_c("```{r, '",obj_name, "'}", ignore_null = TRUE),
+                     stringi::stri_c("```{r, '",
+                                     stringi::stri_sub(obj_name, to = max_width_file),
+                                     "'}", ignore_null = TRUE),
                      hashpipe_string,
                      .,
                      "```",
@@ -103,6 +106,7 @@ insert_obj_in_qmd <- function(element_name,
                               mesos_group = mesos_group,
                               filepath = filepath,
                               caption = caption,
+                              max_width_file = max_width_file,
                               figure_height = figure_height)
     if(add_text) {
       stringi::stri_c(ignore_null=TRUE,

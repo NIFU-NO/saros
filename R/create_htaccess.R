@@ -20,7 +20,7 @@
 #' }
 create_htaccess <-
   function(remote_basepath = "/home/",
-           local_basepath = "rapporter/2023V/org",
+           local_basepath = "reports/2023V/org",
            local_subfolders = basename(fs::dir_ls(local_basepath,
                                                   all = FALSE,
                                                   recurse = FALSE,
@@ -41,9 +41,9 @@ create_htaccess <-
 
     lapply(X = local_subfolders, function(.x) {
       ### .htaccess
-      con <- file(fs::path(local_basepath, .x, ".htaccess"), "w")
+      con <- file(file.path(local_basepath, .x, ".htaccess"), "w")
       content <- paste0('AuthName "NIFUs mesos-rapporter: ', .x, '"
-AuthUserFile ', fs::path(remote_basepath, .x, '.htpasswd'), '
+AuthUserFile ', file.path(remote_basepath, .x, '.htpasswd'), '
 AuthType Basic
 Require valid-user
 AddHandler server-parsed .html')
@@ -59,7 +59,7 @@ AddHandler server-parsed .html')
                             encoding = "UTF-8", fileEncoding = "UTF-8")
       content <- content[content$username %in% c(.x, universal_usernames),]
       # con <- file(, "w")
-      utils::write.table(x = content, file = fs::path(local_basepath, .x, ".htpasswd"),
+      utils::write.table(x = content, file = file.path(local_basepath, .x, ".htpasswd"),
                   quote = FALSE, sep = ":", col.names = FALSE, row.names = FALSE,
                   fileEncoding = "UTF-8")
       # close(con)

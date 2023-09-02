@@ -1,11 +1,11 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 0.9.2.4300
+Version: 0.9.2.4500
 Authors@R: 
     person(given = "Stephan", 
            family = "Daus", 
-           role = c("aut", "cre"),
+           role = c("aut", "cre", "cph"),
            email = "stephus.daus@gmail.com", 
            comment = c(ORCID = "0000-0003-0230-6997"))
 Maintainer: Stephan Daus <stephus.daus@gmail.com>

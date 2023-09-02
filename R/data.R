@@ -49,12 +49,13 @@
 
 #' Stopwords
 #' @format Stopwords as list of character vectors
+#' \describe{contains a list of 58 languages}
 #' @keywords internal
-#' "stopwords"
+"stopwords"
 
 #' ex_survey_ch_overview: Mock overview of chapter structure
 #'
-#' Note that indep_int, dep_txt, indep_txt and other columns are also welcome.
+#' Note that indep, and other columns are also welcome.
 #'
 #' @format A data frame with 3 rows and 6 variables:
 #' \describe{

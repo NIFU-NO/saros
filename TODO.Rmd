@@ -12,43 +12,90 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0 (Spørringene)
-- Allow empty chapter_overview
-[WARNING] This document format requires a nonempty <title> element.
-#>   Defaulting to 'quarto-input0c68d3c9' as the title.
-#>   To specify a title, use 'title' in metadata or --metadata title="...".
+- Titles are missing 
+    - ReportBI => index file should be removed?
+- mesos reports no longer producing mesos groups!
+- header numbers: 
+    chapter_number <- match(chapter_name, unique(chapter_overview$chapter))
+    stringi::stri_c("number-offset: ", chapter_number, ignore_null=TRUE) 
+
+-   Sharepoint!!!
+    - Shorten chunk names
+-   distinguish between qmd_start/end for chapters and indexes?
+-   Konsekvent fargepalett på tvers av figurer med samme svarskala
+-   Quarto Issue: fig-cap + label + no graph =\> error
+
+
+-   saros.template::use_saros() function that
+
+    -   asserts being in a project
+    -   if so, copies files from an argument package (nifutheme)
+    -   alternatively, a function in nifutheme::use_saros()
+    -   dumps these files in a resources folder?
+
+-   Allow empty chapter_overview
+
 # Structure
+
 -   single_y_bivariate_elements?
 
+# Documentation:
+
+-   for_editor article
+-   for_data_cleaner article
+-   for_end_user article
+
+```{r}
+"sdfs"
+
+```
 
 # Ønsker fra andre:
-
 
 # bi_sigtest
 
 -   overkill with main_question in label + as label-column header
 
 # mesos
+
 -   some progress bar seems incorrect
 
 # plots
+
 -   tri_catcatcat_plot (z)
-    - Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys. 
-- estimate_plot_height: consider totals=TRUE 
--   colour_2nd_binary_cat is not working consistently with data$s_43 (gender) and when mesos  - legend is missing when there are two categories in cat_prop, but n  
--   unused levels seem to cause confusion in hide_legend and colours. and tables  
--     all should be displayed  
--   N in legend for each by group  
--   add_n_to_bygroup => yaml  
--   implement uni_plot_int_* bi_plot_intint_* bi_plot_intcat_* 
-- colours  
-    - if .categories %in% yml$params\$colour, use associated colour 
-    - Bruk så fargepalett på resten 
-    - colour_palette_ordinal, colour_palette_nominal colour_palette \<- if(class(data[[col_pos]]) == "ordered" && !is.null(colour_palette_ordinal)) colour_palette_ordinal else if(!is.null(colour_palette_nominal)) colour_palette_nominal 
-    - separate colour_palette for different needs: chapter, designated_type, .variable_role, ...     - which also allows paletter 
-        - if is.colour =\> as colours, else if in paletter list, use that 
-        - if colour_2nd_binary is applicable, should forcats::fct_rev(.x) 
-- prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable 
-- can label_font_size, main_font_size, font_family, data_label_decimal_symbol be set later through CSS/YAML?
+
+    -   Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys.
+
+-   estimate_plot_height: consider totals=TRUE
+
+-   colour_2nd_binary_cat is not working consistently with data\$s_43 (gender) and when mesos - legend is missing when there are two categories in cat_prop, but n\
+
+-   unused levels seem to cause confusion in hide_legend and colours. and tables\
+
+-   
+
+    ```         
+    all should be displayed  
+    ```
+
+-   N in legend for each by group\
+
+-   add_n_to_bygroup =\> yaml\
+
+-   implement uni_plot_int\_\* bi_plot_intint\_\* bi_plot_intcat\_\*
+
+-   colours
+
+    -   if .categories %in% yml\$params\$colour, use associated colour
+    -   Bruk så fargepalett på resten
+    -   colour_palette_ordinal, colour_palette_nominal colour_palette \<- if(class(data[[col_pos]]) == "ordered" && !is.null(colour_palette_ordinal)) colour_palette_ordinal else if(!is.null(colour_palette_nominal)) colour_palette_nominal
+    -   separate colour_palette for different needs: chapter, designated_type, .variable_role, ... - which also allows paletter
+        -   if is.colour =\> as colours, else if in paletter list, use that
+        -   if colour_2nd_binary is applicable, should forcats::fct_rev(.x)
+
+-   prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable
+
+-   can label_font_size, main_font_size, font_family, data_label_decimal_symbol be set later through CSS/YAML?
 
 # summarize_data
 
@@ -67,21 +114,25 @@ knitr::opts_chunk$set(echo = TRUE)
 -   cli_inform rows removed with hide_bi_entry_if_sig_above
 
 # YAML, config, etc
+
 -   move some parameters from \_report_generation_setup.yml to \_quarto.yml file and perform modifications in a R-script loaded in the beginning of index.qmd
     -   decimal marker?
     -   colour_palette?
 -   descend is currently global across all variables...
 
 # Folder structure
+
 -   folder structure: all png in separate folder, etc.
 -   Preclean folder names: The name of the input file cannot contain the special shell characters: [ \<\>()\|:&;#?\*']
 
 # tables
+
 -   tri_catcatcat_table
 -   vertical argument in tables are a pivot-string similar to SSB: 1,2,3
     -   As any element_type so one can get all at once. OR, let reader decide?
 
 # nifutheme
+
 -   all yaml-files
 -   doc-reference template for quarto
 -   <https://quarto.org/docs/extensions/project-types.html>
@@ -90,16 +141,18 @@ knitr::opts_chunk$set(echo = TRUE)
 -   avoid copying main report when rlang::is_string(mesos_group)
 
 # PDF
+
 -   Verify that numbering of chapters, tables, etc is now correct
 -   Find a way to exclude title page or divert into maketitle
 -   Insert TOC at right location
 -   TOC in correct NIFU style
 
 # DOCX (NIFU stil/saros.template):
-- tables should be centered by default
-- tables are not having right style?
-- more air between elements?
-- officer::body_add(doc_1, officer::block_pour_docx("graph.docx")) // nt working?
+
+-   tables should be centered by default
+-   tables are not having right style?
+-   more air between elements?
+-   officer::body_add(doc_1, officer::block_pour_docx("graph.docx")) // nt working?
 
 # cat_text
 
@@ -192,7 +245,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # sarosverse structure
 
--   sarosverse imports: - saros.docx - saros.html - saros.folders - saros.text - saros.psych - saros.effect - saros.qual those in turn import - saros.base - saros.graphic - saros.utils
+-   sarosverse imports:
+    -   saros.docx - saros.html - saros.folders - saros.text - saros.psych - saros.effect - saros.qual those in turn import - saros.base - saros.graphic - saros.utils
 -   Should consider which -verses are connected, and also which are more likely to not be maintained.
     -   clipr, tidySEM, RColorBrewer, viridisLite, ymlthis, srvyr, reactable openai, officeverse
 -   saros.office: pkgs: officer, mschart, flextable

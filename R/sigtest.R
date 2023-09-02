@@ -134,7 +134,7 @@ sigtest <-
       .variable_type <- class(data[[dep_pos]])
     } else if(.variable_type == "int" && class(data[[dep_pos]]) %in% c("factor")) {
       data[[dep_pos]] <- as.numeric(data[[dep_pos]])
-    } else if(.variable_type == "fct" && class(data[[dep_pos]]) %in% c("integer", "numeric")) {
+    } else if(.variable_type %in% c("fct", "ord") && class(data[[dep_pos]]) %in% c("integer", "numeric")) {
       data[[dep_pos]] <- as.factor(data[[dep_pos]])
     }
     dep_n <- dplyr::n_distinct(data[[dep_pos]], na.rm = TRUE)

@@ -6,6 +6,7 @@
 \title{Stopwords}
 \format{
 Stopwords as list of character vectors
+\describe{contains a list of 58 languages}
 }
 \usage{
 stopwords
@@ -13,4 +14,4 @@ stopwords
 \description{
 Stopwords
 }
-\keyword{datasets}
+\keyword{internal}

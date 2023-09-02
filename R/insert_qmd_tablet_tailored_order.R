@@ -12,6 +12,7 @@ insert_qmd_tablet_mesos_order <-
   qmd_out <- ""
   # if(!rlang::is_string(qmd_snippet) || stringi::stri_isempty(qmd_snippet)) return("")
 
+
   if(rlang::is_true(mesos_report) &&
      rlang::is_string(mesos_var) &&
      rlang::is_string(qmd_snippet_mesos) &&

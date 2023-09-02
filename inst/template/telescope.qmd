@@ -9,7 +9,9 @@ server: shiny
 ```{r, "Run on start, at client and server"}
 #| context: data
 #| include: false
-load('flexi_data.RDs')
+# load('flexi_data.RDs')
+load("C:/Users/py128/OneDrive - NIFU/Github-R/saros.template/flexi_data.RDs")
+
 ```
 
 

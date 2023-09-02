@@ -1,7 +1,8 @@
 process_yaml <- function(yaml_file = NULL,
                          title = NULL,
                          authors = NULL,
-                         add_fences = TRUE) {
+                         add_fences = TRUE,
+                         chapter_number = NA) {
 
   if(!rlang::is_string(yaml_file)) {
     yml_section <-
@@ -17,12 +18,20 @@ process_yaml <- function(yaml_file = NULL,
     new_title <- stringi::stri_c(yml_section$title,
                                  if(rlang::is_string(title) &&
                                     rlang::is_string(yml_section$title)) " - ",
-                                 title, ignore_null=TRUE)
+                                 title,
+                                 ignore_null=TRUE)
 
     if(length(new_title)>0)  yml_section$title <- new_title
     if(rlang::is_character(authors)) yml_section$authors <- authors
 
   }
+  if(is.null(yml_section$title)) {
+    yml_section$title <-  as.character(chapter_number)
+  }
+  if(!is.na(chapter_number)) {
+    yml_section[["number-offset"]] <- chapter_number
+  }
+
 
   yml_section <- yaml::as.yaml(yml_section,
                                handlers = list(

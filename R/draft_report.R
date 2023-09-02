@@ -77,7 +77,7 @@
 #'
 #'   String to split column names in data between main question and sub-items
 #'
-#' @param report_yaml_file *Path to YAML-file to insert into index.qmd*
+#' @param index_yaml_file *Path to YAML-file to insert into index.qmd*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'
@@ -301,6 +301,18 @@
 #'
 #'   Column names in `data` that should always be placed at the top or bottom of figures/tables.
 #'
+#' @param attach_chapter_dataset *Toggle inclusion of chapter-specific datasets in qmd-files*
+#'
+#'   `scalar<logical>` // *default:* `FALSE`
+#'
+#'   Whether to save in each chapter folder an Rds-file with the chapter-specific dataset, and load it at the top of each QMD-file.
+#'
+#' @param auxiliary_variables *Auxiliary variables to be included in datasets*
+#'
+#'   `vector<character>` // *default:* `NULL` (`optional`)
+#'
+#'   Column names in `data` that should always be included in datasets for chapter qmd-files, if `attach_chapter_dataset=TRUE`. Not publicly available.
+#'
 #' @param panel_tabset_mesos *mesos panel tabset*
 #'
 #'   `scalar<logical>` // *default:* `TRUE` (`optional`)
@@ -428,7 +440,7 @@ draft_report <-
            mesos_var = NULL,
            label_separator = " - ",
            name_separator = NULL,
-           report_yaml_file = NULL,
+           index_yaml_file = NULL,
            chapter_yaml_file = NULL,
            qmd_start_section_filepath = NULL,
            qmd_end_section_filepath = NULL,
@@ -478,7 +490,9 @@ draft_report <-
            categories_treated_as_na = c(),
            variables_always_at_top = c(),
            variables_always_at_bottom = c(),
+           auxiliary_variables = c(),
            return_raw = TRUE,
+           attach_chapter_dataset = TRUE,
            panel_tabset_mesos = TRUE,
            showNA = c("never", "always", "ifany"),
            totals = FALSE,
@@ -606,14 +620,17 @@ draft_report <-
                   )
   ) {
 
-    args <- c(as.list(environment()), rlang::list2(...))
+    args <- utils::modifyList(as.list(environment()),
+                              rlang::list2(...)
+                              )
     timestamp <- proc.time()
+
 
     args <- argument_validation_and_insertion(params = args)
 
-    if(inherits(data, "survey")) {
-      data <- srvyr::ungroup(data)
-    } else data <- dplyr::ungroup(data)
+
+
+    data <- ungroup_data(data)
 
 
     # if(!rlang::is_null(dots$colour_na)) {
@@ -624,7 +641,7 @@ draft_report <-
     #     .fns = ~forcats::fct_rev(.x)))
     # }
 
-    chapter_overview <-
+    chapter_overview <- # Only run refine if not containing .variable_name, etc
       rlang::exec(
         refine_chapter_overview,
         !!!args) %>%
@@ -632,74 +649,106 @@ draft_report <-
 
 
 
-    if(nrow(chapter_overview)==0) cli::cli_abort("{.var chapter_overview} is empty! Something is not right. Are there no factors in your data?")
+    if(nrow(chapter_overview)==0) cli::cli_abort("{.var chapter_overview} is empty! Something is not right. Are there no factors in your data? Consider `chapter_overview=NULL`")
 
     all_authors <- get_authors(data = chapter_overview, col="author")
 
-    if(rlang::is_false(mesos_report) ||
-       rlang::is_null(mesos_var)) {
-      cli::cli_progress_message(msg = "Generating report ...")
+    if(rlang::is_false(args$mesos_report) ||
+       rlang::is_null(args$mesos_var)) {
 
-      chapter_filepaths <-
-        rlang::exec(
-          gen_qmd_chapters,
-          chapter_overview = chapter_overview,
-          data = data,
-          !!!args[!names(args) %in% c("chapter_overview", "data")]
-          )
+      uniques <- NA_character_
 
-      report_filepath <-
-        rlang::exec(
-          gen_qmd_index,
-          authors = all_authors,
-          index_filepath = fs::path(path, index_filename),
-          chapter_filepaths = chapter_filepaths,
-          !!!args[!names(args) %in% c("authors")],
-          call = rlang::caller_env())
 
-      if(interactive() && isTRUE(open_after_drafting)) {
-        utils::browseURL(url = report_filepath)
-      }
+      # chapter_filepaths <-
+      #   rlang::exec(
+      #     gen_qmd_chapters,
+      #     chapter_overview = chapter_overview,
+      #     data = data,
+      #     mesos_group = mesos_group,
+      #     path = path,
+      #     !!!args[!names(args) %in% c("chapter_overview", "path", "data")])
+      #
+      #
+      # report_filepath <-
+      #   rlang::exec(
+      #     gen_qmd_index,
+      #     authors = all_authors,
+      #     index_filepath = index_filepath,
+      #     chapter_filepaths = chapter_filepaths,
+      #     !!!args[!names(args) %in% c("authors", "title")],
+      #     call = rlang::caller_env())
+
 
     } else {
       # Mesos reports
-      uniques <-
-        if(is.factor(data[[mesos_var]])) levels(data[[mesos_var]]) else as.character(unique(data[[mesos_var]]))
+      uniques <- pull_uniques(data[[args$mesos_var]])
+
       if(any(nchar(uniques) > 12)) {
         cli::cli_warn(c(x="mesos_var has levels > 12 characters: {{uniques[nchar(uniques)>12]}}.",
-                        i="This creates filepaths that are too long for Sharepoint/Quarto to handle..."))
+                        i="This creates filepaths that are likely too long for Sharepoint to handle..."))
       }
-      report_filepath <-
-      as.character(unlist(lapply(X =
-                       cli::cli_progress_along(uniques,
-                                               format = "Generating mesos report for... {uniques[cli::pb_current]}",
-                                               clear = FALSE,
-                                               auto_terminate = FALSE),
-                     FUN = function(.x) {
+    }
+    report_filepath <-
+      lapply(X =
+               cli::cli_progress_along(uniques,
+                                       format = "Generating mesos report for... {uniques[cli::pb_current]}",
+                                       clear = FALSE,
+                                       auto_terminate = FALSE),
+             FUN = function(.x) {
 
 
-      chapter_filepaths <-
-        rlang::exec(
-          gen_qmd_chapters,
-          chapter_overview = chapter_overview,
-          data = data,
-          mesos_group = uniques[.x],
-          path = fs::path(path, uniques[.x]),
-          !!!args[!names(args) %in% c("chapter_overview", "path", "data")])
+               if(is.na(uniques[.x])) {
+
+                 mesos_group <- NULL
+                 path <- path
+                 title <- args$title
+                 index_filepath <- file.path(path,
+                                             args$index_filename)
+
+               } else {
+
+                 mesos_group <- uniques[.x]
+                 path <- file.path(path, uniques[.x])
+                 title <- stringi::stri_c(args$title,
+                                          uniques[.x],
+                                          ignore_null=TRUE)
+                 index_filepath <- file.path(path,
+                                             uniques[.x],
+                                             stringi::stri_c(uniques[.x], # Omit this?
+                                                             "_",
+                                                             args$index_filename,
+                                                             ignore_null=TRUE))
+
+               }
 
 
-      report_filepath <-
-        rlang::exec(
-          gen_qmd_index,
-          title = stringi::stri_c(ignore_null=TRUE, title, uniques[.x]),
-          authors = all_authors,
-          index_filepath = fs::path(path, uniques[.x],
-                                    stringi::stri_c(ignore_null=TRUE, uniques[.x], "_", index_filename)),
-          chapter_filepaths = chapter_filepaths,
-          !!!args[!names(args) %in% c("title", "authors")],
-          call = rlang::caller_env())
+               chapter_filepaths <-
+                 rlang::exec(
+                   gen_qmd_chapters,
+                   chapter_overview = chapter_overview,
+                   data = data,
+                   mesos_group = mesos_group,
+                   path = path,
+                   !!!args[!names(args) %in% c("chapter_overview", "path", "data")])
 
-      })))
+               report_filepath <-
+                 rlang::exec(
+                   gen_qmd_index,
+                   title = title,
+                   authors = all_authors,
+                   index_filepath = index_filepath,
+                   chapter_filepaths = chapter_filepaths,
+                   !!!args[!names(args) %in% c("title", "authors")],
+                   call = rlang::caller_env())
+
+
+               report_filepath
+
+             })
+
+    report_filepath <- as.character(unlist(report_filepath))
+    if(interactive() && isTRUE(args$open_after_drafting)) {
+      lapply(report_filepath, utils::browseURL)
     }
 
     cat(proc.time()-timestamp)

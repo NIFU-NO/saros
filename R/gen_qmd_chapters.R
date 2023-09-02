@@ -27,6 +27,7 @@ gen_qmd_chapters <-
            ...,
            call = rlang::caller_env()
   ) {
+
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
 
@@ -49,14 +50,19 @@ gen_qmd_chapters <-
       dplyr::group_by(chapter_overview,
                       dplyr::pick(tidyselect::all_of(grouping_structure[1])))
 
-    cli::cli_progress_bar(name = "Creating chapter files...", type = "iterator",
+    total_iterations <-
+      dplyr::n_distinct(chapter_overview_chapter_groups[[grouping_structure[1]]]) +
+      dots$flexi
+
+    cli::cli_progress_bar(name = "Creating chapter files...",
+                          type = "iterator",
                           format_done = "Chapter files completed!", clear = FALSE,
-                          total = dplyr::n_distinct(chapter_overview_chapter_groups[[grouping_structure[1]]]) + dots$flexi)
+                          total = total_iterations)
 
 
     ## Generate each chapter. Returns paths to files, which are then used for index.qmd
     chapter_filepaths <-
-      chapter_overview_chapter_groups %>% # CONVERT TO unlist(lapply()) by taking dplyr::
+      chapter_overview_chapter_groups %>% # CONVERT TO unlist(lapply(names(attr(chapter_overview_chapter, "groups"))[names(.) != ".rows"])) by taking dplyr::
       dplyr::group_map(
         .keep = TRUE,
         .f = function(chapter_overview_chapter,
@@ -75,25 +81,30 @@ gen_qmd_chapters <-
             chapter_overview_chapter[[grouping_structure[1]]] %>%
             unique() #%>%
             # fix_path_spaces()
+          chapter_foldername_clean <-
+            stringi::stri_replace_all_regex(chapter_foldername,
+                                            pattern = "[^a-zA-Z0-9]", replacement = "_")
+          chapter_foldername_clean <-
+            make.names(chapter_foldername_clean)
 
           cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
 
 
-          chapter_folderpath_absolute <- fs::path(path, chapter_foldername)
-
+          chapter_folderpath_absolute <- file.path(path, chapter_foldername)
           fs::dir_create(path = chapter_folderpath_absolute, recurse = TRUE)
 
           chapter_filepath_relative <- stringi::stri_c(ignore_null=TRUE, chapter_foldername, ".qmd")
-
-          chapter_filepath_absolute <- fs::path(path, chapter_filepath_relative)
+          chapter_filepath_absolute <- file.path(path, chapter_filepath_relative)
 
 
           authors <- get_authors(data = chapter_overview_chapter, col = "authors")
             # if(!rlang::is_null(chapter_overview_chapter$author) &&
             #    !all(is.na(unique(chapter_overview_chapter$author)))) unique(chapter_overview_chapter$author) else ""
           chapter_yml <- process_yaml(yaml_file = dots$chapter_yaml_file,
-                                      title = NULL,
-                                      authors = authors)
+                                      title = chapter_foldername,
+                                      authors = authors,
+                                      chapter_number = match(chapter_foldername,
+                                                             unique(chapter_overview$chapter)))
 
           chapter_contents <-
             rlang::exec(
@@ -106,12 +117,37 @@ gen_qmd_chapters <-
               !!!dots#[!names(dots) %in% c("chapter_overview", "call")]
               )
 
-          qmd_start_section <- if(!rlang::is_null(dots$qmd_start_section_filepath)) readLines(con = dots$qmd_start_section_filepath)
-          qmd_end_section <- if(!rlang::is_null(dots$qmd_end_section_filepath)) readLines(con = dots$qmd_end_section_filepath)
+          qmd_start_section <-
+            if(!rlang::is_null(dots$qmd_start_section_filepath)) {
+              stringi::stri_c(collapse = "\n",
+                              ignore_null = TRUE,
+                              readLines(con = dots$qmd_start_section_filepath)
+                              )
+            }
+
+          qmd_end_section <-
+            if(!rlang::is_null(dots$qmd_end_section_filepath)) {
+              stringi::stri_c(collapse = "\n",
+                              ignore_null = TRUE,
+                              readLines(con = dots$qmd_end_section_filepath)
+                              )
+            }
+
+          load_dataset <-
+            if(rlang::is_true(dots$attach_chapter_dataset)) {
+              attach_chapter_dataset(data = data,
+                                     chapter_overview_chapter = chapter_overview_chapter,
+                                     chapter_foldername_clean = chapter_foldername_clean,
+                                     chapter_foldername = chapter_foldername,
+                                     path = path,
+                                     mesos_var = dots$mesos_var,
+                                     auxiliary_variables = dots$auxiliary_variables)
+            }
 
           out <-
           stringi::stri_c(ignore_null=TRUE,
                           chapter_yml,
+                          load_dataset,
                          qmd_start_section,
                          chapter_contents,
                          qmd_end_section,
@@ -135,10 +171,9 @@ gen_qmd_chapters <-
                   chapter_overview = chapter_overview_chapter_groups,
                   !!!dots)
       flexi_filepath <- "_flexi/_zzz_flexi.qmd"
-      cat(out, file = fs::path(dots$path, flexi_filepath), sep="\n")
-
-      # chapter_filepaths <- c(chapter_filepaths, flexi_filepath)
+      cat(out, file = file.path(dots$path, flexi_filepath), sep="\n")
     }
+    cli::cli_progress_message(msg = "Completed chapters.")
     cli::cli_process_done()
 
 

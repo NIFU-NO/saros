@@ -6,7 +6,7 @@
 \usage{
 draft_report(
   data,
-  chapter_overview,
+  chapter_overview = NULL,
   ...,
   path = "testreport",
   title = "Report",
@@ -15,7 +15,7 @@ draft_report(
   mesos_var = NULL,
   label_separator = " - ",
   name_separator = NULL,
-  report_yaml_file = NULL,
+  index_yaml_file = NULL,
   chapter_yaml_file = NULL,
   qmd_start_section_filepath = NULL,
   qmd_end_section_filepath = NULL,
@@ -31,7 +31,9 @@ draft_report(
   categories_treated_as_na = c(),
   variables_always_at_top = c(),
   variables_always_at_bottom = c(),
+  auxiliary_variables = c(),
   return_raw = TRUE,
+  attach_chapter_dataset = TRUE,
   panel_tabset_mesos = TRUE,
   showNA = c("never", "always", "ifany"),
   totals = FALSE,
@@ -180,7 +182,7 @@ String to split labels on main question and sub-items.}
 
 String to split column names in data between main question and sub-items}
 
-\item{report_yaml_file}{\emph{Path to YAML-file to insert into index.qmd}
+\item{index_yaml_file}{\emph{Path to YAML-file to insert into index.qmd}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
@@ -259,11 +261,23 @@ Categories that should be treated as NA.}
 
 Column names in \code{data} that should always be placed at the top or bottom of figures/tables.}
 
+\item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names in \code{data} that should always be included in datasets for chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
+
 \item{return_raw}{\emph{NOT IN USE}
 
 \verb{scalar<integer>} // \emph{default:} \code{FALSE}
 
 Whether to return the raw static element.}
+
+\item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE}
+
+Whether to save in each chapter folder an Rds-file with the chapter-specific dataset, and load it at the top of each QMD-file.}
 
 \item{panel_tabset_mesos}{\emph{mesos panel tabset}
 

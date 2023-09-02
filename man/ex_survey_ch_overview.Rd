@@ -18,6 +18,6 @@ A data frame with 3 rows and 6 variables:
 ex_survey_ch_overview
 }
 \description{
-Note that indep_int, dep_txt, indep_txt and other columns are also welcome.
+Note that indep, and other columns are also welcome.
 }
 \keyword{datasets}
