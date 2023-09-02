@@ -37,7 +37,7 @@ gen_qmd_index <-
     check_string(dots$authors, n = NULL, null.ok = TRUE, call = call)
     check_string(index_filepath, null.ok = FALSE, n = 1, call = call)
 
-    yml_section <-
+    yaml_section <-
       process_yaml(yaml_file = dots$index_yaml_file,
                    title = dots$title,
                    authors = dots$authors)
@@ -52,7 +52,7 @@ gen_qmd_index <-
     qmd_end_section <- if(!rlang::is_null(dots$qmd_end_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_end_section_filepath), collapse="\n")
 
     out <-
-      stringi::stri_c(ignore_null=TRUE, yml_section,
+      stringi::stri_c(ignore_null=TRUE, yaml_section,
                    qmd_start_section,
                    main_section,
                    qmd_end_section)

@@ -7,8 +7,8 @@
 #                  cli::cli_inform("{.arg {yaml_path}} did not exist, created it with defaults.")
 #
 #                  yaml_defaults <-
-#                    ymlthis::yml_empty() %>%
-#                    ymlthis::yml_params( # Can this list be !!!spliced? Or simply params = getOption("saros")
+#                    yamlthis::yaml_empty() %>%
+#                    yamlthis::yaml_params( # Can this list be !!!spliced? Or simply params = getOption("saros")
 #                      label_separator = .saros.env$defaults$label_separator,
 #                      name_separator = .saros.env$defaults$name_separator,
 #                      index_yaml_file = .saros.env$defaults$index_yaml_file,

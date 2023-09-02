@@ -543,9 +543,19 @@ See \code{chapter_overview} for more options.
 }
 \examples{
 \donttest{
-draft_report(
+index_filepath <-
+  draft_report(
     chapter_overview = ex_survey_ch_overview,
     data = ex_survey1,
     path = tempdir())
+#quarto::quarto_render(index_filepath)
+#index_filepaths <-
+#   draft_report(
+#    chapter_overview = ex_survey_ch_overview,
+ #   data = ex_survey1,
+  #  mesos_report = TRUE,
+   # mesos_var = "f_uni",
+    #path = tempdir())
+#quarto::quarto_render(index_filepath)
 }
 }

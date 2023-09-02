@@ -102,6 +102,8 @@ gen_qmd_structure2 <-
                 .y$.element_name <- as.character(.y$.element_name)
 
                 qmd_snippet <- NULL
+                qmd_snippet_mesos <- NULL
+
 
 
                 # If not a text-based element with hiding of other mesos_groups,
@@ -119,7 +121,9 @@ gen_qmd_structure2 <-
                     data_for_all <-
                       data[data[[dots$mesos_var]] != mesos_group, ]
 
-                  } else data_for_all <- data
+                  } else {
+                    data_for_all <- data
+                  }
 
                   if(nrow(data_for_all) > 0) {
 
@@ -127,7 +131,7 @@ gen_qmd_structure2 <-
                       gen_element_and_qmd_snippet2(
                         chapter_overview_section = .x,
                         data = data_for_all,
-                        mesos_var = NULL,
+                        mesos_var = dots$mesos_var,
                         mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
                         element_name = .y$.element_name,
                         grouping_structure = grouping_structure,
@@ -144,29 +148,34 @@ gen_qmd_structure2 <-
 
                   data_for_mesos <- data[data[[dots$mesos_var]] == mesos_group, ]
 
-                  qmd_snippet_mesos <-
-                    gen_element_and_qmd_snippet2(
-                      chapter_overview_section = .x,
-                      data = data_for_mesos,
-                      mesos_var = dots$mesos_var,
-                      mesos_group = mesos_group,
-                      element_name = .y$.element_name,
-                      grouping_structure = grouping_structure,
-                      chapter_folderpath_absolute = chapter_folderpath_absolute,
-                      chapter_foldername = chapter_foldername,
-                      !!!dots
+                  if(nrow(data_for_mesos) > 0) {
+                    qmd_snippet_mesos <-
+                      gen_element_and_qmd_snippet2(
+                        chapter_overview_section = .x,
+                        data = data_for_mesos,
+                        mesos_var = dots$mesos_var,
+                        mesos_group = mesos_group,
+                        element_name = .y$.element_name,
+                        grouping_structure = grouping_structure,
+                        chapter_folderpath_absolute = chapter_folderpath_absolute,
+                        chapter_foldername = chapter_foldername,
+                        !!!dots
                       )
+                  }
 
-                  insert_qmd_tablet_mesos_order(element_name = .y$.element_name,
-                                                qmd_snippet = qmd_snippet,
-                                                qmd_snippet_mesos = qmd_snippet_mesos,
-                                                mesos_report = dots$mesos_report,
-                                                mesos_var = dots$mesos_var,
-                                                mesos_group = mesos_group,
-                                                panel_tabset_mesos = dots$panel_tabset_mesos,
-                                                mesos_first = dots$mesos_first,
-                                                translations = dots$translations)
+
                 }
+
+
+                insert_qmd_tablet_mesos_order(element_name = .y$.element_name,
+                                              qmd_snippet = qmd_snippet,
+                                              qmd_snippet_mesos = qmd_snippet_mesos,
+                                              mesos_report = dots$mesos_report,
+                                              mesos_var = dots$mesos_var,
+                                              mesos_group = mesos_group,
+                                              panel_tabset_mesos = dots$panel_tabset_mesos,
+                                              mesos_first = dots$mesos_first,
+                                              translations = dots$translations)
               })
 
 

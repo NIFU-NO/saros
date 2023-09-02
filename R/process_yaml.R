@@ -5,35 +5,35 @@ process_yaml <- function(yaml_file = NULL,
                          chapter_number = NA) {
 
   if(!rlang::is_string(yaml_file)) {
-    yml_section <-
+    yaml_section <-
       list(title = title,
            format = "html",
            echo = FALSE,
            authors = authors)
   } else {
-    yml_section <- yaml::read_yaml(file = yaml_file)
-    if(any(names(yml_section) == "translations")) {
-      yml_section$translations <- unlist(yml_section$translations, recursive = FALSE)
+    yaml_section <- yaml::read_yaml(file = yaml_file)
+    if(any(names(yaml_section) == "translations")) {
+      yaml_section$translations <- unlist(yaml_section$translations, recursive = FALSE)
     }
-    new_title <- stringi::stri_c(yml_section$title,
+    new_title <- stringi::stri_c(yaml_section$title,
                                  if(rlang::is_string(title) &&
-                                    rlang::is_string(yml_section$title)) " - ",
+                                    rlang::is_string(yaml_section$title)) " - ",
                                  title,
                                  ignore_null=TRUE)
 
-    if(length(new_title)>0)  yml_section$title <- new_title
-    if(rlang::is_character(authors)) yml_section$authors <- authors
+    if(length(new_title)>0)  yaml_section$title <- new_title
+    if(rlang::is_character(authors)) yaml_section$authors <- authors
 
   }
-  if(is.null(yml_section$title)) {
-    yml_section$title <-  as.character(chapter_number)
+  if(is.null(yaml_section$title)) {
+    yaml_section$title <-  as.character(chapter_number)
   }
   if(!is.na(chapter_number)) {
-    yml_section[["number-offset"]] <- chapter_number
+    yaml_section[["number-offset"]] <- chapter_number
   }
 
 
-  yml_section <- yaml::as.yaml(yml_section,
+  yaml_section <- yaml::as.yaml(yaml_section,
                                handlers = list(
     logical = function(x) {
       result <- ifelse(x, "true", "false")
@@ -42,11 +42,11 @@ process_yaml <- function(yaml_file = NULL,
     }))
 
   if(add_fences) {
-    yml_section <- stringi::stri_c("---",
-                                   yml_section,
+    yaml_section <- stringi::stri_c("---",
+                                   yaml_section,
                                    "---",
                                    sep="\n",
                                    ignore_null = TRUE)
   }
-  yml_section
+  yaml_section
 }
