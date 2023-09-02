@@ -51,7 +51,7 @@
 #' @format Stopwords as list of character vectors
 #' \describe{contains a list of 58 languages}
 #' @keywords internal
-#' "stopwords"
+"stopwords"
 
 #' ex_survey_ch_overview: Mock overview of chapter structure
 #'

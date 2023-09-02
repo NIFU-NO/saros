@@ -25,7 +25,7 @@
 #'                  index_filepath = filepath)
 gen_qmd_index <-
   function(
-    # report_yaml_file = NULL,
+    # index_yaml_file = NULL,
     # title = NULL,
     # authors = NULL,
     index_filepath = "complete_report.qmd",
@@ -33,13 +33,12 @@ gen_qmd_index <-
     chapter_filepaths = NULL,
     call = rlang::caller_env()) {
 
-    dots <- utils::modifyList(formals(draft_report),
-                              rlang::list2(...))
+    dots <- update_dots(dots = rlang::list2(...), allow_unique_overrides = FALSE)
     check_string(dots$authors, n = NULL, null.ok = TRUE, call = call)
     check_string(index_filepath, null.ok = FALSE, n = 1, call = call)
 
     yml_section <-
-      process_yaml(yaml_file = dots$report_yaml_file,
+      process_yaml(yaml_file = dots$index_yaml_file,
                    title = dots$title,
                    authors = dots$authors)
 

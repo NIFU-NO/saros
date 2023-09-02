@@ -25,7 +25,7 @@ get_data_label_opts <- function() {
 }
 
 # .saros.env$defaults <-
-#   list(report_yaml_file = NULL,
+#   list(index_yaml_file = NULL,
 #        chapter_yaml_file = NULL,
 #        label_separator = " - ",
 #        name_separator = NULL,

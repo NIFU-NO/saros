@@ -11,6 +11,8 @@ gen_qmd_structure2 <-
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
 
+
+
   gen_group_structure2 <- function(grouped_data,
                                   level = 1,
                                   grouping_structure,
@@ -23,31 +25,45 @@ gen_qmd_structure2 <-
 
 
     for(value in unique(grouped_data[[level]])) {
-
-      # Make exception to heading construction to ensure always pretty heading names
-      if(names(grouped_data)[level] == ".variable_name") {
-        heading <- chapter_overview[chapter_overview[[".variable_name"]] == value,
-                                    ".variable_label_suffix"][[1]]
-      } else heading <- value
-
-
-      heading_line <-
-        stringi::stri_c(strrep("#", times = level), " ", heading,
-                        "{#sec-", conv_to_valid_obj_name(value), "_",
-                        stringi::stri_c(ignore_null=TRUE, sample(0:9, size=3, replace = TRUE), collapse=""),
-                        "}\n",
-                        ignore_null=TRUE)
-
-
+#
+#       # Make exception to heading construction to ensure always pretty heading names
+#       if(names(grouped_data)[level] == ".variable_name") {
+#         heading <- chapter_overview[chapter_overview[[".variable_name"]] == value,
+#                                     ".variable_label_suffix"][[1]]
+#       } else heading <- value
+#
+#
+#       heading_line <-
+#         stringi::stri_c(strrep("#", times = level), " ", heading,
+#                         "{#sec-", conv_to_valid_obj_name(value), "_",
+#                         stringi::stri_c(sample(0:9, size=3, replace = TRUE), ignore_null=TRUE, collapse=""),
+#                         "}\n",
+#                         ignore_null=TRUE)
+#
+#
+#       # Create heading, section tag and random ID if not a .element_name
+#       if(names(grouped_data)[level] != ".element_name" &&
+#          level < ncol(grouped_data)) {
+#
+#
+#       output <-
+#         stringi::stri_c(ignore_null=TRUE,
+#                         output,
+#                        heading_line)
+#       }
+      heading_line <- add_section_heading_line(
+                                         grouped_data = grouped_data,
+                                         level = level,
+                                         chapter_overview = chapter_overview,
+                                         value = value)
       # Create heading, section tag and random ID if not a .element_name
       if(names(grouped_data)[level] != ".element_name" &&
          level < ncol(grouped_data)) {
 
-
-      output <-
-        stringi::stri_c(ignore_null=TRUE,
-                        output,
-                       heading_line)
+        output <-
+          stringi::stri_c(output,
+                        heading_line,
+                        ignore_null=TRUE)
       }
 
       # Keep only relevant part of meta data
@@ -69,7 +85,7 @@ gen_qmd_structure2 <-
         }
 
 
-        if(nrow(chapter_overview_section) > 1) {
+        if(nrow(chapter_overview_section) >= 1) {
 
           chapter_overview_section <-
             dplyr::group_by(chapter_overview_section,
@@ -81,16 +97,20 @@ gen_qmd_structure2 <-
                              .keep = TRUE,
                              .f = ~{
 
-                               .x <- dplyr::group_by(.x,
-                                                     dplyr::pick(tidyselect::all_of(unname(grouping_structure))))
+                .x <- dplyr::group_by(.x,
+                                      dplyr::pick(tidyselect::all_of(unname(grouping_structure))))
+                .y$.element_name <- as.character(.y$.element_name)
 
                 qmd_snippet <- NULL
 
-                # If not a character element with hiding of other mesos_groups,
+
+                # If not a text-based element with hiding of other mesos_groups,
                 # produce the default "everyone (else)" data
-                if(!(stringi::stri_detect(str = as.character(.y$.element_name), fixed = "chr") &&
+                if(!(stringi::stri_detect(str = .y$.element_name, fixed = "chr") &&
                      dots$hide_chr_for_others &&
                      rlang::is_string(mesos_group))) {
+
+
 
                   if(rlang::is_true(dots$mesos_report) &&
                      rlang::is_string(dots$mesos_var) &&
@@ -109,10 +129,10 @@ gen_qmd_structure2 <-
                         data = data_for_all,
                         mesos_var = NULL,
                         mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
-                        element_name = as.character(.y$.element_name),
+                        element_name = .y$.element_name,
                         grouping_structure = grouping_structure,
-                        element_folderpath_absolute = file.path(chapter_folderpath_absolute, as.character(.y$.element_name)),
-                        element_folderpath_relative = file.path(chapter_foldername, as.character(.y$.element_name)),
+                        chapter_folderpath_absolute = chapter_folderpath_absolute,
+                        chapter_foldername = chapter_foldername,
                         !!!dots
                       )
                   }
@@ -122,46 +142,44 @@ gen_qmd_structure2 <-
                    rlang::is_string(dots$mesos_var) &&
                    rlang::is_string(mesos_group)) {
 
+                  data_for_mesos <- data[data[[dots$mesos_var]] == mesos_group, ]
+
                   qmd_snippet_mesos <-
                     gen_element_and_qmd_snippet2(
                       chapter_overview_section = .x,
-                      data = data[data[[dots$mesos_var]] == mesos_group, ],
+                      data = data_for_mesos,
+                      mesos_var = dots$mesos_var,
                       mesos_group = mesos_group,
-                      element_name = as.character(.y$.element_name),
+                      element_name = .y$.element_name,
                       grouping_structure = grouping_structure,
-                      element_folderpath_absolute = file.path(chapter_folderpath_absolute, as.character(.y$.element_name)),
-                      element_folderpath_relative = file.path(chapter_foldername, as.character(.y$.element_name)),
+                      chapter_folderpath_absolute = chapter_folderpath_absolute,
+                      chapter_foldername = chapter_foldername,
                       !!!dots
                       )
+
+                  insert_qmd_tablet_mesos_order(element_name = .y$.element_name,
+                                                qmd_snippet = qmd_snippet,
+                                                qmd_snippet_mesos = qmd_snippet_mesos,
+                                                mesos_report = dots$mesos_report,
+                                                mesos_var = dots$mesos_var,
+                                                mesos_group = mesos_group,
+                                                panel_tabset_mesos = dots$panel_tabset_mesos,
+                                                mesos_first = dots$mesos_first,
+                                                translations = dots$translations)
                 }
-                insert_qmd_tablet_mesos_order(element_name = as.character(.y$.element_name),
-                                                 qmd_snippet = qmd_snippet,
-                                                 qmd_snippet_mesos = qmd_snippet_mesos,
-                                              mesos_report = dots$mesos_report,
-                                                 mesos_var = dots$mesos_var,
-                                                 mesos_group = mesos_group,
-                                                 panel_tabset_mesos = dots$panel_tabset_mesos,
-                                                 mesos_first = dots$mesos_first,
-                                                 translations = dots$translations)
               })
 
 
-          new_out <- unlist(new_out)
-          new_out <- new_out[!stringi::stri_isempty(new_out)]
-          new_out <- stringi::stri_c(new_out, collapse = "\n\n", ignore_null=TRUE) # Space between elements
-
-          output <- stringi::stri_c(output,
-                                    if(level == ncol(grouped_data) &&
-                                       names(grouped_data)[level] != ".element_name" &&
-                                       nchar(new_out) > 4) heading_line,
-                                    new_out,
-                                    sep = "\n", ignore_null=TRUE) # Space between heading and first element
-
+          output <- attach_new_output_to_output(new_out = new_out,
+                                                output = output,
+                                                level = level,
+                                                grouped_data = grouped_data,
+                                                heading_line = heading_line)
 
         }
       }
 
-      output <-
+      output <- # Recursive call
         stringi::stri_c(output,
                         gen_group_structure2(grouped_data = sub_df,
                                             level = level + 1,

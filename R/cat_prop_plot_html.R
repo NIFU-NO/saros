@@ -17,11 +17,8 @@ prep_cat_prop_plot_html <-
            call = rlang::caller_env()) {
 
 
-    dots <- rlang::list2(...)
-    dots <- utils::modifyList(
-      x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
-      val = dots[!names(dots) %in% c("...")], keep.null = TRUE
-    )
+    dots <- update_dots(dots = rlang::list2(...), caller_function = "cat_prop_plot")
+
 
     colour_palette <-
       get_colour_set(
@@ -191,6 +188,7 @@ embed_cat_prop_plot <-
 
     dots <- update_dots(dots = rlang::list2(...),
                         caller_function = "cat_prop_plot")
+
 
     check_multiple_indep(data, indep = {{ indep }}, call = call)
 

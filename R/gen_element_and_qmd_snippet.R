@@ -51,7 +51,7 @@ gen_element_and_qmd_snippet <-
            ...,
            call = rlang::caller_env()) {
 
-    if(element_name == "hline") return("---")
+    if(element_name == "hline") return("-----")
 
     dots <- rlang::list2(...)
     dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
@@ -95,7 +95,13 @@ gen_element_and_qmd_snippet <-
     filename_prefix <- dplyr::group_by(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure3)))
     # filename_prefix <- dplyr::distinct(filename_prefix, dplyr::pick(tidyselect::everything()))
     filename_prefix <- glue::glue_data(filename_prefix, stringi::stri_c(ignore_null=TRUE, "{", colnames(filename_prefix), "}", collapse="_"))
-    filename_prefix <- conv_to_valid_obj_name(filename_prefix, max_width = dots$max_width_obj)
+    filename_prefix <- conv_to_valid_obj_name(filename_prefix, max_width = dots$max_width_file)
+    filename_prefix_alt <- Reduce(f = intersect, strsplit(filename_prefix, split = ""))
+
+    if(length(filename_prefix_alt)>0 && nchar(filename_prefix_alt)>0) {
+      filename_prefix_alt <- stringi::stri_c(filename_prefix_alt, collapse = "", ignore_null = TRUE)
+      filename_prefix <- filename_prefix_alt
+    }
     filename_prefix <- stringi::stri_c(filename_prefix, collapse = "_", ignore_null = TRUE)
     if(rlang::is_string(mesos_group)) filename_prefix <- stringi::stri_c(filename_prefix, "_", mesos_group)
 

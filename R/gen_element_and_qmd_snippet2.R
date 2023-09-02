@@ -45,13 +45,15 @@ gen_element_and_qmd_snippet2 <-
            element_name = "uni_cat_prop_plot",
            data,
            mesos_group = NULL,
+           chapter_folderpath_absolute,
+           chapter_foldername,
            element_folderpath_absolute,
            element_folderpath_relative,
            grouping_structure = NULL,
            ...,
            call = rlang::caller_env()) {
 
-    if(element_name == "hline") return("---")
+    if(element_name == "hline") return("-----")
 
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
@@ -59,6 +61,8 @@ gen_element_and_qmd_snippet2 <-
     stopifnot(inherits(data, "data.frame") || inherits(data, "survey"))
     data_cols <- if(inherits(data, "survey")) colnames(data$variables) else colnames(data)
 
+    element_folderpath_absolute <- file.path(chapter_folderpath_absolute, element_name)
+    element_folderpath_relative <- file.path(chapter_foldername, element_name)
     fs::dir_create(element_folderpath_absolute, recurse = TRUE)
 
     if(dplyr::n_distinct(chapter_overview_section$.variable_type) != 1 || # Later add check that all items contain the same indep_cols_df
@@ -97,6 +101,16 @@ gen_element_and_qmd_snippet2 <-
     filename_prefix <- unlist(filename_prefix)
     filename_prefix <- unname(filename_prefix)
     filename_prefix <- stringi::stri_sub(str = filename_prefix, from = 1, to = dots$max_width_obj)
+
+    filename_prefix_alt <- Reduce(f = intersect, strsplit(filename_prefix, split = ""))
+
+    if(length(filename_prefix_alt)>0) {
+      filename_prefix_alt <- stringi::stri_c(filename_prefix_alt, collapse = "", ignore_null = TRUE)
+      if(nchar(filename_prefix_alt)>0) {
+        filename_prefix <- filename_prefix_alt
+      }
+    }
+
     filename_prefix <- stringi::stri_c(filename_prefix, collapse = "_", ignore_null = TRUE)
     if(rlang::is_string(mesos_group)) filename_prefix <- stringi::stri_c(filename_prefix, "_", mesos_group)
 

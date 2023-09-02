@@ -15,7 +15,9 @@ embed_flexi <- function(data,
                                       .keep_all = FALSE)
   chapter_overview$chapter <- as.character(chapter_overview$chapter)
   indeps <- tidyr::unchop(chapter_overview, cols = "indep_cols_df")
-  indeps <- unique(indeps$indep_cols_df$.variable_name)
+  if(nrow(indeps)>0) {
+    indeps <- unique(indeps[["indep_cols_df"]][[".variable_name"]])
+  }
   data <- data[, names(data) %in% c(chapter_overview$.variable_name, indeps, dots$mesos_var)]
 
   fs::dir_create(file.path(dots$path, "_flexi"))

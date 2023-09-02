@@ -36,5 +36,7 @@ write_default_draft_report_args <-
 #' read_default_draft_report_args(path=path)
 read_default_draft_report_args <-
   function(path="settings.yaml") {
-    yaml::read_yaml(file = as.character(path))
+    x <- yaml::read_yaml(file = as.character(path))
+    x$translations <- unlist(x$translations, recursive = FALSE)
+    x
   }

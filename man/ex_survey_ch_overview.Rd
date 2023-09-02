@@ -3,11 +3,8 @@
 \docType{data}
 \name{ex_survey_ch_overview}
 \alias{ex_survey_ch_overview}
-\title{Stopwords}
+\title{ex_survey_ch_overview: Mock overview of chapter structure}
 \format{
-Stopwords as list of character vectors
-\describe{contains a list of 58 languages}
-
 A data frame with 3 rows and 6 variables:
 \describe{
 \item{chapter}{Manual entry chapter title}
@@ -21,22 +18,6 @@ A data frame with 3 rows and 6 variables:
 ex_survey_ch_overview
 }
 \description{
-Stopwords
+Note that indep, and other columns are also welcome.
 }
-\keyword{"stopwords"}
-\keyword{Mock}
-\keyword{Note}
-\keyword{also}
-\keyword{and}
-\keyword{are}
-\keyword{chapter}
-\keyword{columns}
-\keyword{ex_survey_ch_overview:}
-\keyword{indep,}
-\keyword{internal}
-\keyword{of}
-\keyword{other}
-\keyword{overview}
-\keyword{structure}
-\keyword{that}
-\keyword{welcome.}
+\keyword{datasets}

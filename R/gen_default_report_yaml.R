@@ -11,7 +11,7 @@
 #                    ymlthis::yml_params( # Can this list be !!!spliced? Or simply params = getOption("saros")
 #                      label_separator = .saros.env$defaults$label_separator,
 #                      name_separator = .saros.env$defaults$name_separator,
-#                      report_yaml_file = .saros.env$defaults$report_yaml_file,
+#                      index_yaml_file = .saros.env$defaults$index_yaml_file,
 #                      chapter_yaml_file = .saros.env$defaults$chapter_yaml_file,
 #                      index_filename = .saros.env$defaults$index_filename,
 #                      element_names = .saros.env$defaults$element_names,
