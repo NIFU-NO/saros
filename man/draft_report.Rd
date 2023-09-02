@@ -556,6 +556,6 @@ index_filepath <-
   #  mesos_report = TRUE,
    # mesos_var = "f_uni",
     #path = tempdir())
-#quarto::quarto_render(index_filepath)
+#lapply(index_filepaths, quarto::quarto_render)
 }
 }
