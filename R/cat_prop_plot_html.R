@@ -17,7 +17,8 @@ prep_cat_prop_plot_html <-
            call = rlang::caller_env()) {
 
 
-    dots <- update_dots(dots = rlang::list2(...), caller_function = "cat_prop_plot")
+    dots <- update_dots(dots = rlang::list2(...),
+                        caller_function = "cat_prop_plot")
 
 
     colour_palette <-
