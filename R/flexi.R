@@ -20,7 +20,7 @@ embed_flexi <- function(data,
   }
   data <- data[, names(data) %in% c(chapter_overview$.variable_name, indeps, dots$mesos_var)]
 
-  fs::dir_create(file.path(dots$path, "_flexi"))
+  dir.create(file.path(dots$path, "_flexi"), recursive = TRUE, showWarnings = FALSE)
   filepath_rds_data <- file.path(dots$path, "_flexi", "flexi_data.RDs")
   save(list=c("data", "dots", "chapter_overview"), file = filepath_rds_data)
 

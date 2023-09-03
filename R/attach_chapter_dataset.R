@@ -32,9 +32,9 @@ attach_chapter_dataset <- function(chapter_overview_chapter,
   # load_dataset <-
   stringi::stri_c(sep="\n",
                   "```{r}",
-                  stringi::stri_c("data_",
+                  stringi::stri_c("`data_",
                                   chapter_foldername_clean,
-                                  " <- readRDS('", filepath_chapter_dataset_relative, "')"),
+                                  "` <- readRDS('", filepath_chapter_dataset_relative, "')"),
                   "```")
 
 }

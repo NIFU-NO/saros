@@ -29,7 +29,7 @@ process_yaml <- function(yaml_file = NULL,
     yaml_section$title <-  as.character(chapter_number)
   }
   if(!is.na(chapter_number)) {
-    yaml_section[["number-offset"]] <- chapter_number
+    yaml_section[["number-offset"]] <- chapter_number - 1
   }
 
 

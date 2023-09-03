@@ -25,10 +25,10 @@ argument_validation_and_insertion <- function(params) {
       element_names = list(fun = function(x) rlang::is_character(x) && all(x %in% env$element_names)),
       auxiliary_variables = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
       path = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
-      index_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && fs::file_exists(x))),
-      chapter_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && fs::file_exists(x))),
-      qmd_start_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && fs::file_exists(x))),
-      qmd_end_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && fs::file_exists(x))),
+      index_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
+      chapter_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
+      qmd_start_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
+      qmd_end_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       index_filename = list(fun = rlang::is_string),
       translations = list(fun = function(x) rlang::is_bare_list(x) && all(unlist(lapply(x, function(.x) is.character(.x))))), ### SHOULD BE MORE SPECIFIC FOR EACH ITEM?
 

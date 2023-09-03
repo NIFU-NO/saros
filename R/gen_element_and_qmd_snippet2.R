@@ -63,7 +63,7 @@ gen_element_and_qmd_snippet2 <-
 
     element_folderpath_absolute <- file.path(chapter_folderpath_absolute, element_name)
     element_folderpath_relative <- file.path(chapter_foldername, element_name)
-    fs::dir_create(element_folderpath_absolute, recurse = TRUE)
+    dir.create(element_folderpath_absolute, recursive = TRUE, showWarnings = FALSE)
 
     if(dplyr::n_distinct(chapter_overview_section$.variable_type) != 1 || # Later add check that all items contain the same indep_cols_df
        dplyr::n_distinct(chapter_overview_section$.variable_label_prefix) != 1) return("")
@@ -376,11 +376,6 @@ gen_element_and_qmd_snippet2 <-
         if(stringi::stri_detect(str = element_name, fixed = "bi_sigtest")) {
 
           filename_prefix <- stringi::stri_c(ignore_null=TRUE, filename_prefix, "_BY_ALL_INDEP")
-          # filepaths$rel$rds <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          # filepaths$rel$xlsx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          # filepaths$abs$rds <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          # filepaths$abs$xlsx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-
           filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
                                           element_folderpath_absolute = element_folderpath_absolute,
                                           filename_prefix = filename_prefix)
@@ -451,16 +446,9 @@ gen_element_and_qmd_snippet2 <-
           indep_type <- indep_type$.variable_type
 
           filename_prefix <- stringi::stri_c(filename_prefix, "BY", .x, ignore_null=TRUE, sep = "_")
-          filepaths$rel$rds <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepaths$rel$png <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-          filepaths$rel$xlsx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          filepaths$rel$txt <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-          filepaths$rel$docx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
-          filepaths$abs$rds <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepaths$abs$xlsx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          filepaths$abs$png <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-          filepaths$abs$txt <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-          filepaths$abs$docx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
+          filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
+                                           element_folderpath_absolute = element_folderpath_absolute,
+                                           filename_prefix = filename_prefix)
 
           plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
                                               x_cols = indep_pos,

@@ -12,12 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0 (Spørringene)
-+ Titles are missing from both macro and mesos
-+ mesos reports no longer producing mesos groups!
-+ header numbers: 
-    chapter_number <- match(chapter_name, unique(chapter_overview$chapter))
-    stringi::stri_c("number-offset: ", chapter_number, ignore_null=TRUE) 
-
++ Chapters need chapter_number as part of their filename, otherwise disordered
++   chapter_number is one too high
+- BI_index.qmd
+-   colour palette does not seem to be respected
++   Reports/Report => Rapporter/Rapport
 -   Sharepoint!!!
     - Shorten chunk names
 -   distinguish between qmd_start/end for chapters and indexes?

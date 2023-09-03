@@ -5,7 +5,7 @@
 \title{Generate Quarto Index File That Merges All Chapters}
 \usage{
 gen_qmd_index(
-  index_filepath = "complete_report.qmd",
+  index_filepath = "index.qmd",
   ...,
   chapter_filepaths = NULL,
   call = rlang::caller_env()

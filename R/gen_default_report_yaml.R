@@ -19,7 +19,7 @@
 #                    ) %>%
 #                    yaml::as.yaml()
 #
-#                  fs::dir_create(file.path_dir(yaml_path), recurse = TRUE)
+#                  dir.create(file.path_dir(yaml_path), recursive = TRUE, showWarnings = FALSE)
 #                  cat(yaml_defaults, file = yaml_path)
 #                  yaml::read_yaml(file = as.character(yaml_path))
 #                })

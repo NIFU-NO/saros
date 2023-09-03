@@ -712,8 +712,6 @@ draft_report <-
                  mesos_group <- NULL
                  path <- path
                  args$title <- args$title
-                 index_filepath <- file.path(path,
-                                             args$index_filename)
 
                } else {
 
@@ -722,11 +720,6 @@ draft_report <-
                  args$title <- stringi::stri_c(args$title,
                                           uniques[.x],
                                           ignore_null=TRUE)
-                 index_filepath <- file.path(path,
-                                             stringi::stri_c(uniques[.x], # Omit this?
-                                                             "_",
-                                                             args$index_filename,
-                                                             ignore_null=TRUE))
 
                }
 
@@ -745,7 +738,7 @@ draft_report <-
                    gen_qmd_index,
                    title = args$title,
                    authors = all_authors,
-                   index_filepath = index_filepath,
+                   index_filepath = file.path(path, args$index_filename),
                    chapter_filepaths = chapter_filepaths,
                    !!!args[!names(args) %in% c("title", "authors")],
                    call = rlang::caller_env())
