@@ -71,7 +71,7 @@ hex_bw <- function(hex_code, colour_2nd_binary_cat = NULL) {
 }
 
 check_colour_palette <- function(colour_palette, call = rlang::caller_env()) {
-  if(!is.null(colour_palette) & !all(is_colour(colour_palette))) {
+  if(!is.null(colour_palette) && !all(is_colour(colour_palette))) {
     cli::cli_abort(
       c("Invalid user-specified colours.",
         i="{.arg colour_palette} must be a character vector of valid colours in hex-format (e.g. #000000).",
@@ -113,17 +113,23 @@ get_remaining_colours <- function(user_colour_set,
 
 #' Provide A Colour Set for A Number of Requested Colours
 #'
-#' Possibly using user_colour_set if available. If not sufficient, uses a set
+#' Possibly using colour_palette_nominal if available. If not sufficient, uses a set
 #'     palette from RColorBrewer.
 #'
 #' @inheritParams draft_report
 #' @inheritParams summarize_data
 #' @param x Vector for which colours will be found.
-#' @param user_colour_set *User specified colour set*
+#' @param colour_palette_nominal,colour_palette_ordinal *User specified colour set*
 #'
 #'  `vector<character>` // *default:* `NULL` (`optional`)
 #'
 #'   User-supplied default palette, excluding `colour_na`.
+#'
+#' @param common_data_type *factor or ordered data type*
+#'
+#'  `scalar<character>` // *default:* `factor` (`optional`)
+#'
+#'  Currently only supports factor and ordered.
 #'
 #' @param ordinal
 #'
@@ -131,18 +137,24 @@ get_remaining_colours <- function(user_colour_set,
 #'
 #'  Is palette ordinal?
 #'
-#' @return A colour set as character vector, where `NA` has the `colour_na`, and the rest are taken from user_colour_set if available.
+#' @return A colour set as character vector, where `NA` has the `colour_na`, and the rest are taken from colour_palette_nominal if available.
 #' @export
 #' @examples
 #' get_colour_set(x=1:4)
 get_colour_set <-
   function(x,
-           user_colour_set=NULL,
+           common_data_type = "factor",
+           colour_palette_nominal=NULL,
+           colour_palette_ordinal=NULL,
            colour_na = NULL,
            colour_2nd_binary_cat = NULL,
            ordinal = FALSE,
            call = rlang::caller_env()) {
 
+    user_colour_set <-
+      switch(common_data_type,
+            ordered = colour_palette_ordinal,
+            factor = colour_palette_nominal)
 
     x <- stats::setNames(x, x)
     names(x)[is.na(names(x))] <- "NA"
@@ -177,17 +189,17 @@ get_colour_set <-
 
 # get_colour_set2 <-
 #   function(x,
-#            user_colour_set=NULL,
+#            colour_palette_nominal=NULL,
 #            colour_na = NULL,
 #            colour_2nd_binary_cat = NULL,
 #            call = rlang::caller_env()) {
 #
 #     n_colours_needed <- length(x)
-#     if(!is.null(user_colour_set)) {
-#       check_colour_palette(colour_palette = user_colour_set)
+#     if(!is.null(colour_palette_nominal)) {
+#       check_colour_palette(colour_palette = colour_palette_nominal)
 #
-#       if(length(user_colour_set) >= n_colours_needed) {
-#         out <- subset_vector(vec = user_colour_set, set = ".spread",
+#       if(length(colour_palette_nominal) >= n_colours_needed) {
+#         out <- subset_vector(vec = colour_palette_nominal, set = ".spread",
 #                              spread_n = n_colours_needed)
 #
 #       } else {
@@ -271,14 +283,14 @@ get_colour_set <-
 #                  if(!is.na(type[i]) && type[i] %in% c("ordinal", "interval")) {
 #                    unname(get_colour_set(
 #                      n_colours_needed = length(unique_set[[i]]),
-#                      user_colour_set = colour_set_ordinal,
+#                      colour_palette_nominal = colour_set_ordinal,
 #                      names = unique_set_group[[i]]))[unique_set[[i]]]
 #
 #                  } else if(!is.na(type[i]) && type[i] == "nominal" &&
 #                            n_unique_set_group_i <= 12) { # Why this limit here only?
 #                    unname(get_colour_set(
 #                      n_colours_needed = n_unique_set_group_i,
-#                      user_colour_set = colour_set_nominal,
+#                      colour_palette_nominal = colour_set_nominal,
 #                      names = unique_set_group[[i]]))[unique_set[[i]]]
 #                  } else NA_character_
 #                })

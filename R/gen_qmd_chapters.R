@@ -95,7 +95,7 @@ gen_qmd_chapters <-
           cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
 
 
-          chapter_folderpath_absolute <- file.path(path, chapter_foldername)
+          chapter_folderpath_absolute <- file.path(path, chapter_foldername_clean)
           dir.create(path = chapter_folderpath_absolute, recursive = TRUE, showWarnings = FALSE)
 
           chapter_filepath_relative <- stringi::stri_c(chapter_foldername_clean, ".qmd", ignore_null=TRUE)
@@ -106,7 +106,7 @@ gen_qmd_chapters <-
             # if(!rlang::is_null(chapter_overview_chapter$author) &&
             #    !all(is.na(unique(chapter_overview_chapter$author)))) unique(chapter_overview_chapter$author) else ""
           chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
-                                      title = chapter_foldername,
+                                      title = dots$title,
                                       authors = authors,
                                       chapter_number = chapter_number)
 
@@ -117,7 +117,7 @@ gen_qmd_chapters <-
               chapter_overview = chapter_overview_chapter,
               mesos_group = mesos_group,
               chapter_folderpath_absolute = chapter_folderpath_absolute,
-              chapter_foldername = chapter_foldername,
+              chapter_foldername = chapter_foldername_clean,
               !!!dots#[!names(dots) %in% c("chapter_overview", "call")]
               )
 
@@ -142,7 +142,6 @@ gen_qmd_chapters <-
               attach_chapter_dataset(data = data,
                                      chapter_overview_chapter = chapter_overview_chapter,
                                      chapter_foldername_clean = chapter_foldername_clean,
-                                     chapter_foldername = chapter_foldername,
                                      path = path,
                                      mesos_var = dots$mesos_var,
                                      auxiliary_variables = dots$auxiliary_variables)

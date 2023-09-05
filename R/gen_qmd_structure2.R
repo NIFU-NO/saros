@@ -12,7 +12,6 @@ gen_qmd_structure2 <-
                         allow_unique_overrides = FALSE)
 
 
-
   gen_group_structure2 <- function(grouped_data,
                                   level = 1,
                                   grouping_structure,
@@ -25,32 +24,7 @@ gen_qmd_structure2 <-
 
 
     for(value in unique(grouped_data[[level]])) {
-#
-#       # Make exception to heading construction to ensure always pretty heading names
-#       if(names(grouped_data)[level] == ".variable_name") {
-#         heading <- chapter_overview[chapter_overview[[".variable_name"]] == value,
-#                                     ".variable_label_suffix"][[1]]
-#       } else heading <- value
-#
-#
-#       heading_line <-
-#         stringi::stri_c(strrep("#", times = level), " ", heading,
-#                         "{#sec-", conv_to_valid_obj_name(value), "_",
-#                         stringi::stri_c(sample(0:9, size=3, replace = TRUE), ignore_null=TRUE, collapse=""),
-#                         "}\n",
-#                         ignore_null=TRUE)
-#
-#
-#       # Create heading, section tag and random ID if not a .element_name
-#       if(names(grouped_data)[level] != ".element_name" &&
-#          level < ncol(grouped_data)) {
-#
-#
-#       output <-
-#         stringi::stri_c(ignore_null=TRUE,
-#                         output,
-#                        heading_line)
-#       }
+
       heading_line <- add_section_heading_line(
                                          grouped_data = grouped_data,
                                          level = level,
@@ -127,11 +101,12 @@ gen_qmd_structure2 <-
 
                   if(nrow(data_for_all) > 0) {
 
+
                     qmd_snippet <-
-                      gen_element_and_qmd_snippet2(
+                      rlang::exec(
+                      gen_element_and_qmd_snippet2,
                         chapter_overview_section = .x,
                         data = data_for_all,
-                        mesos_var = dots$mesos_var,
                         mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
                         element_name = .y$.element_name,
                         grouping_structure = grouping_structure,
@@ -150,7 +125,8 @@ gen_qmd_structure2 <-
 
                   if(nrow(data_for_mesos) > 0) {
                     qmd_snippet_mesos <-
-                      gen_element_and_qmd_snippet2(
+                      rlang::exec(
+                      gen_element_and_qmd_snippet2,
                         chapter_overview_section = .x,
                         data = data_for_mesos,
                         mesos_var = dots$mesos_var,

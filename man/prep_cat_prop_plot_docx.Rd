@@ -4,7 +4,13 @@
 \alias{prep_cat_prop_plot_docx}
 \title{Create Categorical Data Chart from Summarized Data}
 \usage{
-prep_cat_prop_plot_docx(data, ..., inverse = FALSE, call = rlang::caller_env())
+prep_cat_prop_plot_docx(
+  data,
+  ...,
+  colour_palette = NULL,
+  inverse = FALSE,
+  call = rlang::caller_env()
+)
 }
 \arguments{
 \item{data}{\emph{Survey data}

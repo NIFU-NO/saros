@@ -13,21 +13,21 @@
 prep_cat_freq_plot_pdf <-
   function(data,
            ...,
+           colour_palette = NULL,
            inverse = FALSE,
            call = rlang::caller_env()) {
 
-    dots <- rlang::list2(...)
-    dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
-                              val = dots[!names(dots) %in% c("...")], keep.null = TRUE)
+
+    dots <- update_dots(dots = rlang::list2(...),
+                        caller_function = "cat_freq_plot")
 
     # check_summary_data_cols(data, call = call)
 
-    colour_palette <-
-      get_colour_set(
-        x = levels(data[[".category"]]),
-        user_colour_set = dots$colour_palette,
-        colour_na = dots$colour_na,
-        colour_2nd_binary_cat = dots$colour_2nd_binary_cat)
+    if(is.null(colour_palette)) {
+      n <- length(levels(data[[".category"]]))
+      hues <- seq(15, 375, length = n + 1)
+      colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+    }
 
     multi <- length(colour_palette) > 2
 

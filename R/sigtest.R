@@ -218,7 +218,7 @@ sigtest <-
   }
 
 
-#' Title
+#' Run univariate significance tests and collect them in a table
 #'
 #' @inheritParams sigtest
 #' @inheritParams gen_qmd_chapters

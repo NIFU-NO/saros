@@ -6,7 +6,9 @@
 \usage{
 get_colour_set(
   x,
-  user_colour_set = NULL,
+  common_data_type = "factor",
+  colour_palette_nominal = NULL,
+  colour_palette_ordinal = NULL,
   colour_na = NULL,
   colour_2nd_binary_cat = NULL,
   ordinal = FALSE,
@@ -16,7 +18,13 @@ get_colour_set(
 \arguments{
 \item{x}{Vector for which colours will be found.}
 
-\item{user_colour_set}{\emph{User specified colour set}
+\item{common_data_type}{\emph{factor or ordered data type}
+
+\verb{scalar<character>} // \emph{default:} \code{factor} (\code{optional})
+
+Currently only supports factor and ordered.}
+
+\item{colour_palette_nominal, colour_palette_ordinal}{\emph{User specified colour set}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
@@ -45,10 +53,10 @@ Is palette ordinal?}
 Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
-A colour set as character vector, where \code{NA} has the \code{colour_na}, and the rest are taken from user_colour_set if available.
+A colour set as character vector, where \code{NA} has the \code{colour_na}, and the rest are taken from colour_palette_nominal if available.
 }
 \description{
-Possibly using user_colour_set if available. If not sufficient, uses a set
+Possibly using colour_palette_nominal if available. If not sufficient, uses a set
 palette from RColorBrewer.
 }
 \examples{

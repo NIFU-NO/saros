@@ -25,8 +25,11 @@ process_yaml <- function(yaml_file = NULL,
     if(rlang::is_character(authors)) yaml_section$authors <- authors
 
   }
-  if(is.null(yaml_section$title)) {
+  if(rlang::is_null(yaml_section$title)) {
     yaml_section$title <-  as.character(chapter_number)
+  }
+  if(rlang::is_null(yaml_section$authors) || all(nchar(yaml_section$authors)==0)) {
+    yaml_section$authors <- NULL
   }
   if(!is.na(chapter_number)) {
     yaml_section[["number-offset"]] <- chapter_number - 1

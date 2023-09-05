@@ -245,10 +245,7 @@ summarize_data <-
 
     if(any(dep %in% indep)) return()
 
-
-    fct_unions <- if(!inherits(data, "survey.design")) data[, dep] else data$variables[, dep]
-    fct_unions <- forcats::fct_unify(fs = fct_unions)[[1]]
-    fct_unions <- levels(fct_unions)
+    fct_unions <- get_common_levels(data=data, col_names=dep)
 
     cross_table_output <-
       crosstable3(data,

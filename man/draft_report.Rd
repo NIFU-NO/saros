@@ -62,7 +62,8 @@ draft_report(
   descend = TRUE,
   require_common_categories = TRUE,
   flexi = TRUE,
-  colour_palette = NULL,
+  colour_palette_nominal = NULL,
+  colour_palette_ordinal = NULL,
   colour_na = "gray90",
   colour_2nd_binary_cat = NULL,
   digits = 1,
@@ -450,7 +451,7 @@ Whether to check if all items share common categories.}
 
 Whether to include totals in the output.}
 
-\item{colour_palette}{\emph{Colour palette}
+\item{colour_palette_nominal, colour_palette_ordinal}{\emph{Colour palettes (nominal and ordinal)}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 

@@ -12,16 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0 (Spørringene)
-+ Chapters need chapter_number as part of their filename, otherwise disordered
-+   chapter_number is one too high
-- BI_index.qmd
--   colour palette does not seem to be respected
-+   Reports/Report => Rapporter/Rapport
--   Sharepoint!!!
-    - Shorten chunk names
 -   distinguish between qmd_start/end for chapters and indexes?
--   Konsekvent fargepalett på tvers av figurer med samme svarskala
--   Quarto Issue: fig-cap + label + no graph =\> error
 -   functions to simplify copying of files?
 
 -   saros.template::use_saros() function that
@@ -31,7 +22,17 @@ knitr::opts_chunk$set(echo = TRUE)
     -   alternatively, a function in nifutheme::use_saros()
     -   dumps these files in a resources folder?
 
+# Chapter overview
 -   Allow empty chapter_overview
+-   In refine, handle " and ' interchangably for dep/indep cells (matches, etc), handle spaces, 
+-   not keeping significant relationships!
+-   simpler chapter_overview dep/indep notation: allow spaces, not having to use matches?
+-   No var label will cause entire chapter to be NA...
+    -   NA labels should be replaced with variable name in refine_chapter_overview
+    -   Functions should not return NA to stringr::str_c()
+    -   Any group_by set of variables in chapter_overview should not have NA (or deal appropriately with them)
+-   Check early on if multiple variables have identical labels and warn imemdiately
+-   cli_inform rows removed with hide_bi_entry_if_sig_above
 
 # Structure
 
@@ -43,12 +44,6 @@ knitr::opts_chunk$set(echo = TRUE)
 -   for_data_cleaner article
 -   for_end_user article
 
-```{r}
-"sdfs"
-
-```
-
-# Ønsker fra andre:
 
 # bi_sigtest
 
@@ -56,42 +51,32 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # mesos
 
--   some progress bar seems incorrect
-
 # plots
-
 -   tri_catcatcat_plot (z)
-
     -   Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys.
 
 -   estimate_plot_height: consider totals=TRUE
 
--   colour_2nd_binary_cat is not working consistently with data\$s_43 (gender) and when mesos - legend is missing when there are two categories in cat_prop, but n\
+-   colour_2nd_binary_cat is not working consistently with data\$s_43 (gender) and when mesos - legend is missing when there are two categories in cat_prop, but n
 
--   unused levels seem to cause confusion in hide_legend and colours. and tables\
+-   unused levels seem to cause confusion in hide_legend and colours. and tables
+-   N in legend for each by group
+-   prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable
+-   add_n_to_bygroup as arg
+-   implement uni_plot_int_ bi_plot_intint_ bi_plot_intcat_
 
--   
+# Colours
+-2   Konsekvent fargepalett på tvers av figurer med samme svarskala
+-1   Sikre at nifutheme fungerer manuelt
 
-    ```         
-    all should be displayed  
-    ```
-
--   N in legend for each by group\
-
--   add_n_to_bygroup =\> yaml\
-
--   implement uni_plot_int\_\* bi_plot_intint\_\* bi_plot_intcat\_\*
-
--   colours
-
-    -   if .categories %in% yml\$params\$colour, use associated colour
+-   if .categories %in% names(colour_palette), use associated colour
     -   Bruk så fargepalett på resten
-    -   colour_palette_ordinal, colour_palette_nominal colour_palette \<- if(class(data[[col_pos]]) == "ordered" && !is.null(colour_palette_ordinal)) colour_palette_ordinal else if(!is.null(colour_palette_nominal)) colour_palette_nominal
-    -   separate colour_palette for different needs: chapter, designated_type, .variable_role, ... - which also allows paletter
++   colour_palette_ordinal, colour_palette_nominal 
+
+-   separate colour_palette for different needs: chapter, designated_type, .variable_role, ... 
+- which also allows paletter
         -   if is.colour =\> as colours, else if in paletter list, use that
         -   if colour_2nd_binary is applicable, should forcats::fct_rev(.x)
-
--   prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable
 
 -   can label_font_size, main_font_size, font_family, data_label_decimal_symbol be set later through CSS/YAML?
 
@@ -100,18 +85,8 @@ knitr::opts_chunk$set(echo = TRUE)
 -   sorting of indep should only occur if is.ordered(data[[by_name]]), otherwise ignore it and just sort by .sum_value
 -   only call summarize_data once and reuse.
 
-# refine_chapter_overview
 
--   not keeping significant relationships!
--   simpler chapter_overview dep/indep notation: allow spaces, not having to use matches?
--   No var label will cause entire chapter to be NA...
-    -   NA labels should be replaced with variable name in refine_chapter_overview
-    -   Functions should not return NA to stringr::str_c()
-    -   Any group_by set of variables in chapter_overview should not have NA (or deal appropriately with them)
--   Check early on if multiple variables have identical labels and warn imemdiately
--   cli_inform rows removed with hide_bi_entry_if_sig_above
-
-# YAML, config, etc
+# Arguments
 
 -   move some parameters from \_report_generation_setup.yml to \_quarto.yml file and perform modifications in a R-script loaded in the beginning of index.qmd
     -   decimal marker?
@@ -120,8 +95,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Folder structure
 
--   folder structure: all png in separate folder, etc.
--   Preclean folder names: The name of the input file cannot contain the special shell characters: [ \<\>()\|:&;#?\*']
+-   Separate subfolders for PNG, DOCX (grraphs), TXT, XLSX
 
 # tables
 
@@ -131,12 +105,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # nifutheme
 
--   all yaml-files
--   doc-reference template for quarto
 -   <https://quarto.org/docs/extensions/project-types.html>
--   css: nifustil.css `{=html} <style type="text/css"> caption, .table-caption {   text-align: left; } </style>`
--   sub-groups, interaction terms or "stratification" (resp in Spørringene, etc.)
--   avoid copying main report when rlang::is_string(mesos_group)
 
 # PDF
 
@@ -169,7 +138,7 @@ knitr::opts_chunk$set(echo = TRUE)
 -   automate copying of .htaccess and .htpasswd files to subfolders
 
 # Stuff partially out of my control:
-
+-   Quarto Issue: fig-cap + label + no graph =\> error
 -   Issue at <https://github.com/tidymodels/infer> about annoying warning.
 -   Issue at Quarto-cli for: If processing fails, it leaves a temporary .rmarkdown file which if not manually deleted will cause the following error on the next rendering: "The name of the input file cannot contain the special shell characters: [ \<\>()\|:&;#?\*']"
 

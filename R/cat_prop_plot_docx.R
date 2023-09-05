@@ -10,6 +10,7 @@
 prep_cat_prop_plot_docx <-
   function(data,
            ...,
+           colour_palette = NULL,
            inverse = FALSE,
            call = rlang::caller_env()) {
 
@@ -18,12 +19,11 @@ prep_cat_prop_plot_docx <-
                               val = dots[!names(dots) %in% c("...")], keep.null = TRUE)
 
 
-    colour_palette <-
-      get_colour_set(
-        x = levels(data[[".category"]]),
-        user_colour_set = dots$colour_palette,
-        colour_na = dots$colour_na,
-        colour_2nd_binary_cat = dots$colour_2nd_binary_cat)
+    if(is.null(colour_palette)) {
+      n <- length(levels(data[[".category"]]))
+      hues <- seq(15, 375, length = n + 1)
+      colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+    }
 
     multi <- length(colour_palette) > 2
 
@@ -96,7 +96,7 @@ prep_cat_prop_plot_docx <-
 #' @inheritParams draft_report
 #' @inheritParams summarize_data
 #' @inheritParams gen_qmd_chapters
-#' @param inverse Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.
+#' @inheritParams embed_cat_prop_plot
 #'
 #' @importFrom tidyselect everything eval_select
 #' @importFrom officer read_docx docx_dim block_caption body_add_caption
@@ -135,6 +135,7 @@ embed_cat_prop_plot_docx <-
            ...,
            dep = tidyselect::everything(),
            indep = NULL,
+           colour_palette = NULL,
            mesos_group = NULL,
            inverse = FALSE) {
 
@@ -176,6 +177,7 @@ embed_cat_prop_plot_docx <-
         prep_cat_prop_plot_docx,
         data = data_out,
         inverse = inverse,
+        colour_palette = colour_palette,
         call = rlang::caller_env(),
         !!!dots)
 

@@ -223,7 +223,7 @@
 #'
 #'   Font size for all other text.
 #'
-#' @param colour_palette *Colour palette*
+#' @param colour_palette_nominal,colour_palette_ordinal *Colour palettes (nominal and ordinal)*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
@@ -534,7 +534,8 @@ draft_report <-
            flexi = TRUE,
 
 
-           colour_palette = NULL,
+           colour_palette_nominal = NULL,
+           colour_palette_ordinal = NULL,
            colour_na = "gray90",
            colour_2nd_binary_cat = NULL,
            digits = 1,
@@ -639,7 +640,6 @@ draft_report <-
     args <- argument_validation_and_insertion(params = args)
 
 
-
     data <- ungroup_data(data)
 
 
@@ -668,27 +668,6 @@ draft_report <-
 
       uniques <- NA_character_
 
-
-      # chapter_filepaths <-
-      #   rlang::exec(
-      #     gen_qmd_chapters,
-      #     chapter_overview = chapter_overview,
-      #     data = data,
-      #     mesos_group = mesos_group,
-      #     path = path,
-      #     !!!args[!names(args) %in% c("chapter_overview", "path", "data")])
-      #
-      #
-      # report_filepath <-
-      #   rlang::exec(
-      #     gen_qmd_index,
-      #     authors = all_authors,
-      #     index_filepath = index_filepath,
-      #     chapter_filepaths = chapter_filepaths,
-      #     !!!args[!names(args) %in% c("authors", "title")],
-      #     call = rlang::caller_env())
-
-
     } else {
       # Mesos reports
       uniques <- pull_uniques(data[[args$mesos_var]])
@@ -710,8 +689,8 @@ draft_report <-
                if(is.na(uniques[.x])) {
 
                  mesos_group <- NULL
-                 path <- path
-                 args$title <- args$title
+                 # path <- path
+                 # args$title <- args$title
 
                } else {
 

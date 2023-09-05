@@ -58,6 +58,7 @@ gen_element_and_qmd_snippet2 <-
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
 
+
     stopifnot(inherits(data, "data.frame") || inherits(data, "survey"))
     data_cols <- if(inherits(data, "survey")) colnames(data$variables) else colnames(data)
 
@@ -80,41 +81,19 @@ gen_element_and_qmd_snippet2 <-
 
     if(nrow(section_key)>1) cli::cli_warn("Something weird going on in grouping.")
 
-    obj_name <- stringi::stri_c(ignore_null=TRUE, list_valid_obj_name(section_key, max_width = dots$max_width_obj),
-                               if(rlang::is_string(mesos_group)) "_", mesos_group)
+    obj_name <- stringi::stri_c(list_valid_obj_name(section_key,
+                                                    max_width = dots$max_width_obj),
+                               if(rlang::is_string(mesos_group)) "_", mesos_group,
+                               ignore_null=TRUE)
 
 
     ## Only for filenames
-    grouping_structure3 <- grouping_structure2
-    grouping_structure3[grouping_structure3 %in%
-                          c(".variable_label_prefix", ".variable_label_suffix")] <- ".variable_name"
-    grouping_structure3 <- unique(grouping_structure3)
-    grouping_structure3 <- grouping_structure3[!grouping_structure3 %in% c(".element_name")]
 
-    filename_prefix <- chapter_overview_section
-    filename_prefix <- dplyr::ungroup(filename_prefix)
-    filename_prefix <- dplyr::distinct(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure3)))
-    filename_prefix <- dplyr::arrange(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure3)))
-    filename_prefix <- dplyr::group_by(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure3)))
-    filename_prefix <- lapply(filename_prefix, unique)
-    filename_prefix <- filename_prefix[order(lengths(filename_prefix))]
-    filename_prefix <- unlist(filename_prefix)
-    filename_prefix <- unname(filename_prefix)
-    filename_prefix <- stringi::stri_sub(str = filename_prefix, from = 1, to = dots$max_width_obj)
-
-    filename_prefix_alt <- Reduce(f = intersect, strsplit(filename_prefix, split = ""))
-
-    if(length(filename_prefix_alt)>0) {
-      filename_prefix_alt <- stringi::stri_c(filename_prefix_alt, collapse = "", ignore_null = TRUE)
-      if(nchar(filename_prefix_alt)>0) {
-        filename_prefix <- filename_prefix_alt
-      }
-    }
-
-    filename_prefix <- stringi::stri_c(filename_prefix, collapse = "_", ignore_null = TRUE)
-    if(rlang::is_string(mesos_group)) filename_prefix <- stringi::stri_c(filename_prefix, "_", mesos_group)
-
-
+    filename_prefix <- make_filename_prefix(
+      grouping_structure = grouping_structure2,
+      chapter_overview_section = chapter_overview_section,
+      max_width_obj = dots$max_width_obj,
+      mesos_group = mesos_group)
 
     y_col_names <- unique(chapter_overview_section$.variable_name)
     y_col_pos <- match(y_col_names, colnames(data))
@@ -125,6 +104,19 @@ gen_element_and_qmd_snippet2 <-
       if(any(names(section_key) == ".variable_name_prefix") &&
          dplyr::n_distinct(section_key$.variable_name_prefix)==1) unique(section_key$.variable_name_prefix)
 
+    common_data_type <- get_common_data_type(data, col_names = y_col_names)
+    if(any(c("factor", "ordered") == common_data_type)) {
+      common_levels <- get_common_levels(data, col_names = y_col_names)
+
+      colour_palette <- get_colour_set(
+        x = common_levels,
+        common_data_type = common_data_type,
+        colour_palette_nominal = dots$colour_palette_nominal,
+        colour_palette_ordinal = dots$colour_palette_ordinal,
+        colour_na = dots$colour_na,
+        colour_2nd_binary_cat = dots$colour_2nd_binary_cat)
+
+    }
 
     if(stringi::stri_detect(element_name, regex="^uni_.*")) {
 
@@ -189,6 +181,7 @@ gen_element_and_qmd_snippet2 <-
             embed_cat_prop_plot_docx,
             data = data,
             dep = y_col_pos,
+            colour_palette = colour_palette,
             mesos_group = mesos_group,
             !!!dots)
         print(out_docx, target = filepaths$abs$docx)
@@ -198,6 +191,7 @@ gen_element_and_qmd_snippet2 <-
             embed_cat_prop_plot,
             data = data,
             dep = y_col_pos,
+            colour_palette = colour_palette,
             mesos_group = mesos_group,
             html_interactive = TRUE,
             !!!dots)
@@ -255,6 +249,7 @@ gen_element_and_qmd_snippet2 <-
             embed_cat_freq_plot_docx,
             data = data,
             dep = y_col_pos,
+            colour_palette = colour_palette,
             mesos_group = mesos_group,
             !!!dots)
         print(out_docx, target = filepaths$abs$docx)
@@ -264,6 +259,7 @@ gen_element_and_qmd_snippet2 <-
             embed_cat_freq_plot,
             data = data,
             dep = y_col_pos,
+            colour_palette = colour_palette,
             mesos_group = mesos_group,
             html_interactive = TRUE,
             !!!dots)
@@ -495,6 +491,7 @@ gen_element_and_qmd_snippet2 <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 !!!dots)
             print(out_docx, target = filepaths$abs$docx)
@@ -505,6 +502,7 @@ gen_element_and_qmd_snippet2 <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 html_interactive = TRUE,
                 !!!dots)
@@ -551,6 +549,7 @@ gen_element_and_qmd_snippet2 <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 !!!dots)
             print(out_docx, target = filepaths$abs$docx)
@@ -561,6 +560,7 @@ gen_element_and_qmd_snippet2 <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 html_interactive = TRUE,
                 !!!dots)
@@ -608,6 +608,7 @@ gen_element_and_qmd_snippet2 <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 inverse = TRUE,
                 !!!dots)
@@ -619,6 +620,7 @@ gen_element_and_qmd_snippet2 <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 html_interactive = TRUE,
                 inverse = TRUE,
@@ -665,6 +667,7 @@ gen_element_and_qmd_snippet2 <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 inverse = TRUE,
                 !!!dots)
@@ -676,6 +679,7 @@ gen_element_and_qmd_snippet2 <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 html_interactive = TRUE,
                 inverse = TRUE,
