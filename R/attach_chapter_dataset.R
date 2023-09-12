@@ -28,7 +28,8 @@ attach_chapter_dataset <- function(chapter_overview_chapter,
 
   saveRDS(data_chapter, file = filepath_chapter_dataset_absolute)
 
-  r_chunk_header <- stringi::stri_c("```{r, 'Import data for ",
+  r_chunk_header <- stringi::stri_c("```{r}\n",
+                                    "#| label: 'Import data for ",
                                     chapter_foldername_clean,
                                     "'}",
                                     sep="", ignore_null = TRUE)
