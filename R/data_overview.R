@@ -5,9 +5,10 @@ eval_cols <- function(x, data,
   check_data_frame(data, call = call)
   lapply(x, function(col_entry) {
       if(stringi::stri_length(col_entry)>0) {
-        expr <- stringi::stri_c(ignore_null=TRUE, 'tidyselect::eval_select(expr = rlang::expr(c(',
+        expr <- stringi::stri_c('tidyselect::eval_select(expr = rlang::expr(c(',
                             col_entry,
-                            ')), data = data)')
+                            ')), data = data)',
+                            ignore_null=TRUE)
         out <- rlang::try_fetch(eval(parse(text = expr)),
                  error = function(e) cli::cli_abort("Column {.var {col_entry}} doesn't exist in data.",
                                                     call = call)
@@ -37,12 +38,18 @@ look_for_extended <- function(data,
     .variable_type = as.character(unlist(lapply(names(data_part), function(.x) vctrs::vec_ptype_abbr(data_part[[.x]])))),
     row.names = NULL
   )
+  check_duplicates <- duplicated(x$.variable_label)
+  if(any(check_duplicates)) {
+    duplicates <- unique(x$.variable_label[check_duplicates])
+    cli::cli_warn(c("Found duplicated variable labels: {duplicates}.",
+                    "This will likely cause problems!"))
+  }
 
   if(!is.null(name_separator)) {
     if(rlang::is_character(name_separator, n = 1)) {
       x <-
-        x %>%
-        tidyr::separate_wider_delim(cols = ".variable_name",
+        tidyr::separate_wider_delim(x,
+                                    cols = ".variable_name",
                                     delim = name_separator,
                                     names = c(".variable_name_prefix", ".variable_name_suffix"),
                                     cols_remove = FALSE,
@@ -53,14 +60,15 @@ look_for_extended <- function(data,
       }
 
     } else cli::cli_abort("Non-string {.arg name_separator} currently not supported.")
-  } else x <- x %>% dplyr::mutate(.variable_name_prefix = .data$.variable_name,
-                                  .variable_name_suffix = .data$.variable_name)
+  } else x <- dplyr::mutate(x,
+                            .variable_name_prefix = .data$.variable_name,
+                            .variable_name_suffix = .data$.variable_name)
 
   if(!is.null(label_separator)) {
     if(rlang::is_character(label_separator, n = 1)) {
       x <-
-        x %>%
-        tidyr::separate_wider_delim(cols = ".variable_label",
+        tidyr::separate_wider_delim(x,
+                                    cols = ".variable_label",
                                     names = c(".variable_label_prefix", ".variable_label_suffix"),
                                     delim = label_separator,
                                     too_few = "align_end", too_many = "merge")
@@ -123,6 +131,7 @@ look_for_extended <- function(data,
 validate_labels <- function(data) {
   miss_label_vars <- data[is.na(data$.variable_label_prefix), ]
   if(nrow(miss_label_vars) > 0) cli::cli_warn("Using variable name in place of missing label for {.var {miss_label_vars$.variable_name}}.")
+  # if(data$.variable_label)
   data$.variable_label_prefix <- dplyr::if_else(!is.na(data$.variable_label_prefix), data$.variable_label_prefix, data$.variable_name)
   data$.variable_label_suffix <- dplyr::if_else(!is.na(data$.variable_label_suffix), data$.variable_label_suffix, data$.variable_name)
   data
@@ -272,7 +281,7 @@ add_element_names <- function(refined_chapter_overview, element_names) {
 #' ref_df2 <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview,
 #'                      data = ex_survey1)
 refine_chapter_overview <-
-  function(chapter_overview,
+  function(chapter_overview = NULL,
            data = NULL,
            ...,
            progress = TRUE,
@@ -285,8 +294,13 @@ refine_chapter_overview <-
 
 
   col_headers <- c("dep", "indep")
-  if(!any(colnames(chapter_overview) == "dep")) {
+  if(!rlang::is_null(chapter_overview) &&
+     !any(colnames(chapter_overview) == "dep")) {
     cli::cli_abort("{.arg chapter_overview} must contain columns `dep` (and optionally `indep`).")
+  } else {
+    if(rlang::is_null(chapter_overview)) {
+      chapter_overview <- data.frame(chapter = "All", dep = "everything()")
+    }
   }
   data_present <- !is.null(data) && is.data.frame(data)
 
@@ -334,6 +348,15 @@ refine_chapter_overview <-
 
 
   if(data_present) {
+    out$.variable_selection <-
+      stringi::stri_replace_all_fixed(out$.variable_selection,
+                                      pattern = '\"',
+                                      replacement = "'")
+    out$.variable_selection <-
+      stringi::stri_replace_all_regex(out$.variable_selection,
+                                      pattern = '[[:space:]]+',
+                                      replacement = "")
+
     out$cols <- eval_cols(x = out$.variable_selection,
                           data = data,
                           call = call)
@@ -349,7 +372,7 @@ refine_chapter_overview <-
                                           label_separator = dots$label_separator,
                                           name_separator = dots$name_separator),
                       by = dplyr::join_by(".variable_position", ".variable_name"))
-    out <-
+    out <- # Move to separate function, and add argument that defaults to TRUE
       dplyr::mutate(out,
                     .variable_label_prefix = stringi::stri_trim_both(.data$.variable_label_prefix),
                     .variable_label_prefix = stringi::stri_replace_all_regex(.data$.variable_label_prefix, pattern = "[[:space:]]+", replacement = " "),
@@ -368,9 +391,9 @@ refine_chapter_overview <-
     out <-
       tidyr::expand_grid(out, .element_name = dots$element_names)
     out <-
-      dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$groupby)))
+      dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by)))
     # out <-
-    #   dplyr::arrange(out, dplyr::pick(tidyselect::any_of(c(dots$groupby, names(dots$sort_by)))))
+    #   dplyr::arrange(out, dplyr::pick(tidyselect::any_of(c(dots$organize_by, names(dots$sort_by)))))
   }
   if(!rlang::is_null(out$chapter)) out$chapter <- factor(out$chapter, levels=unique(out$chapter))
   out

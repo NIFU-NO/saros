@@ -9,35 +9,38 @@ find_stat_config <-
            indep_n,
            indep_unique) {
 
+    categorical_types <- c("fct", "factor", "ord", "ordered", "chr", "character")
+    continuous_types <- c("numeric", "dbl", "integer", "int")
+
     stat_test <-
       dplyr::case_when(
-        .variable_type %in% c("numeric", "dbl", "integer", "int") &&
+        .variable_type %in% continuous_types &&
           dep_n > 2 && length(indep_pos) == 0 ~ "mean",
 
         dep_n == 2 && length(indep_pos) == 0 ~ "prop",
 
-        .variable_type %in% c("fct", "factor", "chr", "character") &&
+        .variable_type %in% categorical_types &&
           dep_n > 2 && length(indep_pos) == 0 ~ "chisq",
 
-        .variable_type %in% c("numeric", "dbl", "integer", "int") &&
+        .variable_type %in% continuous_types &&
           length(indep_pos) == 1 &&
-          indep_type %in% c("numeric", "dbl", "integer", "int") &&
+          indep_type %in% continuous_types &&
           indep_n >= 5 ~ "correlation",
 
-        .variable_type %in% c("numeric", "dbl", "integer", "int") &&
+        .variable_type %in% continuous_types &&
           length(indep_pos) == 1 &&
-          indep_type %in% c("fct", "factor", "chr", "character") &&
+          indep_type %in% categorical_types &&
           indep_n > 2 ~ "F",
 
-        .variable_type %in% c("numeric", "dbl", "integer", "int") &&
+        .variable_type %in% continuous_types &&
           length(indep_pos) == 1 &&
-          indep_type %in% c("fct", "factor", "chr", "character") &&
+          indep_type %in% categorical_types &&
           indep_n == 2 ~ "t",
 
-        .variable_type %in% c("fct", "factor", "character") &&
+        .variable_type %in% categorical_types &&
           dep_n >= 2 &&
           length(indep_pos) == 1 &&
-          indep_type %in% c("fct", "factor", "chr", "character") &&
+          indep_type %in% categorical_types &&
           indep_n >= 2 ~ "chisq",
 
         .default = "NA"
@@ -164,7 +167,7 @@ sigtest <-
 
     if(dep_n >= 2 &&
        (length(indep_pos) == 0 || indep_n >= 2) &&
-       (!.variable_type %in% c("fct", "factor") ||
+       (!.variable_type %in% c("fct", "factor", "ordered", "ord") ||
         all(count_uniques$.n_count >= 10)) &&
        df_main$N >= 1 &&
        min(table(data[, c(dep_pos, indep_pos)])) >= 1) {
@@ -256,8 +259,7 @@ embed_uni_sigtest <-
     if(length(indep_pos) > 1L) cli::cli_abort("{.arg indep} must be at most a single column.")
 
     data <-
-      data %>%
-      dplyr::filter(dplyr::if_all(.cols=c(dep_pos, indep_pos), ~!is.na(.x)))
+      dplyr::filter(data, dplyr::if_all(.cols=c(dep_pos, indep_pos), ~!is.na(.x)))
 
     main_question <-
       get_raw_labels(data = data, col_pos = dep_pos) %>%
@@ -270,9 +272,7 @@ embed_uni_sigtest <-
 
 
     out <-
-      dep_pos %>%
-      names() %>%
-      lapply(FUN = function(.x) {
+      lapply(names(dep_pos), FUN = function(.x) {
         col_sym <- rlang::sym(.x)
 
         rlang::inject(
@@ -283,8 +283,8 @@ embed_uni_sigtest <-
             .variable_type = .variable_type,
             indep_type = indep_type,
             !!!dots))
-      }) %>%
-      dplyr::bind_rows()
+      })
+    out <- dplyr::bind_rows(out)
     out$N <- NULL
     # names(out)[names(out) == ".variable_label"] <- main_question
 
@@ -352,21 +352,19 @@ embed_bi_sigtest <-
     indep_sym <- rlang::sym(names(indep_pos))
 
     out <-
-      dep_pos %>%
-      names() %>%
-      lapply(FUN = function(.x) {
+      lapply(names(dep_pos), FUN = function(.x) {
         col_sym <- rlang::sym(.x)
 
-
+        rlang::inject(
         sigtest(
           data = data,
           dep = !!col_sym,
           indep = !!indep_sym,
           .variable_type = .variable_type,
           indep_type = indep_type,
-          !!!dots)
-      }) %>%
-      dplyr::bind_rows()
+          !!!dots))
+      })
+    out <- dplyr::bind_rows(out)
     names(out)[names(out) == ".variable_label"] <- main_question
     if(dplyr::n_distinct(out[[main_question]])==1) out[[main_question]] <- NULL
 

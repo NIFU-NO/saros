@@ -20,7 +20,7 @@ draft_report(
   qmd_start_section_filepath = NULL,
   qmd_end_section_filepath = NULL,
   index_filename = "index.qmd",
-  groupby = c("chapter", ".variable_label_prefix", ".element_name"),
+  organize_by = c("chapter", ".variable_label_prefix", ".element_name"),
   element_names = c("uni_cat_text", "uni_cat_prop_plot", "uni_cat_freq_plot",
     "uni_cat_table", "uni_chr_table", "uni_sigtest", "hline", "bi_catcat_prop_plot",
     "bi_catcat_freq_plot", "bi_catcat_prop_plot2", "bi_catcat_freq_plot2",
@@ -95,22 +95,22 @@ draft_report(
     intro_by_prefix = "We will now look at the questions asked regarding ",
     intro_by_infix = " broken down by ", intro_by_suffix = "", by_breakdown = " by ", 
   
-      n_equal_prefix = " (N = ", n_equal_suffix = ")", table_heading_N = "Total (N)",
-    by_total = "Everyone", sigtest_prefix = "Significance testing of ", sigtest_suffix =
-    "", mesos_group_prefix = " Group: ", mesos_group_suffix = "", mesos_label_all_others
-    = "Others", empty_chunk_text = "\\nText\\n", flexi_input_chapter = "Chapter(s):",
-    flexi_input_dep = "Dependent variable(s):", flexi_input_indep =
-    "Independent variable:", flexi_input_mesos_group = "Filter:", flexi_figure_type =
-    "Figure type:", flexi_data_label = "Summary to display", 
-     flexi_showNA =
-    "Show NA (Missing)", flexi_sort_by = "Sort by", flexi_totals = "Totals", flexi_digits
-    = "Digits after decimal", flexi_table = "Table", flexi_figure = "Figure",
-    flexi_cols_variable_name = "Variable name", flexi_cols_variable_label =
+      n_equal_prefix = " (N &equals; ", n_equal_suffix = ")", table_heading_N =
+    "Total (N)", by_total = "Everyone", sigtest_prefix = "Significance testing of ",
+    sigtest_suffix = "", mesos_group_prefix = " Group: ", mesos_group_suffix = "",
+    mesos_label_all_others = "Others", empty_chunk_text = "\\nText\\n",
+    flexi_input_chapter = "Chapter(s):", flexi_input_dep = "Dependent variable(s):",
+    flexi_input_indep = "Independent variable:", flexi_input_mesos_group = "Filter:",
+    flexi_figure_type = "Figure type:", 
+     flexi_data_label = "Summary to display",
+    flexi_showNA = "Show NA (Missing)", flexi_sort_by = "Sort by", flexi_totals =
+    "Totals", flexi_digits = "Digits after decimal", flexi_table = "Table", flexi_figure
+    = "Figure", flexi_cols_variable_name = "Variable name", flexi_cols_variable_label =
     "Variable label", flexi_cols_category = "Response category", flexi_cols_count = "N",
     flexi_cols_count_se = "SE(N)", flexi_cols_proportion = "Proportion",
-    flexi_cols_proportion_se = "SE(Proportion)", flexi_cols_mean = "Mean",
-    flexi_cols_mean_se = "SE(Mean)", 
-     flexi_cols_data_label = "Data label",
+    flexi_cols_proportion_se = "SE(Proportion)", flexi_cols_mean = "Mean", 
+    
+    flexi_cols_mean_se = "SE(Mean)", flexi_cols_data_label = "Data label",
     flexi_cols_comb_categories = "Combined categories", flexi_cols_sum_value =
     "Sum of data label across combined categories", flexi_validate =
     "Error: Columns must have some categories in common.", flexi_settings = "Settings",
@@ -207,7 +207,7 @@ Path to qmd-snippet placed before/after body of all chapter qmds.}
 
 The name of the main index Quarto file (and its subfolder) used to collect all the chapters.}
 
-\item{groupby}{\emph{Grouping columns}
+\item{organize_by}{\emph{Grouping columns}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 

@@ -10,7 +10,7 @@ argument_validation_and_insertion <- function(params) {
 
     if (!validation_fun(target[[param_name]])) {
       default <- env[[param_name]]
-      cli::cli_warn(paste0("{.arg {param_name}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}). Using default: {default}"))
+      cli::cli_warn(paste0("{.arg {param_name}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}, and specified as {target[[param_name]]}). Using default: {default}"))
       default
     } else target[[param_name]]
   }
@@ -73,7 +73,7 @@ argument_validation_and_insertion <- function(params) {
       data_label = list(fun = function(x) rlang::is_character(x) && any(env$data_label == x[1])),
       colour_palette_nominal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
       colour_palette_ordinal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
-      groupby = list(fun = function(x) rlang::is_character(x)),
+      organize_by = list(fun = function(x) rlang::is_character(x)),
       showNA = list(fun = function(x) rlang::is_character(x) && any(env$showNA == x[1]))
     )
 
@@ -92,9 +92,9 @@ argument_validation_and_insertion <- function(params) {
      !any(colnames(params$data) == params$mesos_var)) {
     cli::cli_abort("{.arg mesos_var}: {.arg {params$mesos_var}} not found in data.")
   }
-  if(!all(c("chapter", ".element_name") %in% params$groupby)) {
-    cli::cli_abort(c("{.arg groupby} must contain both {.var {c('chapter', '.element_name')}}.",
-                     i = "You provided {.arg {params$groupby}}."))
+  if(!all(c("chapter", ".element_name") %in% params$organize_by)) {
+    cli::cli_abort(c("{.arg organize_by} must contain both {.var {c('chapter', '.element_name')}}.",
+                     i = "You provided {.arg {params$organize_by}}."))
   }
   if(rlang::is_null(params$chapter_overview)) {
     params$chapter_overview <-

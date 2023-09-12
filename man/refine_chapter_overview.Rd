@@ -5,7 +5,7 @@
 \title{Processes A 'chapter_overview' Data Frame}
 \usage{
 refine_chapter_overview(
-  chapter_overview,
+  chapter_overview = NULL,
   data = NULL,
   ...,
   progress = TRUE,

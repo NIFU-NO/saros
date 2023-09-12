@@ -74,11 +74,11 @@ insert_obj_in_qmd <-
 
 
     r_chunk_header_line <-
-      stringi::stri_c("```{r, '", label, "'}", ignore_null = TRUE)
+      stringi::stri_c("```{r}", ignore_null = TRUE)
 
     hashpipe_caption <-
-      if(length(caption)>0) stringi::stri_c(ignore_null=TRUE,
-                                                              "#| ", tbl_fig_prefix, "cap: '", caption, "'")
+      if(length(caption)>0) stringi::stri_c( "#| ", tbl_fig_prefix, "cap: '", caption, "'",
+                                             ignore_null=TRUE)
     hashpipe_figheight <-
       if(tbl_fig_prefix == "fig-" &&
          !is.na(figure_height)) stringi::stri_c("#| fig-height: ", figure_height, ignore_null=TRUE)

@@ -103,10 +103,8 @@ gen_qmd_chapters <-
 
 
           authors <- get_authors(data = chapter_overview_chapter, col = "authors")
-            # if(!rlang::is_null(chapter_overview_chapter$author) &&
-            #    !all(is.na(unique(chapter_overview_chapter$author)))) unique(chapter_overview_chapter$author) else ""
           chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
-                                      title = dots$title,
+                                      title = chapter_foldername,
                                       authors = authors,
                                       chapter_number = chapter_number)
 

@@ -58,7 +58,6 @@ gen_element_and_qmd_snippet2 <-
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
 
-
     stopifnot(inherits(data, "data.frame") || inherits(data, "survey"))
     data_cols <- if(inherits(data, "survey")) colnames(data$variables) else colnames(data)
 
@@ -383,7 +382,7 @@ gen_element_and_qmd_snippet2 <-
               .y <- names(name_indep)[[i]]
 
               # Early check whether x and y are the same, which saros cannot handle
-              if(is.null(y_col_names) || is.null(.x) || any(y_col_names == .x)) return("")
+              if(is.null(y_col_names) || is.null(.x) || any(y_col_names == .x)) return(data.frame())
 
               indep_pos <- match(.x, data_cols)
 
@@ -405,8 +404,9 @@ gen_element_and_qmd_snippet2 <-
                     !!!dots)
                 )
               }
-            }) %>%
-            dplyr::bind_rows()
+            })
+
+          out <- dplyr::bind_rows(out)
 
           if(nrow(out)>0) {
             writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)

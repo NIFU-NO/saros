@@ -25,7 +25,9 @@ create_htaccess <-
                                                   all = FALSE,
                                                   recurse = FALSE,
                                                   type = "directory")),
-           local_main_htpasswd_path = ".main_htpasswd_public",
+           local_main_htpasswd_path = file.path(Sys.getenv("USERPROFILE"), "NIFU",
+                                                "Metode - Sensitivt - Sensitivt",
+                                                ".main_htpasswd_public"),
            universal_usernames = c("admin", "nifu")) {
 
     if(!rlang::is_string(remote_basepath)) cli::cli_abort("{.arg remote_basepath} must be a string.")
@@ -64,5 +66,87 @@ AddHandler server-parsed .html')
                   fileEncoding = "UTF-8")
       # close(con)
     })
-    paste0(local_basepath, .Platform$file.sep, local_subfolders, "/.htaccess")
+    stringi::stri_c(local_basepath, .Platform$file.sep, local_subfolders, "/.htaccess",
+                    ignore_null = TRUE)
   }
+
+
+add_entry_local_main_htpasswd <-
+  function(username = stringi::stri_c(sample(letters, size=5, replace=TRUE), collapse=""),
+           password = stringi::stri_c(sample(letters, size=5, replace=TRUE), collapse=""),
+           local_main_htpasswd_public_path =
+             file.path(Sys.getenv("USERPROFILE"), "NIFU",
+                       "Metode - Sensitivt - Sensitivt",
+                       ".main_htpasswd_public"),
+           local_main_htpasswd_private_path =
+             file.path(Sys.getenv("USERPROFILE"), "NIFU",
+                       "Metode - Sensitivt - Sensitivt",
+                       ".main_htpasswd_private"),
+           gensalt_log_rounds = 12) {
+
+    if(!file.exists(local_main_htpasswd_private_path)) {
+      cli::cli_abort(c("Cannot find {.arg local_main_htpasswd_private_path}.",
+                       "An empty file must be created manually first, due to security precautions.",
+                       "Check that the file has been made available to you"))
+    }
+    if(!file.exists(local_main_htpasswd_public_path)) {
+      cli::cli_abort(c("Cannot find {.arg local_main_htpasswd_public_path}.",
+                       "An empty file must be created manually first, due to security precautions.",
+                       "Check that the file has been made available to you"))
+    }
+    if(length(username) != length(password)) cli::cli_abort("{.arg username} length does not match {.arg password} length.")
+
+    handle_credentials <- function(username = username,
+                                   password = password,
+                                   local_main_htpasswd_path) {
+
+      credentials_added <- stringi::stri_c(username, ":", password, collapse="\n")
+      cat(credentials_added, file = local_main_htpasswd_path, append = TRUE)
+    }
+
+      handle_credentials(local_main_htpasswd_path = local_main_htpasswd_private_path)
+      password <- unlist(lapply(password, function(x) bcrypt::hashpw(password = x,
+                                 salt = bcrypt::gensalt(log_rounds = gensalt_log_rounds))))
+      handle_credentials(local_main_htpasswd_path = local_main_htpasswd_public_path)
+    cli::cli_inform("Successfully registered password credentials.")
+  }
+
+
+#' Create a _headers file for Netlify publication
+#'
+#' @param site_path String, path to where to locate the _headers file
+#' @param mesos_paths Character vector of relative paths within site_path to the locked directories
+#' @param mesos_usernames,mesos_passwords Character vector of respective usernames and passwords for the mesos_paths
+#' @param global_username,global_password String, username and password that always gives access to a mesos_paths path. Defaults to "admin"
+#'
+#' @return String, the path to the _headers file
+#' @export
+#'
+#' @examples create__headers_file(site_path=tempdir())
+create__headers_file <- function(site_path="_site",
+                                 mesos_paths=paste0("rapporter/Barnehageleder/2022H/mesos/",
+                                                    c("BI", "DMMH", "NHH_og_AFF", "OsloMet", "UiA", "UiT", "USN")),
+                                 mesos_usernames=c("BI", "DMMH", "NHH_og_AFF", "OsloMet", "UiA", "UiT", "USN"),
+                                 mesos_passwords=c("BI", "DMMH", "NHH_og_AFF", "OsloMet", "UiA", "UiT", "USN"),
+                                 global_username="admin",
+                                 global_password="arturead") {
+
+  if(length(mesos_paths) != length(mesos_usernames) ||
+     length(mesos_usernames) != length(mesos_passwords)) {
+    cli::cli_abort("Lengths of {.arg mesos_paths}, {.arg mesos_usernames}, and {.arg mesos_passwords} do not match.")
+  }
+  global_credentials <- stringi::stri_c(
+    global_username, ":", global_password,
+    ignore_null = TRUE, collapse = " ")
+  out <- stringi::stri_c(mesos_paths, "/*\n  Basic-Auth: ",
+                         mesos_usernames, ":", mesos_passwords, " ",
+                         global_credentials, "\n",
+                         ignore_null = TRUE, collapse = "")
+
+  out_file <- file.path(site_path, "_headers")
+  cat(out, file=out_file, sep = "\n")
+
+  out_file
+
+
+}

@@ -32,7 +32,7 @@ get_data_label_opts <- function() {
 #        index_filename = "index.qmd",
 #        qmd_start_section_filepath = NULL,
 #        qmd_end_section_filepath = NULL,
-#        groupby = c("chapter", ".variable_name"),
+#        organize_by = c("chapter", ".variable_name"),
 #        sort_by = ".upper",
 #        data_label = .saros.env$data_label_opts,
 #        always_show_bi_for_by = c(),

@@ -271,7 +271,7 @@
 #'
 #'   If N is below this value, p-value will not be shown.
 #'
-#' @param groupby *Grouping columns*
+#' @param organize_by *Grouping columns*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
@@ -455,7 +455,7 @@ draft_report <-
            qmd_start_section_filepath = NULL,
            qmd_end_section_filepath = NULL,
            index_filename = "index.qmd",
-           groupby = c("chapter", ".variable_label_prefix", ".element_name"),
+           organize_by = c("chapter", ".variable_label_prefix", ".element_name"),
 
            element_names =
              c(#"opening_text",
@@ -586,7 +586,7 @@ draft_report <-
                   intro_by_infix = " broken down by ",
                   intro_by_suffix = "",
                   by_breakdown = " by ",
-                  n_equal_prefix = " (N = ",
+                  n_equal_prefix = " (N &equals; ",
                   n_equal_suffix = ")",
                   table_heading_N = "Total (N)",
                   by_total = "Everyone",
@@ -686,13 +686,12 @@ draft_report <-
              FUN = function(.x) {
 
 
-               if(is.na(uniques[.x])) {
+               if(is.na(uniques[.x])) { # Macro
 
                  mesos_group <- NULL
-                 # path <- path
                  # args$title <- args$title
 
-               } else {
+               } else {  # Mesos
 
                  mesos_group <- uniques[.x]
                  path <- file.path(path, uniques[.x])
