@@ -3,14 +3,15 @@ eval_cols <- function(x, data,
                       call = rlang::caller_env()) {
   check_string(x = x, n = NULL, null.ok = FALSE, call = call)
   check_data_frame(data, call = call)
-  lapply(x, function(col_entry) {
-      if(stringi::stri_length(col_entry)>0) {
+  x_cond_evaluate <- !is.na(x) && stringi::stri_length(x)>0
+  lapply(seq_along(x), function(i) {
+      if(x_cond_evaluate[i]) {
         expr <- stringi::stri_c('tidyselect::eval_select(expr = rlang::expr(c(',
-                            col_entry,
+                            x[i],
                             ')), data = data)',
                             ignore_null=TRUE)
         out <- rlang::try_fetch(eval(parse(text = expr)),
-                 error = function(e) cli::cli_abort("Column {.var {col_entry}} doesn't exist in data.",
+                 error = function(e) cli::cli_abort("Column {.var {x[i]}} doesn't exist in data.",
                                                     call = call)
           )
 
@@ -205,7 +206,7 @@ remove_non_significant_bivariates <-
             dplyr::rowwise() %>%
             dplyr::group_map(.keep = TRUE, .f = function(df_indep_row, indep_df_key) {
 
-              if(df_indep_row$.variable_name != df_col_row$.variable_name) {
+              if(!is.na(df_col_row$.variable_name) && df_indep_row$.variable_name != df_col_row$.variable_name) {
 
                 df_chitest <-
                   data[!is.na(data[[df_col_row$.variable_name]]) & !is.na(data[[df_indep_row$.variable_name]]),
@@ -339,8 +340,8 @@ refine_chapter_overview <-
                                    false = .data$.variable_selection))
   out <-
     dplyr::distinct(out, .keep_all = TRUE)
-  out <-
-    dplyr::filter(out, !.data$.variable_selection == "" & !is.na(.data$.variable_selection))
+  # out <-
+  #   dplyr::filter(out, !.data$.variable_selection == "" & !is.na(.data$.variable_selection))
   out <-
     dplyr::arrange(out, .data$.variable_role)
   out <-

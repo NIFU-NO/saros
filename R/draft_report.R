@@ -651,15 +651,23 @@ draft_report <-
     #     .fns = ~forcats::fct_rev(.x)))
     # }
 
-    chapter_overview <- # Only run refine if not containing .variable_name, etc
-      rlang::exec(
-        refine_chapter_overview,
-        !!!args) %>%
-      dplyr::filter(.data$.variable_role == "dep") ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
+    if(!all(names(chapter_overview) %in% c("chapter",
+                                           ".variable_role", ".variable_selection", ".variable_position",
+                                           ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
+                                           ".variable_label_prefix", ".variable_label_suffix",
+                                           ".variable_type", ".variable_group_id",
+                                           ".element_name", "indep_cols_df"))) {
+      chapter_overview <-
+        rlang::exec(
+          refine_chapter_overview,
+          !!!args)
+    }
+    chapter_overview <- chapter_overview[chapter_overview$.variable_role == "dep", drop=FALSE] ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
 
 
+    chapter_overview_indep <- chapter_overview[chapter_overview$.variable_role != "dep", drop=FALSE]
 
-    if(nrow(chapter_overview)==0) cli::cli_abort("{.var chapter_overview} is empty! Something is not right. Are there no factors in your data? Consider `chapter_overview=NULL`")
+    if(nrow(chapter_overview)==0) cli::cli_abort("{.var chapter_overview} is empty! Something is not right. Are there no factors in your data? Consider `chapter_overview=NULL` for everything in a single phantom chapter")
 
     all_authors <- get_authors(data = chapter_overview, col="author")
 
