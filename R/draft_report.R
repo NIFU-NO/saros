@@ -305,7 +305,7 @@
 #'
 #'   `scalar<logical>` // *default:* `FALSE`
 #'
-#'   Whether to save in each chapter folder an Rds-file with the chapter-specific dataset, and load it at the top of each QMD-file.
+#'   Whether to save in each chapter folder an 'Rds'-file with the chapter-specific dataset, and load it at the top of each QMD-file.
 #'
 #' @param auxiliary_variables *Auxiliary variables to be included in datasets*
 #'

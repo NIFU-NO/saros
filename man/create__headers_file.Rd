@@ -6,10 +6,9 @@
 \usage{
 create__headers_file(
   site_path = "_site",
-  mesos_paths = paste0("rapporter/Barnehageleder/2022H/mesos/", c("BI", "DMMH",
-    "NHH_og_AFF", "OsloMet", "UiA", "UiT", "USN")),
-  mesos_usernames = c("BI", "DMMH", "NHH_og_AFF", "OsloMet", "UiA", "UiT", "USN"),
-  mesos_passwords = c("BI", "DMMH", "NHH_og_AFF", "OsloMet", "UiA", "UiT", "USN"),
+  mesos_paths = paste0("rapporter/Barnehageleder/2022H/mesos/Uni of ", LETTERS[1:6]),
+  mesos_usernames = paste0("Uni of ", LETTERS[1:6]),
+  mesos_passwords = mesos_usernames,
   global_username = "admin",
   global_password = "arturead"
 )

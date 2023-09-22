@@ -9,7 +9,7 @@ find_stat_config <-
            indep_n,
            indep_unique) {
 
-    categorical_types <- c("fct", "factor", "ord", "ordered", "chr", "character")
+    categorical_types <- c("fct", "factor", "ord", "ordered")
     continuous_types <- c("numeric", "dbl", "integer", "int")
 
     stat_test <-
@@ -45,9 +45,9 @@ find_stat_config <-
 
         .default = "NA"
       )
-    if(stat_test == "NA") {
+    if(stat_test == "NA" && .variable_type != "chr") {
       error_indep_str <- if(length(indep_pos) == 1) stringi::stri_c(ignore_null=TRUE, " and {.arg {indep_type}} ({.arg {indep_pos}})")
-      cli::cli_warn(stringi::stri_c(ignore_null=TRUE, "Statistical test not found for {.arg { .variable_type}} ({.arg {dep_pos}}, n_unique={.var {dep_n}})", error_indep_str, "."), call = call)
+      cli::cli_warn("Statistical test not found for {.arg { .variable_type}} ({.arg {dep_pos}}, n_unique={.var {dep_n}}){error_indep_str}.")
     }
 
     lvls <- dep_unique %>% as.character()
@@ -126,6 +126,7 @@ sigtest <-
       dplyr::mutate(dplyr::across(c({{dep}}, {{indep}}) & tidyselect::where(~is.factor(.x)), ~forcats::fct_drop(.x)))
 
     number_rows <- nrow(data)
+    if(is.null(number_rows)) browser()
     number_rows_by_group <- min(table(data[,c(dep_pos, indep_pos)]))
 
     var_labels <-
@@ -135,9 +136,9 @@ sigtest <-
 
     if(is.null(.variable_type)) {
       .variable_type <- class(data[[dep_pos]])
-    } else if(.variable_type == "int" && class(data[[dep_pos]]) %in% c("factor")) {
+    } else if(.variable_type == "int" && any(class(data[[dep_pos]]) %in% c("factor", "ordered"))) {
       data[[dep_pos]] <- as.numeric(data[[dep_pos]])
-    } else if(.variable_type %in% c("fct", "ord") && class(data[[dep_pos]]) %in% c("integer", "numeric")) {
+    } else if(.variable_type %in% c("fct", "ord") && any(class(data[[dep_pos]]) %in% c("integer", "numeric"))) {
       data[[dep_pos]] <- as.factor(data[[dep_pos]])
     }
     dep_n <- dplyr::n_distinct(data[[dep_pos]], na.rm = TRUE)
@@ -183,16 +184,23 @@ sigtest <-
                          indep_n = indep_n,
                          indep_unique = unique(data[[indep_pos]]))
 
+      if(stat_config$test == "NA") return(NULL)
       estimate <-
         infer::specify(data,
                        response = {{dep}},
                        explanatory = {{indep}},
                        success = stat_config$success)
+
+      tryCatch({
       estimate <-
         infer::calculate(estimate,
                          stat = stat_config$test,
                          order = stat_config$order_lvls) %>%
         suppressWarnings()
+      }, error = function(e) {
+        print(stat_config)
+        browser()
+        })
 
       null_dist <-
         infer::specify(data,

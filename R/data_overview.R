@@ -159,20 +159,20 @@ attach_indep <- function(refined_chapter_overview) {
 
 
 find_test <- function(y, x) {
+
+  chisq_test2 <- function(...) stats::chisq.test(table(...))
+
   if((inherits(y, what = "double") ||
       inherits(y, what = "integer")) &&
      (inherits(x, what = "double") ||
       inherits(x, what = "integer"))) return(stats::cor.test)
 
-  if((inherits(y, what = "factor") ||
-      inherits(y, what = "character")) &&
-     (inherits(x, what = "factor") ||
-      inherits(x, what = "character"))) return(stats::chisq.test)
+  if(inherits(y, what = "factor") &&
+     inherits(x, what = "factor")) return(chisq_test2)
 
   if((inherits(y, what = "double") ||
       inherits(y, what = "integer")) &&
-     (inherits(x, what = "factor") ||
-      inherits(x, what = "character"))) return(stats::t.test)
+     inherits(x, what = "factor")) return(stats::t.test)
 
 }
 
@@ -222,7 +222,7 @@ remove_non_significant_bivariates <-
 
 
 
-                  stattest <- find_test(y=df_chitest[[df_col_row$.variable_name]],
+                  stattest <- find_test(y = df_chitest[[df_col_row$.variable_name]],
                                         x = df_chitest[[df_indep_row$.variable_name]])
 
                   df_indep_row$chi_p <-

@@ -110,7 +110,7 @@ gen_qmd_chapters <-
 
           chapter_contents <-
             rlang::exec(
-              gen_qmd_structure2,
+              gen_qmd_structure,
               data = data,
               chapter_overview = chapter_overview_chapter,
               mesos_group = mesos_group,

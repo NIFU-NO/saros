@@ -31,7 +31,7 @@ attach_chapter_dataset <- function(chapter_overview_chapter,
   r_chunk_header <- stringi::stri_c("```{r}\n",
                                     "#| label: 'Import data for ",
                                     chapter_foldername_clean,
-                                    "'}",
+                                    "'",
                                     sep="", ignore_null = TRUE)
   import_code <- stringi::stri_c("`data_",
                                  chapter_foldername_clean,

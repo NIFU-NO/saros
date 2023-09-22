@@ -1,5 +1,5 @@
 #' @keywords internal
-gen_qmd_structure2 <-
+gen_qmd_structure <-
   function(chapter_overview,
            data,
            mesos_group = NULL,
@@ -12,7 +12,7 @@ gen_qmd_structure2 <-
                         allow_unique_overrides = FALSE)
 
 
-  gen_group_structure2 <- function(grouped_data,
+  gen_group_structure <- function(grouped_data,
                                   level = 1,
                                   grouping_structure,
                                   level_values = character()) {
@@ -104,7 +104,7 @@ gen_qmd_structure2 <-
 
                     qmd_snippet <-
                       rlang::exec(
-                      gen_element_and_qmd_snippet2,
+                      gen_element_and_qmd_snippet,
                         chapter_overview_section = .x,
                         data = data_for_all,
                         mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
@@ -126,7 +126,7 @@ gen_qmd_structure2 <-
                   if(nrow(data_for_mesos) > 0) {
                     qmd_snippet_mesos <-
                       rlang::exec(
-                      gen_element_and_qmd_snippet2,
+                      gen_element_and_qmd_snippet,
                         chapter_overview_section = .x,
                         data = data_for_mesos,
                         mesos_var = dots$mesos_var,
@@ -166,7 +166,7 @@ gen_qmd_structure2 <-
 
       output <- # Recursive call
         stringi::stri_c(output,
-                        gen_group_structure2(grouped_data = sub_df,
+                        gen_group_structure(grouped_data = sub_df,
                                             level = level + 1,
                                             grouping_structure = grouping_structure,
                                             level_values = level_values),
@@ -186,7 +186,7 @@ gen_qmd_structure2 <-
     dplyr::group_by(dplyr::pick(tidyselect::all_of(grouping_structure))) %>%
     dplyr::distinct(dplyr::pick(tidyselect::all_of(grouping_structure)))
 
-  gen_group_structure2(grouped_data = grouped_data,
+  gen_group_structure(grouped_data = grouped_data,
                       grouping_structure = grouping_structure)
 }
 

@@ -11,8 +11,18 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Version 1.0 (Spørringene)
-3   functions to simplify copying of files? in saros.struct
+# Version 1.0
+1   Must allow chapter in chapter_overview with NA in dep/indep: These are manually created chapters. Numbering must still work.
+1   Methodize
+3   functions to simplify copying of files? 
+    in saros.struct
+    in nifutheme (resources)
+2   Test replace_docx_imgs_with_mscharts
+3   reformat_qmd_from_docx_copy() og split_qmd_to_chapters()
+        Sjekk slides
+1   methodchapter_inlines.R and methodchapter.qmd
+1   SSN: Avoid H2023
+1   Argument: drop empty sections before rendering (in the render_site())
 
 # Chapter overview
 1   not keeping significant relationships!
@@ -36,11 +46,19 @@ knitr::opts_chunk$set(echo = TRUE)
 2   for_end_user article
 
 
-# bi_sigtest
+# Sigtest
+2   waning: n min(table(data[, c(dep_pos, indep_pos)])) :
+  no non-missing arguments to min; returning Inf
+    Why would data be empty?
+2 Strange error without trace:
+    Error in sample.int(length(x), size, replace, prob) : 
+  NA in probability vector
 1   no pval is showing!
     hide_sigtest_if_n_below seems too strict?
     Hide entire table if nothing to display?
 3   overkill with main_question in label + as label-column header
+3   variable	.variable_label	test	stat	p
+        - Have some translations-headers?
 
 # mesos
 
@@ -152,8 +170,20 @@ knitr::opts_chunk$set(echo = TRUE)
 4   automate copying of .htaccess and .htpasswd files to subfolders
 
 # Stuff partially out of my control:
+2   RStudio Quarto: Copying table from Word into Visual editor results in empty cols and rows
+2   RStudio Quarto: Copying figure from Word into Visual editor results in image not found
+
 4   Issue at <https://github.com/tidymodels/infer> about annoying warning.
 4   Issue at Quarto-cli for: If processing fails, it leaves a temporary .rmarkdown file which if not manually deleted will cause the following error on the next rendering: "The name of the input file cannot contain the special shell characters: [ \<\>()\|:&;#?\*']"
+
+
+# Version-naming system:
+-   V1.0.0:   Cay G.
+-   V1.1.0:   Siv-Elisabeth S.
+-   V1.2.0:   Ann Cecilie 
+-   V1.3.0:   Cathrine P.
+-   V1.4.0:   Torstein de B
+
 
 # Version 3.0
 

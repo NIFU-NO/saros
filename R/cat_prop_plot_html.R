@@ -47,10 +47,10 @@ prep_cat_prop_plot_html <-
       dplyr::mutate(
         Tooltip = # Tooltip is opposite of the regular display
           if (prop_family) {
-            sprintf(fmt = "%s: %.0f", .data[[".category"]], .data[[".count"]])
+            sprintf(fmt = "%s\nN = %.0f", .data[[".category"]], .data[[".count"]])
           } else {
             sprintf(
-              fmt = stringi::stri_c(ignore_null=TRUE, "%s: %.", dots$digits, "f%%"),
+              fmt = stringi::stri_c("%s\nP = %.", dots$digits, "f%%", ignore_null=TRUE),
               .data[[".category"]], .data[[".proportion"]] * 100
             )
           },

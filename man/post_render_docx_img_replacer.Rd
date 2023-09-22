@@ -4,10 +4,19 @@
 \alias{post_render_docx_img_replacer}
 \title{Post-Render All docx-files Found in The Output Folder To Replace Images with Mscharts}
 \usage{
-post_render_docx_img_replacer(path = Sys.getenv("QUARTO_PROJECT_OUTPUT_DIR"))
+post_render_docx_img_replacer(
+  site_dir = fs::path(Sys.getenv("QUARTO_PROJECT_OUTPUT_DIR"), "reports", "report"),
+  site_mesos_dir = fs::path(site_dir, "mesos"),
+  chart_dir = fs::path(Sys.getenv("QUARTO_PROJECT_OUTPUT_DIR"), "..", "reports",
+    "report"),
+  chart_mesos_dir = fs::path(chart_dir, "mesos"),
+  delete_mschart_files = FALSE
+)
 }
 \arguments{
-\item{path}{String, path to _site output folder}
+\item{site_dir, site_mesos_dir, chart_dir, chart_mesos_dir}{String. Paths to the site (and mesos subfolder) with the docx files where the images are to be replaced, and paths to where to find the docx files with mscharts to be replaced with can be found.}
+
+\item{delete_mschart_files}{Flag. Whether to delete the mschart docx files after succesful copying into the docx files. Defaults to FALSE.}
 }
 \value{
 Nothing, side-effects only.

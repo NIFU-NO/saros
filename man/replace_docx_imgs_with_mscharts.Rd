@@ -4,10 +4,18 @@
 \alias{replace_docx_imgs_with_mscharts}
 \title{Replace Images in A Quarto-Generated docx-file with Mschart docx-files}
 \usage{
-replace_docx_imgs_with_mscharts(file)
+replace_docx_imgs_with_mscharts(
+  main_file,
+  chart_dir = fs::path_ext_remove(main_file),
+  delete_mschart_files = FALSE
+)
 }
 \arguments{
-\item{file}{String path to a docx-file which has images that will be replaced}
+\item{main_file}{docx file where images are to be replaced with mscharts}
+
+\item{chart_dir}{Directory path to where the mscharts as docx files can be found.}
+
+\item{delete_mschart_files}{Flag. Whether to delete the mschart docx files after insertion. Defaults to FALSE.}
 }
 \value{
 String, path to input file.

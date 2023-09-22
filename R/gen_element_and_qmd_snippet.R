@@ -40,7 +40,7 @@ compare_many <- function(x) {
 #' @importFrom rlang !!!
 #' @keywords internal
 #'
-gen_element_and_qmd_snippet2 <-
+gen_element_and_qmd_snippet <-
   function(chapter_overview_section,
            element_name = "uni_cat_prop_plot",
            data,
@@ -70,12 +70,12 @@ gen_element_and_qmd_snippet2 <-
 
 
     grouping_structure <- dplyr::group_vars(chapter_overview_section)
-    grouping_structure2 <- grouping_structure[!grouping_structure %in% "chapter"]
+    grouping_structure <- grouping_structure[!grouping_structure %in% "chapter"]
 
     section_key <- chapter_overview_section
     section_key <- dplyr::ungroup(section_key)
-    section_key <- dplyr::distinct(section_key, dplyr::pick(tidyselect::all_of(grouping_structure2)))
-    section_key <- dplyr::group_by(section_key, dplyr::pick(tidyselect::all_of(grouping_structure2)))
+    section_key <- dplyr::distinct(section_key, dplyr::pick(tidyselect::all_of(grouping_structure)))
+    section_key <- dplyr::group_by(section_key, dplyr::pick(tidyselect::all_of(grouping_structure)))
 
 
     if(nrow(section_key)>1) cli::cli_warn("Something weird going on in grouping.")
@@ -89,7 +89,7 @@ gen_element_and_qmd_snippet2 <-
     ## Only for filenames
 
     filename_prefix <- make_filename_prefix(
-      grouping_structure = grouping_structure2,
+      grouping_structure = grouping_structure,
       chapter_overview_section = chapter_overview_section,
       max_width_obj = dots$max_width_obj,
       mesos_group = mesos_group)
@@ -324,6 +324,7 @@ gen_element_and_qmd_snippet2 <-
             .variable_type = unique(chapter_overview_section$.variable_type),
             mesos_group = mesos_group,
             !!!dots)
+        if(nrow(out)==0) return("<!--# No uni_sigtest to return  -->")
         saveRDS(out, file = filepaths$abs$rds)
         writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
 
