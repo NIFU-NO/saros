@@ -9,6 +9,7 @@ embed_cat_freq_plot(
   ...,
   dep = tidyselect::everything(),
   indep = NULL,
+  colour_palette = NULL,
   mesos_group = NULL,
   html_interactive = TRUE,
   inverse = FALSE,
@@ -35,13 +36,19 @@ Arguments forwarded to the corresponding functions that create the elements.}
 
 Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
 
+\item{colour_palette}{Character vector of colour codes.}
+
 \item{mesos_group}{\emph{Specific group to compare with}
 
 \verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
 
 Both the absolute and relative folderpaths are required, as strings.}
 
-\item{html_interactive}{Flag, defaults to TRUE}
+\item{html_interactive}{\emph{Toggle interactive plot}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether plot is to be interactive (ggiraph) or static (ggplot2).}
 
 \item{inverse}{Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.}
 

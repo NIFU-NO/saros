@@ -9,6 +9,8 @@ gen_element_and_qmd_snippet(
   element_name = "uni_cat_prop_plot",
   data,
   mesos_group = NULL,
+  chapter_folderpath_absolute,
+  chapter_foldername,
   element_folderpath_absolute,
   element_folderpath_relative,
   grouping_structure = NULL,

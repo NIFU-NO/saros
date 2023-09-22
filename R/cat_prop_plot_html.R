@@ -13,20 +13,21 @@
 prep_cat_prop_plot_html <-
   function(data,
            ...,
+           colour_palette = NULL,
            inverse = FALSE,
            call = rlang::caller_env()) {
 
 
-    dots <- update_dots(dots = rlang::list2(...), caller_function = "cat_prop_plot")
+    dots <- update_dots(dots = rlang::list2(...),
+                        caller_function = "cat_prop_plot")
 
 
-    colour_palette <-
-      get_colour_set(
-        x = levels(data[[".category"]]),
-        user_colour_set = dots$colour_palette,
-        colour_na = dots$colour_na,
-        colour_2nd_binary_cat = dots$colour_2nd_binary_cat
-      )
+    if(is.null(colour_palette)) {
+      n <- length(levels(data[[".category"]]))
+      hues <- seq(15, 375, length = n + 1)
+      colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+    }
+
 
     multi <- length(colour_palette) > 2
 
@@ -46,10 +47,10 @@ prep_cat_prop_plot_html <-
       dplyr::mutate(
         Tooltip = # Tooltip is opposite of the regular display
           if (prop_family) {
-            sprintf(fmt = "%s: %.0f", .data[[".category"]], .data[[".count"]])
+            sprintf(fmt = "%s\nN = %.0f", .data[[".category"]], .data[[".count"]])
           } else {
             sprintf(
-              fmt = stringi::stri_c(ignore_null=TRUE, "%s: %.", dots$digits, "f%%"),
+              fmt = stringi::stri_c("%s\nP = %.", dots$digits, "f%%", ignore_null=TRUE),
               .data[[".category"]], .data[[".proportion"]] * 100
             )
           },
@@ -161,6 +162,7 @@ prep_cat_prop_plot_html <-
 #' @inheritParams draft_report
 #' @inheritParams summarize_data
 #' @inheritParams gen_qmd_chapters
+#' @param colour_palette Character vector of colour codes.
 #' @param inverse Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.
 #' @param html_interactive *Toggle interactive plot*
 #'
@@ -181,6 +183,7 @@ embed_cat_prop_plot <-
            ...,
            dep = tidyselect::everything(),
            indep = NULL,
+           colour_palette = NULL,
            mesos_group = NULL,
            html_interactive = TRUE,
            inverse = FALSE,
@@ -223,6 +226,7 @@ embed_cat_prop_plot <-
         if (html_interactive) prep_cat_prop_plot_html else prep_cat_prop_plot_pdf,
         data = data_out,
         inverse = inverse,
+        colour_palette = colour_palette,
         !!!dots
       )
 

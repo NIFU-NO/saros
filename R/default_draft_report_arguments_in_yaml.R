@@ -16,7 +16,7 @@ write_default_draft_report_args <-
     args <- args[!names(args) %in% c("data", "...", "chapter_overview")]
     args <- lapply(args, eval)
     args <- yaml::as.yaml(args)
-    fs::dir_create(fs::path_dir(path), recurse = TRUE)
+    dir.create(fs::path_dir(path), recursive = TRUE, showWarnings = FALSE)
     cat(args, file = path)
     path
   }

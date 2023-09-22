@@ -47,7 +47,7 @@ library(dplyr)
 #                           chapter_overview =
 #                             saros::ex_survey_ch_overview %>%
 #                             saros::refine_chapter_overview(data = saros::ex_survey1,
-#                                                         groupby = c("chapter", ".variable_label_prefix"),
+#                                                         organize_by = c("chapter", ".variable_label_prefix"),
 #                                                         label_separator = " - ",
 #                                                         name_separator = "_"),
 #                           data = saros::ex_survey1,

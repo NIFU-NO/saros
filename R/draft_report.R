@@ -223,7 +223,7 @@
 #'
 #'   Font size for all other text.
 #'
-#' @param colour_palette *Colour palette*
+#' @param colour_palette_nominal,colour_palette_ordinal *Colour palettes (nominal and ordinal)*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
@@ -271,7 +271,7 @@
 #'
 #'   If N is below this value, p-value will not be shown.
 #'
-#' @param groupby *Grouping columns*
+#' @param organize_by *Grouping columns*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
@@ -305,7 +305,7 @@
 #'
 #'   `scalar<logical>` // *default:* `FALSE`
 #'
-#'   Whether to save in each chapter folder an Rds-file with the chapter-specific dataset, and load it at the top of each QMD-file.
+#'   Whether to save in each chapter folder an 'Rds'-file with the chapter-specific dataset, and load it at the top of each QMD-file.
 #'
 #' @param auxiliary_variables *Auxiliary variables to be included in datasets*
 #'
@@ -455,7 +455,7 @@ draft_report <-
            qmd_start_section_filepath = NULL,
            qmd_end_section_filepath = NULL,
            index_filename = "index.qmd",
-           groupby = c("chapter", ".variable_label_prefix", ".element_name"),
+           organize_by = c("chapter", ".variable_label_prefix", ".element_name"),
 
            element_names =
              c(#"opening_text",
@@ -534,7 +534,8 @@ draft_report <-
            flexi = TRUE,
 
 
-           colour_palette = NULL,
+           colour_palette_nominal = NULL,
+           colour_palette_ordinal = NULL,
            colour_na = "gray90",
            colour_2nd_binary_cat = NULL,
            digits = 1,
@@ -585,7 +586,7 @@ draft_report <-
                   intro_by_infix = " broken down by ",
                   intro_by_suffix = "",
                   by_breakdown = " by ",
-                  n_equal_prefix = " (N = ",
+                  n_equal_prefix = " (N &equals; ",
                   n_equal_suffix = ")",
                   table_heading_N = "Total (N)",
                   by_total = "Everyone",
@@ -639,7 +640,6 @@ draft_report <-
     args <- argument_validation_and_insertion(params = args)
 
 
-
     data <- ungroup_data(data)
 
 
@@ -668,27 +668,6 @@ draft_report <-
 
       uniques <- NA_character_
 
-
-      # chapter_filepaths <-
-      #   rlang::exec(
-      #     gen_qmd_chapters,
-      #     chapter_overview = chapter_overview,
-      #     data = data,
-      #     mesos_group = mesos_group,
-      #     path = path,
-      #     !!!args[!names(args) %in% c("chapter_overview", "path", "data")])
-      #
-      #
-      # report_filepath <-
-      #   rlang::exec(
-      #     gen_qmd_index,
-      #     authors = all_authors,
-      #     index_filepath = index_filepath,
-      #     chapter_filepaths = chapter_filepaths,
-      #     !!!args[!names(args) %in% c("authors", "title")],
-      #     call = rlang::caller_env())
-
-
     } else {
       # Mesos reports
       uniques <- pull_uniques(data[[args$mesos_var]])
@@ -707,26 +686,18 @@ draft_report <-
              FUN = function(.x) {
 
 
-               if(is.na(uniques[.x])) {
+               if(is.na(uniques[.x])) { # Macro
 
                  mesos_group <- NULL
-                 path <- path
-                 args$title <- args$title
-                 index_filepath <- file.path(path,
-                                             args$index_filename)
+                 # args$title <- args$title
 
-               } else {
+               } else {  # Mesos
 
                  mesos_group <- uniques[.x]
                  path <- file.path(path, uniques[.x])
                  args$title <- stringi::stri_c(args$title,
                                           uniques[.x],
                                           ignore_null=TRUE)
-                 index_filepath <- file.path(path,
-                                             stringi::stri_c(uniques[.x], # Omit this?
-                                                             "_",
-                                                             args$index_filename,
-                                                             ignore_null=TRUE))
 
                }
 
@@ -745,7 +716,7 @@ draft_report <-
                    gen_qmd_index,
                    title = args$title,
                    authors = all_authors,
-                   index_filepath = index_filepath,
+                   index_filepath = file.path(path, args$index_filename),
                    chapter_filepaths = chapter_filepaths,
                    !!!args[!names(args) %in% c("title", "authors")],
                    call = rlang::caller_env())

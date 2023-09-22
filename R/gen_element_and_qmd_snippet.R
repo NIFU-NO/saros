@@ -45,6 +45,8 @@ gen_element_and_qmd_snippet <-
            element_name = "uni_cat_prop_plot",
            data,
            mesos_group = NULL,
+           chapter_folderpath_absolute,
+           chapter_foldername,
            element_folderpath_absolute,
            element_folderpath_relative,
            grouping_structure = NULL,
@@ -53,64 +55,44 @@ gen_element_and_qmd_snippet <-
 
     if(element_name == "hline") return("-----")
 
-    dots <- rlang::list2(...)
-    dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
-                              val = dots[!names(dots) %in% c("...")], keep.null = TRUE)
+    dots <- update_dots(dots = rlang::list2(...),
+                        allow_unique_overrides = FALSE)
 
     stopifnot(inherits(data, "data.frame") || inherits(data, "survey"))
     data_cols <- if(inherits(data, "survey")) colnames(data$variables) else colnames(data)
 
-    fs::dir_create(element_folderpath_absolute, recurse = TRUE)
+    element_folderpath_absolute <- file.path(chapter_folderpath_absolute, element_name)
+    element_folderpath_relative <- file.path(chapter_foldername, element_name)
+    dir.create(element_folderpath_absolute, recursive = TRUE, showWarnings = FALSE)
 
     if(dplyr::n_distinct(chapter_overview_section$.variable_type) != 1 || # Later add check that all items contain the same indep_cols_df
        dplyr::n_distinct(chapter_overview_section$.variable_label_prefix) != 1) return("")
 
 
     grouping_structure <- dplyr::group_vars(chapter_overview_section)
-    grouping_structure2 <- grouping_structure[!grouping_structure %in% "chapter"]
+    grouping_structure <- grouping_structure[!grouping_structure %in% "chapter"]
 
     section_key <- chapter_overview_section
     section_key <- dplyr::ungroup(section_key)
-    section_key <- dplyr::distinct(section_key, dplyr::pick(tidyselect::all_of(grouping_structure2)))
-    section_key <- dplyr::group_by(section_key, dplyr::pick(tidyselect::all_of(grouping_structure2)))
+    section_key <- dplyr::distinct(section_key, dplyr::pick(tidyselect::all_of(grouping_structure)))
+    section_key <- dplyr::group_by(section_key, dplyr::pick(tidyselect::all_of(grouping_structure)))
 
 
     if(nrow(section_key)>1) cli::cli_warn("Something weird going on in grouping.")
 
-    obj_name <- stringi::stri_c(ignore_null=TRUE, list_valid_obj_name(section_key, max_width = dots$max_width_obj),
-                               if(rlang::is_string(mesos_group)) "_", mesos_group)
+    obj_name <- stringi::stri_c(list_valid_obj_name(section_key,
+                                                    max_width = dots$max_width_obj),
+                               if(rlang::is_string(mesos_group)) "_", mesos_group,
+                               ignore_null=TRUE)
 
 
     ## Only for filenames
-    # if(any(grouping_structure2 %in% ".variable_label_prefix")) {
-      grouping_structure3 <- grouping_structure2
-      grouping_structure3[grouping_structure3 %in%
-                            c(".variable_label_prefix", ".variable_label_suffix")] <- ".variable_name"
-      grouping_structure3 <- unique(grouping_structure3)
-    # }
-    filename_prefix <- chapter_overview_section
-    filename_prefix <- dplyr::ungroup(filename_prefix)
-    filename_prefix <- dplyr::distinct(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure3)))
-    filename_prefix <- dplyr::arrange(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure3)))
-    filename_prefix <- dplyr::group_by(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure3)))
-    # filename_prefix <- dplyr::distinct(filename_prefix, dplyr::pick(tidyselect::everything()))
-    filename_prefix <- glue::glue_data(filename_prefix, stringi::stri_c(ignore_null=TRUE, "{", colnames(filename_prefix), "}", collapse="_"))
-    filename_prefix <- conv_to_valid_obj_name(filename_prefix, max_width = dots$max_width_file)
-    filename_prefix_alt <- Reduce(f = intersect, strsplit(filename_prefix, split = ""))
 
-    if(length(filename_prefix_alt)>0 && nchar(filename_prefix_alt)>0) {
-      filename_prefix_alt <- stringi::stri_c(filename_prefix_alt, collapse = "", ignore_null = TRUE)
-      filename_prefix <- filename_prefix_alt
-    }
-    filename_prefix <- stringi::stri_c(filename_prefix, collapse = "_", ignore_null = TRUE)
-    if(rlang::is_string(mesos_group)) filename_prefix <- stringi::stri_c(filename_prefix, "_", mesos_group)
-
-    # if(nrow(section_key)>1) cli::cli_warn("Something weird going on in grouping.")
-
-    # filename_prefix <- stringi::stri_c(ignore_null=TRUE, list_valid_obj_name(filename_prefix, max_width = dots$max_width_obj),
-    #                            if(rlang::is_string(mesos_group)) "_", mesos_group)
-
-
+    filename_prefix <- make_filename_prefix(
+      grouping_structure = grouping_structure,
+      chapter_overview_section = chapter_overview_section,
+      max_width_obj = dots$max_width_obj,
+      mesos_group = mesos_group)
 
     y_col_names <- unique(chapter_overview_section$.variable_name)
     y_col_pos <- match(y_col_names, colnames(data))
@@ -121,20 +103,25 @@ gen_element_and_qmd_snippet <-
       if(any(names(section_key) == ".variable_name_prefix") &&
          dplyr::n_distinct(section_key$.variable_name_prefix)==1) unique(section_key$.variable_name_prefix)
 
+    common_data_type <- get_common_data_type(data, col_names = y_col_names)
+    if(any(c("factor", "ordered") == common_data_type)) {
+      common_levels <- get_common_levels(data, col_names = y_col_names)
+
+      colour_palette <- get_colour_set(
+        x = common_levels,
+        common_data_type = common_data_type,
+        colour_palette_nominal = dots$colour_palette_nominal,
+        colour_palette_ordinal = dots$colour_palette_ordinal,
+        colour_na = dots$colour_na,
+        colour_2nd_binary_cat = dots$colour_2nd_binary_cat)
+
+    }
 
     if(stringi::stri_detect(element_name, regex="^uni_.*")) {
 
-      # filename_prefix <- obj_name
-      filepath_rel_rds <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-      filepath_rel_png <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-      filepath_rel_xlsx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-      filepath_rel_txt <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-      filepath_rel_docx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
-      filepath_abs_rds <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-      filepath_abs_png <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-      filepath_abs_xlsx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-      filepath_abs_txt <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-      filepath_abs_docx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
+      filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
+                                      element_folderpath_absolute = element_folderpath_absolute,
+                                      filename_prefix = filename_prefix)
 
       plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
                                           vertical = dots$vertical,
@@ -154,6 +141,7 @@ gen_element_and_qmd_snippet <-
 
       if(element_name == "uni_cat_text" &&
          all(chapter_overview_section$.variable_type %in% c("fct", "ord"))) {
+
         out <-
           rlang::exec(
             embed_cat_text_html,
@@ -161,9 +149,9 @@ gen_element_and_qmd_snippet <-
             dep = y_col_pos,
             mesos_group = mesos_group,
             !!!dots)
-        saveRDS(out, file = filepath_abs_rds)
-        writeLines(text = stringi::stri_c(ignore_null=TRUE, out, collapse=""),
-                   con = filepath_abs_txt)
+        saveRDS(out, file = filepaths$abs$rds)
+        writeLines(text = stringi::stri_c(out, ignore_null=TRUE, collapse=""),
+                   con = filepaths$abs$txt)
       }
 
       ######################################################################
@@ -178,8 +166,8 @@ gen_element_and_qmd_snippet <-
             dep = y_col_pos,
             mesos_group = mesos_group,
             !!!dots)
-        saveRDS(out, file = filepath_abs_rds)
-        writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
+        saveRDS(out, file = filepaths$abs$rds)
+        writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
       }
 
       ######################################################################
@@ -192,26 +180,28 @@ gen_element_and_qmd_snippet <-
             embed_cat_prop_plot_docx,
             data = data,
             dep = y_col_pos,
+            colour_palette = colour_palette,
             mesos_group = mesos_group,
             !!!dots)
-        print(out_docx, target = filepath_abs_docx)
+        print(out_docx, target = filepaths$abs$docx)
 
         out_html <-
           rlang::exec(
             embed_cat_prop_plot,
             data = data,
             dep = y_col_pos,
+            colour_palette = colour_palette,
             mesos_group = mesos_group,
             html_interactive = TRUE,
             !!!dots)
         ggplot2::ggsave(plot = out_html,
-                        filename = filepath_abs_png,
+                        filename = filepaths$abs$png,
                         scale = dots$png_scale,
                         width = dots$png_width,
                         height = dots$png_height,
                         units = "cm", dpi = "retina")
-        writexl::write_xlsx(x = out_html$data, filepath_abs_xlsx)
-        saveRDS(out_html, file = filepath_abs_rds)
+        writexl::write_xlsx(x = out_html$data, filepaths$abs$xlsx)
+        saveRDS(out_html, file = filepaths$abs$rds)
 
         # out_pdf <-
         #   rlang::exec(
@@ -221,7 +211,7 @@ gen_element_and_qmd_snippet <-
         #     translations = dots$translations,
         #     html_interactive = FALSE,
         #     !!!dots)
-        # ggplot2::ggsave(plot = out_pdf, filename = filepath_abs_png,
+        # ggplot2::ggsave(plot = out_pdf, filename = filepaths$abs$png,
         #                 scale = dots$png_scale, width = dots$png_width, height = dots$png_height,
         #                 units = "cm", dpi = "retina")
 
@@ -231,7 +221,7 @@ gen_element_and_qmd_snippet <-
                               index = obj_name,
                               variable_prefix = variable_prefix,
                               mesos_group = mesos_group,
-                              filepath = filepath_rel_rds,
+                              filepath = filepaths$rel$rds,
                               figure_height = plot_height,
                               add_text = FALSE,
                               max_width_obj = dots$max_width_obj,
@@ -242,7 +232,7 @@ gen_element_and_qmd_snippet <-
                               index = obj_name,
                               variable_prefix = variable_prefix,
                               mesos_group = mesos_group,
-                              filepath = filepath_rel_rds,
+                              filepath = filepaths$rel$rds,
                               figure_height = plot_height,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
@@ -258,25 +248,27 @@ gen_element_and_qmd_snippet <-
             embed_cat_freq_plot_docx,
             data = data,
             dep = y_col_pos,
+            colour_palette = colour_palette,
             mesos_group = mesos_group,
             !!!dots)
-        print(out_docx, target = filepath_abs_docx)
+        print(out_docx, target = filepaths$abs$docx)
 
         out_html <-
           rlang::exec(
             embed_cat_freq_plot,
             data = data,
             dep = y_col_pos,
+            colour_palette = colour_palette,
             mesos_group = mesos_group,
             html_interactive = TRUE,
             !!!dots)
         ggplot2::ggsave(plot = out_html,
-                        filename = filepath_abs_png,
+                        filename = filepaths$abs$png,
                         scale = dots$png_scale,
                         width = dots$png_width,
                         height = dots$png_height,
                         units = "cm", dpi = "retina")
-        saveRDS(out_html, file = filepath_abs_rds)
+        saveRDS(out_html, file = filepaths$abs$rds)
 
 
         return(
@@ -285,7 +277,7 @@ gen_element_and_qmd_snippet <-
                               index = obj_name,
                               variable_prefix = variable_prefix,
                               mesos_group = mesos_group,
-                              filepath = filepath_rel_rds,
+                              filepath = filepaths$rel$rds,
                               figure_height = plot_height,
                               add_text = FALSE,
                               max_width_obj = dots$max_width_obj,
@@ -296,7 +288,7 @@ gen_element_and_qmd_snippet <-
                               index = obj_name,
                               variable_prefix = variable_prefix,
                               mesos_group = mesos_group,
-                              filepath = filepath_rel_rds,
+                              filepath = filepaths$rel$rds,
                               figure_height = plot_height,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
@@ -317,8 +309,8 @@ gen_element_and_qmd_snippet <-
             dep = y_col_pos,
             mesos_group = mesos_group,
             !!!dots)
-        saveRDS(out, file = filepath_abs_rds)
-        writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
+        saveRDS(out, file = filepaths$abs$rds)
+        writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
       }
 
 
@@ -332,8 +324,9 @@ gen_element_and_qmd_snippet <-
             .variable_type = unique(chapter_overview_section$.variable_type),
             mesos_group = mesos_group,
             !!!dots)
-        saveRDS(out, file = filepath_abs_rds)
-        writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
+        if(nrow(out)==0) return("<!--# No uni_sigtest to return  -->")
+        saveRDS(out, file = filepaths$abs$rds)
+        writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
 
       }
 
@@ -344,8 +337,8 @@ gen_element_and_qmd_snippet <-
                               index = obj_name,
                               variable_prefix = variable_prefix,
                               mesos_group = mesos_group,
-                              filepath_txt = filepath_abs_rds,
-                              filepath = filepath_rel_rds,
+                              filepath_txt = filepaths$abs$rds,
+                              filepath = filepaths$rel$rds,
                               figure_height = plot_height,
                               max_width_obj = dots$max_width_obj,
                               max_width_file = dots$max_width_file,
@@ -364,11 +357,12 @@ gen_element_and_qmd_snippet <-
        !rlang::is_null(chapter_overview_section$indep_cols_df) &&
        !rlang::is_null(chapter_overview_section$indep_cols_df[[1]]) &&
        nrow(chapter_overview_section$indep_cols_df[[1]])>0 &&
-       compare_many(chapter_overview_section$indep_cols_df)) {
+       compare_many(chapter_overview_section$indep_cols_df) &&
+       inherits(chapter_overview_section$indep_cols_df[[1]], what = "data.frame")) {
 
       indep_df <- chapter_overview_section$indep_cols_df[[1]]
 
-      if(inherits(indep_df, what = "data.frame")) {
+      # if(inherits(indep_df, what = "data.frame")) {
 
         name_indep <-
           stats::setNames(unique(indep_df$.variable_name),
@@ -378,57 +372,57 @@ gen_element_and_qmd_snippet <-
         if(stringi::stri_detect(str = element_name, fixed = "bi_sigtest")) {
 
           filename_prefix <- stringi::stri_c(ignore_null=TRUE, filename_prefix, "_BY_ALL_INDEP")
-          filepath_rel_rds <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepath_rel_xlsx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          filepath_abs_rds <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepath_abs_xlsx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
+          filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
+                                          element_folderpath_absolute = element_folderpath_absolute,
+                                          filename_prefix = filename_prefix)
 
 
-        out <-
-        lapply(X = seq_along(name_indep), FUN = function(i) {
-          .x <- name_indep[[i]]
-          .y <- names(name_indep)[[i]]
+          out <-
+            lapply(X = seq_along(name_indep), FUN = function(i) {
+              .x <- name_indep[[i]]
+              .y <- names(name_indep)[[i]]
 
-          # Early check whether x and y are the same, which saros cannot handle
-          if(is.null(y_col_names) || is.null(.x) || any(y_col_names == .x)) return("")
+              # Early check whether x and y are the same, which saros cannot handle
+              if(is.null(y_col_names) || is.null(.x) || any(y_col_names == .x)) return(data.frame())
 
-          indep_pos <- match(.x, data_cols)
+              indep_pos <- match(.x, data_cols)
 
-          indep_type <- vctrs::vec_slice(indep_df, indep_df$.variable_name == .x)
-          indep_type <- indep_type$.variable_type
+              indep_type <- vctrs::vec_slice(indep_df, indep_df$.variable_name == .x)
+              indep_type <- indep_type$.variable_type
 
-          ##############################################################################
-          if(dplyr::n_distinct(chapter_overview_section$.variable_type) == 1 &&
-             dplyr::n_distinct(indep_type) == 1) {
+              ##############################################################################
+              if(dplyr::n_distinct(chapter_overview_section$.variable_type) == 1 &&
+                 dplyr::n_distinct(indep_type) == 1) {
+                return(
+                  rlang::exec(
+                    embed_bi_sigtest,
+                    data = data,
+                    dep = y_col_pos,
+                    indep = indep_pos,
+                    .variable_type = unique(chapter_overview_section$.variable_type),
+                    indep_type = unique(indep_type),
+                    mesos_group = mesos_group,
+                    !!!dots)
+                )
+              }
+            })
+
+          out <- dplyr::bind_rows(out)
+
+          if(nrow(out)>0) {
+            writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
+            saveRDS(out, file = filepaths$abs$rds)
             return(
-              rlang::exec(
-                embed_bi_sigtest,
-                data = data,
-                dep = y_col_pos,
-                indep = indep_pos,
-                .variable_type = unique(chapter_overview_section$.variable_type),
-                indep_type = unique(indep_type),
-                mesos_group = mesos_group,
-                !!!dots)
-            )
-          }
-        }) %>%
-          dplyr::bind_rows()
-
-        if(nrow(out)>0) {
-          writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
-          saveRDS(out, file = filepath_abs_rds)
-          return(
-            insert_obj_in_qmd(element_name = element_name,
-                              index = filename_prefix,
-                              mesos_group = mesos_group,
-                              filepath_txt = filepath_abs_rds,
-                              filepath = filepath_rel_rds,
-                              figure_height = plot_height,
-                              max_width_obj = dots$max_width_obj,
-                              max_width_file = dots$max_width_file,
-                              translations = dots$translations,
-                              caption = attr(out, "saros_caption")))
+              insert_obj_in_qmd(element_name = element_name,
+                                index = filename_prefix,
+                                mesos_group = mesos_group,
+                                filepath_txt = filepaths$abs$rds,
+                                filepath = filepaths$rel$rds,
+                                figure_height = plot_height,
+                                max_width_obj = dots$max_width_obj,
+                                max_width_file = dots$max_width_file,
+                                translations = dots$translations,
+                                caption = attr(out, "saros_caption")))
           }
         } else {
 
@@ -438,6 +432,9 @@ gen_element_and_qmd_snippet <-
                  FUN = function(i) {
             .x <- name_indep[[i]]
             .y <- names(name_indep)[[i]]
+            # print(name_indep[i])
+
+            # If dep and indep are the same, or empty, return early.
           if(is.null(y_col_names) || is.null(.x) || any(y_col_names == .x)) return("")
 
           indep_pos <- match(.x, data_cols)
@@ -445,17 +442,10 @@ gen_element_and_qmd_snippet <-
           indep_type <- vctrs::vec_slice(indep_df, indep_df$.variable_name == .x)
           indep_type <- indep_type$.variable_type
 
-          filename_prefix <- stringi::stri_c(ignore_null=TRUE, .y, collapse = "_")
-          filepath_rel_rds <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepath_rel_png <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-          filepath_rel_xlsx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          filepath_rel_txt <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-          filepath_rel_docx <- file.path(element_folderpath_relative, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
-          filepath_abs_rds <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".rds"))
-          filepath_abs_xlsx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".xlsx"))
-          filepath_abs_png <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".png"))
-          filepath_abs_txt <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".txt"))
-          filepath_abs_docx <- file.path(element_folderpath_absolute, stringi::stri_c(ignore_null=TRUE, filename_prefix, ".docx"))
+          filename_prefix <- stringi::stri_c(filename_prefix, "BY", .x, ignore_null=TRUE, sep = "_")
+          filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
+                                           element_folderpath_absolute = element_folderpath_absolute,
+                                           filename_prefix = filename_prefix)
 
           plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
                                               x_cols = indep_pos,
@@ -495,15 +485,17 @@ gen_element_and_qmd_snippet <-
              all(chapter_overview_section$.variable_type %in% c("fct", "ord")) &&
              all(indep_type %in% c("fct", "ord"))) {
 
+
             out_docx <-
               rlang::exec(
                 embed_cat_prop_plot_docx,
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 !!!dots)
-            print(out_docx, target = filepath_abs_docx)
+            print(out_docx, target = filepaths$abs$docx)
 
             out_html <-
               rlang::exec(
@@ -511,23 +503,26 @@ gen_element_and_qmd_snippet <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 html_interactive = TRUE,
                 !!!dots)
             ggplot2::ggsave(plot = out_html,
-                            filename = filepath_abs_png,
+                            filename = filepaths$abs$png,
                             scale = dots$png_scale,
                             width = dots$png_width,
                             height = dots$png_height,
                             units = "cm", dpi = "retina")
-            saveRDS(out_html, file = filepath_abs_rds)
+            writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
+
+            saveRDS(out_html, file = filepaths$abs$rds)
 
             return(
               stringi::stri_c(ignore_null=TRUE,
                 insert_obj_in_qmd(element_name = paste0(element_name, "_html"),
                                   index = filename_prefix,
                                   mesos_group = mesos_group,
-                                  filepath = filepath_rel_rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   add_text = FALSE,
                                   max_width_obj = dots$max_width_obj,
@@ -536,7 +531,7 @@ gen_element_and_qmd_snippet <-
                                   caption = attr(out_html, "saros_caption")),
                 insert_obj_in_qmd(element_name = paste0(element_name, "_pdf"),
                                   index = filename_prefix,
-                                  filepath = filepath_rel_rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
@@ -555,9 +550,10 @@ gen_element_and_qmd_snippet <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 !!!dots)
-            print(out_docx, target = filepath_abs_docx)
+            print(out_docx, target = filepaths$abs$docx)
 
             out_html <-
               rlang::exec(
@@ -565,23 +561,25 @@ gen_element_and_qmd_snippet <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 html_interactive = TRUE,
                 !!!dots)
             ggplot2::ggsave(plot = out_html,
-                            filename = filepath_abs_png,
+                            filename = filepaths$abs$png,
                             scale = dots$png_scale,
                             width = dots$png_width,
                             height = dots$png_height,
                             units = "cm", dpi = "retina")
-            saveRDS(out_html, file = filepath_abs_rds)
+            writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
+            saveRDS(out_html, file = filepaths$abs$rds)
 
             return(
               stringi::stri_c(ignore_null=TRUE,
                 insert_obj_in_qmd(element_name = paste0(element_name, "_html"),
                                   index = filename_prefix,
                                   mesos_group = mesos_group,
-                                  filepath = filepath_rel_rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   add_text = FALSE,
                                   max_width_obj = dots$max_width_obj,
@@ -591,7 +589,7 @@ gen_element_and_qmd_snippet <-
                 insert_obj_in_qmd(element_name = paste0(element_name, "_pdf"),
                                   index = filename_prefix,
                                   mesos_group = mesos_group,
-                                  filepath = filepath_rel_rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
@@ -611,10 +609,11 @@ gen_element_and_qmd_snippet <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 inverse = TRUE,
                 !!!dots)
-            print(out_docx, target = filepath_abs_docx)
+            print(out_docx, target = filepaths$abs$docx)
 
             out_html <-
               rlang::exec(
@@ -622,24 +621,26 @@ gen_element_and_qmd_snippet <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 html_interactive = TRUE,
                 inverse = TRUE,
                 !!!dots)
             ggplot2::ggsave(plot = out_html,
-                            filename = filepath_abs_png,
+                            filename = filepaths$abs$png,
                             scale = dots$png_scale,
                             width = dots$png_width,
                             height = dots$png_height,
                             units = "cm", dpi = "retina")
-            saveRDS(out_html, file = filepath_abs_rds)
+            writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
+            saveRDS(out_html, file = filepaths$abs$rds)
 
             return(
               stringi::stri_c(ignore_null=TRUE,
                 insert_obj_in_qmd(element_name = paste0(element_name, "_html"),
                                   index = filename_prefix,
                                   mesos_group = mesos_group,
-                                  filepath = filepath_rel_rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   add_text = FALSE,
                                   max_width_obj = dots$max_width_obj,
@@ -648,7 +649,7 @@ gen_element_and_qmd_snippet <-
                                   caption = attr(out_html, "saros_caption")),
                 insert_obj_in_qmd(element_name = paste0(element_name, "_pdf"),
                                   index = filename_prefix,
-                                  filepath = filepath_rel_rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
@@ -667,10 +668,11 @@ gen_element_and_qmd_snippet <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 inverse = TRUE,
                 !!!dots)
-            print(out_docx, target = filepath_abs_docx)
+            print(out_docx, target = filepaths$abs$docx)
 
             out_html <-
               rlang::exec(
@@ -678,24 +680,26 @@ gen_element_and_qmd_snippet <-
                 data = data,
                 dep = y_col_pos,
                 indep = indep_pos,
+                colour_palette = colour_palette,
                 mesos_group = mesos_group,
                 html_interactive = TRUE,
                 inverse = TRUE,
                 !!!dots)
             ggplot2::ggsave(plot = out_html,
-                            filename = filepath_abs_png,
+                            filename = filepaths$abs$png,
                             scale = dots$png_scale,
                             width = dots$png_width,
                             height = dots$png_height,
                             units = "cm", dpi = "retina")
-            saveRDS(out_html, file = filepath_abs_rds)
+            writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
+            saveRDS(out_html, file = filepaths$abs$rds)
 
             return(
               stringi::stri_c(ignore_null=TRUE,
                 insert_obj_in_qmd(element_name = paste0(element_name, "_html"),
                                   index = filename_prefix,
                                   mesos_group = mesos_group,
-                                  filepath = filepath_rel_rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   add_text = FALSE,
                                   max_width_obj = dots$max_width_obj,
@@ -705,7 +709,7 @@ gen_element_and_qmd_snippet <-
                 insert_obj_in_qmd(element_name = paste0(element_name, "_pdf"),
                                   index = filename_prefix,
                                   mesos_group = mesos_group,
-                                  filepath = filepath_rel_rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
@@ -726,8 +730,8 @@ gen_element_and_qmd_snippet <-
                 indep = indep_pos,
                 mesos_group = mesos_group,
                 !!!dots)
-            writexl::write_xlsx(x=out, path = filepath_abs_xlsx)
-            saveRDS(out, file = filepath_abs_rds)
+            writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
+            saveRDS(out, file = filepaths$abs$rds)
           }
 
 
@@ -738,8 +742,8 @@ gen_element_and_qmd_snippet <-
                 insert_obj_in_qmd(element_name = element_name,
                                   index = filename_prefix,
                                   mesos_group = mesos_group,
-                                  filepath_txt = filepath_abs_rds,
-                                  filepath = filepath_rel_rds,
+                                  filepath_txt = filepaths$abs$rds,
+                                  filepath = filepaths$rel$rds,
                                   figure_height = plot_height,
                                   max_width_obj = dots$max_width_obj,
                                   max_width_file = dots$max_width_file,
@@ -748,7 +752,7 @@ gen_element_and_qmd_snippet <-
           } else ""
         })) %>% stringi::stri_c(ignore_null=TRUE, collapse = "\n")
         }
-      }
+      # }
     }
   }
 

@@ -9,7 +9,8 @@ create_htaccess(
   local_basepath = "reports/2023V/org",
   local_subfolders = basename(fs::dir_ls(local_basepath, all = FALSE, recurse = FALSE,
     type = "directory")),
-  local_main_htpasswd_path = ".main_htpasswd_public",
+  local_main_htpasswd_path = file.path(Sys.getenv("USERPROFILE"), "NIFU",
+    "Metode - Sensitivt - Sensitivt", ".main_htpasswd_public"),
   universal_usernames = c("admin", "nifu")
 )
 }

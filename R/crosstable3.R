@@ -20,9 +20,15 @@ crosstable3.data.frame <-
     if(length(indep) > 0 && rlang::is_true(totals)) {
       for(indep_var in indep) {
         data_duplicate <- data
+
         data_duplicate[[indep_var]] <- forcats::fct_na_value_to_level(data_duplicate[[indep_var]], level = translations$by_total)
         levels(data_duplicate[[indep_var]]) <- rep(translations$by_total,
                                                 length=length(levels(data_duplicate[[indep_var]])))
+        # Below is to ensure it works with ordered factors. Still faster than using rbind
+        levels(data_duplicate[[indep_var]]) <- c(levels(data[[indep_var]]),
+                                                 levels(data_duplicate[[indep_var]]))
+        levels(data[[indep_var]]) <- c(levels(data[[indep_var]]),
+                                                 levels(data_duplicate[[indep_var]]))
         data <- dplyr::bind_rows(data, data_duplicate)
         for(i in seq_len(ncol(data))) {
           attr(data[[i]], "label") <- attr(data_duplicate[[i]], "label")

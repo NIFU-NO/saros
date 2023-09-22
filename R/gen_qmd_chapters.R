@@ -34,7 +34,7 @@ gen_qmd_chapters <-
     check_string(mesos_group, n=1, null.ok=TRUE, call = call)
 
     path <- fs::as_fs_path(dots$path)
-    fs::dir_create(path = path, recurse = TRUE)
+    dir.create(path = path, recursive = TRUE, showWarnings = FALSE)
 
 
     grouping_structure <- dplyr::group_vars(chapter_overview)
@@ -77,39 +77,45 @@ gen_qmd_chapters <-
                             dplyr::pick(tidyselect::all_of(grouping_structure)))
 
           # Paths
+
+
           chapter_foldername <-
             unique(chapter_overview_chapter[[grouping_structure[1]]])
           chapter_foldername <- as.character(chapter_foldername)
 
-          chapter_foldername_clean <- filename_sanitizer(chapter_foldername)
+          chapter_number <- match(chapter_foldername,
+                                  unique(chapter_overview$chapter))
+
+
+          chapter_foldername_clean <-
+            stringi::stri_c(chapter_number, "_",
+                            filename_sanitizer(chapter_foldername),
+                            ignore_null = TRUE)
 
           cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
 
 
-          chapter_folderpath_absolute <- file.path(path, chapter_foldername)
-          fs::dir_create(path = chapter_folderpath_absolute, recurse = TRUE)
+          chapter_folderpath_absolute <- file.path(path, chapter_foldername_clean)
+          dir.create(path = chapter_folderpath_absolute, recursive = TRUE, showWarnings = FALSE)
 
           chapter_filepath_relative <- stringi::stri_c(chapter_foldername_clean, ".qmd", ignore_null=TRUE)
           chapter_filepath_absolute <- file.path(path, chapter_filepath_relative)
 
 
           authors <- get_authors(data = chapter_overview_chapter, col = "authors")
-            # if(!rlang::is_null(chapter_overview_chapter$author) &&
-            #    !all(is.na(unique(chapter_overview_chapter$author)))) unique(chapter_overview_chapter$author) else ""
           chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
                                       title = chapter_foldername,
                                       authors = authors,
-                                      chapter_number = match(chapter_foldername,
-                                                             unique(chapter_overview$chapter)))
+                                      chapter_number = chapter_number)
 
           chapter_contents <-
             rlang::exec(
-              gen_qmd_structure2,
+              gen_qmd_structure,
               data = data,
               chapter_overview = chapter_overview_chapter,
               mesos_group = mesos_group,
               chapter_folderpath_absolute = chapter_folderpath_absolute,
-              chapter_foldername = chapter_foldername,
+              chapter_foldername = chapter_foldername_clean,
               !!!dots#[!names(dots) %in% c("chapter_overview", "call")]
               )
 
@@ -134,7 +140,6 @@ gen_qmd_chapters <-
               attach_chapter_dataset(data = data,
                                      chapter_overview_chapter = chapter_overview_chapter,
                                      chapter_foldername_clean = chapter_foldername_clean,
-                                     chapter_foldername = chapter_foldername,
                                      path = path,
                                      mesos_var = dots$mesos_var,
                                      auxiliary_variables = dots$auxiliary_variables)
@@ -170,8 +175,7 @@ gen_qmd_chapters <-
       flexi_filepath <- "_flexi/_zzz_flexi.qmd"
       cat(out, file = file.path(dots$path, flexi_filepath), sep="\n")
     }
-    cli::cli_progress_message(msg = "Completed chapters.")
-    cli::cli_process_done()
+    cli::cli_process_done(msg_done = "Completed report{if(rlang::is_string(mesos_group)) paste0(' for ', mesos_group)}.")
 
 
     chapter_filepaths

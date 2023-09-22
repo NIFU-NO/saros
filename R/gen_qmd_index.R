@@ -25,10 +25,7 @@
 #'                  index_filepath = filepath)
 gen_qmd_index <-
   function(
-    # index_yaml_file = NULL,
-    # title = NULL,
-    # authors = NULL,
-    index_filepath = "complete_report.qmd",
+    index_filepath = "index.qmd",
     ...,
     chapter_filepaths = NULL,
     call = rlang::caller_env()) {

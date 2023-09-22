@@ -10,7 +10,9 @@ embed_cat_freq_plot_docx(
   inverse = FALSE,
   dep = tidyselect::everything(),
   indep = NULL,
-  mesos_group = NULL
+  colour_palette = NULL,
+  mesos_group = NULL,
+  call = rlang::caller_env()
 )
 }
 \arguments{
@@ -35,9 +37,17 @@ Arguments forwarded to the corresponding functions that create the elements.}
 
 Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
 
+\item{colour_palette}{Character vector of colour codes.}
+
 \item{mesos_group}{\emph{Specific group to compare with}
 
 \verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
+
+Both the absolute and relative folderpaths are required, as strings.}
+
+\item{call}{\emph{Internal call}
+
+\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
 
 Both the absolute and relative folderpaths are required, as strings.}
 }

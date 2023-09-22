@@ -2,7 +2,6 @@ attach_chapter_dataset <- function(chapter_overview_chapter,
                                    data,
                                    path,
                                    chapter_foldername_clean,
-                                   chapter_foldername,
                                    mesos_var,
                                    auxiliary_variables) {
 
@@ -24,17 +23,19 @@ attach_chapter_dataset <- function(chapter_overview_chapter,
 
   filename_chapter_dataset <-
     stringi::stri_c("data_", chapter_foldername_clean, ".RDs", ignore_null = TRUE)
-  filepath_chapter_dataset_absolute <- file.path(path, chapter_foldername, filename_chapter_dataset)
-  filepath_chapter_dataset_relative <- file.path(chapter_foldername, filename_chapter_dataset)
+  filepath_chapter_dataset_absolute <- file.path(path, chapter_foldername_clean, filename_chapter_dataset)
+  filepath_chapter_dataset_relative <- file.path(chapter_foldername_clean, filename_chapter_dataset)
 
   saveRDS(data_chapter, file = filepath_chapter_dataset_absolute)
 
-  # load_dataset <-
-  stringi::stri_c(sep="\n",
-                  "```{r}",
-                  stringi::stri_c("data_",
-                                  chapter_foldername_clean,
-                                  " <- readRDS('", filepath_chapter_dataset_relative, "')"),
-                  "```")
-
+  r_chunk_header <- stringi::stri_c("```{r}\n",
+                                    "#| label: 'Import data for ",
+                                    chapter_foldername_clean,
+                                    "'",
+                                    sep="", ignore_null = TRUE)
+  import_code <- stringi::stri_c("`data_",
+                                 chapter_foldername_clean,
+                                 "` <- readRDS('", filepath_chapter_dataset_relative, "')",
+                                 sep="", ignore_null = TRUE)
+  stringi::stri_c(r_chunk_header, import_code, "```", sep="\n")
 }

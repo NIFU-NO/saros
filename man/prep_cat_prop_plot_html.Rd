@@ -4,7 +4,13 @@
 \alias{prep_cat_prop_plot_html}
 \title{Create Single Interactive Categorical Plot with Univariates for Categorical Columns Sharing Same Categories}
 \usage{
-prep_cat_prop_plot_html(data, ..., inverse = FALSE, call = rlang::caller_env())
+prep_cat_prop_plot_html(
+  data,
+  ...,
+  colour_palette = NULL,
+  inverse = FALSE,
+  call = rlang::caller_env()
+)
 }
 \arguments{
 \item{data}{\emph{Survey data}

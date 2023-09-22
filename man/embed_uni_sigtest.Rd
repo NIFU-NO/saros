@@ -2,7 +2,7 @@
 % Please edit documentation in R/sigtest.R
 \name{embed_uni_sigtest}
 \alias{embed_uni_sigtest}
-\title{Title}
+\title{Run univariate significance tests and collect them in a table}
 \usage{
 embed_uni_sigtest(
   data,
@@ -53,7 +53,7 @@ Both the absolute and relative folderpaths are required, as strings.}
 Data frame
 }
 \description{
-Title
+Run univariate significance tests and collect them in a table
 }
 \examples{
 embed_uni_sigtest(data=ex_survey1,

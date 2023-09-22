@@ -9,6 +9,7 @@ embed_cat_prop_plot_docx(
   ...,
   dep = tidyselect::everything(),
   indep = NULL,
+  colour_palette = NULL,
   mesos_group = NULL,
   inverse = FALSE
 )
@@ -32,6 +33,8 @@ Arguments forwarded to the corresponding functions that create the elements.}
 <\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
 
 Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
+
+\item{colour_palette}{Character vector of colour codes.}
 
 \item{mesos_group}{\emph{Specific group to compare with}
 
