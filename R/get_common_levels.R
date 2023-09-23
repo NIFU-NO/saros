@@ -1,5 +1,7 @@
 get_common_levels <- function(data, col_names=NULL) {
-  if(!rlang::is_character(col_names)) col_names <- colnames(data)
+  if(!rlang::is_character(col_names)) {
+    col_names <- if(!inherits(data, "survey.design")) colnames(data) else colnames(data$variables)
+  }
   fct_unions <- if(!inherits(data, "survey.design")) data[, col_names] else data$variables[, col_names]
   fct_unions <- forcats::fct_unify(fs = fct_unions)[[1]]
   levels(fct_unions)

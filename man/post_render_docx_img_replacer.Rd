@@ -16,7 +16,7 @@ post_render_docx_img_replacer(
 \arguments{
 \item{site_dir, site_mesos_dir, chart_dir, chart_mesos_dir}{String. Paths to the site (and mesos subfolder) with the docx files where the images are to be replaced, and paths to where to find the docx files with mscharts to be replaced with can be found.}
 
-\item{delete_mschart_files}{Flag. Whether to delete the mschart docx files after succesful copying into the docx files. Defaults to FALSE.}
+\item{delete_mschart_files}{Flag. Whether to delete the mschart docx files after successful copying into the docx files. Defaults to FALSE.}
 }
 \value{
 Nothing, side-effects only.
