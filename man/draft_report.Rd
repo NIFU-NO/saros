@@ -278,7 +278,7 @@ Whether to return the raw static element.}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE}
 
-Whether to save in each chapter folder an Rds-file with the chapter-specific dataset, and load it at the top of each QMD-file.}
+Whether to save in each chapter folder an 'Rds'-file with the chapter-specific dataset, and load it at the top of each QMD-file.}
 
 \item{panel_tabset_mesos}{\emph{mesos panel tabset}
 

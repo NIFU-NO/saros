@@ -12,7 +12,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-1   Must allow chapter in chapter_overview with NA in dep/indep: These are manually created chapters. Numbering must still work.
 1   Methodize
 3   functions to simplify copying of files? 
     in saros.struct
@@ -22,6 +21,8 @@ knitr::opts_chunk$set(echo = TRUE)
         Sjekk slides
 1   methodchapter_inlines.R and methodchapter.qmd
 1   SSN: Avoid H2023
+1   Title of report in index.qmd is still last title available in includes??
+    
 1   Argument: drop empty sections before rendering (in the render_site())
 
 # Chapter overview

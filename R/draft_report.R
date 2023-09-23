@@ -662,10 +662,11 @@ draft_report <-
           refine_chapter_overview,
           !!!args)
     }
-    chapter_overview <- chapter_overview[chapter_overview$.variable_role == "dep", drop=FALSE] ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
+    chapter_overview <-
+      dplyr::filter(chapter_overview, .data$.variable_role == "dep") ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
 
 
-    chapter_overview_indep <- chapter_overview[chapter_overview$.variable_role != "dep", drop=FALSE]
+    chapter_overview_indep <- dplyr::filter(chapter_overview, .data$.variable_role != "dep")
 
     if(nrow(chapter_overview)==0) cli::cli_abort("{.var chapter_overview} is empty! Something is not right. Are there no factors in your data? Consider `chapter_overview=NULL` for everything in a single phantom chapter")
 

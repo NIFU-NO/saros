@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_htaccess.R
 \name{create__headers_file}
 \alias{create__headers_file}
-\title{Create a _headers file for Netlify publication}
+\title{Create a _headers file for 'Netlify' publishing}
 \usage{
 create__headers_file(
   site_path = "_site",
@@ -26,7 +26,7 @@ create__headers_file(
 String, the path to the _headers file
 }
 \description{
-Create a _headers file for Netlify publication
+Create a _headers file for 'Netlify' publishing
 }
 \examples{
 create__headers_file(site_path=tempdir())

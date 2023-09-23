@@ -3,7 +3,7 @@ eval_cols <- function(x, data,
                       call = rlang::caller_env()) {
   check_string(x = x, n = NULL, null.ok = FALSE, call = call)
   check_data_frame(data, call = call)
-  x_cond_evaluate <- !is.na(x) && stringi::stri_length(x)>0
+  x_cond_evaluate <- !is.na(x) & stringi::stri_length(x)>0
   lapply(seq_along(x), function(i) {
       if(x_cond_evaluate[i]) {
         expr <- stringi::stri_c('tidyselect::eval_select(expr = rlang::expr(c(',
@@ -305,7 +305,9 @@ refine_chapter_overview <-
   }
   data_present <- !is.null(data) && is.data.frame(data)
 
-  delim_regex <- ",|[[:space:]]+"
+
+  ## separate function from here
+  delim_regex <- "[,[:space:]]+"
   attr(delim_regex, "options") <-
     list(case_insensitive = FALSE,
          comments = FALSE,
@@ -347,6 +349,7 @@ refine_chapter_overview <-
   out <-
     dplyr::relocate(out, tidyselect::all_of(c(".variable_role", ".variable_selection")))
 
+  # to here
 
   if(data_present) {
     out$.variable_selection <-
@@ -373,6 +376,7 @@ refine_chapter_overview <-
                                           label_separator = dots$label_separator,
                                           name_separator = dots$name_separator),
                       by = dplyr::join_by(".variable_position", ".variable_name"))
+
     out <- # Move to separate function, and add argument that defaults to TRUE
       dplyr::mutate(out,
                     .variable_label_prefix = stringi::stri_trim_both(.data$.variable_label_prefix),
@@ -389,12 +393,20 @@ refine_chapter_overview <-
                                         hide_bi_entry_if_sig_above = dots$hide_bi_entry_if_sig_above,
                                         always_show_bi_for_indep = dots$always_show_bi_for_indep,
                                         progress = progress)
+
+    # separate to new function from here
     out <-
       tidyr::expand_grid(out, .element_name = dots$element_names)
+    out <-
+      dplyr::mutate(out, .element_name = ifelse(is.na(.data$.variable_position), NA, .data$.element_name))
+    out <-
+      dplyr::distinct(out, .data$chapter, .data$.variable_position, .data$.element_name, .keep_all = TRUE)
     out <-
       dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by)))
     # out <-
     #   dplyr::arrange(out, dplyr::pick(tidyselect::any_of(c(dots$organize_by, names(dots$sort_by)))))
+
+    # to here
   }
   if(!rlang::is_null(out$chapter)) out$chapter <- factor(out$chapter, levels=unique(out$chapter))
   out
