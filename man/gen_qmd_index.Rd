@@ -8,6 +8,8 @@ gen_qmd_index(
   index_filepath = "index.qmd",
   ...,
   chapter_filepaths = NULL,
+  report_filepath = NULL,
+  yaml_file = NULL,
   call = rlang::caller_env()
 )
 }
@@ -21,6 +23,10 @@ gen_qmd_index(
 Arguments forwarded to the corresponding functions that create the elements.}
 
 \item{chapter_filepaths}{A character vector containing the filepaths of the chapter files to be included in the index, in the desired order.}
+
+\item{report_filepath}{A string containing the filepath to the report.qmd.}
+
+\item{yaml_file}{A string containing the filepath to a yaml-file to be inserted at top of qmd-file.}
 
 \item{call}{Internal call argument. Not to be fiddled with by the user.}
 }

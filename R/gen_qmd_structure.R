@@ -31,7 +31,7 @@ gen_qmd_structure <-
                                          chapter_overview = chapter_overview,
                                          value = value)
       # Create heading, section tag and random ID if not a .element_name
-      if(names(grouped_data)[level] != ".element_name" &&
+      if(!names(grouped_data)[level] %in% c(".element_name", "chapter") &&
          level < ncol(grouped_data)) {
 
         output <-
@@ -172,7 +172,7 @@ gen_qmd_structure <-
                                             level_values = level_values),
                         sep="\n\n", ignore_null=TRUE) # Space between each section (before new heading)
     }
-
+    output <- if(!is.na(output)) output else ""
     return(output)
   }
 

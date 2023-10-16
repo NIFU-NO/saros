@@ -245,7 +245,7 @@ summarize_data <-
 
     if(any(dep %in% indep)) return()
 
-    fct_unions <- get_common_levels(data=data, col_names=dep)
+    fct_unions <- get_common_levels(data=data, col_pos=match(dep, colnames(data)))
 
     cross_table_output <-
       crosstable3(data,

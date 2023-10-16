@@ -26,7 +26,7 @@ attach_chapter_dataset <- function(chapter_overview_chapter,
   filepath_chapter_dataset_absolute <- file.path(path, chapter_foldername_clean, filename_chapter_dataset)
   filepath_chapter_dataset_relative <- file.path(chapter_foldername_clean, filename_chapter_dataset)
 
-  saveRDS(data_chapter, file = filepath_chapter_dataset_absolute)
+  qs::qsave(data_chapter, file = filepath_chapter_dataset_absolute)
 
   r_chunk_header <- stringi::stri_c("```{r}\n",
                                     "#| label: 'Import data for ",
@@ -35,7 +35,7 @@ attach_chapter_dataset <- function(chapter_overview_chapter,
                                     sep="", ignore_null = TRUE)
   import_code <- stringi::stri_c("`data_",
                                  chapter_foldername_clean,
-                                 "` <- readRDS('", filepath_chapter_dataset_relative, "')",
+                                 "` <- qs::qread('", filepath_chapter_dataset_relative, "')",
                                  sep="", ignore_null = TRUE)
   stringi::stri_c(r_chunk_header, import_code, "```", sep="\n")
 }

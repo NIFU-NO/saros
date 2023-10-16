@@ -12,18 +12,29 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-1   Methodize
+
+1   pre-render script: build_report() functio, which takes a Report.qmd with YAML-header containing the typst-stuff and other preface-files (and the Report.qmd file(s) cannot be placed in the input folder... index.qmd contains a link to a typst-based PDF of the entire report ({{< include file.qmd >}}).
+
+1   Argument: drop empty sections before rendering (in the render_site() or post-render lua)
+1   Update saros according to last version of SSN
+        Resources => nifutheme
+
+3   Sjekk ut hypothes-is muligheter, skru av, moderator, osv.
+2   nifutheme: trekke ut alle filer til nifumaler
+
+2   Rproj must disable RData saving/use and Rhistory: set up for multiple users
 3   functions to simplify copying of files? 
     in saros.struct
     in nifutheme (resources)
 2   Test replace_docx_imgs_with_mscharts
 3   reformat_qmd_from_docx_copy() og split_qmd_to_chapters()
         Sjekk slides
+3   La brukerne selv sortere etter sin egen preferanse
 1   methodchapter_inlines.R and methodchapter.qmd
-1   SSN: Avoid H2023
-1   Title of report in index.qmd is still last title available in includes??
+3   Remove rlang::exec when calling own functions that take rlang::list2()
+1   data folder structure (in saros.structure)
+3   Flytte TODO til Github issues...
     
-1   Argument: drop empty sections before rendering (in the render_site())
 
 # Chapter overview
 1   not keeping significant relationships!
@@ -33,11 +44,15 @@ knitr::opts_chunk$set(echo = TRUE)
 3   cli_inform: rows removed with hide_bi_entry_if_sig_above
 
 # Structure
-3 Look into whether top-level-division can be used to avoid having both chapters and index rendered in separate files. Or ask around
 2   single_y_bivariate_elements: if TRUE, then each bivariate will contain only a single y variable, and one x variable, rather than entire batteries.
 
 # Internals
 4 Can find_test be combined with find_stat_config?
+2   Methodize
+        Input validation functions
+        Reduce number of arguments
+        tryCatch() for file saving
+        match(.x, data_cols) => What to do if nothing is found?
 
 # Documentation (all written such that slides become easy to produce):
 
@@ -62,6 +77,8 @@ knitr::opts_chunk$set(echo = TRUE)
         - Have some translations-headers?
 
 # mesos
+2   Argument for hva som er faner: c("element", "mesos_var", "dep") 
+3   Early fail if mesos_var contains all NA
 
 # plots
 -   tri_catcatcat_plot (z)

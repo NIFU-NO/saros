@@ -104,7 +104,6 @@ gen_qmd_chapters <-
 
           authors <- get_authors(data = chapter_overview_chapter, col = "authors")
           chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
-                                      title = chapter_foldername,
                                       authors = authors,
                                       chapter_number = chapter_number)
 
@@ -145,14 +144,15 @@ gen_qmd_chapters <-
                                      auxiliary_variables = dots$auxiliary_variables)
             }
 
+
           out <-
-          stringi::stri_c(ignore_null=TRUE,
-                          chapter_yaml,
+          stringi::stri_c(chapter_yaml,
+                          stringi::stri_c("# ", chapter_foldername),
                           load_dataset,
                          qmd_start_section,
                          chapter_contents,
                          qmd_end_section,
-                         sep = "\n")
+                         sep = "\n", ignore_null=TRUE)
           out <- stringi::stri_replace_all_regex(out,
                                                  pattern = "\n{3,}",
                                                  replacement = "\n\n\n")
@@ -162,6 +162,7 @@ gen_qmd_chapters <-
           chapter_filepath_relative
 
         })
+    chapter_filepaths <- unlist(chapter_filepaths)
 
 
     if(rlang::is_true(dots$flexi) && rlang::is_string(dots$mesos_var)) {

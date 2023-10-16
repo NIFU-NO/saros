@@ -17,7 +17,7 @@ insert_obj_in_qmd <-
     if(!rlang::is_string(filepath)) return("")
 
     if(stringi::stri_detect(element_name, fixed = "text")) {
-      text <- tryCatch(readRDS(filepath_txt)[[1]],
+      text <- tryCatch(qs::qread(filepath_txt)[[1]],
                        error = function(e) cli::cli_warn("Unable to read text from {.path {filepath_txt}}. File not found.", call = call))
       return(text)
     }
@@ -88,7 +88,7 @@ insert_obj_in_qmd <-
 
 
     chunk_body <- stringi::stri_c(obj_name, # Replace with glue?
-                                  ' <- \n  readRDS("', filepath, '")\n',
+                                  ' <- \n  qs::qread("', filepath, '")\n',
                                   function_call_prefix, obj_name, function_call_suffix,
                                   ignore_null=TRUE)
 

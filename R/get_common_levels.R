@@ -1,16 +1,16 @@
-get_common_levels <- function(data, col_names=NULL) {
-  if(!rlang::is_character(col_names)) {
-    col_names <- if(!inherits(data, "survey.design")) colnames(data) else colnames(data$variables)
+get_common_levels <- function(data, col_pos=NULL) {
+  if(!rlang::is_integer(col_pos)) {
+    col_pos <- if(!inherits(data, "survey.design")) seq_len(ncol(data)) else seq_len(ncol(data$variables))
   }
-  fct_unions <- if(!inherits(data, "survey.design")) data[, col_names] else data$variables[, col_names]
+  fct_unions <- if(!inherits(data, "survey.design")) data[, col_pos] else data$variables[, col_pos]
   fct_unions <- forcats::fct_unify(fs = fct_unions)[[1]]
   levels(fct_unions)
 }
 
 
-get_common_data_type <- function(data, col_names=NULL) {
-  if(!rlang::is_character(col_names)) col_names <- colnames(data)
-  x <- unique(unlist(lapply(data[, col_names], function(x) class(x)[1])))
+get_common_data_type <- function(data, col_pos=NULL) {
+  if(!rlang::is_integer(col_pos)) col_pos <- seq_len(ncol(data))
+  x <- unique(unlist(lapply(data[, col_pos], function(x) class(x)[1])))
   if(length(x)==1) return(x)
   if(all(x %in% c("ordered", "factor"))) return("factor")
   "integer"

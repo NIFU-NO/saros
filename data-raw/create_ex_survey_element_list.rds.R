@@ -54,5 +54,5 @@ library(dplyr)
 #                           label_separator = " - ",
 #                           showNA = "never")
 # )
-# saveRDS(object = ex_survey_elements_list, file = "inst/extdata/ex_survey_elements_list.RDS", compress = FALSE)
+# qs::qsave(object = ex_survey_elements_list, file = "inst/extdata/ex_survey_elements_list.RDS", compress = FALSE)
 # usethis::use_data(ex_survey_elements_list, overwrite = TRUE)
