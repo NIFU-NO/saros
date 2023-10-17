@@ -28,7 +28,7 @@ draft_report(
     "bi_catcat_table", "bi_sigtest"),
   sort_by = ".upper",
   data_label = saros::get_data_label_opts(),
-  always_show_bi_for_by = NULL,
+  always_show_bi_for_indep = NULL,
   categories_treated_as_na = NULL,
   variables_always_at_top = NULL,
   variables_always_at_bottom = NULL,
@@ -247,7 +247,7 @@ Sort output (and collapse if requested).
 
 One of "proportion", "percentage", "percentage_bare", "count", "mean", or "median".}
 
-\item{always_show_bi_for_by}{\emph{Always show bivariate for by-variable}
+\item{always_show_bi_for_indep}{\emph{Always show bivariate for indep-variable}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 

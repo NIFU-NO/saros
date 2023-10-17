@@ -166,6 +166,7 @@ sigtest <-
                    dplyr::pick(tidyselect::any_of(names(c(dep_pos, indep_pos)))),
                    name = ".n_count")
 
+    if(min(table(data[, c(dep_pos, indep_pos)]))==Inf) browser()
     if(dep_n >= 2 &&
        (length(indep_pos) == 0 || indep_n >= 2) &&
        (!.variable_type %in% c("fct", "factor", "ordered", "ord") ||

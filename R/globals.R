@@ -35,7 +35,7 @@ get_data_label_opts <- function() {
 #        organize_by = c("chapter", ".variable_name"),
 #        sort_by = ".upper",
 #        data_label = .saros.env$data_label_opts,
-#        always_show_bi_for_by = c(),
+#        always_show_bi_for_indep = c(),
 #        categories_treated_as_na = c(),
 #        variables_always_at_top = c(),
 #        variables_always_at_bottom = c(),

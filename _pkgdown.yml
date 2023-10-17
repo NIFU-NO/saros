@@ -42,6 +42,7 @@ reference:
 - title: "Useful website management tools"
   contents:
   - create_htaccess
+  - create__headers_file
   - upload_to_ftp
 - title: "Create individual elements (usually called automatically)"
   contents:

@@ -65,8 +65,14 @@ gen_element_and_qmd_snippet <-
     element_folderpath_relative <- file.path(chapter_foldername, element_name)
     dir.create(element_folderpath_absolute, recursive = TRUE, showWarnings = FALSE)
 
-    if(dplyr::n_distinct(chapter_overview_section$.variable_type) != 1 || # Later add check that all items contain the same indep_cols_df
-       dplyr::n_distinct(chapter_overview_section$.variable_label_prefix) != 1) return("")
+    if(dplyr::n_distinct(chapter_overview_section$.variable_type) != 1) {
+      cli::cli_warn("{.var {chapter_overview_section$.variable_name}} contain multiple variable types.")
+      return("")
+    }
+    if(dplyr::n_distinct(chapter_overview_section$.variable_label_prefix) != 1) {
+      cli::cli_warn("{.var {chapter_overview_section$.variable_name}} contain multiple variable label prefixes.")
+      return("")
+    }
 
 
     grouping_structure <- dplyr::group_vars(chapter_overview_section)

@@ -283,7 +283,7 @@
 #'
 #'   Which pre-computed information for each variable-category to display.
 #'
-#' @param always_show_bi_for_by *Always show bivariate for by-variable*
+#' @param always_show_bi_for_indep *Always show bivariate for indep-variable*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
@@ -497,7 +497,7 @@ draft_report <-
 
            sort_by = ".upper",
            data_label = saros::get_data_label_opts(),
-           always_show_bi_for_by = NULL,
+           always_show_bi_for_indep = NULL,
            categories_treated_as_na = NULL,
            variables_always_at_top = NULL,
            variables_always_at_bottom = NULL,

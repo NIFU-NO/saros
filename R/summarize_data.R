@@ -172,6 +172,8 @@ sort_data <- function(data_summary,
       dplyr::arrange(dplyr::pick(tidyselect::all_of(sort_col)))
   }
   uniques <- as.character(unique(data_summary$.variable_label))
+
+  if(!all(is.na(data_summary$.variable_label))) {
   data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label, uniques)
 
   variables_always_at_bottom <- dots$variables_always_at_bottom[dots$variables_always_at_bottom %in% uniques]
@@ -181,6 +183,7 @@ sort_data <- function(data_summary,
   variables_always_at_top <- dots$variables_always_at_top[dots$variables_always_at_top %in% uniques]
   data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
                                                        variables_always_at_top, after = 0)
+  }
 
   if(length(indep_names) > 0) {
 

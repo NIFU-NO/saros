@@ -98,7 +98,8 @@ embed_cat_text_html <-
 
 
     generate_not_used_category <- function() {
-      data_out %>%
+      out <-
+        data_out %>%
         dplyr::filter(!is.na(.data$.count)) %>% #.data$.count < .env$dots$hide_label_if_prop_below,
         dplyr::select(tidyselect::all_of(c(".category", ".variable_label"))) %>%
         dplyr::arrange(dplyr::pick(tidyselect::all_of(c(".category", ".variable_label")))) %>%
@@ -109,11 +110,15 @@ embed_cat_text_html <-
             stringi::stri_c(ignore_null=TRUE, y$.category, " (", ., ")")
         }, .keep = TRUE) %>%
         unlist() %>%
-        create_text_collapse(last_sep = dots$translations$last_sep) %>%
-        {if(stringi::stri_length(.) > 0) stringi::stri_c(ignore_null=TRUE,
-          dots$translations$not_used_prefix,
-          .,
-          dots$translations$not_used_suffix) else ""}
+        create_text_collapse(last_sep = dots$translations$last_sep)
+
+      if(length(out)>0 &&
+         !is.na(out) &&
+         stringi::stri_length(out) > 0) {
+        stringi::stri_c(dots$translations$not_used_prefix,
+                        out,
+                        dots$translations$not_used_suffix, ignore_null=TRUE)
+        } else ""
     }
 
 
