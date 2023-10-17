@@ -92,10 +92,13 @@ gen_element_and_qmd_snippet3 <-
       max_width_obj = dots$max_width_obj,
       mesos_group = mesos_group)
 
-    y_col_names <- unique(chapter_overview_section$.variable_name)
-    y_col_pos <- match(y_col_names, colnames(data))
+    y_col_pos <- match(unique(chapter_overview_section$.variable_name),
+                       colnames(data))
 
 
+    filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
+                                     element_folderpath_absolute = element_folderpath_absolute,
+                                     filename_prefix = filename_prefix)
 
     variable_prefix <-
       if(any(names(section_key) == ".variable_name_prefix") &&
@@ -106,7 +109,6 @@ gen_element_and_qmd_snippet3 <-
                 chapter_overview_section = chapter_overview_section,
                 data = data,
                 y_col_pos = y_col_pos,
-                y_col_names = y_col_names,
                 mesos_group = mesos_group,
                 filepaths = filepaths,
                 obj_name = obj_name,

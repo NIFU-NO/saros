@@ -25,8 +25,11 @@ crosstable3.data.frame <-
         levels(data_duplicate[[indep_var]]) <- rep(translations$by_total,
                                                 length=length(levels(data_duplicate[[indep_var]])))
         # Below is to ensure it works with ordered factors. Still faster than using rbind
-        levels(data_duplicate[[indep_var]]) <- c(levels(data[[indep_var]]),
-                                                 levels(data_duplicate[[indep_var]]))
+        if(is.ordered(data[[indep_var]])) levels(data_duplicate[[indep_var]]) <-
+          c(levels(data[[indep_var]]),
+            levels(data_duplicate[[indep_var]]))
+
+        # levels(data_duplicate[[indep_var]]) <- forcats::fct_c(data[[indep_var]], data_duplicate[[indep_var]])
         levels(data[[indep_var]]) <- c(levels(data[[indep_var]]),
                                                  levels(data_duplicate[[indep_var]]))
         data <- dplyr::bind_rows(data, data_duplicate)
@@ -81,6 +84,7 @@ crosstable3.data.frame <-
         cli::cli_warn("{.arg {.x}} is {.obj_type_friendly {out$.category}}. Taking its mean is meaningless and results in NAs.",
                       call = call)
       }
+
       out <- out[rlang::inject(order(!!!out[, c(indep, ".category")])), ]
       summary_mean <- out
       summary_mean$.mean <- suppressWarnings(as.numeric(summary_mean$.category))
@@ -131,39 +135,8 @@ crosstable3.data.frame <-
           # ".mean_base",
           indep)]
 
-    # # Add totals when 'indep' is not NULL and 'totals' is TRUE
-    # if(length(indep)>0 && isTRUE(totals)) {
-    #   # Combine the indep_names and .variable_name into a single factor for aggregating
-    #   out$group <- rlang::exec(interaction, !!!as.list(out[, c(".variable_name", indep)]), drop = TRUE)
-    #
-    #   # Calculate totals using aggregate function
-    #   total_counts <- stats::aggregate(.count,  ~ group, data = out, FUN = sum)
-    #   total_props <- stats::aggregate(.proportion ~ group, data = out, FUN = sum)
-    #   total_means <- stats::aggregate(.mean ~ group, data = out, FUN = sum)
-    #
-    #   print(total_counts)
-    #   print(total_props)
-    #   print(total_means)
-    #   print(out)
-    #   # Combine totals into a data.frame
-    #   tryCatch(expr = {
-    #   totals <- tibble::tibble(
-    #     .category = "Total",
-    #     .variable_name = out$.variable_name,
-    #     .variable_label = out$.variable_label,
-    #     .count = total_counts$.count,
-    #     .count_se = NA,
-    #     .proportion = total_props$.proportion,
-    #     .proportion_se = NA,
-    #     .mean = total_means$.mean,
-    #     .mean_se = NA
-    #   )}, error=browser())
-    #
-    #   out <- rbind(out, totals)
-    # }
 
     for(indep_var in indep) {
-      # if(is.null(out[[indep_var]])) browser()
       attr(out[[indep_var]], "label") <- indep_labels[[indep_var]]
     }
 
@@ -175,6 +148,7 @@ crosstable3.data.frame <-
 
   }
 
+crosstable3.tbl_df <- crosstable3.data.frame
 
 crosstable3.tbl_svy <-
   function(data,

@@ -39,7 +39,7 @@ Imports:
     forcats,
     fs,
     clipr,
-    RCurl
+    qs
 Suggests:
     covr,
     ggfittext,

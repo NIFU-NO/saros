@@ -427,7 +427,7 @@ col_to_binaries <- function(data, col,
 create_text_collapse <-
   function(text = NULL,
            last_sep = NULL) {
-    if(rlang::is_null(last_sep)) last_sep <-
+    if(!rlang::is_string(last_sep)) last_sep <-
         eval(formals(draft_report)$translations)$last_sep
     cli::ansi_collapse(text, last = last_sep)
   }

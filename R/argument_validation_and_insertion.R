@@ -28,8 +28,13 @@ argument_validation_and_insertion <- function(params) {
       mesos_var = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
       element_names = list(fun = function(x) rlang::is_character(x) && all(x %in% env$element_names)),
       auxiliary_variables = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
+      always_show_bi_for_indep = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
+      variables_always_at_top = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
+      variables_always_at_bottom = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
+      variables_show_bi_for_by = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
       path = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
       index_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
+      report_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       chapter_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       qmd_start_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       qmd_end_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
@@ -88,10 +93,16 @@ argument_validation_and_insertion <- function(params) {
   params$data_label <- params$data_label[1]
   params$showNA <- params$showNA[1]
   check_sort_by(params$sort_by)
-  if(rlang::is_string(params$mesos_var) &&
-     !any(colnames(params$data) == params$mesos_var)) {
-    cli::cli_abort("{.arg mesos_var}: {.arg {params$mesos_var}} not found in data.")
+  if(rlang::is_string(params$mesos_var)) {
+    if(!any(colnames(params$data) == params$mesos_var)) {
+      cli::cli_abort("{.arg mesos_var}: {.arg {params$mesos_var}} not found in data.")
+    }
+    if(all(is.na(params$data[[params$mesos_var]]))) {
+      cli::cli_abort("{.arg mesos_var}: All mesos_var entries are NA.")
+    }
   }
+
+
   if(!all(c("chapter", ".element_name") %in% params$organize_by)) {
     cli::cli_abort(c("{.arg organize_by} must contain both {.var {c('chapter', '.element_name')}}.",
                      i = "You provided {.arg {params$organize_by}}."))

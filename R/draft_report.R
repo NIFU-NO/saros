@@ -77,11 +77,11 @@
 #'
 #'   String to split column names in data between main question and sub-items
 #'
-#' @param index_yaml_file *Path to YAML-file to insert into index.qmd*
+#' @param index_yaml_file,report_yaml_file *Path to YAML-file to insert into index.qmd and report.qmd respectively*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'
-#'   Path to file used to insert header YAML, in report.
+#'   Path to file used to insert header YAML, in index and report files.
 #'
 #' @param chapter_yaml_file *Path to YAML-file to insert into each chapter qmd-file*
 #'
@@ -93,7 +93,7 @@
 #'
 #'   `scalar<character>` // *default:* `"index.qmd"` (`optional`)
 #'
-#'   The name of the main index Quarto file (and its subfolder) used to collect all the chapters.
+#'   The name of the main index Quarto file (and its subfolder) used as landing page for each report. Will link to a PDF (report.qmd) which collects all chapters.
 #'
 #' @param qmd_start_section_filepath,qmd_end_section_filepath *Path to qmd-bit for start/end of each qmd*
 #'
@@ -283,7 +283,7 @@
 #'
 #'   Which pre-computed information for each variable-category to display.
 #'
-#' @param always_show_bi_for_by *Always show bivariate for by-variable*
+#' @param always_show_bi_for_indep *Always show bivariate for indep-variable*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
@@ -451,6 +451,7 @@ draft_report <-
            label_separator = " - ",
            name_separator = NULL,
            index_yaml_file = NULL,
+           report_yaml_file = NULL,
            chapter_yaml_file = NULL,
            qmd_start_section_filepath = NULL,
            qmd_end_section_filepath = NULL,
@@ -496,11 +497,11 @@ draft_report <-
 
            sort_by = ".upper",
            data_label = saros::get_data_label_opts(),
-           always_show_bi_for_by = c(),
-           categories_treated_as_na = c(),
-           variables_always_at_top = c(),
-           variables_always_at_bottom = c(),
-           auxiliary_variables = c(),
+           always_show_bi_for_indep = NULL,
+           categories_treated_as_na = NULL,
+           variables_always_at_top = NULL,
+           variables_always_at_bottom = NULL,
+           auxiliary_variables = NULL,
            return_raw = TRUE,
            attach_chapter_dataset = TRUE,
            panel_tabset_mesos = TRUE,
@@ -559,6 +560,7 @@ draft_report <-
 
            translations =
              list(last_sep = " and ",
+                  download_report = "Download report (PDF)",
                   intro_prefix = "We will now look at the questions asked regarding ",
                   intro_suffix = "",
                   mode_max_onfix = " on ",
@@ -651,17 +653,8 @@ draft_report <-
     #     .fns = ~forcats::fct_rev(.x)))
     # }
 
-    if(!all(names(chapter_overview) %in% c("chapter",
-                                           ".variable_role", ".variable_selection", ".variable_position",
-                                           ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
-                                           ".variable_label_prefix", ".variable_label_suffix",
-                                           ".variable_type", ".variable_group_id",
-                                           ".element_name", "indep_cols_df"))) {
-      chapter_overview <-
-        rlang::exec(
-          refine_chapter_overview,
-          !!!args)
-    }
+    chapter_overview <-
+      validate_chapter_overview(chapter_overview=chapter_overview, args=args)
     chapter_overview <-
       dplyr::filter(chapter_overview, .data$.variable_role == "dep") ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -686,7 +679,7 @@ draft_report <-
                         i="This creates filepaths that are likely too long for Sharepoint to handle..."))
       }
     }
-    report_filepath <-
+    index_filepath <-
       lapply(X =
                cli::cli_progress_along(uniques,
                                        format = "Generating mesos report for... {uniques[cli::pb_current]}",
@@ -698,7 +691,7 @@ draft_report <-
                if(is.na(uniques[.x])) { # Macro
 
                  mesos_group <- NULL
-                 # args$title <- args$title
+
 
                } else {  # Mesos
 
@@ -720,27 +713,42 @@ draft_report <-
                    path = path,
                    !!!args[!names(args) %in% c("chapter_overview", "path", "data")])
 
+
+
                report_filepath <-
                  rlang::exec(
                    gen_qmd_index,
                    title = args$title,
                    authors = all_authors,
-                   index_filepath = file.path(path, args$index_filename),
+                   index_filepath = file.path(path, stringi::stri_c(args$title, ".qmd", ignore_null = TRUE)),
                    chapter_filepaths = chapter_filepaths,
-                   !!!args[!names(args) %in% c("title", "authors")],
+                   yaml_file = args$report_yaml_file,
+                   !!!args[!names(args) %in% c("title", "authors", "report_yaml_file")],
+                   call = rlang::caller_env())
+
+               index_filepath <-
+                 rlang::exec(
+                   gen_qmd_index,
+                   title = args$title,
+                   authors = all_authors,
+                   index_filepath = file.path(path, args$index_filename),
+                   chapter_filepaths = NULL,
+                   report_filepath = report_filepath,
+                   yaml_file = args$index_yaml_file,
+                   !!!args[!names(args) %in% c("title", "authors", "index_yaml_file")],
                    call = rlang::caller_env())
 
 
-               report_filepath
+               index_filepath
 
              })
 
-    report_filepath <- as.character(unlist(report_filepath))
+    index_filepath <- as.character(unlist(index_filepath))
     if(interactive() && isTRUE(args$open_after_drafting)) {
-      lapply(report_filepath, utils::browseURL)
+      lapply(index_filepath, utils::browseURL)
     }
 
     cat(proc.time()-timestamp)
     cat("\n")
-    report_filepath
+    index_filepath
   }

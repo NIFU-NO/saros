@@ -65,8 +65,14 @@ gen_element_and_qmd_snippet <-
     element_folderpath_relative <- file.path(chapter_foldername, element_name)
     dir.create(element_folderpath_absolute, recursive = TRUE, showWarnings = FALSE)
 
-    if(dplyr::n_distinct(chapter_overview_section$.variable_type) != 1 || # Later add check that all items contain the same indep_cols_df
-       dplyr::n_distinct(chapter_overview_section$.variable_label_prefix) != 1) return("")
+    if(dplyr::n_distinct(chapter_overview_section$.variable_type) != 1) {
+      cli::cli_warn("{.var {chapter_overview_section$.variable_name}} contain multiple variable types.")
+      return("")
+    }
+    if(dplyr::n_distinct(chapter_overview_section$.variable_label_prefix) != 1) {
+      cli::cli_warn("{.var {chapter_overview_section$.variable_name}} contain multiple variable label prefixes.")
+      return("")
+    }
 
 
     grouping_structure <- dplyr::group_vars(chapter_overview_section)
@@ -103,9 +109,9 @@ gen_element_and_qmd_snippet <-
       if(any(names(section_key) == ".variable_name_prefix") &&
          dplyr::n_distinct(section_key$.variable_name_prefix)==1) unique(section_key$.variable_name_prefix)
 
-    common_data_type <- get_common_data_type(data, col_names = y_col_names)
+    common_data_type <- get_common_data_type(data, col_pos = y_col_pos)
     if(any(c("factor", "ordered") == common_data_type)) {
-      common_levels <- get_common_levels(data, col_names = y_col_names)
+      common_levels <- get_common_levels(data, col_pos = y_col_pos)
 
       colour_palette <- get_colour_set(
         x = common_levels,
@@ -149,7 +155,7 @@ gen_element_and_qmd_snippet <-
             dep = y_col_pos,
             mesos_group = mesos_group,
             !!!dots)
-        saveRDS(out, file = filepaths$abs$rds)
+        qs::qsave(out, file = filepaths$abs$rds)
         writeLines(text = stringi::stri_c(out, ignore_null=TRUE, collapse=""),
                    con = filepaths$abs$txt)
       }
@@ -166,7 +172,7 @@ gen_element_and_qmd_snippet <-
             dep = y_col_pos,
             mesos_group = mesos_group,
             !!!dots)
-        saveRDS(out, file = filepaths$abs$rds)
+        qs::qsave(out, file = filepaths$abs$rds)
         writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
       }
 
@@ -201,7 +207,7 @@ gen_element_and_qmd_snippet <-
                         height = dots$png_height,
                         units = "cm", dpi = "retina")
         writexl::write_xlsx(x = out_html$data, filepaths$abs$xlsx)
-        saveRDS(out_html, file = filepaths$abs$rds)
+        qs::qsave(out_html, file = filepaths$abs$rds)
 
         # out_pdf <-
         #   rlang::exec(
@@ -268,7 +274,7 @@ gen_element_and_qmd_snippet <-
                         width = dots$png_width,
                         height = dots$png_height,
                         units = "cm", dpi = "retina")
-        saveRDS(out_html, file = filepaths$abs$rds)
+        qs::qsave(out_html, file = filepaths$abs$rds)
 
 
         return(
@@ -309,7 +315,7 @@ gen_element_and_qmd_snippet <-
             dep = y_col_pos,
             mesos_group = mesos_group,
             !!!dots)
-        saveRDS(out, file = filepaths$abs$rds)
+        qs::qsave(out, file = filepaths$abs$rds)
         writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
       }
 
@@ -325,7 +331,7 @@ gen_element_and_qmd_snippet <-
             mesos_group = mesos_group,
             !!!dots)
         if(nrow(out)==0) return("<!--# No uni_sigtest to return  -->")
-        saveRDS(out, file = filepaths$abs$rds)
+        qs::qsave(out, file = filepaths$abs$rds)
         writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
 
       }
@@ -411,7 +417,7 @@ gen_element_and_qmd_snippet <-
 
           if(nrow(out)>0) {
             writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
-            saveRDS(out, file = filepaths$abs$rds)
+            qs::qsave(out, file = filepaths$abs$rds)
             return(
               insert_obj_in_qmd(element_name = element_name,
                                 index = filename_prefix,
@@ -515,7 +521,7 @@ gen_element_and_qmd_snippet <-
                             units = "cm", dpi = "retina")
             writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
 
-            saveRDS(out_html, file = filepaths$abs$rds)
+            qs::qsave(out_html, file = filepaths$abs$rds)
 
             return(
               stringi::stri_c(ignore_null=TRUE,
@@ -572,7 +578,7 @@ gen_element_and_qmd_snippet <-
                             height = dots$png_height,
                             units = "cm", dpi = "retina")
             writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
-            saveRDS(out_html, file = filepaths$abs$rds)
+            qs::qsave(out_html, file = filepaths$abs$rds)
 
             return(
               stringi::stri_c(ignore_null=TRUE,
@@ -633,7 +639,7 @@ gen_element_and_qmd_snippet <-
                             height = dots$png_height,
                             units = "cm", dpi = "retina")
             writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
-            saveRDS(out_html, file = filepaths$abs$rds)
+            qs::qsave(out_html, file = filepaths$abs$rds)
 
             return(
               stringi::stri_c(ignore_null=TRUE,
@@ -692,7 +698,7 @@ gen_element_and_qmd_snippet <-
                             height = dots$png_height,
                             units = "cm", dpi = "retina")
             writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
-            saveRDS(out_html, file = filepaths$abs$rds)
+            qs::qsave(out_html, file = filepaths$abs$rds)
 
             return(
               stringi::stri_c(ignore_null=TRUE,
@@ -731,7 +737,7 @@ gen_element_and_qmd_snippet <-
                 mesos_group = mesos_group,
                 !!!dots)
             writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
-            saveRDS(out, file = filepaths$abs$rds)
+            qs::qsave(out, file = filepaths$abs$rds)
           }
 
 

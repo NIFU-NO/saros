@@ -22,28 +22,35 @@ eval_cols <- function(x, data,
 
 
 look_for_extended <- function(data,
-                              cols = tidyselect::everything(),
+                              cols = colnames(data),
                               label_separator = NULL,
                               name_separator = NULL) {
   ### Assume that related columns always have identical label prefix AND overlapping response categories.
   ### Assume that variables with identical label prefix may not be related.
   ### Assume that related columns are always next to each other OR share same variable name prefix.
 
-  data_part <- dplyr::select(data, {{cols}})
+  data_part <- data[,cols]
   if(ncol(data_part) == 0 || nrow(data_part) == 0) cli::cli_abort("data.frame is of 0 length.")
 
-  x <- data.frame(
-    .variable_position = match(colnames(data_part), colnames(data)),
-    .variable_name = colnames(data_part),
-    .variable_label = get_raw_labels(data = data_part),
-    .variable_type = as.character(unlist(lapply(names(data_part), function(.x) vctrs::vec_ptype_abbr(data_part[[.x]])))),
+
+    .variable_position <- match(colnames(data_part), colnames(data))
+    .variable_name <- colnames(data_part)
+    .variable_label <- get_raw_labels(data = data_part)
+    .variable_type <- as.character(unlist(lapply(names(data_part), function(.x) vctrs::vec_ptype_abbr(data_part[[.x]]))))
+    if(length(.variable_position) != length(.variable_name) ||
+       length(.variable_name) != length(.variable_label) ||
+       length(.variable_label) != length(.variable_type)) browser()
+    x <- data.frame(.variable_position = .variable_position,
+                    .variable_name = .variable_name,
+                    .variable_label = .variable_label,
+                    .variable_type = .variable_type,
     row.names = NULL
   )
   check_duplicates <- duplicated(x$.variable_label)
   if(any(check_duplicates)) {
     duplicates <- unique(x$.variable_label[check_duplicates])
-    cli::cli_warn(c("Found duplicated variable labels: {duplicates}.",
-                    "This will likely cause problems!"))
+    cli::cli_warn(c(i="Found duplicated variable labels: {duplicates}.",
+                    i="This will likely cause problems!"))
   }
 
   if(!is.null(name_separator)) {
@@ -130,11 +137,13 @@ look_for_extended <- function(data,
 #
 
 validate_labels <- function(data) {
-  miss_label_vars <- data[is.na(data$.variable_label_prefix), ]
-  if(nrow(miss_label_vars) > 0) cli::cli_warn("Using variable name in place of missing label for {.var {miss_label_vars$.variable_name}}.")
+  miss_label_vars <- data[is.na(data$.variable_label_prefix) & !is.na(data$.variable_position), ]
+  if(nrow(miss_label_vars) > 0) {
+    cli::cli_warn("Using variable name in place of missing label for {.var {miss_label_vars$.variable_name}}.")
+  }
   # if(data$.variable_label)
-  data$.variable_label_prefix <- dplyr::if_else(!is.na(data$.variable_label_prefix), data$.variable_label_prefix, data$.variable_name)
-  data$.variable_label_suffix <- dplyr::if_else(!is.na(data$.variable_label_suffix), data$.variable_label_suffix, data$.variable_name)
+  data$.variable_label_prefix <- dplyr::if_else(is.na(data$.variable_label_prefix) & !is.na(data$.variable_position), data$.variable_name, data$.variable_label_prefix)
+  data$.variable_label_suffix <- dplyr::if_else(is.na(data$.variable_label_suffix) & !is.na(data$.variable_position), data$.variable_name, data$.variable_label_suffix)
   data
 }
 
@@ -166,97 +175,23 @@ find_test <- function(y, x) {
   if((inherits(y, what = "double") ||
       inherits(y, what = "integer")) &&
      (inherits(x, what = "double") ||
-      inherits(x, what = "integer"))) return(stats::cor.test)
+      inherits(x, what = "integer") ||
+      inherits(x, what = "ordered"))) return(stats::cor.test)
 
   if(inherits(y, what = "factor") &&
-     inherits(x, what = "factor")) return(chisq_test2)
+     (inherits(x, what = "factor") ||
+      inherits(x, what = "ordered"))) return(chisq_test2)
 
   if((inherits(y, what = "double") ||
       inherits(y, what = "integer")) &&
      inherits(x, what = "factor")) return(stats::t.test)
 
+  if(inherits(y, what = "ordered") &&
+     inherits(x, what = "factor")) return(stats::kruskal.test)
+
+  cli::cli_abort("Unable to find a suitable statistical test for outcome {class(y)} and {class(x)}.")
+
 }
-
-remove_non_significant_bivariates <-
-  function(refined_chapter_overview,
-           data,
-           hide_bi_entry_if_sig_above = .05,
-           always_show_bi_for_indep = c(),
-           progress = TRUE,
-           call = rlang::caller_env()) {
-
-    check_double(hide_bi_entry_if_sig_above, min = 0, max = 1, call = call)
-    check_string(always_show_bi_for_indep, null.ok = TRUE, n = NULL, call = call)
-
-    if(hide_bi_entry_if_sig_above < 1) {
-      if(progress) cli::cli_progress_message("Removing bivariate occurences if {.arg hide_bi_entry_if_sig_above}: {.arg {hide_bi_entry_if_sig_above}}, except {always_show_bi_for_indep}.")
-
-      out <- refined_chapter_overview
-      out <- dplyr::rowwise(out)
-      out <- dplyr::group_map(out, .keep = TRUE, .f = function(df_col_row, df_col_key) {
-
-          if(rlang::is_null(df_col_row$indep_cols_df[[1]]) || nrow(df_col_row$indep_cols_df[[1]]) == 0) {
-
-            df_col_row
-
-          } else {
-
-          out_indep <-
-            df_col_row$indep_cols_df[[1]] %>% ### COULD ALSO lapply(1:nrow(df_col_row$indep_cols_df[[1]])) %>% bind_rows()
-            dplyr::rowwise() %>%
-            dplyr::group_map(.keep = TRUE, .f = function(df_indep_row, indep_df_key) {
-
-              if(!is.na(df_col_row$.variable_name) && df_indep_row$.variable_name != df_col_row$.variable_name) {
-
-                df_chitest <-
-                  data[!is.na(data[[df_col_row$.variable_name]]) & !is.na(data[[df_indep_row$.variable_name]]),
-                       c(df_col_row$.variable_name, df_indep_row$.variable_name)]
-
-                count_uniques <- dplyr::count(df_chitest,
-                                              .data[[df_col_row$.variable_name]],
-                                              .data[[df_indep_row$.variable_name]],
-                                              name = ".n_count")
-
-                if(dplyr::n_distinct(df_chitest[[df_col_row$.variable_name]]) > 1 &&
-                   dplyr::n_distinct(df_chitest[[df_indep_row$.variable_name]]) > 1 &&
-                   all(count_uniques$.n_count >= 10)) {
-
-
-
-                  stattest <- find_test(y = df_chitest[[df_col_row$.variable_name]],
-                                        x = df_chitest[[df_indep_row$.variable_name]])
-
-                  df_indep_row$chi_p <-
-                    stattest(x=df_chitest[[df_col_row$.variable_name]],
-                             y=df_chitest[[df_indep_row$.variable_name]])$p.value %>%
-                    suppressWarnings()
-
-
-                  return(df_indep_row)
-                }
-              }
-              df_indep_row$chi_p <- NA_real_
-              return(df_indep_row)
-
-            }) %>%
-            dplyr::bind_rows()
-
-          df_col_row$indep_cols_df[[1]] <-
-            vctrs::vec_slice(out_indep,
-                             (!is.na(out_indep$chi_p) &
-                               out_indep$chi_p <= hide_bi_entry_if_sig_above) |
-                               out_indep$.variable_name %in% always_show_bi_for_indep,
-                             error_call = call)
-          df_col_row
-          }
-
-
-        }) %>%
-        dplyr::bind_rows()
-
-      out
-    } else refined_chapter_overview
-  }
 
 
 add_element_names <- function(refined_chapter_overview, element_names) {
@@ -358,8 +293,8 @@ refine_chapter_overview <-
                                       replacement = "'")
     out$.variable_selection <-
       stringi::stri_replace_all_regex(out$.variable_selection,
-                                      pattern = '[[:space:]]+',
-                                      replacement = "")
+                                      pattern = '[[:space:],]+',
+                                      replacement = ",")
 
     out$cols <- eval_cols(x = out$.variable_selection,
                           data = data,
@@ -369,6 +304,10 @@ refine_chapter_overview <-
                            col = "cols",
                            values_to = ".variable_position",
                            indices_to = ".variable_name")
+
+    out <-
+      dplyr::filter(out, .data$.variable_name != "")
+
     # check_duplicates_in_chapter_overview(out)
     out <-
      dplyr::left_join(x=out,
