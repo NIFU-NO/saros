@@ -12,8 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-1   title should be placed in the yaml of index.qmd and report.qmd?
-1   empty_text_chunk is not respected
+1   In CriThiSE, there are no bivariates??? Maybe coincidence
+2   No _flexi in main report?
 1   read_main_password_file
 1   create__headers_file
 1   Finne ut av hvorfor jeg hadde satt execute_dir = getwd() når det medførte at kapittel.qmd ikke fant filer i undermappene. Antageligvis fordi det er enkelte maler i R-skript som jeg ønsket å lese inn fra Ressurser-mappen. Disse kunne jeg ikke finne på andre måter. Kanskje vurdere å bruke environment variabelen. 

@@ -55,7 +55,7 @@ gen_qmd_index <-
       main_section <-  stringi::stri_c(main_section, ignore_null=TRUE, collapse = "\n\n")
     }
     report_link <- if(rlang::is_character(report_filepath)) {
-      stringi::stri_c("[", dots$translations$download_report, "](", dots$title, ".pdf)")
+      stringi::stri_c("[", dots$translations$download_report, "](", dots$title, ".qmd)")
     }
 
     qmd_start_section <- if(!rlang::is_null(dots$qmd_start_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_start_section_filepath), collapse="\n")
