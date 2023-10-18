@@ -12,7 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-
+1   title should be placed in the yaml of index.qmd and report.qmd?
+1   empty_text_chunk is not respected
+1   read_main_password_file
+1   create__headers_file
+1   Finne ut av hvorfor jeg hadde satt execute_dir = getwd() når det medførte at kapittel.qmd ikke fant filer i undermappene. Antageligvis fordi det er enkelte maler i R-skript som jeg ønsket å lese inn fra Ressurser-mappen. Disse kunne jeg ikke finne på andre måter. Kanskje vurdere å bruke environment variabelen. 
 # nifutemplate
 2   SSN_methodchapter_inlines.R and SSN_methodchapter.qmd
 1   functions to quickly download files to a folder
@@ -77,6 +81,9 @@ knitr::opts_chunk$set(echo = TRUE)
 2   Argument for hva som er faner: c("element", "mesos_var", "dep") 
 
 # plots
+2   Interactivity on a single cell, not the group. 
+2   Also, a lighter inactive shadow alpha. 
+2   hover contains variable_name 
 3   La brukerne selv sortere etter sin egen preferanse
 -   tri_catcatcat_plot (z)
     -   Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys.
@@ -178,6 +185,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Raise issues in other packages
 1   RStudio Quarto: Copying table from Word into Visual editor results in empty cols and rows
 1   RStudio Quarto: Copying figure from Word into Visual editor results in image not found
+1   Quarto-CLI: Seems that if the _nifu_global.yaml contains wrong paths (which?), we get a TypeError instead of an informative error. Could also be the main vs Main spelling for the render: 
 
 4   Issue at <https://github.com/tidymodels/infer> about annoying warning.
 4   Issue at Quarto-cli for: If processing fails, it leaves a temporary .rmarkdown file which if not manually deleted will cause the following error on the next rendering: "The name of the input file cannot contain the special shell characters: [ \<\>()\|:&;#?\*']"

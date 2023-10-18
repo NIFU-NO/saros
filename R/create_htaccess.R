@@ -1,3 +1,8 @@
+read_main_password_file <- function(x, usernames) {
+  x <- read.table(file = x, header = TRUE)
+  x <- strsplit(x=x, split = ":", fixed = TRUE)
+
+}
 #' Create Bulk of .htaccess files in local folders, having valid AuthUserFile when uploaded to ftp-server at remote_basepath
 #'
 #' @param remote_basepath String
@@ -119,22 +124,27 @@ add_entry_local_main_htpasswd <-
 #' @param mesos_usernames,mesos_passwords Character vector of respective usernames and passwords for the mesos_paths
 #' @param global_username,global_password String, username and password that always gives access to a mesos_paths path. Defaults to "admin"
 #'
-#' @return String, the path to the _headers file
+#' @return String, the path to the _headers file having been created.
 #' @export
 #'
 #' @examples create__headers_file(site_path=tempdir())
-create__headers_file <- function(site_path="_site",
-                                 mesos_paths=paste0("rapporter/Barnehageleder/2022H/mesos/Uni of ",
-                                                    LETTERS[1:6]),
-                                 mesos_usernames=paste0("Uni of ", LETTERS[1:6]),
-                                 mesos_passwords=mesos_usernames,
-                                 global_username="admin",
-                                 global_password="arturead") {
+create__headers_file <- function(site_path = "_site",
+                                 mesos_parent_path = "Rapporter/Barnehageleder/2022H/Mesos",
+                                 main_passwordfile_path = NULL,
+                                 mesos_usernames = paste0("Uni of ", LETTERS[1:6]),
+                                 global_username = "admin"
+                                 ) {
 
-  if(length(mesos_paths) != length(mesos_usernames) ||
-     length(mesos_usernames) != length(mesos_passwords)) {
-    cli::cli_abort("Lengths of {.arg mesos_paths}, {.arg mesos_usernames}, and {.arg mesos_passwords} do not match.")
+  if(length(mesos_paths) != length(mesos_usernames)) {
+    cli::cli_abort("Lengths of {.arg mesos_paths} and {.arg mesos_usernames} do not match.")
   }
+
+  if(rlang::is_string(main_passwordfile_path)) {
+    main_passwords <- read_main_password_file(main_passwordfile_path,
+                                              usernames = c(mesos_usernames, global_username))
+
+  }
+
   global_credentials <- stringi::stri_c(
     global_username, ":", global_password,
     ignore_null = TRUE, collapse = " ")

@@ -105,6 +105,7 @@ gen_qmd_chapters <-
           authors <- get_authors(data = chapter_overview_chapter, col = "authors")
           chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
                                       authors = authors,
+                                      title = NULL,
                                       chapter_number = chapter_number)
 
           chapter_contents <-

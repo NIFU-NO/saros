@@ -675,7 +675,7 @@ draft_report <-
       uniques <- pull_uniques(data[[args$mesos_var]])
 
       if(any(nchar(uniques) > 12)) {
-        cli::cli_warn(c(x="mesos_var has levels > 12 characters: {{uniques[nchar(uniques)>12]}}.",
+        cli::cli_warn(c(i="{.arg mesos_var} has levels > 12 characters: {uniques[nchar(uniques)>12]}.",
                         i="This creates filepaths that are likely too long for Sharepoint to handle..."))
       }
     }
