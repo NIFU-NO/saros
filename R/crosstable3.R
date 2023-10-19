@@ -11,6 +11,7 @@ crosstable3.data.frame <-
 
     showNA <- rlang::arg_match(showNA, values = eval(formals(draft_report)$showNA), error_call = call)
 
+
     # indep_names <- colnames(data[, indep, drop = FALSE])
     indep_labels <- get_raw_labels(data = data, col_pos = indep)
     col_names <- colnames(data[, dep, drop = FALSE])[!(colnames(data[, dep, drop = FALSE]) %in% indep)]
@@ -85,7 +86,7 @@ crosstable3.data.frame <-
                       call = call)
       }
 
-      out <- out[rlang::inject(order(!!!out[, c(indep, ".category")])), ]
+      out <- out[rlang::inject(order(!!!out[, c(indep, ".category"), drop = FALSE])), ]
       summary_mean <- out
       summary_mean$.mean <- suppressWarnings(as.numeric(summary_mean$.category))
       summary_mean <- stats::aggregate(x = .mean ~ ., data = summary_mean[, c(indep, ".mean"), drop = FALSE], FUN = mean, na.rm = TRUE)

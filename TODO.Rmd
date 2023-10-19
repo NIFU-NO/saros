@@ -12,18 +12,27 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
+1   If a data.frame is submitted as data in draft_report(), only a single row is used...
+1   Must find out why AGU creates a report within the mesos/næring folder...
+        Probably because of NA on the mesos_var!
+1   Must get remove_empty_headers() to work!
+1   Ensure ordinal scales in AGU, DU, etc.
+1   #| prefer-html: false doesn't work with typst
+  1   With typst, is it really needed to have the pdf-conditionals for ggiraph/ggplot?
+
 1   In CriThiSE, there are no bivariates??? Maybe coincidence
-2   No _flexi in main report?
+2   Reduce level 2 header font?
 1   read_main_password_file
 1   create__headers_file
 1   Finne ut av hvorfor jeg hadde satt execute_dir = getwd() når det medførte at kapittel.qmd ikke fant filer i undermappene. Antageligvis fordi det er enkelte maler i R-skript som jeg ønsket å lese inn fra Ressurser-mappen. Disse kunne jeg ikke finne på andre måter. Kanskje vurdere å bruke environment variabelen. 
+
 # nifutemplate
 2   SSN_methodchapter_inlines.R and SSN_methodchapter.qmd
 1   functions to quickly download files to a folder
 
 
 # Chapter overview
-1   not keeping significant relationships!
+1   not keeping significant relationships! Seems all or nothing?
 3   cli_inform: rows removed with hide_bi_entry_if_sig_above
 
 # Structure
@@ -48,6 +57,8 @@ knitr::opts_chunk$set(echo = TRUE)
 2   No variable label will cause text-output (interpretations) to use NA.
     2   Review all stringi::stri_c( and check whether there is a possibility of inputs being NA. Should then use stringi::stri_remove_empty_na( before
     2   Any organize_by set of variables in chapter_overview should not have NA (or deal appropriately with them)
+3    Warning in value[[3L]](cond) :                            
+  cli progress bar update failed: subscript out of bounds
 
 ## Reverse engineering from Word to Quarto
 2   Test replace_docx_imgs_with_mscharts
@@ -81,6 +92,7 @@ knitr::opts_chunk$set(echo = TRUE)
 2   Argument for hva som er faner: c("element", "mesos_var", "dep") 
 
 # plots
+1   gglikert()
 2   Interactivity on a single cell, not the group. 
 2   Also, a lighter inactive shadow alpha. 
 2   hover contains variable_name 
