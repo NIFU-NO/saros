@@ -12,7 +12,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-1   If a data.frame is submitted as data in draft_report(), only a single row is used...
 1   Must find out why AGU creates a report within the mesos/næring folder...
         Probably because of NA on the mesos_var!
 1   Must get remove_empty_headers() to work!
