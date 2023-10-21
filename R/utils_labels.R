@@ -82,21 +82,21 @@ get_raw_labels <-
   }
 
 
-set_var_labels <- function(data, cols=tidyselect::everything(), overwrite=TRUE) {
+set_var_labels <- function(data, cols=colnames(data), overwrite=TRUE) {
   cols_enq <- rlang::enquo(arg = cols)
   cols_pos <- tidyselect::eval_select(expr = cols_enq, data = data)
   col_names <- colnames(data)
   data <-
-    lapply(seq_len(ncol(data)), FUN = function(.x) {
+    lapply(colnames(data), FUN = function(.x) {
       if(
-        .x %in% cols_pos &&
+        .x %in% cols &&
         (overwrite || is.null(attr(data[[.x]], "label")))
       ) {
-        attr(data[[.x]], "label") <- col_names[.x]
+        attr(data[[.x]], "label") <- cols[.x]
       }
       data[[.x]]
     })
-  names(data) <- col_names
+  names(data) <- cols
   vctrs::new_data_frame(vctrs::df_list(data))
 }
 

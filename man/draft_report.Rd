@@ -63,6 +63,7 @@ draft_report(
   descend = TRUE,
   require_common_categories = TRUE,
   flexi = TRUE,
+  micro = FALSE,
   colour_palette_nominal = NULL,
   colour_palette_ordinal = NULL,
   colour_na = "gray90",
@@ -452,7 +453,13 @@ Whether to check if all items share common categories.}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
-Whether to include totals in the output.}
+Whether to create a folder with a Shiny flexi app containing all the variables in the chapter_overview and auxiliary_variables.}
+
+\item{micro}{\emph{Create page with raw data (micro data) and codebook}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).}
 
 \item{colour_palette_nominal, colour_palette_ordinal}{\emph{Colour palettes (nominal and ordinal)}
 

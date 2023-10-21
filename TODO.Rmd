@@ -12,22 +12,24 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-1   Must find out why AGU creates a report within the mesos/næring folder...
-        Probably because of NA on the mesos_var!
-1   Must get remove_empty_headers() to work!
-1   Ensure ordinal scales in AGU, DU, etc.
-1   #| prefer-html: false doesn't work with typst
-  1   With typst, is it really needed to have the pdf-conditionals for ggiraph/ggplot?
+1   From AGU script and elsewhere collect common functions:
+        Sanitize factor labels
+        Check beforehand that there are no " - " in all data_prep scripts
 
+2   Also export a complete archivable dataset with codebook
+        en side med lenker til følgende:
+        Datasettet
+        En kodebok med variabelnavn, variabel-label, unike verdier, antall missing, data-type)
+            Excel, HTML
+        Eventuelle maler vi kommer på senere for dokumentasjon.
 1   In CriThiSE, there are no bivariates??? Maybe coincidence
-2   Reduce level 2 header font?
-1   read_main_password_file
-1   create__headers_file
+x   Reduce level 2 header font?
 1   Finne ut av hvorfor jeg hadde satt execute_dir = getwd() når det medførte at kapittel.qmd ikke fant filer i undermappene. Antageligvis fordi det er enkelte maler i R-skript som jeg ønsket å lese inn fra Ressurser-mappen. Disse kunne jeg ikke finne på andre måter. Kanskje vurdere å bruke environment variabelen. 
 
 # nifutemplate
 2   SSN_methodchapter_inlines.R and SSN_methodchapter.qmd
-1   functions to quickly download files to a folder
+        Turn method chapter into a more generic function?
+1   functions to quickly download template files to a folder?
 
 
 # Chapter overview
@@ -46,7 +48,7 @@ knitr::opts_chunk$set(echo = TRUE)
 3   target and renv initialization with menu selection. =\> {saros.template}
 
 # Internals
-4 Can find_test be combined with find_stat_config?
+4   Can find_test be combined with find_stat_config?
 2   Methodize
         Input validation functions
         Reduce number of arguments
@@ -88,13 +90,14 @@ knitr::opts_chunk$set(echo = TRUE)
         - Have some translations-headers?
 
 # mesos
-2   Argument for hva som er faner: c("element", "mesos_var", "dep") 
+2   Option to specify what is used for tabset: c("element", "mesos_var", "dep") 
 
 # plots
-1   gglikert()
-2   Interactivity on a single cell, not the group. 
+2   gglikert()
+2   kontinuerlig avhengig => histogram
+2   kontinuerlig avhengig x kategorisk uavhengig => boxplot
+2   kontinuerlig avhengig x kontinuerlig uavhengig => scatter plot
 2   Also, a lighter inactive shadow alpha. 
-2   hover contains variable_name 
 3   La brukerne selv sortere etter sin egen preferanse
 -   tri_catcatcat_plot (z)
     -   Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys.
@@ -111,6 +114,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # tables
 3   La brukerne selv sortere etter sin egen preferanse
+3   For tabeller for det samme så tenker jeg prosent missing, snitt, SD, og antall outliers som default.* samt brutt ned på kategorisk uavhengig ved behov. *Men her skal man kunne sette bestilling på forhånd før rapport genereres.
 
 
 # Colours
@@ -135,7 +139,7 @@ knitr::opts_chunk$set(echo = TRUE)
 3   Parallellism = c("none", "chapter", "inner")
      lapply_function <- if(require("future.apply)) future.lapply::future_lapply else lapply
 
-4   distinguish between qmd_start/end for chapters and indexes?
+4   distinguish between qmd_start/end for chapter.qmd, index.qmd and report.qmd?
 4   move some parameters from \_report_generation_setup.yml to \_quarto.yml file and perform modifications in a R-script loaded in the beginning of index.qmd
     -   decimal marker?
     -   colour_palette?

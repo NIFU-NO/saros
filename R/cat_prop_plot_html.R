@@ -44,7 +44,7 @@ prep_cat_prop_plot_html <-
 
     p <-
       data %>%
-      dplyr::mutate(
+      dplyr::mutate(id = seq_len(nrow(.)),
         Tooltip = # Tooltip is opposite of the regular display
           if (prop_family) {
             sprintf(fmt = "%s\nN = %.0f", .data[[".category"]], .data[[".count"]])
@@ -63,7 +63,7 @@ prep_cat_prop_plot_html <-
           fill = .data[[".category"]],
           group = .data[[".category"]],
           label = .data[[".data_label"]],
-          data_id = .data[[".category"]],
+          data_id = .data[["id"]],
           onclick = .data[["onclick"]]
         ),
         cumulative = TRUE

@@ -336,7 +336,13 @@
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
 #'
-#'   Whether to include totals in the output.
+#'   Whether to create a folder with a Shiny flexi app containing all the variables in the chapter_overview and auxiliary_variables.
+#'
+#' @param micro *Create page with raw data (micro data) and codebook*
+#'
+#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'
+#'   Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).
 #'
 #' @param hide_bi_entry_if_sig_above *p-value threshold for hiding bivariate entry*
 #'
@@ -533,6 +539,7 @@ draft_report <-
            descend = TRUE,
            require_common_categories = TRUE,
            flexi = TRUE,
+           micro = FALSE,
 
 
            colour_palette_nominal = NULL,
@@ -742,6 +749,14 @@ draft_report <-
                index_filepath
 
              })
+
+    if(isTRUE(micro)) {
+      gen_micro(data = data,
+                cols = unique(c(chapter_overview$.variable_name,
+                                chapter_overview_indep$.variable_name,
+                                args$mesos_var,
+                                args$auxiliary_variables)))
+    }
 
     index_filepath <- as.character(unlist(index_filepath))
     if(interactive() && isTRUE(args$open_after_drafting)) {

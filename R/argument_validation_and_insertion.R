@@ -54,6 +54,8 @@ argument_validation_and_insertion <- function(params) {
       panel_tabset_mesos = list(fun = rlang::is_bool),
       single_y_bivariate_elements = list(fun = rlang::is_bool),
       totals = list(fun = rlang::is_bool),
+      flexi = list(fun = rlang::is_bool),
+      micro = list(fun = rlang::is_bool),
 
       plot_height_multiplier = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
       plot_height_fixed_constant = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
