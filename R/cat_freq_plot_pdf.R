@@ -34,7 +34,10 @@ prep_cat_freq_plot_pdf <-
     by_vars <- colnames(data)[!colnames(data) %in%
                                 .saros.env$summary_data_sort2]
 
-    hide_axis_text <- length(by_vars) == 0 && dplyr::n_distinct(data[[".variable_label"]]) == 1
+    hide_axis_text <-
+      isTRUE(dots$hide_axis_text_if_single_variable) &&
+      length(indep_vars) == 0 &&
+      dplyr::n_distinct(data[[".variable_label"]]) == 1
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")

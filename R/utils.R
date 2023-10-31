@@ -392,8 +392,8 @@ col_to_binaries <- function(data, col,
   col_pos <- tidyselect::eval_select(expr = col_enq, data = data)
   col_label <- attr(data[[col_pos]], "label")
 
-  if(is.factor(data[, col_pos]) | is.ordered(data[, col_pos]) |
-     is.integer(data[, col_pos]) | is.numeric(data[, col_pos])) {
+  if(is.factor(data[, col_pos, drop=TRUE]) | is.ordered(data[, col_pos, drop=TRUE]) |
+     is.integer(data[, col_pos, drop=TRUE]) | is.numeric(data[, col_pos, drop=TRUE])) {
     data2 <-
       data |>
       dplyr::arrange(as.numeric({{col}}))

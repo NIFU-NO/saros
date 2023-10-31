@@ -1,33 +1,6 @@
-read_main_password_file <- function(x=".main_htpasswd_private",
-                                    usernames = "admin",
-                                    log_rounds = 12,
-                                    append_users = FALSE,
-                                    password_input = c("prompt", "8", "10", "12", "16")) {
-  password_input <- rlang::arg_match(password_input, multiple = FALSE)
-  # Read in x, split it into usernames and plaintext passwords, encrypt the passwords, return a table
-  if(!file.exists(x)) {
-    cli::cli_abort(c(x="Cannot find {.file x}.",
-                     i="Check that the file has been made available to you"))
-  }
-  master_table <- utils::read.table(file = x, header = FALSE, col.names = c("username", "password"), sep=":", tryLogical = FALSE)
-  lapply(usernames, FUN = function(user) {
-    passwd <- master_table[master_table$username == user, "password"]
-    if(!rlang::is_string(passwd)) {
-      if(isFALSE(append_users)) cli::cli_abort("Unable to find password for username {user}.")
-      if(password_input == "prompt") {
-        plaintext_password <- rstudioapi::askForPassword(prompt = stringi::stri_c("Enter password for new user: ", user))
-      } else {
-        plaintext_password <- sample(x = c(letters, LETTERS, 0:9),
-                                     size = as.integer(password_input),
-                                     replace = TRUE)
-      }
-      append_main_password_file(x = x,
-                                usernames = user,
-                                plaintext_passwords = plaintext_password)
-    }
-    passwd <- bcrypt::hashpw(password = passwd, salt = bcrypt::gensalt(log_rounds = log_rounds))
-    rlang::set_names(x = passwd, nm = user)
-  })
+read_main_password_file <- function(file) {
+  utils::read.table(file = file, header = TRUE,
+                    sep=":", tryLogical = FALSE)
 }
 
 
@@ -35,34 +8,81 @@ append_main_password_file <- function(x=".main_htpasswd_private",
                                       usernames="admin",
                                       plaintext_passwords="admin") {
   if(!file.exists(x)) {
-    cli::cli_abort(c("Cannot find {.file x}.",
+    cli::cli_abort(c("Cannot find {.file {x}}.",
                      "An empty file must be created manually first, due to security precautions.",
                      "Check that the file has been made available to you."))
   }
   if(length(usernames) != length(plaintext_passwords)) {
     cli::cli_abort("Lengths of {.arg usernames} and {.arg plaintext_passwords} do not match.")
   }
-  master_table <- utils::read.table(file = x, header = TRUE, col.names = c("username", "password"), sep=":", tryLogical = FALSE)
+  master_table <- read_main_password_file(file = x)
   new_table <- data.frame(username = usernames, password = plaintext_passwords)
   duplicates <- new_table$username[new_table$username %in% master_table$username]
-  if(length(duplicates)>0) cli::cli_warn("usernames {usernames} already exist in x, ignoring these. Delete these manually in {.file x} if you want to change passwords.")
+  if(length(duplicates)>0) cli::cli_warn(c(i="usernames {usernames} already exist in {.file {x}}, ignoring these.",
+                                           i="Delete these lines manually in the file if you want to change passwords."))
   new_table <- new_table[!new_table$username %in% master_table$username, ]
   out <- rbind(master_table, new_table)
-  utils::write.table(x = out, file = x)
+  write_htpasswd_file(x = out, file = x, header=TRUE)
   cli::cli_progress_done("Successfully registered password credentials!")
   x
 }
 
-write_htpasswd_file <- function(x, file) {
+
+refer_main_password_file <- function(x=".main_htpasswd_private",
+                                    usernames = "admin",
+                                    log_rounds = 12,
+                                    append_users = FALSE,
+                                    password_input = c("prompt", "8", "10", "12", "16")) {
+  password_input <- rlang::arg_match(password_input, multiple = FALSE)
+  # Read in x, split it into usernames and plaintext passwords, encrypt the passwords, return a table
+  if(!file.exists(x)) {
+    cli::cli_abort(c(x="Cannot find {.file {x}}.",
+                     i="Check that the file has been made available to you"))
+  }
+  master_table <- read_main_password_file(file = x)
+  out <-
+  lapply(usernames, FUN = function(user) {
+    passwd <- master_table[master_table$username == user, "password"]
+    if(!rlang::is_string(passwd) || nchar(passwd)==0) {
+      if(isFALSE(append_users)) cli::cli_abort("Unable to find password for username {user}.")
+      if(password_input == "prompt") {
+        passwd <- rstudioapi::askForPassword(prompt = stringi::stri_c("Enter password for new user: ", user))
+      } else {
+        if(length(password_input)>1 ||
+           is.na(as.integer(password_input)) ||
+           as.integer(password_input)<1) {
+          cli::cli_abort("Password input must be a positive integer stored as string.")
+        }
+        passwd <- sample(x = c(letters, LETTERS, 0:9),
+                         size = as.integer(password_input),
+                         replace = TRUE)
+        passwd <- stringi::stri_c(passwd, collapse="", ignore_null = TRUE)
+      }
+
+      append_main_password_file(x = x,
+                                usernames = user,
+                                plaintext_passwords = passwd)
+    }
+    passwd <- bcrypt::hashpw(password = passwd, salt = bcrypt::gensalt(log_rounds = log_rounds))
+    rlang::set_names(x = passwd, nm = user)
+  })
+  unlist(out)
+}
+
+
+
+write_htpasswd_file <- function(x, file, header=FALSE) {
   utils::write.table(x = x, file = file,
-                     quote = FALSE, sep = ":", col.names = FALSE, row.names = FALSE,
+                     quote = FALSE, sep = ":",
+                     col.names = if(rlang::is_true(header)) c("username", "password") else FALSE,
+                     row.names = FALSE,
                      fileEncoding = "UTF-8")
 
 }
 
 obtain_usernames_from_foldernames <- function(x) {
   if(!rlang::is_string(x) || !file.exists(x)) {
-    cli::cli_abort("{.arg x} does not exist: {.file x}")
+    cli::cli_abort("{.arg x} does not exist: {.file {x}}")
   }
   list.dirs(path = x, full.names = FALSE, recursive = FALSE)
 }
@@ -93,39 +113,52 @@ create_htaccess <-
            append_users = TRUE,
            password_input = "prompt") {
 
-    paths <- validate_access_folder_paths(remote_basepath = remote_basepath,
-                                   local_basepath = local_basepath,
-                                   rel_path_base_to_parent_of_user_restricted_folder = rel_path_base_to_parent_of_user_restricted_folder)
+    abs_path_parents <-
+      file.path(local_basepath,
+              rel_path_base_to_parent_of_user_restricted_folder)
 
-    local_subfolders <-
-      obtain_usernames_from_foldernames(x = file.path(local_basepath,
-                                                    rel_path_base_to_parent_of_user_restricted_folder))
 
-    lapply(X = local_subfolders, function(.x) {
-      ### .htaccess
-      con <- file(file.path(local_basepath, .x, ".htaccess"), "w")
-      content <- paste0('AuthName "Saros-report access: ', .x, '"
+    local_subfolders_sets <- lapply(abs_path_parents, obtain_usernames_from_foldernames)
+    names(local_subfolders_sets) <- rel_path_base_to_parent_of_user_restricted_folder
+
+    lapply(seq_along(local_subfolders_sets), function(i) {
+
+      lapply(X = local_subfolders_sets[[i]], function(.x) {
+        ### .htaccess
+
+        content <- paste0('AuthName "Saros-report access: ', .x, '"
 AuthUserFile ', file.path(remote_basepath,
-                          file.path(rel_path_base_to_parent_of_user_restricted_folder),
+                          names(local_subfolders_sets)[i],
                           .x, '.htpasswd'), '
 AuthType Basic
 Require valid-user
 AddHandler server-parsed .html')
-      writeLines(text = content, con = con)
-      close(con)
+        outpath <- file.path(local_basepath,
+                             names(local_subfolders_sets)[i],
+                             .x, ".htaccess")
 
+        writeLines(text = content, con = outpath)
 
-### .htpasswd
+        ### .htpasswd
 
-      credentials <- read_main_password_file(x = local_main_password_path,
-                                         usernames = unique(c(.x, universal_usernames)),
-                                         log_rounds = log_rounds,
-                                         append_users = append_users,
-                                         password_input = password_input)
-      write_htpasswd_file(x= credentials, file = file.path(local_basepath, .x, ".htpasswd"))
+        credentials <- refer_main_password_file(x = local_main_password_path,
+                                               usernames = unique(c(.x, universal_usernames)),
+                                               log_rounds = log_rounds,
+                                               append_users = append_users,
+                                               password_input = password_input)
+        credentials <- data.frame(username=names(credentials),
+                                  password=unname(credentials),
+                                  row.names = NULL, stringsAsFactors = FALSE)
 
+        write_htpasswd_file(x= credentials,
+                            file = file.path(local_basepath,
+                                             names(local_subfolders_sets)[i],
+                                             .x, ".htpasswd"),
+                            header=FALSE)
+      })
     })
-    file.path(local_basepath, local_subfolders, ".htaccess")
+    invisible()
+
   }
 
 create__headers_file <- function(remote_basepath = "/home/", # Not used in this function, included for consistency
@@ -137,28 +170,36 @@ create__headers_file <- function(remote_basepath = "/home/", # Not used in this 
                                  append_users = TRUE,
                                  password_input = "prompt") {
 
-  abs_path_parent <- file.path(local_basepath,
-                               rel_path_base_to_parent_of_user_restricted_folder)
-  local_subfolders <-
-    obtain_usernames_from_foldernames(x = abs_path_parent)
+  abs_path_parents <-
+    file.path(local_basepath,
+              rel_path_base_to_parent_of_user_restricted_folder)
+
+
+  local_subfolders_sets <- lapply(abs_path_parents, obtain_usernames_from_foldernames)
+  names(local_subfolders_sets) <- rel_path_base_to_parent_of_user_restricted_folder
 
 
   out <-
-    lapply(local_subfolders, FUN = function(.x) {
+    lapply(seq_along(local_subfolders_sets), function(i) {
+
+    lapply(local_subfolders_sets[[i]], FUN = function(.x) {
 
 
-      credentials <- read_main_password_file(x = local_main_password_path,
+      credentials <- refer_main_password_file(x = local_main_password_path,
                                              usernames = unique(c(.x, universal_usernames)),
                                              log_rounds = log_rounds,
                                              append_users = append_users,
                                              password_input = password_input)
 
-      path <- file.path(rel_path_base_to_parent_of_user_restricted_folder, .x)
-      credentials_flattened <- stringi::stri_c(.x, ":", credentials[[.x]], collapse = " ", ignore_null = TRUE)
+      path <- file.path(names(local_subfolders_sets)[i], .x)
+      credentials_flattened <- stringi::stri_c(.x, ":", credentials[[.x]],
+                                               collapse = " ", ignore_null = TRUE)
       stringi::stri_c(path, "/*\n  Basic-Auth: ", credentials_flattened)
+    })
     })
 
   out_file <- stringi::stri_c(local_basepath, .Platform$file.sep, "_headers") #No file.path because of _headers lacking extension
+  out <- unlist(unlist(out))
   cat(out, file = out_file, sep = "\n")
 
   out_file
@@ -196,6 +237,15 @@ setup_access_restrictions <- function(remote_basepath = "/home/",
                                       password_input = "prompt",
                                       type = c("netlify", "apache")) {
 
+  remote_basepath <- stringi::stri_replace_last_regex(remote_basepath, pattern = "/", "")
+
+  for(rel_path_base_to_parent_of_user_restricted_folder_string in rel_path_base_to_parent_of_user_restricted_folder) {
+    validate_access_folder_paths(remote_basepath = remote_basepath,
+                                 local_basepath = local_basepath,
+                                 rel_path_base_to_parent_of_user_restricted_folder = rel_path_base_to_parent_of_user_restricted_folder)
+  }
+
+
   if(any("netlify" == type)) {
     create__headers_file(remote_basepath = remote_basepath, # Not used in this function, included for consistency
                          local_basepath = local_basepath,
@@ -207,7 +257,7 @@ setup_access_restrictions <- function(remote_basepath = "/home/",
                          password_input = password_input)
   }
   if(any("apache" == type)) {
-    create__headers_file(remote_basepath = remote_basepath, # Not used in this function, included for consistency
+    create_htaccess(remote_basepath = remote_basepath, # Not used in this function, included for consistency
                          local_basepath = local_basepath,
                          rel_path_base_to_parent_of_user_restricted_folder = rel_path_base_to_parent_of_user_restricted_folder,
                          local_main_password_path = local_main_password_path,

@@ -12,19 +12,54 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-1   From AGU script and elsewhere collect common functions:
-        Sanitize factor labels
-        Check beforehand that there are no " - " in all data_prep scripts
+x   A data.frame (instead of tibble) makes Mesos tabset tables and figures all fucked up
+x   Stop hiding variable_suffix on y-axis in plots with just a single variable. 
+x   Seems that crosstable crashes (aggregate) if .x (dep) consists of a single value and NA. x   "Forstår ikke spørsmålet/\nvet ikke" => categories_treated_as_na not working
++   Some check that if(nrow(chapter_overview)>1) a chapter should not contain all variables. (can turn check off). 
+x   Option to turn off report.qmd (for Saros). 
+x   rename_chunk_labels as lua filter
+x   Rendering within a package function returns the HTML instead of saving it to disk??
+x   copy_to_render_folder, render_website, etc functions
+x   Plots are still not having appropriate height. 
+x   Gjerne også en fin måte å få ut de åpne svarene (enten export til excel, eller som en tabell som er enkel å lese i en split screen).
+x   Chapters with NA dep are removed...
+x   colour_na
+x   Fylkeskommune settes til NA i alle figurer/tabeller med prosenter. 
+x   Frekvenser for resp==4
+x   Too few bivariates are showing, only the exceptions
 
+x   chr should not have sigtests!
+1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
+1   bi_sigtest not showing any p-value etc! Also, should have x_var
+3   Avoid running remove_non_significant_bivariates if already excepted
+
+1   Løse skript for stolpediagrammer, kart (signifikante forskjeller på fylke/landsdel/kommune), tabeller
+3   Prettier duplicated labels warning, containing variable name, bullet points/new line.
+1   mesos: why fails if data.frame but works with tibble??
+2   mesos: Keep sorting of variables in plots equal across target and others. (but will likely change this type of plot anyway)
+1   Call summary_data only once in gen_element_and_qmd_snippet3
+1   Move common procedures in the dataprep scripts into saros to avoid accidental issues
+        mesos_var => must droplevels()
+        trim and sanitize factor labels
+        stop if not all used variables have a label (can be turned off)
+        across(where(~is.factor(.x)), ~forcats::fct_relabel(.x, function(x) na_if(x, ""))),
+             across(where(~is.character(.x)), ~na_if(.x, ""))
+3   Multiple authors in a chapter_overview cell should be expanded in any YAML: process_yaml.
+2   Always ignore author column for Mesos
 2   Also export a complete archivable dataset with codebook
         en side med lenker til følgende:
         Datasettet
         En kodebok med variabelnavn, variabel-label, unike verdier, antall missing, data-type)
             Excel, HTML
         Eventuelle maler vi kommer på senere for dokumentasjon.
-1   In CriThiSE, there are no bivariates??? Maybe coincidence
-x   Reduce level 2 header font?
-1   Finne ut av hvorfor jeg hadde satt execute_dir = getwd() når det medførte at kapittel.qmd ikke fant filer i undermappene. Antageligvis fordi det er enkelte maler i R-skript som jeg ønsket å lese inn fra Ressurser-mappen. Disse kunne jeg ikke finne på andre måter. Kanskje vurdere å bruke environment variabelen. 
+3   Faster read_main_password_file
+        vectorize   lapply(usernames, FUN = function(user) {
+    passwd <- master_table[master_table$username == user, "password"]
+1   No bivariates?
+2   Merge and refactor the relabelling functions (qualtrics, stata, SX, etc)
+3   Introduce {targets}, but figure out the R-quarto-render (_freeze) setup
+        Must be able to run a new report without rerunning everything.
+3   setup_access_restrictions rel_path_base_to_parent_of_user_restricted_folder should give warning if NULL (not error)
 
 # nifutemplate
 2   SSN_methodchapter_inlines.R and SSN_methodchapter.qmd
@@ -60,6 +95,10 @@ x   Reduce level 2 header font?
     2   Any organize_by set of variables in chapter_overview should not have NA (or deal appropriately with them)
 3    Warning in value[[3L]](cond) :                            
   cli progress bar update failed: subscript out of bounds
+      Only for mesos reports.
+3   Warning messages:
+        In (function (case_insensitive = FALSE, overlap = FALSE,  ... :
+          Unknown option to `stri_opts_fixed`.
 
 ## Reverse engineering from Word to Quarto
 2   Test replace_docx_imgs_with_mscharts
@@ -71,6 +110,10 @@ x   Reduce level 2 header font?
 2   for_editor article
 2   for_chapter_author article
 2   for_data_cleaner article
+        guidelines for variable names, labels, etc
+            stick to english whenever possible. underscore to distinguish levels
+            avoid years (a survey may cross a year, be published later, etc)
+            use cycle-numbering, cohort, etc which are more stable
 2   for_end_user article
 3   Flytte TODO til Github issues...
 

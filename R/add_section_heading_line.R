@@ -11,7 +11,7 @@ add_section_heading_line <- function(grouped_data,
 
   stringi::stri_c(strrep("#", times = level), " ", heading,
                     "{#sec-", conv_to_valid_obj_name(value), "_",
-                    stringi::stri_c(sample(0:9, size=3, replace = TRUE), ignore_null=TRUE, collapse=""),
+                    stringi::stri_c(sample(0:9, size=2, replace = TRUE), ignore_null=TRUE, collapse=""),
                     "}\n",
                     ignore_null=TRUE)
 

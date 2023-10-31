@@ -34,7 +34,11 @@ prep_cat_prop_plot_html <-
     indep_vars <- colnames(data)[!colnames(data) %in%
       .saros.env$summary_data_sort2]
 
-    hide_axis_text <- length(indep_vars) == 0 && dplyr::n_distinct(data[[".variable_label"]]) == 1
+    hide_axis_text <-
+      isTRUE(dots$hide_axis_text_if_single_variable) &&
+      length(indep_vars) == 0 &&
+      dplyr::n_distinct(data[[".variable_label"]]) == 1
+
     hide_legend <-
       dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
         !rlang::is_null(dots$colour_2nd_binary_cat)
@@ -44,17 +48,17 @@ prep_cat_prop_plot_html <-
 
     p <-
       data %>%
-      dplyr::mutate(id = seq_len(nrow(.)),
-        Tooltip = # Tooltip is opposite of the regular display
+      dplyr::mutate(.id = seq_len(nrow(.)),
+        .tooltip = # Tooltip is opposite of the regular display
           if (prop_family) {
-            sprintf(fmt = "%s\nN = %.0f", .data[[".category"]], .data[[".count"]])
+            sprintf(fmt = "%s\nN = %.0f\n%s", .data[[".category"]], .data[[".count"]], .data[[".variable_label"]])
           } else {
             sprintf(
-              fmt = stringi::stri_c("%s\nP = %.", dots$digits, "f%%", ignore_null=TRUE),
-              .data[[".category"]], .data[[".proportion"]] * 100
+              fmt = stringi::stri_c("%s\nP = %.", dots$digits, "f%%\n%s", ignore_null=TRUE),
+              .data[[".category"]], .data[[".proportion"]] * 100, .data[[".variable_label"]]
             )
           },
-        onclick = paste0('alert(\"variable: ', .data[['.variable_name']], '\")')
+        .onclick = paste0('alert(\"variable: ', .data[['.variable_name']], '\")')
       ) %>%
       ggplot2::ggplot(
         mapping = ggplot2::aes(
@@ -63,13 +67,13 @@ prep_cat_prop_plot_html <-
           fill = .data[[".category"]],
           group = .data[[".category"]],
           label = .data[[".data_label"]],
-          data_id = .data[["id"]],
-          onclick = .data[["onclick"]]
+          data_id = .data[[".id"]],
+          onclick = .data[[".onclick"]]
         ),
         cumulative = TRUE
       ) +
       ggiraph::geom_col_interactive(
-        mapping = ggplot2::aes(tooltip = .data[["Tooltip"]]), # BUG: Messes up order of categories if enabled.
+        mapping = ggplot2::aes(tooltip = .data[[".tooltip"]]), # BUG: Messes up order of categories if enabled.
         position = ggplot2::position_stack(reverse = TRUE),
         na.rm = TRUE
       ) +
@@ -92,7 +96,8 @@ prep_cat_prop_plot_html <-
         name = "",
         values = colour_palette,
         data_id = function(x) x,
-        tooltip = function(x) x, drop = FALSE
+        tooltip = function(x) x,
+        drop = FALSE
       ) +
       ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white")) +
       ggplot2::scale_x_discrete(limits = rev, labels = function(x) string_wrap(x, width = dots$x_axis_label_width)) +
@@ -108,7 +113,7 @@ prep_cat_prop_plot_html <-
         legend.position = "bottom",
         legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
         strip.placement = "outside",
-        strip.text = ggiraph::element_text_interactive(data_id = "strip.text", angle = 0, hjust = .5, size = dots$main_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
+        strip.text = ggiraph::element_text_interactive(data_id = "strip.text", angle = dots$strip_angle, hjust = .5, size = dots$main_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
         strip.background = ggiraph::element_rect_interactive(colour = NA)
       ) +
       ggplot2::labs(x = NULL, y = NULL)
@@ -120,9 +125,10 @@ prep_cat_prop_plot_html <-
           rows = ggplot2::vars(.data[[".variable_label"]]),
           labeller = ggiraph::labeller_interactive(
             .mapping = ggplot2::aes(
+              data_id = .data[[".variable_label"]],
               tooltip = .data[[".variable_label"]],
               label = string_wrap(.data$.variable_label,
-                width = dots$x_axis_label_width
+                                  width = dots$x_axis_label_width
               )
             )
           ),
@@ -135,6 +141,7 @@ prep_cat_prop_plot_html <-
             rows = ggplot2::vars(.data[[indep_vars]]),
             labeller = ggiraph::labeller_interactive(
               .mapping = ggplot2::aes(
+                data_id = .data[[indep_vars]],
                 tooltip = .data[[indep_vars]],
                 label = string_wrap(.data[[indep_vars]],
                                     width = dots$x_axis_label_width

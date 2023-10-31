@@ -18,7 +18,7 @@ attach_chapter_dataset <- function(chapter_overview_chapter,
   data_chapter <- data[, names(data) %in% c(chapter_columns$.variable_name,
                                             indeps,
                                             mesos_var,
-                                            auxiliary_variables)]
+                                            auxiliary_variables), drop = FALSE]
 
 
   filename_chapter_dataset <-

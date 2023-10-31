@@ -75,7 +75,9 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
 
       label <- stringi::stri_replace_all_regex(label, pattern = "- Selected Choice ", replacement = "- ")
       label <- stringi::stri_replace_all_regex(label, pattern = "<.+?>|\\[.*\\]| - tekst", replacement = "")
-      label <- stringi::stri_replace_all_regex(label, pattern = "\\$\\{.+[^[:alnum:]]([[:alnum:]]+)\\}", replacement = "$1")
+      label <- stringi::stri_replace_all_regex(label, pattern = "\\$\\{[[:alnum:]]+[^[:alnum:]]([[:alnum:]]+)\\}", replacement = "$1")
+      label <- stringi::stri_replace_all_regex(label, pattern = "\\{%name:([[:alnum:]]+) expression:.+?%\\}", replacement = "$1")
+      label <- stringi::stri_replace_all_regex(label, pattern = "\\{%expression:.+?%\\}", replacement = "")
       label <- stringi::stri_replace_all_regex(label, pattern = "[[:space:]\n\r\t]+", replacement = " ")
       if(stringi::stri_count_fixed(label, " - ")>=2) label <- stringi::stri_replace_all_fixed(label, pattern = sep, replacement = multi_sep_replacement)
       if(stringi::stri_count_fixed(label, " - ")>=2) label <- stringi::stri_replace_all_fixed(label, pattern = sep, replacement = multi_sep_replacement)

@@ -9,7 +9,8 @@ replace_stata_labels(
   df_new_labels,
   var_name_col = "name",
   var_label_col = "vallab_full",
-  trim = "both"
+  trim = c("both", "all"),
+  overwrite = TRUE
 )
 }
 \arguments{
@@ -25,5 +26,5 @@ replace_stata_labels(
 data, with variable labels replaced
 }
 \description{
-Replace Stata Labels
+If no replacement exists, keeps the original.
 }

@@ -195,13 +195,13 @@
 #' }
 #' @param plot_height_multiplier *Height multiplier*
 #'
-#'   `scalar<double>` // *default:* `1`
+#'   `scalar<double>` // *default:* `.1`
 #'
 #'   Height in cm per chart entry, for all static plots.
 #'
 #' @param plot_height_fixed_constant *Height constant addition*
 #'
-#'   `scalar<double>` // *default:* `0`
+#'   `scalar<double>` // *default:* `1`
 #'
 #'   Fixed height in cm to add to all static plots.
 #'
@@ -517,18 +517,21 @@ draft_report <-
            hide_bi_entry_if_sig_above = 1,
            hide_test_if_n_below = 10,
            hide_chr_for_others = TRUE,
+           hide_variable_if_all_na = TRUE,
+           hide_axis_text_if_single_variable = FALSE,
            label_font_size = 8,
            main_font_size = 8,
            x_axis_label_width = 20,
-           plot_height_multiplier = NA_real_,
-           plot_height_fixed_constant = NA_real_,
+           plot_height_multiplier = .02,
+           plot_height_fixed_constant = 1,
            plot_height_max = 20,
            plot_height_min = 1.5,
            png_scale = 1.2,
            png_width = 14,
            png_height = 16,
            vertical_height = 12,
-           max_width_obj = 90,
+           strip_angle = 0,
+           max_width_obj = 128,
            max_width_file = 64,
            font_family = "sans",
            open_after_drafting = FALSE,
@@ -538,6 +541,7 @@ draft_report <-
            single_y_bivariate_elements = FALSE,
            descend = TRUE,
            require_common_categories = TRUE,
+           pdf = TRUE,
            flexi = TRUE,
            micro = FALSE,
 
@@ -661,9 +665,15 @@ draft_report <-
     # }
 
     chapter_overview <-
-      validate_chapter_overview(chapter_overview=chapter_overview, args=args)
+      refine_chapter_overview(chapter_overview = chapter_overview,
+                              data=data,
+                              !!!args[!names(args) %in% c("chapter_overview", "data")])
+
+
     chapter_overview <-
-      dplyr::filter(chapter_overview, .data$.variable_role == "dep") ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
+      dplyr::filter(chapter_overview,
+                    .data$.variable_role == "dep" |
+                      is.na(.data$.variable_role)) ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
 
 
     chapter_overview_indep <- dplyr::filter(chapter_overview, .data$.variable_role != "dep")
@@ -673,7 +683,7 @@ draft_report <-
     all_authors <- get_authors(data = chapter_overview, col="author")
 
     if(rlang::is_false(args$mesos_report) ||
-       rlang::is_null(args$mesos_var)) {
+       !rlang::is_string(args$mesos_var)) {
 
       uniques <- NA_character_
 
@@ -722,16 +732,18 @@ draft_report <-
 
 
 
-               report_filepath <-
-                 rlang::exec(
-                   gen_qmd_index,
-                   title = args$title,
-                   authors = all_authors,
-                   index_filepath = file.path(path, stringi::stri_c(args$title, ".qmd", ignore_null = TRUE)),
-                   chapter_filepaths = chapter_filepaths,
-                   yaml_file = args$report_yaml_file,
-                   !!!args[!names(args) %in% c("title", "authors", "report_yaml_file")],
-                   call = rlang::caller_env())
+               if(rlang::is_true(args$pdf)) {
+                 report_filepath <-
+                   rlang::exec(
+                     gen_qmd_index,
+                     title = args$title,
+                     authors = all_authors,
+                     index_filepath = file.path(path, stringi::stri_c(args$title, ".qmd", ignore_null = TRUE)),
+                     chapter_filepaths = chapter_filepaths,
+                     yaml_file = args$report_yaml_file,
+                     !!!args[!names(args) %in% c("title", "authors", "report_yaml_file")],
+                     call = rlang::caller_env())
+               }
 
                index_filepath <-
                  rlang::exec(
@@ -740,7 +752,7 @@ draft_report <-
                    authors = all_authors,
                    index_filepath = file.path(path, args$index_filename),
                    chapter_filepaths = NULL,
-                   report_filepath = report_filepath,
+                   report_filepath = if(rlang::is_true(args$pdf)) report_filepath,
                    yaml_file = args$index_yaml_file,
                    !!!args[!names(args) %in% c("title", "authors", "index_yaml_file")],
                    call = rlang::caller_env())

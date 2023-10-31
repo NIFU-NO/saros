@@ -42,18 +42,21 @@ draft_report(
   hide_bi_entry_if_sig_above = 1,
   hide_test_if_n_below = 10,
   hide_chr_for_others = TRUE,
+  hide_variable_if_all_na = TRUE,
+  hide_axis_text_if_single_variable = FALSE,
   label_font_size = 8,
   main_font_size = 8,
   x_axis_label_width = 20,
-  plot_height_multiplier = NA_real_,
-  plot_height_fixed_constant = NA_real_,
+  plot_height_multiplier = 0.02,
+  plot_height_fixed_constant = 1,
   plot_height_max = 20,
   plot_height_min = 1.5,
   png_scale = 1.2,
   png_width = 14,
   png_height = 16,
   vertical_height = 12,
-  max_width_obj = 90,
+  strip_angle = 0,
+  max_width_obj = 128,
   max_width_file = 64,
   font_family = "sans",
   open_after_drafting = FALSE,
@@ -62,6 +65,7 @@ draft_report(
   single_y_bivariate_elements = FALSE,
   descend = TRUE,
   require_common_categories = TRUE,
+  pdf = TRUE,
   flexi = TRUE,
   micro = FALSE,
   colour_palette_nominal = NULL,
@@ -351,13 +355,13 @@ Width of the labels used for the categorical column names.}
 
 \item{plot_height_multiplier}{\emph{Height multiplier}
 
-\verb{scalar<double>} // \emph{default:} \code{1}
+\verb{scalar<double>} // \emph{default:} \code{.1}
 
 Height in cm per chart entry, for all static plots.}
 
 \item{plot_height_fixed_constant}{\emph{Height constant addition}
 
-\verb{scalar<double>} // \emph{default:} \code{0}
+\verb{scalar<double>} // \emph{default:} \code{1}
 
 Fixed height in cm to add to all static plots.}
 

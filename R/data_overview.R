@@ -29,28 +29,28 @@ look_for_extended <- function(data,
   ### Assume that variables with identical label prefix may not be related.
   ### Assume that related columns are always next to each other OR share same variable name prefix.
 
-  data_part <- data[,cols]
+  data_part <- data[,cols, drop=FALSE]
   if(ncol(data_part) == 0 || nrow(data_part) == 0) cli::cli_abort("data.frame is of 0 length.")
 
 
-    .variable_position <- match(colnames(data_part), colnames(data))
-    .variable_name <- colnames(data_part)
-    .variable_label <- get_raw_labels(data = data_part)
-    .variable_type <- as.character(unlist(lapply(names(data_part), function(.x) vctrs::vec_ptype_abbr(data_part[[.x]]))))
-    if(length(.variable_position) != length(.variable_name) ||
-       length(.variable_name) != length(.variable_label) ||
-       length(.variable_label) != length(.variable_type)) browser()
-    x <- data.frame(.variable_position = .variable_position,
-                    .variable_name = .variable_name,
-                    .variable_label = .variable_label,
-                    .variable_type = .variable_type,
-    row.names = NULL
+  .variable_position <- match(colnames(data_part), colnames(data))
+  .variable_name <- colnames(data_part)
+  .variable_label <- get_raw_labels(data = data_part)
+  .variable_type <- as.character(unlist(lapply(names(data_part), function(.x) vctrs::vec_ptype_abbr(data_part[[.x]]))))
+  if(length(.variable_position) != length(.variable_name) ||
+     length(.variable_name) != length(.variable_label) ||
+     length(.variable_label) != length(.variable_type)) browser()
+  x <- data.frame(.variable_position = .variable_position,
+                  .variable_name = .variable_name,
+                  .variable_label = .variable_label,
+                  .variable_type = .variable_type,
+                  row.names = NULL
   )
   check_duplicates <- duplicated(x$.variable_label)
   if(any(check_duplicates)) {
     duplicates <- unique(x$.variable_label[check_duplicates])
-    cli::cli_warn(c(i="Found duplicated variable labels: {duplicates}.",
-                    i="This will likely cause problems!"))
+    cli::cli_warn(c(i="Found duplicated variable labels, which will likely cause problems if you only group on variable_label(_prefix):"))
+    cli::cli_ul(duplicates)
   }
 
   if(!is.null(name_separator)) {
@@ -64,7 +64,7 @@ look_for_extended <- function(data,
                                     too_few = "align_end", too_many = "merge")
       if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = " - "), na.rm=TRUE) > 0) {
         cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
-                      i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
+                        i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
       }
 
     } else cli::cli_abort("Non-string {.arg name_separator} currently not supported.")
@@ -121,7 +121,7 @@ look_for_extended <- function(data,
 
     ) %>%
     dplyr::relocate(tidyselect::any_of(c(".variable_position", ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
-                    ".variable_label_prefix", ".variable_label_suffix", ".variable_type"))) %>%
+                                         ".variable_label_prefix", ".variable_label_suffix", ".variable_type"))) %>%
     dplyr::mutate(.variable_group_id = dplyr::cur_group_id(),
                   .by = tidyselect::all_of(if(length(grouping_vars)>0) grouping_vars else ".variable_position"))
 
@@ -137,9 +137,9 @@ look_for_extended <- function(data,
 #
 
 validate_labels <- function(data) {
-  miss_label_vars <- data[is.na(data$.variable_label_prefix) & !is.na(data$.variable_position), ]
+  miss_label_vars <- subset(data, subset = is.na(data[[".variable_label_prefix"]]) & !is.na(data[[".variable_position"]]))
   if(nrow(miss_label_vars) > 0) {
-    cli::cli_warn("Using variable name in place of missing label for {.var {miss_label_vars$.variable_name}}.")
+    cli::cli_warn("Using variable name in place of missing label for {.var {unique(miss_label_vars$.variable_name)}}.")
   }
   # if(data$.variable_label)
   data$.variable_label_prefix <- dplyr::if_else(is.na(data$.variable_label_prefix) & !is.na(data$.variable_position), data$.variable_name, data$.variable_label_prefix)
@@ -180,7 +180,7 @@ find_test <- function(y, x) {
 
   if(inherits(y, what = "factor") &&
      (inherits(x, what = "factor") ||
-      inherits(x, what = "ordered"))) return(chisq_test2)
+      inherits(x, what = "ordered"))) return(stats::chisq.test)
 
   if((inherits(y, what = "double") ||
       inherits(y, what = "integer")) &&
@@ -189,7 +189,11 @@ find_test <- function(y, x) {
   if(inherits(y, what = "ordered") &&
      inherits(x, what = "factor")) return(stats::kruskal.test)
 
-  cli::cli_abort("Unable to find a suitable statistical test for outcome {class(y)} and {class(x)}.")
+  if(!inherits(y, what = "character") &&
+     !inherits(x, what = "character")) {
+    cli::cli_warn("Unable to find a suitable statistical test for outcome {class(y)} and {class(x)}.")
+  }
+  return()
 
 }
 
@@ -226,6 +230,15 @@ refine_chapter_overview <-
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
 
+    if(all(c("chapter",
+              ".variable_role", ".variable_selection", ".variable_position",
+              ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
+              ".variable_label_prefix", ".variable_label_suffix",
+              ".variable_type", ".variable_group_id",
+              ".element_name", "indep_cols_df") %in% names(chapter_overview))) {
+      return(chapter_overview)
+    }
+
     if(progress) cli::cli_progress_message(msg = "Refining chapter_overview...\n")
 
 
@@ -250,6 +263,7 @@ refine_chapter_overview <-
          multiline = FALSE)
   class(delim_regex) <- c("stringr_regex", "stringr_pattern", "character")
 
+
   out <-
     tidyr::pivot_longer(chapter_overview,
                         cols = tidyselect::any_of(col_headers),
@@ -263,6 +277,10 @@ refine_chapter_overview <-
                     col = .data$name,
                     into = ".variable_role",
                     sep="_")
+
+  out[[".variable_role"]] <-
+    ifelse(is.na(out[[".variable_selection"]]), NA_character_, out[[".variable_role"]])
+
   out <-
     dplyr::mutate(out,
                   .variable_selection =
@@ -287,6 +305,7 @@ refine_chapter_overview <-
   # to here
 
   if(data_present) {
+
     out$.variable_selection <-
       stringi::stri_replace_all_fixed(out$.variable_selection,
                                       pattern = '\"',
@@ -299,22 +318,37 @@ refine_chapter_overview <-
     out$cols <- eval_cols(x = out$.variable_selection,
                           data = data,
                           call = call)
+
     out <-
       tidyr::unnest_longer(out,
                            col = "cols",
                            values_to = ".variable_position",
                            indices_to = ".variable_name")
 
-    out <-
-      dplyr::filter(out, .data$.variable_name != "")
+    out[[".variable_name"]] <- ifelse(out[[".variable_name"]]=="", NA, out[[".variable_name"]])
+
+    if(rlang::is_true(dots$hide_variable_if_all_na)) {
+      na_vars <- c()
+
+      for(var in unique(out$.variable_name)) {
+        if(!is.na(var) && all(is.na(data[[var]]))) {
+          na_vars <- c(na_vars, var)
+        }
+      }
+
+      out <- out[!out$.variable_name %in% na_vars, ]
+    }
 
     # check_duplicates_in_chapter_overview(out)
+
     out <-
      dplyr::left_join(x=out,
                       y=look_for_extended(data = data,
+                                          cols = stringi::stri_remove_empty_na(unique(out$.variable_name)),
                                           label_separator = dots$label_separator,
                                           name_separator = dots$name_separator),
-                      by = dplyr::join_by(".variable_position", ".variable_name"))
+                      by = dplyr::join_by(".variable_position", ".variable_name"),
+                      )
 
     out <- # Move to separate function, and add argument that defaults to TRUE
       dplyr::mutate(out,
@@ -333,20 +367,36 @@ refine_chapter_overview <-
                                         always_show_bi_for_indep = dots$always_show_bi_for_indep,
                                         progress = progress)
 
+
     # separate to new function from here
+
     out <-
       tidyr::expand_grid(out, .element_name = dots$element_names)
+
+    out$.element_name <- ifelse(is.na(out$.variable_position), NA_character_, out$.element_name)
+
     out <-
-      dplyr::mutate(out, .element_name = ifelse(is.na(.data$.variable_position), NA, .data$.element_name))
-    out <-
-      dplyr::distinct(out, .data$chapter, .data$.variable_position, .data$.element_name, .keep_all = TRUE)
+      dplyr::distinct(out, dplyr::pick(tidyselect::all_of(c("chapter", ".variable_position", ".element_name"))),
+                      .keep_all = TRUE)
     out <-
       dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by)))
     # out <-
     #   dplyr::arrange(out, dplyr::pick(tidyselect::any_of(c(dots$organize_by, names(dots$sort_by)))))
 
     # to here
+
   }
-  if(!rlang::is_null(out$chapter)) out$chapter <- factor(out$chapter, levels=unique(out$chapter))
+
+
+  if(!rlang::is_null(out$chapter)) {
+    out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
+    out <- dplyr::arrange(out, .data$chapter, .by_group = TRUE)
+  }
+
+  if(length(unique(out$chapter)) > 1 &&
+     max(tapply(out, out$chapter, FUN = function(df) length(unique(df$.variable_name))))==ncol(data)) {
+    cli::cli_warn("One of your chapters contain all the variables in the dataset. Is this what you intend?")
+  }
+
   out
 }
