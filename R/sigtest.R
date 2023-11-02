@@ -126,8 +126,9 @@ sigtest <-
       dplyr::mutate(dplyr::across(c({{dep}}, {{indep}}) & tidyselect::where(~is.factor(.x)), ~forcats::fct_drop(.x)))
 
     number_rows <- nrow(data)
-    if(is.null(number_rows)) browser()
-    number_rows_by_group <- min(table(data[,c(dep_pos, indep_pos)]))
+    if(is.null(number_rows) || is.na(number_rows) || number_rows == 0 ||
+       (!is.na(.variable_type) && .variable_type == "chr")) return(data.frame())
+    number_rows_by_group <- min(table(data[, c(dep_pos, indep_pos)]))
 
     var_labels <-
       get_raw_labels(data = data, col_pos = dep_pos) %>%
@@ -147,10 +148,11 @@ sigtest <-
       if(length(indep_pos) >= 1) get_raw_labels(data = data, col_pos = unname(indep_pos))
 
     df_main <-
-      vctrs::df_list(variable = names(dep_pos),
+      vctrs::df_list(y_var = names(dep_pos),
                      .variable_label = var_labels,
                      N = number_rows,
-                     X = indep_label)
+                     x = indep_label,
+                     x_var = names(indep_pos))
     df_main <- vctrs::new_data_frame(df_main)
 
 
@@ -166,7 +168,7 @@ sigtest <-
                    dplyr::pick(tidyselect::any_of(names(c(dep_pos, indep_pos)))),
                    name = ".n_count")
 
-    if(min(table(data[, c(dep_pos, indep_pos)]))==Inf) browser()
+    # if(min(table(data[, c(dep_pos, indep_pos)]))==Inf) browser()
     if(dep_n >= 2 &&
        (length(indep_pos) == 0 || indep_n >= 2) &&
        (!.variable_type %in% c("fct", "factor", "ordered", "ord") ||
@@ -184,6 +186,7 @@ sigtest <-
                          indep_pos = indep_pos,
                          indep_n = indep_n,
                          indep_unique = unique(data[[indep_pos]]))
+      if(rlang::is_string(indep_pos)) browser()
 
       if(stat_config$test == "NA") return(NULL)
       estimate <-
@@ -219,13 +222,14 @@ sigtest <-
         null_dist %>%
         infer::get_p_value(obs_stat = estimate, direction = "two-sided") %>%
         suppressWarnings()
-      pval <- pval$p_value
+      # pval <- pval$p_value
+      df_main$test <- stat_config$test
+      df_main$stat <- round(estimate[["stat"]][[1]], digits = 1)
+      df_main$p <- ifelse(pval$p_value > 0, pval$p_value, 3/dots$reps)
+      df_main$p <- ifelse(df_main$N >= dots$hide_test_if_n_below, df_main$p, NA_real_)
 
-        dplyr::mutate(df_main,
-                      test = stat_config$test,
-                      stat = round(estimate[["stat"]], digits = 1),
-                      p = dplyr::if_else(pval > 0, pval, 3/dots$reps),
-                      p = dplyr::if_else(.data$N >= dots$hide_test_if_n_below, .data$p, NA_real_))
+      df_main
+
     } else df_main
   }
 

@@ -70,7 +70,7 @@ insert_obj_in_qmd <-
       stringi::stri_c(tbl_fig_prefix, qmd_format,
                       if(stringi::stri_length(qmd_format) > 0) "_",
                       stringi::stri_sub(obj_name, to = max_width_file), "_",
-                      stringi::stri_c(ignore_null=TRUE, sample(0:9, size=3, replace=TRUE), collapse=""), ignore_null = TRUE)
+                      stringi::stri_c(ignore_null=TRUE, sample(0:9, size=2, replace=TRUE), collapse=""), ignore_null = TRUE)
 
 
     r_chunk_header_line <-

@@ -35,8 +35,9 @@ gen_qmd_index <-
     call = rlang::caller_env()) {
 
     dots <- update_dots(dots = rlang::list2(...), allow_unique_overrides = FALSE)
+    check_string(dots$title, n = 1, null.ok = TRUE, call = call)
     check_string(dots$authors, n = NULL, null.ok = TRUE, call = call)
-    check_string(index_filepath, null.ok = FALSE, n = 1, call = call)
+    check_string(index_filepath, n = 1, null.ok = FALSE,  call = call)
     check_string(chapter_filepaths, n = NULL, null.ok = TRUE, call = call)
     check_string(report_filepath, n = 1, null.ok = TRUE, call = call)
     check_string(yaml_file, n = 1, null.ok = TRUE, call = call)
@@ -54,7 +55,7 @@ gen_qmd_index <-
       main_section <-  stringi::stri_c(main_section, ignore_null=TRUE, collapse = "\n\n")
     }
     report_link <- if(rlang::is_character(report_filepath)) {
-      stringi::stri_c("[", dots$translations$download_report, "](", dots$title, ".pdf)")
+      stringi::stri_c("[", dots$translations$download_report, "](", dots$title, ".qmd)")
     }
 
     qmd_start_section <- if(!rlang::is_null(dots$qmd_start_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_start_section_filepath), collapse="\n")
@@ -62,7 +63,7 @@ gen_qmd_index <-
 
     out <-
       stringi::stri_c(yaml_section, "\n",
-                   qmd_start_section,
+                   # qmd_start_section,
                    if(rlang::is_character(chapter_filepaths)) main_section,
                    if(rlang::is_character(report_filepath)) report_link,
                    qmd_end_section,

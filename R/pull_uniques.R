@@ -1,7 +1,8 @@
 pull_uniques <- function(x) {
   if(is.factor(x)) {
-    levels(x)
+    x <- levels(x)
   } else {
-    as.character(unique(x))
+    x <- as.character(unique(x))
   }
+  x[!is.na(x)]
 }

@@ -45,11 +45,13 @@ embed_cat_table <-
       unique()
 
     if(length(indep_pos)>0) {
-    indep_label <-
-      get_raw_labels(data = data, col_pos = indep_pos) %>%
-      get_main_question2(label_separator = dots$label_separator,
-                         warn_multiple = TRUE) %>%
-      unique()
+      indep_label <- get_raw_labels(data = data, col_pos = indep_pos)
+      indep_label <- get_main_question2(indep_label,
+                                        label_separator = dots$label_separator,
+                                        warn_multiple = TRUE)
+      indep_label <- unique(indep_label)
+      if(nchar(indep_label)==0) browser() #cli::cli_warn("Indep {.var {indep_pos}} lacks a label.")
+
     } else indep_label <- character(0)
 
     # indep_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))
@@ -101,7 +103,13 @@ embed_cat_table <-
                          .fn = ~stringi::stri_c(ignore_null=TRUE, .x, if(dots$data_label %in% c("percentage", "percentage_bare")) " (%)")) %>%
       dplyr::rename_with(.cols = "N",
                          .fn = function(x) dots$translations$table_heading_N)
-    if(length(indep_pos)>0) data_out <- dplyr::rename_with(data_out, .cols = tidyselect::all_of(names(indep_pos)), .fn = function(x) indep_label)
+    if(length(indep_pos)>0 &&
+       rlang::is_character(indep_label, n=length(indep_pos)) &&
+       all(nchar(indep_label)>0)) {
+      data_out <- dplyr::rename_with(data_out,
+                                     .cols = tidyselect::all_of(names(indep_pos)),
+                                     .fn = function(x) indep_label)
+    }
 
     if(rlang::is_string(main_question) && stringi::stri_length(main_question)>0) {
       names(data_out)[names(data_out)==".variable_label"] <- main_question

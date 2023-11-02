@@ -149,6 +149,7 @@ get_colour_set <-
            colour_na = NULL,
            colour_2nd_binary_cat = NULL,
            ordinal = FALSE,
+           categories_treated_as_na = NULL,
            call = rlang::caller_env()) {
 
     user_colour_set <-
@@ -156,15 +157,22 @@ get_colour_set <-
             ordered = colour_palette_ordinal,
             factor = colour_palette_nominal)
 
+
+    # if("Vet ikke" %in% x) browser()
     x <- stats::setNames(x, x)
-    names(x)[is.na(names(x))] <- "NA"
-    if(!rlang::is_null(colour_na)) {
-      x[names(x) == "NA"] <- colour_na
+    if(rlang::is_character(colour_na)) {
+      if(length(colour_na)>= length(categories_treated_as_na)) {
+        for(i in seq_along(categories_treated_as_na)) {
+          x[names(x) == categories_treated_as_na[i]] <- colour_na[i]
+        }
+      } else {
+        x[names(x) %in% categories_treated_as_na] <- colour_na[1]
+      }
     }
-    n_colours_needed <- length(x[!names(x) == "NA"])
+    n_colours_needed <- length(x[!x %in% colour_na])
     if(!rlang::is_null(colour_2nd_binary_cat) &&
        n_colours_needed == 2) {
-      x[!names(x) == "NA"][2] <- colour_2nd_binary_cat
+      x[!x %in% colour_na][2] <- colour_2nd_binary_cat
       n_colours_needed <- 1
     }
 
@@ -176,11 +184,11 @@ get_colour_set <-
 
     if(!rlang::is_null(colour_2nd_binary_cat) &&
        n_colours_needed == 1) {
-      x[!names(x) == "NA"][1] <- colours_available
+      x[!x %in% colour_na][1] <- colours_available
     } else {
 
       tryCatch(
-      x[!names(x) == "NA"] <- colours_available[seq_along(x[!names(x) == "NA"])], ## PERHAPS NOT PERFECT HERE?
+        x[!x %in% colour_na] <- colours_available[seq_along(x[!x %in% colour_na])], ## PERHAPS NOT PERFECT HERE?
       warning = function(e) cli::cli_warn(stringi::stri_c(ignore_null=TRUE, "colours_available: {colours_available}. 'x' yields {x}.", e)),
       error = function(e) cli::cli_warn(stringi::stri_c(ignore_null=TRUE, "colours_available: {colours_available}. 'x' yields {x}.", e)))
     }

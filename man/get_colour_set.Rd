@@ -12,6 +12,7 @@ get_colour_set(
   colour_na = NULL,
   colour_2nd_binary_cat = NULL,
   ordinal = FALSE,
+  categories_treated_as_na = NULL,
   call = rlang::caller_env()
 )
 }
@@ -45,6 +46,12 @@ Colour for second category in binary variables. Often useful to hide this.}
 \item{ordinal}{\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
 Is palette ordinal?}
+
+\item{categories_treated_as_na}{\emph{NA categories}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Categories that should be treated as NA.}
 
 \item{call}{\emph{Internal call}
 

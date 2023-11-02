@@ -39,6 +39,22 @@ remove_special_chars_in_labels <-
   }
 
 
+keep_subitem <- function(fct, label_separator = NULL,
+                         call = rlang::caller_env()) {
+  lvls <- unique(as.character(fct)) # The items (including main question)
+  lbls <-
+    if(!is.null(label_separator)) {
+      stringi::stri_replace(str = lvls,
+                            regex = stringi::stri_c(ignore_null=TRUE, "^(.*)", label_separator, "(.*)$"), # Assumes that the main question always comes first, and subitem always last
+                            replacement = "$2")
+    } else lvls
+
+  factor(x = fct,
+         levels = lvls,
+         labels = lbls,
+         ordered = TRUE)
+}
+
 # Helper function to extract main question from the data
 get_main_question2 <-
   function(x, label_separator, warn_multiple = TRUE, call=rlang::caller_env()) {
@@ -82,21 +98,21 @@ get_raw_labels <-
   }
 
 
-set_var_labels <- function(data, cols=tidyselect::everything(), overwrite=TRUE) {
+set_var_labels <- function(data, cols=colnames(data), overwrite=TRUE) {
   cols_enq <- rlang::enquo(arg = cols)
   cols_pos <- tidyselect::eval_select(expr = cols_enq, data = data)
   col_names <- colnames(data)
   data <-
-    lapply(seq_len(ncol(data)), FUN = function(.x) {
+    lapply(colnames(data), FUN = function(.x) {
       if(
-        .x %in% cols_pos &&
+        .x %in% cols &&
         (overwrite || is.null(attr(data[[.x]], "label")))
       ) {
-        attr(data[[.x]], "label") <- col_names[.x]
+        attr(data[[.x]], "label") <- cols[.x]
       }
       data[[.x]]
     })
-  names(data) <- col_names
+  names(data) <- cols
   vctrs::new_data_frame(vctrs::df_list(data))
 }
 

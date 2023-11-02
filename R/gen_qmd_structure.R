@@ -58,7 +58,6 @@ gen_qmd_structure <-
                           .data[[grouping_structure[i]]] == names(grouping_structure)[i])
         }
 
-
         if(nrow(chapter_overview_section) >= 1) {
 
           chapter_overview_section <-
@@ -93,7 +92,7 @@ gen_qmd_structure <-
                      rlang::is_string(mesos_group)) {
 
                     data_for_all <-
-                      data[data[[dots$mesos_var]] != mesos_group, ]
+                      subset(data, subset = data[[dots$mesos_var]] != mesos_group)
 
                   } else {
                     data_for_all <- data
@@ -121,9 +120,11 @@ gen_qmd_structure <-
                    rlang::is_string(dots$mesos_var) &&
                    rlang::is_string(mesos_group)) {
 
-                  data_for_mesos <- data[data[[dots$mesos_var]] == mesos_group, ]
+                  data_for_mesos <- subset(data, subset = data[[dots$mesos_var]] == mesos_group)
+                  if(!inherits(data_for_mesos, "data.frame")) browser()
 
                   if(nrow(data_for_mesos) > 0) {
+
                     qmd_snippet_mesos <-
                       rlang::exec(
                       gen_element_and_qmd_snippet,
@@ -176,7 +177,18 @@ gen_qmd_structure <-
     return(output)
   }
 
-
+  chapter_overview <- chapter_overview
+  if(rlang::is_string(mesos_group)) {
+    unique_vars <- unique(chapter_overview$.variable_name)
+    unique_vars <- unique_vars[!is.na(unique_vars)]
+    for(var in unique_vars) {
+      tmp <- data[data[[dots$mesos_var]] == mesos_group, var, drop=TRUE]
+      if(all(is.na(tmp)) || length(tmp)==0) {
+        cli::cli_inform("In mesos_group {mesos_group}, removing empty column {var}.")
+        chapter_overview <- subset(chapter_overview, subset=chapter_overview[[".variable_name"]] != var)
+      }
+    }
+  }
 
   grouping_structure <- dplyr::group_vars(chapter_overview)
   non_grouping_vars <- colnames(chapter_overview)[!colnames(chapter_overview) %in% grouping_structure]

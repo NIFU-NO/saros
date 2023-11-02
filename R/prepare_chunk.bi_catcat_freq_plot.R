@@ -68,13 +68,14 @@ prepare_chunk.bi_catcat_freq_plot <-
                  colour_palette_nominal = dots$colour_palette_nominal,
                  colour_palette_ordinal = dots$colour_palette_ordinal,
                  colour_na = dots$colour_na,
-                 colour_2nd_binary_cat = dots$colour_2nd_binary_cat)
+                 colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
+                 categories_treated_as_na = dots$categories_treated_as_na[dots$categories_treated_as_na %in% y_col_names])
 
                plot_height <-
                  estimate_plot_height(y_col_pos = y_col_pos,
                                       x_cols = indep_pos,
                                       vertical = dots$vertical,
-                                      .variable_label_prefix = chapter_overview_section$.variable_label_prefix,
+                                      label_separator = dots$label_separator,
                                       x_axis_label_width = dots$x_axis_label_width,
                                       data = data,
                                       showNA = dots$showNA,

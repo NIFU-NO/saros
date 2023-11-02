@@ -7,8 +7,7 @@ process_yaml <- function(yaml_file = NULL,
 
   if(!rlang::is_string(yaml_file)) {
     yaml_section <-
-      list(#title = title,
-           format = format,
+      list(format = format,
            echo = FALSE,
            authors = authors)
   } else {
@@ -16,6 +15,7 @@ process_yaml <- function(yaml_file = NULL,
     if(any(names(yaml_section) == "translations")) {
       yaml_section$translations <- unlist(yaml_section$translations, recursive = FALSE)
     }
+    yaml_section$title <- title
     # new_title <- stringi::stri_c(yaml_section$title,
     #                              if(rlang::is_string(title) &&
     #                                 rlang::is_string(yaml_section$title)) " - ",

@@ -105,6 +105,7 @@ gen_qmd_chapters <-
           authors <- get_authors(data = chapter_overview_chapter, col = "authors")
           chapter_yaml <- process_yaml(yaml_file = dots$chapter_yaml_file,
                                       authors = authors,
+                                      title = NULL,
                                       chapter_number = chapter_number)
 
           chapter_contents <-
@@ -165,7 +166,7 @@ gen_qmd_chapters <-
     chapter_filepaths <- unlist(chapter_filepaths)
 
 
-    if(rlang::is_true(dots$flexi) && rlang::is_string(dots$mesos_var)) {
+    if(rlang::is_true(dots$flexi) && !rlang::is_string(dots$mesos_var)) {
 
       cli::cli_progress_message(msg = "Generating flexi-app")
 

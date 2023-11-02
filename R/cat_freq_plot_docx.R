@@ -31,6 +31,11 @@ prep_cat_freq_plot_docx <-
     indep_vars <- colnames(data)[!colnames(data) %in%
                                 .saros.env$summary_data_sort2]
 
+    hide_axis_text <-
+      isTRUE(dots$hide_axis_text_if_single_variable) &&
+      length(indep_vars) == 0 &&
+      dplyr::n_distinct(data[[".variable_label"]]) == 1
+
     fp_text_settings <-
       lapply(colour_palette,
              function(color) {
@@ -75,7 +80,7 @@ prep_cat_freq_plot_docx <-
     # }
     m <- mschart::chart_data_fill(x = m, values = colour_palette)
     m <- mschart::chart_data_stroke(x = m, values = colour_palette)
-    m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
+    if(length(fp_text_settings)>0) m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
     m <- mschart::chart_labels(x = m, ylab = NULL, xlab = NULL, title = NULL)
     m <- mschart::chart_ax_x(x = m, major_tick_mark = "none")
     if(dots$data_label %in% c("percentage", "percentage_bare")) {

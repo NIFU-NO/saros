@@ -55,6 +55,7 @@ gen_element_and_qmd_snippet <-
 
     if(element_name == "hline") return("-----")
 
+
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
 
@@ -100,6 +101,8 @@ gen_element_and_qmd_snippet <-
       max_width_obj = dots$max_width_obj,
       mesos_group = mesos_group)
 
+
+
     y_col_names <- unique(chapter_overview_section$.variable_name)
     y_col_pos <- match(y_col_names, colnames(data))
 
@@ -119,7 +122,8 @@ gen_element_and_qmd_snippet <-
         colour_palette_nominal = dots$colour_palette_nominal,
         colour_palette_ordinal = dots$colour_palette_ordinal,
         colour_na = dots$colour_na,
-        colour_2nd_binary_cat = dots$colour_2nd_binary_cat)
+        colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
+        categories_treated_as_na = dots$categories_treated_as_na[dots$categories_treated_as_na %in% common_levels])
 
     }
 
@@ -131,7 +135,7 @@ gen_element_and_qmd_snippet <-
 
       plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
                                           vertical = dots$vertical,
-                                          .variable_label_prefix = chapter_overview_section$.variable_label_prefix,
+                                          label_separator = dots$label_separator,
                                           x_axis_label_width = dots$x_axis_label_width,
                                           data = data,
                                           showNA = dots$showNA,
@@ -321,7 +325,8 @@ gen_element_and_qmd_snippet <-
 
 
       if(stringi::stri_detect(element_name, fixed = "uni_sigtest") &&
-         dplyr::n_distinct(unique(chapter_overview_section$.variable_type)) == 1) {
+         dplyr::n_distinct(unique(chapter_overview_section$.variable_type)) == 1 &&
+         !any(unique(chapter_overview_section$.variable_type) == "chr")) {
         out <-
           rlang::exec(
             embed_uni_sigtest,
@@ -370,9 +375,13 @@ gen_element_and_qmd_snippet <-
 
       # if(inherits(indep_df, what = "data.frame")) {
 
+
+
         name_indep <-
           stats::setNames(unique(indep_df$.variable_name),
-                   nm = stringi::stri_c(ignore_null=TRUE, obj_name, "_BY_", unique(indep_df$.variable_name)))
+                   nm = stringi::stri_c(obj_name, "_BY_",
+                                        get_common_name(unique(indep_df$.variable_name)),
+                                        ignore_null=TRUE))
 
 
         if(stringi::stri_detect(str = element_name, fixed = "bi_sigtest")) {
@@ -398,7 +407,8 @@ gen_element_and_qmd_snippet <-
 
               ##############################################################################
               if(dplyr::n_distinct(chapter_overview_section$.variable_type) == 1 &&
-                 dplyr::n_distinct(indep_type) == 1) {
+                 dplyr::n_distinct(indep_type) == 1  &&
+                 !any(indep_type == "chr")) {
                 return(
                   rlang::exec(
                     embed_bi_sigtest,
@@ -456,7 +466,7 @@ gen_element_and_qmd_snippet <-
           plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
                                               x_cols = indep_pos,
                                               vertical = dots$vertical,
-                                              .variable_label_prefix = chapter_overview_section$.variable_label_prefix,
+                                              label_separator = dots$label_separator,
                                               x_axis_label_width = dots$x_axis_label_width,
                                               data = data,
                                               showNA = dots$showNA,

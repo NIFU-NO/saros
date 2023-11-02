@@ -50,10 +50,15 @@ argument_validation_and_insertion <- function(params) {
       include_numbers = list(fun = rlang::is_bool),
       require_common_categories = list(fun = rlang::is_bool),
       hide_chr_for_others = list(fun = rlang::is_bool),
+      hide_variable_if_all_na = list(fun = rlang::is_bool),
+      hide_axis_text_if_single_variable = list(fun = rlang::is_bool),
       mesos_first = list(fun = rlang::is_bool),
       panel_tabset_mesos = list(fun = rlang::is_bool),
       single_y_bivariate_elements = list(fun = rlang::is_bool),
       totals = list(fun = rlang::is_bool),
+      pdf = list(fun = rlang::is_bool),
+      flexi = list(fun = rlang::is_bool),
+      micro = list(fun = rlang::is_bool),
 
       plot_height_multiplier = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
       plot_height_fixed_constant = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
@@ -63,6 +68,7 @@ argument_validation_and_insertion <- function(params) {
       hide_label_if_prop_below = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0 && x <= 1),
       hide_bi_entry_if_sig_above = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0 && x <= 1),
       digits = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0),
+      strip_angle = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0),
       label_font_size = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 72),
       main_font_size = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 72),
       n_top_bottom = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0),
@@ -78,6 +84,7 @@ argument_validation_and_insertion <- function(params) {
       data_label = list(fun = function(x) rlang::is_character(x) && any(env$data_label == x[1])),
       colour_palette_nominal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
       colour_palette_ordinal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
+      colour_na = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
       organize_by = list(fun = function(x) rlang::is_character(x)),
       showNA = list(fun = function(x) rlang::is_character(x) && any(env$showNA == x[1]))
     )

@@ -42,18 +42,21 @@ draft_report(
   hide_bi_entry_if_sig_above = 1,
   hide_test_if_n_below = 10,
   hide_chr_for_others = TRUE,
+  hide_variable_if_all_na = TRUE,
+  hide_axis_text_if_single_variable = FALSE,
   label_font_size = 8,
   main_font_size = 8,
   x_axis_label_width = 20,
-  plot_height_multiplier = NA_real_,
-  plot_height_fixed_constant = NA_real_,
+  plot_height_multiplier = 0.02,
+  plot_height_fixed_constant = 1,
   plot_height_max = 20,
   plot_height_min = 1.5,
   png_scale = 1.2,
   png_width = 14,
   png_height = 16,
   vertical_height = 12,
-  max_width_obj = 90,
+  strip_angle = 0,
+  max_width_obj = 128,
   max_width_file = 64,
   font_family = "sans",
   open_after_drafting = FALSE,
@@ -62,7 +65,9 @@ draft_report(
   single_y_bivariate_elements = FALSE,
   descend = TRUE,
   require_common_categories = TRUE,
+  pdf = TRUE,
   flexi = TRUE,
+  micro = FALSE,
   colour_palette_nominal = NULL,
   colour_palette_ordinal = NULL,
   colour_na = "gray90",
@@ -330,6 +335,18 @@ For mesos reports using the element "chr_table", open responses are
 displayed for also the entire sample (\code{FALSE}) or only for the mesos
 group to ensure data privacy (\code{TRUE}).}
 
+\item{hide_variable_if_all_na}{\emph{Hide variable from outputs if containing all NA}
+
+\verb{scalar<boolean>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether to remove all variables (in particular useful for mesos) if all values are NA}
+
+\item{hide_axis_text_if_single_variable}{\emph{Hide y-axis text if just a single variable}
+
+\verb{scalar<boolean>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to hide text on the y-axis label if just a single variabl}
+
 \item{label_font_size}{\emph{Data labels font size}
 
 \verb{scalar<integer>} // \emph{default:} \code{10} (\code{optional})
@@ -350,13 +367,13 @@ Width of the labels used for the categorical column names.}
 
 \item{plot_height_multiplier}{\emph{Height multiplier}
 
-\verb{scalar<double>} // \emph{default:} \code{1}
+\verb{scalar<double>} // \emph{default:} \code{.1}
 
 Height in cm per chart entry, for all static plots.}
 
 \item{plot_height_fixed_constant}{\emph{Height constant addition}
 
-\verb{scalar<double>} // \emph{default:} \code{0}
+\verb{scalar<double>} // \emph{default:} \code{1}
 
 Fixed height in cm to add to all static plots.}
 
@@ -389,6 +406,10 @@ Width for PNG output.}
 \verb{scalar<double>} // \emph{default:} \code{NULL} (\code{optional})
 
 Height for vertical layout of plot? NEEDS CHECKING}
+
+\item{strip_angle}{\emph{Angle on the facet strip in plots}
+
+\verb{scalar<double>} // \emph{default:} \code{0}}
 
 \item{max_width_obj}{\emph{Maximum object width}
 
@@ -448,11 +469,23 @@ Reverse sorting of \code{sort_by}.}
 
 Whether to check if all items share common categories.}
 
+\item{pdf}{\emph{Create PDF of full report?}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to create a PDF of the entire report (all chapters included in a single file).}
+
 \item{flexi}{\emph{Create page with user-editable categorical plots and tables}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
-Whether to include totals in the output.}
+Whether to create a folder with a Shiny flexi app containing all the variables in the chapter_overview and auxiliary_variables.}
+
+\item{micro}{\emph{Create page with raw data (micro data) and codebook}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).}
 
 \item{colour_palette_nominal, colour_palette_ordinal}{\emph{Colour palettes (nominal and ordinal)}
 

@@ -30,7 +30,11 @@ prep_cat_prop_plot_docx <-
     indep_vars <- colnames(data)[!colnames(data) %in%
                                 .saros.env$summary_data_sort2]
 
-    hide_axis_text <- length(indep_vars) == 0 && dplyr::n_distinct(data[[".variable_label"]]) == 1
+    hide_axis_text <-
+      isTRUE(dots$hide_axis_text_if_single_variable) &&
+      length(indep_vars) == 0 &&
+      dplyr::n_distinct(data[[".variable_label"]]) == 1
+
     hide_legend <-
       dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
       !rlang::is_null(dots$colour_na)
@@ -47,6 +51,7 @@ prep_cat_prop_plot_docx <-
              })
 
     fp_text_settings <- fp_text_settings[seq_len(dplyr::n_distinct(data[[".category"]], na.rm = TRUE))]
+
 
     blank_border <- officer::fp_border(style = "none")
 
@@ -70,7 +75,7 @@ prep_cat_prop_plot_docx <-
                                  overlap = overlap, gap_width = gap_width)
     m <- mschart::chart_data_fill(x = m, values = colour_palette)
     m <- mschart::chart_data_stroke(x = m, values = colour_palette)
-    m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
+    if(length(fp_text_settings)>0) m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
     m <- mschart::chart_labels(x = m, ylab = NULL, xlab = NULL, title = NULL)
     m <- mschart::chart_ax_x(x = m, major_tick_mark = "none")
     if(percentage) {

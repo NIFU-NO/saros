@@ -11,7 +11,7 @@ remove_non_significant_bivariates <-
     check_double(hide_bi_entry_if_sig_above, min = 0, max = 1, call = call)
     check_string(always_show_bi_for_indep, null.ok = TRUE, n = NULL, call = call)
 
-    if(hide_bi_entry_if_sig_above < 1) {
+    if(!is.na(hide_bi_entry_if_sig_above) && hide_bi_entry_if_sig_above < 1) {
       if(progress) cli::cli_progress_message("Removing bivariate occurences if {.arg hide_bi_entry_if_sig_above}: {.arg {hide_bi_entry_if_sig_above}}, except {.arg {always_show_bi_for_indep}}.")
 
       out <- refined_chapter_overview
@@ -33,6 +33,7 @@ remove_non_significant_bivariates <-
 
 
               if(!is.na(df_col_row$.variable_name) &&
+                 !is.na(df_indep_row$.variable_name) &&
                  df_indep_row$.variable_name != df_col_row$.variable_name) {
 
                 df_chitest <-
@@ -44,21 +45,28 @@ remove_non_significant_bivariates <-
                                               .data[[df_indep_row$.variable_name]],
                                               name = ".n_count")
 
-                if(dplyr::n_distinct(df_chitest[[df_col_row$.variable_name]]) > 1 &&
-                   dplyr::n_distinct(df_chitest[[df_indep_row$.variable_name]]) > 1 &&
-                   all(count_uniques$.n_count >= hide_test_if_n_below) &&
-                   !any(df_col_row$.variable_type == "chr") &&
-                   !any(df_indep_row$.variable_type == "chr")) {
+                stattest <- find_test(y = df_chitest[[df_col_row$.variable_name]],
+                                      x = df_chitest[[df_indep_row$.variable_name]])
+
+                valid_to_move_forward <-
+                  dplyr::n_distinct(df_chitest[[df_col_row$.variable_name]]) > 1 &&
+                  dplyr::n_distinct(df_chitest[[df_indep_row$.variable_name]]) > 1 &&
+                  all(count_uniques$.n_count >= hide_test_if_n_below) &&
+                  !any(df_col_row$.variable_type == "chr") &&
+                  !any(df_indep_row$.variable_type == "chr") &&
+                  rlang::is_function(stattest)
+
+                if(valid_to_move_forward) {
 
 
 
-                  stattest <- find_test(y = df_chitest[[df_col_row$.variable_name]],
-                                        x = df_chitest[[df_indep_row$.variable_name]])
+
 
                   df_indep_row$chi_p <-
+                    suppressWarnings(
                     stattest(x = df_chitest[[df_col_row$.variable_name]],
-                             y = df_chitest[[df_indep_row$.variable_name]])$p.value %>%
-                    suppressWarnings()
+                             y = df_chitest[[df_indep_row$.variable_name]])$p.value
+                    )
 
 
                   return(df_indep_row)
@@ -80,8 +88,8 @@ remove_non_significant_bivariates <-
         }
 
 
-      }) %>%
-        dplyr::bind_rows()
+      })
+      out <- dplyr::bind_rows(out)
 
       out
     } else refined_chapter_overview

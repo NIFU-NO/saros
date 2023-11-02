@@ -11,9 +11,10 @@ crosstable3.data.frame <-
 
     showNA <- rlang::arg_match(showNA, values = eval(formals(draft_report)$showNA), error_call = call)
 
+
     # indep_names <- colnames(data[, indep, drop = FALSE])
     indep_labels <- get_raw_labels(data = data, col_pos = indep)
-    col_names <- colnames(data[, dep, drop = FALSE])[!(colnames(data[, dep, drop = FALSE]) %in% indep)]
+    col_names <- colnames(data[ , dep, drop=FALSE])[!(colnames(data[ , dep, drop=FALSE]) %in% indep)]
 
     if(length(col_names)==0) return()
 
@@ -69,11 +70,11 @@ crosstable3.data.frame <-
            (showNA == "ifany" && any(is.na(indep_col)))) {
           out[[indep_var]] <- forcats::fct_na_value_to_level(f = indep_col, level = "NA")
         } else {
-          out <- out[!is.na(out[[indep_var]]), ]
+          out <- subset(out, subset = !is.na(out[[indep_var]]))
         }
       }
 
-
+      if(nrow(out)>0) {
 
       col <- out$.category
 
@@ -85,10 +86,13 @@ crosstable3.data.frame <-
                       call = call)
       }
 
-      out <- out[rlang::inject(order(!!!out[, c(indep, ".category")])), ]
+
+
+
+      out <- out[rlang::inject(order(!!!out[, c(indep, ".category"), drop = FALSE])), ]
       summary_mean <- out
       summary_mean$.mean <- suppressWarnings(as.numeric(summary_mean$.category))
-      summary_mean <- stats::aggregate(x = .mean ~ ., data = summary_mean[, c(indep, ".mean"), drop = FALSE], FUN = mean, na.rm = TRUE)
+        summary_mean <- stats::aggregate(x = .mean ~ ., data = summary_mean[, c(indep, ".mean"), drop = FALSE], FUN = mean, na.rm = TRUE)
 
       summary_prop <- out
       summary_prop$.count <- 1L
@@ -120,6 +124,18 @@ crosstable3.data.frame <-
       # }
 
       out$.variable_name <- .x
+      } else {
+        out <- data.frame(.variable_name = .x,
+                          .variable_label = unname(get_raw_labels(data = data, col_pos = .x)),
+                          .category = factor(NA),
+                          .count = NA_integer_,
+                          .proportion = NA_real_,
+                          .count_se = NA_real_,
+                          .proportion_se = NA_real_,
+                          .mean = NA_real_,
+                          .mean_se = NA_real_)
+        out[, indep] <- NA_character_
+      }
       out
         }
 
@@ -183,6 +199,9 @@ crosstable3.tbl_svy <-
       } else {
         out <- srvyr::filter(out, !is.na(.data$.category))
       }
+
+      if(nrow(out)>0) {
+
       col <- srvyr::pull(out, .data$.category)
 
       fct_lvls <- if (is.factor(col)) levels(col) else sort(unique(col))
@@ -225,6 +244,19 @@ crosstable3.tbl_svy <-
         out <- cbind(summary_prop, summary_mean)
       }
       out$.variable_name <- .x
+
+    } else {
+      out <- data.frame(.variable_name = .x,
+                        .variable_label = unname(get_raw_labels(data = data, col_pos = .x)),
+                        .category = factor(),
+                        .count = integer(),
+                        .proportion = numeric(),
+                        .count_se = numeric(),
+                        .proportion_se = numeric(),
+                        .mean = numeric(),
+                        .mean_se = numeric())
+      out[, indep] <- character()
+    }
       as.data.frame(out)
 
     })

@@ -35,7 +35,11 @@ prep_cat_prop_plot_pdf <-
     by_vars <- colnames(data)[!colnames(data) %in%
                                 .saros.env$summary_data_sort2]
 
-    hide_axis_text <- length(by_vars) == 0 && dplyr::n_distinct(data[[".variable_label"]]) == 1
+    hide_axis_text <-
+      isTRUE(dots$hide_axis_text_if_single_variable) &&
+      length(by_vars) == 0 &&
+      dplyr::n_distinct(data[[".variable_label"]]) == 1
+
     hide_legend <- dplyr::n_distinct(data[[".category"]]) == 2 && !rlang::is_null(dots$colour_2nd_binary_cat)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
