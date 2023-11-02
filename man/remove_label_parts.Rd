@@ -4,16 +4,14 @@
 \alias{remove_label_parts}
 \title{Remove regex pattern from variable labels}
 \usage{
-remove_label_parts(
-  data = survey_data[[params$cycle]][[params$response_group]],
-  pattern = NULL,
-  data_type_criterion = NULL
-)
+remove_label_parts(data, pattern = NULL, data_type_criterion = NULL)
 }
 \arguments{
 \item{data}{Data.frame}
 
 \item{pattern}{String, regex pattern.}
+
+\item{data_type_criterion}{Can be a function that specifies what kind of variables to select, e.g. is.factor}
 }
 \value{
 Data

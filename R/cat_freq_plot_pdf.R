@@ -36,7 +36,7 @@ prep_cat_freq_plot_pdf <-
 
     hide_axis_text <-
       isTRUE(dots$hide_axis_text_if_single_variable) &&
-      length(indep_vars) == 0 &&
+      length(by_vars) == 0 &&
       dplyr::n_distinct(data[[".variable_label"]]) == 1
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")

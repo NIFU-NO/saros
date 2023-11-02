@@ -27,10 +27,11 @@ x   colour_na
 x   Fylkeskommune settes til NA i alle figurer/tabeller med prosenter. 
 x   Frekvenser for resp==4
 x   Too few bivariates are showing, only the exceptions
-
 x   chr should not have sigtests!
+x   bi_sigtest not showing any p-value etc! Also, should have x_var
+x   Not trusting remove_non_significant_bivariates/bi_sigtest
+
 1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
-1   bi_sigtest not showing any p-value etc! Also, should have x_var
 3   Avoid running remove_non_significant_bivariates if already excepted
 
 1   Løse skript for stolpediagrammer, kart (signifikante forskjeller på fylke/landsdel/kommune), tabeller
@@ -46,6 +47,7 @@ x   chr should not have sigtests!
              across(where(~is.character(.x)), ~na_if(.x, ""))
 3   Multiple authors in a chapter_overview cell should be expanded in any YAML: process_yaml.
 2   Always ignore author column for Mesos
+3   Redesign entire refine_chapter_overview, remove_non_significant_bivariates and sigtest
 2   Also export a complete archivable dataset with codebook
         en side med lenker til følgende:
         Datasettet

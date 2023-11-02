@@ -335,6 +335,18 @@ For mesos reports using the element "chr_table", open responses are
 displayed for also the entire sample (\code{FALSE}) or only for the mesos
 group to ensure data privacy (\code{TRUE}).}
 
+\item{hide_variable_if_all_na}{\emph{Hide variable from outputs if containing all NA}
+
+\verb{scalar<boolean>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether to remove all variables (in particular useful for mesos) if all values are NA}
+
+\item{hide_axis_text_if_single_variable}{\emph{Hide y-axis text if just a single variable}
+
+\verb{scalar<boolean>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to hide text on the y-axis label if just a single variabl}
+
 \item{label_font_size}{\emph{Data labels font size}
 
 \verb{scalar<integer>} // \emph{default:} \code{10} (\code{optional})
@@ -395,6 +407,10 @@ Width for PNG output.}
 
 Height for vertical layout of plot? NEEDS CHECKING}
 
+\item{strip_angle}{\emph{Angle on the facet strip in plots}
+
+\verb{scalar<double>} // \emph{default:} \code{0}}
+
 \item{max_width_obj}{\emph{Maximum object width}
 
 \verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
@@ -452,6 +468,12 @@ Reverse sorting of \code{sort_by}.}
 \verb{scalar<logical>} // \emph{default:} \code{NULL} (\code{optional})
 
 Whether to check if all items share common categories.}
+
+\item{pdf}{\emph{Create PDF of full report?}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to create a PDF of the entire report (all chapters included in a single file).}
 
 \item{flexi}{\emph{Create page with user-editable categorical plots and tables}
 

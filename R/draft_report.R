@@ -344,6 +344,12 @@
 #'
 #'   Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).
 #'
+#' @param pdf *Create PDF of full report?*
+#'
+#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'
+#'   Whether to create a PDF of the entire report (all chapters included in a single file).
+#'
 #' @param hide_bi_entry_if_sig_above *p-value threshold for hiding bivariate entry*
 #'
 #'   `scalar<double>` // *default:* `1` (`optional`)
@@ -382,6 +388,22 @@
 #'   `scalar<double>` // *default:* `12` (`optional`)
 #'
 #'   Width for PNG output.
+#'
+#' @param hide_variable_if_all_na *Hide variable from outputs if containing all NA*
+#'
+#'   `scalar<boolean>` // *default:* `TRUE` (`optional`)
+#'
+#'   Whether to remove all variables (in particular useful for mesos) if all values are NA
+#'
+#' @param hide_axis_text_if_single_variable *Hide y-axis text if just a single variable*
+#'
+#'   `scalar<boolean>` // *default:* `FALSE` (`optional`)
+#'
+#'   Whether to hide text on the y-axis label if just a single variabl
+#'
+#' @param strip_angle *Angle on the facet strip in plots*
+#'
+#'   `scalar<double>` // *default:* `0`
 #'
 #' @param vertical_height *Vertical height*
 #'

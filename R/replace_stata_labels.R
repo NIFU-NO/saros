@@ -6,6 +6,7 @@
 #' @param df_new_labels a data frame with a var_name_col and a var_label_col
 #' @param var_name_col,var_label_col variable names (as strings) for the lookup of variable names in data, and the corresponding variable label.
 #' @param trim string, trim "both" sides (default), "left" or "right".
+#' @param overwrite Flag. Whether to remove label if it already exists.
 #'
 #' @return data, with variable labels replaced
 #' @export

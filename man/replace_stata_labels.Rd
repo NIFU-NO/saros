@@ -21,6 +21,8 @@ replace_stata_labels(
 \item{var_name_col, var_label_col}{variable names (as strings) for the lookup of variable names in data, and the corresponding variable label.}
 
 \item{trim}{string, trim "both" sides (default), "left" or "right".}
+
+\item{overwrite}{Flag. Whether to remove label if it already exists.}
 }
 \value{
 data, with variable labels replaced

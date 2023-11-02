@@ -79,7 +79,7 @@ quarto_render_saros <- function(site_path,
     )
   )
 
-  browseURL(site_path)
+  utils::browseURL(site_path)
 
   invisible()
 }
@@ -101,26 +101,22 @@ quarto_render_saros <- function(site_path,
 #' @param rel_path_base_to_parent_of_user_restricted_folder String. Path going from basepath to the folder containg folders to password-protect.
 #' @param from_folders,from_files Character vector of folders and files to copy into the site path.
 #' @param overwrite Flag. Defaults to FALSE to ensure you know what you are doing. If TRUE, will delete all files and folders in site!
+#' @param prompt Flag. Whether to ask the user if they are certain. Defaults to TRUE.
 #'
 #' @return local_basepath
 #' @export
 #'
 prepare_safe_render <- function(remote_basepath = "/home/",
-                                 from_folders = c("55_fullførte_utkast", "52_ressurser/_images", "52_ressurser/_extensions"),
-                                 from_files = c(file.path("52_ressurser/YAML", c("_quarto.yaml",
-                                                                                 "_nifu_global.yaml")),
-                                                file.path("52_ressurser/CSS", c("styles.css",
-                                                                                 "styles.scss")),
-                                                file.path("52_ressurser/CitationStyles/nifu.csl")),
-                                 local_basepath = "55_fullførte_utkast",
+                                 from_folders = NULL,
+                                 from_files = NULL,
+                                 local_basepath = getwd(),
                                  site = tempdir(),
                                  rel_path_base_to_parent_of_user_restricted_folder = "Reports",
 
                                  overwrite = FALSE,
-                                 prompt = TRUE,
-                                 ...) {
+                                 prompt = TRUE) {
 
-  dots <- rlang::list2(...)
+  # dots <- rlang::list2(...)
 
   # Initial checks of folders
   if(!dir.exists(local_basepath) || length(dir(local_basepath))==0) {
@@ -167,7 +163,7 @@ prepare_safe_render <- function(remote_basepath = "/home/",
 #'
 #' @return Data.frame
 #' @export
-create_email_credentials <- function(local_basepath = "55_fullførte_utkast",
+create_email_credentials <- function(local_basepath = getwd(),
                               rel_path_base_to_parent_of_user_restricted_folder,
                               email_data_frame,
                               email_col= "email",
@@ -194,7 +190,7 @@ create_email_credentials <- function(local_basepath = "55_fullførte_utkast",
   choice <- utils::menu(title = "Continue?", choices = c("Y", "N"))
   if(toupper(choice)=="N") return()
 
-  out <- dplyr::inner_join(emails, credentials, by=setNames("username", email_col),
+  out <- dplyr::inner_join(emails, credentials, by=stats::setNames("username", email_col),
                            relationship = "many-to-one")
   data.frame(body = glue::glue_data(out, email_body),
              to = out$email,

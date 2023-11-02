@@ -33,6 +33,7 @@ remove_non_significant_bivariates <-
 
 
               if(!is.na(df_col_row$.variable_name) &&
+                 !is.na(df_indep_row$.variable_name) &&
                  df_indep_row$.variable_name != df_col_row$.variable_name) {
 
                 df_chitest <-

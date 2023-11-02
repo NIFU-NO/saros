@@ -15,8 +15,7 @@ prepare_safe_render(
   site = tempdir(),
   rel_path_base_to_parent_of_user_restricted_folder = "Reports",
   overwrite = FALSE,
-  prompt = TRUE,
-  ...
+  prompt = TRUE
 )
 }
 \arguments{
@@ -31,6 +30,8 @@ prepare_safe_render(
 \item{rel_path_base_to_parent_of_user_restricted_folder}{String. Path going from basepath to the folder containg folders to password-protect.}
 
 \item{overwrite}{Flag. Defaults to FALSE to ensure you know what you are doing. If TRUE, will delete all files and folders in site!}
+
+\item{prompt}{Flag. Whether to ask the user if they are certain. Defaults to TRUE.}
 }
 \value{
 local_basepath

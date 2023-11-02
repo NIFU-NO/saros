@@ -126,7 +126,8 @@ sigtest <-
       dplyr::mutate(dplyr::across(c({{dep}}, {{indep}}) & tidyselect::where(~is.factor(.x)), ~forcats::fct_drop(.x)))
 
     number_rows <- nrow(data)
-    if(is.null(number_rows) || number_rows == 0 || .variable_type == "chr") return(data.frame())
+    if(is.null(number_rows) || is.na(number_rows) || number_rows == 0 ||
+       (!is.na(.variable_type) && .variable_type == "chr")) return(data.frame())
     number_rows_by_group <- min(table(data[, c(dep_pos, indep_pos)]))
 
     var_labels <-
@@ -221,13 +222,14 @@ sigtest <-
         null_dist %>%
         infer::get_p_value(obs_stat = estimate, direction = "two-sided") %>%
         suppressWarnings()
-      pval <- pval$p_value
+      # pval <- pval$p_value
+      df_main$test <- stat_config$test
+      df_main$stat <- round(estimate[["stat"]][[1]], digits = 1)
+      df_main$p <- ifelse(pval$p_value > 0, pval$p_value, 3/dots$reps)
+      df_main$p <- ifelse(df_main$N >= dots$hide_test_if_n_below, df_main$p, NA_real_)
 
-      dplyr::mutate(df_main,
-                    test = stat_config$test,
-                    stat = round(estimate[["stat"]], digits = 1),
-                    p = dplyr::if_else(pval > 0, pval, 3/dots$reps),
-                    p = dplyr::if_else(.data$N >= dots$hide_test_if_n_below, .data$p, NA_real_))
+      df_main
+
     } else df_main
   }
 
@@ -366,7 +368,6 @@ embed_bi_sigtest <-
       lapply(names(dep_pos), FUN = function(.x) {
         col_sym <- rlang::sym(.x)
 
-        out <-
         rlang::inject(
         sigtest(
           data = data,
@@ -375,7 +376,6 @@ embed_bi_sigtest <-
           .variable_type = .variable_type,
           indep_type = indep_type,
           !!!dots))
-        out
       })
     out <- dplyr::bind_rows(out)
     names(out)[names(out) == ".variable_label"] <- main_question

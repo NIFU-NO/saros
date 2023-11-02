@@ -179,7 +179,9 @@ gen_qmd_structure <-
 
   chapter_overview <- chapter_overview
   if(rlang::is_string(mesos_group)) {
-    for(var in unique(chapter_overview$.variable_name)) {
+    unique_vars <- unique(chapter_overview$.variable_name)
+    unique_vars <- unique_vars[!is.na(unique_vars)]
+    for(var in unique_vars) {
       tmp <- data[data[[dots$mesos_var]] == mesos_group, var, drop=TRUE]
       if(all(is.na(tmp)) || length(tmp)==0) {
         cli::cli_inform("In mesos_group {mesos_group}, removing empty column {var}.")
