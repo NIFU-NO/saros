@@ -29,13 +29,26 @@ x   Frekvenser for resp==4
 x   Too few bivariates are showing, only the exceptions
 x   chr should not have sigtests!
 x   bi_sigtest not showing any p-value etc! Also, should have x_var
-x   Not trusting remove_non_significant_bivariates/bi_sigtest
+x   remove_non_significant_bivariates/bi_sigtest now uses all data available
+x   Numbering chapters if more than 10 chapters: use sprintf
+x   SSN: endre variabelnavn
+x   SSN: cat_prop_plot: total = FALSE
+x   SSN: "vennligst spesifiser" skal fjernes
+x   SSN: Sortere output etter variabelnavn, ikke labels
+x   typst: multiple authors
+x   SSN: absolute paths in innledning.qmd and 2_beskrivelse_av_gjennomforing.qmd
 
+1   Avoid sorting first on .element_name and then indep
+
+
+3   Clean up the obj_name and filename_prefix stuff.
+1   Løse skript for stolpediagrammer, kart (signifikante forskjeller på fylke/landsdel/kommune), tabeller
 1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
+3   Construct a global list of filename_prefixes. If it is already there, add "_2"
 3   Avoid running remove_non_significant_bivariates if already excepted
 
-1   Løse skript for stolpediagrammer, kart (signifikante forskjeller på fylke/landsdel/kommune), tabeller
 3   Prettier duplicated labels warning, containing variable name, bullet points/new line.
+3   Better checks of input data: Provide feedback/log on not mentioned variables, included variables, excluded due to non-significance, 
 1   mesos: why fails if data.frame but works with tibble??
 2   mesos: Keep sorting of variables in plots equal across target and others. (but will likely change this type of plot anyway)
 1   Call summary_data only once in gen_element_and_qmd_snippet3

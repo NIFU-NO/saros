@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 0.9.2.4903
+Version: 0.9.7
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -43,7 +43,6 @@ Imports:
     fs,
     clipr,
     qs,
-    RCurl,
     rstudioapi,
     rvest
 Suggests:

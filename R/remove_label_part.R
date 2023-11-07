@@ -14,7 +14,7 @@ remove_label_parts <- function(data,
 
   if(rlang::is_string(pattern)) {
     for(var in colnames(data)) {
-      # if(var == "campus2") browser()
+
       if(data_type_criterion(data[[var]])) {
         label <- attr(data[[var]], "label")
         label <- stringr::str_replace(label, pattern = pattern, replacement = "")

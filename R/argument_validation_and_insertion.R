@@ -1,6 +1,7 @@
 argument_validation_and_insertion <- function(params) {
 
-  unwanted_args <- names(params)[!names(params) %in% names(formals(draft_report))]
+  unwanted_args <- names(params)[!names(params) %in% c(names(formals(draft_report)),
+                                                       .saros.env$element_names_simplified)]
   if(length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
 
   env <- lapply(formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")], eval)
@@ -86,6 +87,7 @@ argument_validation_and_insertion <- function(params) {
       colour_palette_ordinal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
       colour_na = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
       organize_by = list(fun = function(x) rlang::is_character(x)),
+      arrange_output_by = list(fun = function(x) rlang::is_character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)),
       showNA = list(fun = function(x) rlang::is_character(x) && any(env$showNA == x[1]))
     )
 
@@ -114,6 +116,15 @@ argument_validation_and_insertion <- function(params) {
     cli::cli_abort(c("{.arg organize_by} must contain both {.var {c('chapter', '.element_name')}}.",
                      i = "You provided {.arg {params$organize_by}}."))
   }
+  if(!all(params$organize_by %in% .saros.env$refined_chapter_overview_columns)) {
+    cli::cli_abort(c("{.arg organize_by} is not valid. Must be one or more of {.saros.env$refined_chapter_overview_columns}.",
+                     i = "You provided {.arg {params$organize_by}}."))
+  }
+  if(!all(params$arrange_output_by %in% .saros.env$refined_chapter_overview_columns)) {
+    cli::cli_abort(c("{.arg arrange_output_by} is not valid. Must be one or more of {.saros.env$refined_chapter_overview_columns}.",
+                     i = "You provided {.arg {params$arrange_output_by}}."))
+  }
+
   if(rlang::is_null(params$chapter_overview)) {
     params$chapter_overview <-
       data.frame(chapter = "", dep = "everything()")

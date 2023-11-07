@@ -267,7 +267,8 @@ embed_cat_text_html <-
         stringi::stri_replace(str = .x, regex = "([[:alpha:]\\)])$", "$1.")
       })
 
-    if(dots$return_raw) as.list(stringi::stri_c(ignore_null=TRUE, out, collapse=" ")) else out
+    out <- stringi::stri_c(out, collapse=" ", ignore_null=TRUE)
+    if(dots$return_raw) as.list(out) else stringi::stri_c(out, collapse="", ignore_null=TRUE)
   }
 
 

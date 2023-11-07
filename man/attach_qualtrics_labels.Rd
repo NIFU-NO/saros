@@ -2,14 +2,14 @@
 % Please edit documentation in R/qualtrics.R
 \name{attach_qualtrics_labels}
 \alias{attach_qualtrics_labels}
-\title{Re-attach label information from qualtrics not obtained from regular data downloads}
+\title{Re-attach label information from Qualtrics not obtained from regular data downloads}
 \usage{
 attach_qualtrics_labels(data, questions, reverse_stata_replacement = FALSE)
 }
 \arguments{
 \item{data}{Data.frame with original variable names.}
 
-\item{questions}{Data frame with questions obtained from  qualtRics::survey_questions()}
+\item{questions}{Data frame with questions obtained from \code{qualtRics::survey_questions()}}
 
 \item{reverse_stata_replacement}{If variable names have already been modified
 with full stops changed to underscores, this will reverse them for connection. Rarely needed. Defaults to FALSE.}
@@ -18,5 +18,5 @@ with full stops changed to underscores, this will reverse them for connection. R
 Data returned with only variable labels modified.
 }
 \description{
-Re-attach label information from qualtrics not obtained from regular data downloads
+Re-attach label information from Qualtrics not obtained from regular data downloads
 }

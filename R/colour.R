@@ -158,7 +158,7 @@ get_colour_set <-
             factor = colour_palette_nominal)
 
 
-    # if("Vet ikke" %in% x) browser()
+
     x <- stats::setNames(x, x)
     if(rlang::is_character(colour_na)) {
       if(length(colour_na)>= length(categories_treated_as_na)) {

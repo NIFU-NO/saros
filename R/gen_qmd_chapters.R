@@ -85,10 +85,12 @@ gen_qmd_chapters <-
 
           chapter_number <- match(chapter_foldername,
                                   unique(chapter_overview$chapter))
+          digits <- floor(log10(dplyr::n_distinct(chapter_overview_chapter_groups[[grouping_structure[1]]])))+1
+          chapter_number_text <- sprintf(paste0("%0", digits, "d"), as.integer(chapter_number))
 
 
           chapter_foldername_clean <-
-            stringi::stri_c(chapter_number, "_",
+            stringi::stri_c(chapter_number_text, "_",
                             filename_sanitizer(chapter_foldername),
                             ignore_null = TRUE)
 
@@ -108,9 +110,11 @@ gen_qmd_chapters <-
                                       title = NULL,
                                       chapter_number = chapter_number)
 
+          if(!all(is.na(chapter_overview_chapter$.variable_name_dep))) {
+
           chapter_contents <-
             rlang::exec(
-              gen_qmd_structure,
+              gen_qmd_structure2,
               data = data,
               chapter_overview = chapter_overview_chapter,
               mesos_group = mesos_group,
@@ -118,6 +122,8 @@ gen_qmd_chapters <-
               chapter_foldername = chapter_foldername_clean,
               !!!dots#[!names(dots) %in% c("chapter_overview", "call")]
               )
+
+          } else chapter_contents <- NULL
 
           qmd_start_section <-
             if(!rlang::is_null(dots$qmd_start_section_filepath)) {
@@ -137,7 +143,7 @@ gen_qmd_chapters <-
 
           load_dataset <-
             if(rlang::is_true(dots$attach_chapter_dataset)) {
-              attach_chapter_dataset(data = data,
+              attach_chapter_dataset2(data = data,
                                      chapter_overview_chapter = chapter_overview_chapter,
                                      chapter_foldername_clean = chapter_foldername_clean,
                                      path = path,
@@ -145,6 +151,7 @@ gen_qmd_chapters <-
                                      auxiliary_variables = dots$auxiliary_variables)
             }
 
+          # if(chapter_foldername != "Introduction") browser()
 
           out <-
           stringi::stri_c(chapter_yaml,
@@ -163,10 +170,12 @@ gen_qmd_chapters <-
           chapter_filepath_relative
 
         })
+
     chapter_filepaths <- unlist(chapter_filepaths)
 
 
-    if(rlang::is_true(dots$flexi) && !rlang::is_string(dots$mesos_var)) {
+    if(rlang::is_true(dots$flexi) && !rlang::is_string(dots$mesos_var) &&
+       !all(is.na(chapter_overview_chapter_groups$.variable_name_dep))) {
 
       cli::cli_progress_message(msg = "Generating flexi-app")
 

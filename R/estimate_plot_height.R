@@ -25,12 +25,15 @@ estimate_plot_height <- function(data,
     } else {
       n_cats <- 1
     }
+    x_max <- if(length(x_cols)>0 && all(!is.na(x_cols))) {
+      dplyr::n_distinct(data[[x_cols]], na.rm = TRUE)
+      }
 
     plot_height_estimate <-
       max_axis_lines_per_var *
       n_cats *
       length(y_col_pos) *
-      max(c(1, if(length(x_cols)>0) dplyr::n_distinct(data[[x_cols]], na.rm = TRUE))) *
+      max(c(1, x_max)) *
       plot_height_multiplier +
       plot_height_fixed_constant
 
