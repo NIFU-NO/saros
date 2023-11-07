@@ -137,7 +137,9 @@ look_for_extended <- function(data,
 #
 
 validate_labels <- function(data) {
-  miss_label_vars <- subset(data, subset = is.na(data[[".variable_label_prefix"]]) & !is.na(data[[".variable_position"]]))
+  miss_label_vars <- vctrs::vec_slice(data,
+                                      is.na(data[[".variable_label_prefix"]]) &
+                                        !is.na(data[[".variable_position"]]))
   if(nrow(miss_label_vars) > 0) {
     cli::cli_warn("Using variable name in place of missing label for {.var {unique(miss_label_vars$.variable_name)}}.")
   }
@@ -148,61 +150,17 @@ validate_labels <- function(data) {
 }
 
 
-attach_indep <- function(refined_chapter_overview) {
-  if(!rlang::is_null(refined_chapter_overview$.variable_role)) {
-
-    indep_df <- refined_chapter_overview
-    indep_df <- dplyr::ungroup(indep_df)
-    indep_df <- dplyr::filter(indep_df, .data$.variable_role == "indep")
-    indep_df <- tidyr::nest(indep_df, .by = tidyselect::all_of("chapter"),
-                  .key = "indep_cols_df")
-
-    dplyr::left_join(x = refined_chapter_overview,
-                     y = indep_df,
-                     by = dplyr::join_by("chapter"))
-
-  } else {
-    cli::cli_warn("No column {.var .variable_role} found, no bivariates possible.")
-    dplyr::mutate(refined_chapter_overview, indep_cols_df = list(NULL))
-  }
-}
-
-
-find_test <- function(y, x) {
-
-  chisq_test2 <- function(...) stats::chisq.test(table(...))
-
-  if((inherits(y, what = "double") ||
-      inherits(y, what = "integer")) &&
-     (inherits(x, what = "double") ||
-      inherits(x, what = "integer") ||
-      inherits(x, what = "ordered"))) return(stats::cor.test)
-
-  if(inherits(y, what = "factor") &&
-     (inherits(x, what = "factor") ||
-      inherits(x, what = "ordered"))) return(stats::chisq.test)
-
-  if((inherits(y, what = "double") ||
-      inherits(y, what = "integer")) &&
-     inherits(x, what = "factor")) return(stats::t.test)
-
-  if(inherits(y, what = "ordered") &&
-     inherits(x, what = "factor")) return(stats::kruskal.test)
-
-  if(!inherits(y, what = "character") &&
-     !inherits(x, what = "character")) {
-    cli::cli_warn("Unable to find a suitable statistical test for outcome {class(y)} and {class(x)}.")
-  }
-  return()
-
-}
 
 
 add_element_names <- function(refined_chapter_overview, element_names) {
-  refined_chapter_overview <- dplyr::group_map(refined_chapter_overview,
-                                               .f = ~tidyr::crossing(.x, .element_name = element_names))
-  refined_chapter_overview <- dplyr::bind_rows(refined_chapter_overview)
-  refined_chapter_overview
+
+  out <- vctrs::vec_slice(refined_chapter_overview,
+                          !is.na(refined_chapter_overview$.variable_name_dep))
+  out <- tidyr::expand_grid(out, .element_name = element_names)
+  out_na <- vctrs::vec_slice(refined_chapter_overview,
+                               is.na(refined_chapter_overview$.variable_name_dep))
+
+  dplyr::bind_rows(out_na, out)
 }
 
 #' Processes A 'chapter_overview' Data Frame
@@ -230,12 +188,7 @@ refine_chapter_overview <-
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
 
-    if(all(c("chapter",
-              ".variable_role", ".variable_selection", ".variable_position",
-              ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
-              ".variable_label_prefix", ".variable_label_suffix",
-              ".variable_type", ".variable_group_id",
-              ".element_name", "indep_cols_df") %in% names(chapter_overview))) {
+    if(all(.saros.env$refined_chapter_overview_columns %in% names(chapter_overview))) {
       return(chapter_overview)
     }
 
@@ -263,11 +216,15 @@ refine_chapter_overview <-
          multiline = FALSE)
   class(delim_regex) <- c("stringr_regex", "stringr_pattern", "character")
 
-
   out <-
     tidyr::pivot_longer(chapter_overview,
                         cols = tidyselect::any_of(col_headers),
                         values_to = ".variable_selection")
+  out <-
+    vctrs::vec_slice(out,
+                     !(out$name == "indep" &
+                         (is.na(out$.variable_selection) |
+                            out$.variable_selection == "")))
   out <-
     tidyr::separate_longer_delim(out,
                                  cols = ".variable_selection",
@@ -279,26 +236,21 @@ refine_chapter_overview <-
                     sep="_")
 
   out[[".variable_role"]] <-
-    ifelse(is.na(out[[".variable_selection"]]), NA_character_, out[[".variable_role"]])
+    ifelse(is.na(out[[".variable_selection"]]) |
+             out[[".variable_selection"]] == "", NA_character_, out[[".variable_role"]])
 
-  out <-
-    dplyr::mutate(out,
-                  .variable_selection =
-                    dplyr::if_else(!stringi::stri_detect(.data$.variable_selection,
-                                                         regex = "matches\\(") &
-                                     stringi::stri_detect(.data$.variable_selection,
-                                                          regex = "\\*"),
-                                   true = stringi::stri_c(ignore_null=TRUE,
-                                                          "matches('",
-                                                          .data$.variable_selection,
-                                                          "')"),
-                                   false = .data$.variable_selection))
+  out[[".variable_selection"]] <-
+    dplyr::if_else(!stringi::stri_detect(out$.variable_selection,
+                                         regex = "matches\\(") &
+                     stringi::stri_detect(out$.variable_selection,
+                                          regex = "\\*"),
+                   true = stringi::stri_c(ignore_null=TRUE,
+                                          "matches('",
+                                          out$.variable_selection,
+                                          "')"),
+                   false = out$.variable_selection)
   out <-
     dplyr::distinct(out, .keep_all = TRUE)
-  # out <-
-  #   dplyr::filter(out, !.data$.variable_selection == "" & !is.na(.data$.variable_selection))
-  out <-
-    dplyr::arrange(out, .data$.variable_role)
   out <-
     dplyr::relocate(out, tidyselect::all_of(c(".variable_role", ".variable_selection")))
 
@@ -315,17 +267,17 @@ refine_chapter_overview <-
                                       pattern = '[[:space:],]+',
                                       replacement = ",")
 
-    out$cols <- eval_cols(x = out$.variable_selection,
+    out$.cols <- eval_cols(x = out$.variable_selection,
                           data = data,
                           call = call)
 
     out <-
       tidyr::unnest_longer(out,
-                           col = "cols",
+                           col = ".cols",
                            values_to = ".variable_position",
                            indices_to = ".variable_name")
+    out$.variable_name <- ifelse(out$.variable_name %in% c("1", ""), NA, out$.variable_name)
 
-    out[[".variable_name"]] <- ifelse(out[[".variable_name"]]=="", NA, out[[".variable_name"]])
 
     if(rlang::is_true(dots$hide_variable_if_all_na)) {
       na_vars <- c()
@@ -341,62 +293,64 @@ refine_chapter_overview <-
 
     # check_duplicates_in_chapter_overview(out)
 
-    out <-
-     dplyr::left_join(x=out,
-                      y=look_for_extended(data = data,
-                                          cols = stringi::stri_remove_empty_na(unique(out$.variable_name)),
-                                          label_separator = dots$label_separator,
-                                          name_separator = dots$name_separator),
-                      by = dplyr::join_by(".variable_position", ".variable_name"),
-                      )
+    present_variable_names <-
+      stringi::stri_remove_empty_na(unique(out$.variable_name))
 
-    out <- # Move to separate function, and add argument that defaults to TRUE
-      dplyr::mutate(out,
-                    .variable_label_prefix = stringi::stri_trim_both(.data$.variable_label_prefix),
-                    .variable_label_prefix = stringi::stri_replace_all_regex(.data$.variable_label_prefix, pattern = "[[:space:]]+", replacement = " "),
-                    .variable_label_suffix = stringi::stri_trim_both(.data$.variable_label_suffix),
-                    .variable_label_suffix = stringi::stri_replace_all_regex(.data$.variable_label_suffix, pattern = "[[:space:]]+", replacement = " "))
-    out <-
-      validate_labels(out)
-    out <-
-      attach_indep(out)
-    out <-
-      remove_non_significant_bivariates(out,
-                                        data = data,
-                                        hide_bi_entry_if_sig_above = dots$hide_bi_entry_if_sig_above,
-                                        always_show_bi_for_indep = dots$always_show_bi_for_indep,
-                                        progress = progress)
+    if(length(present_variable_names)>0) {
+      out <-
+        dplyr::left_join(x=out,
+                         y=look_for_extended(data = data,
+                                             cols = present_variable_names,
+                                             label_separator = dots$label_separator,
+                                             name_separator = dots$name_separator),
+                         by = dplyr::join_by(".variable_position", ".variable_name"))
 
 
-    # separate to new function from here
+
+      out <-
+        trim_columns(out, cols = c(".variable_label_prefix", ".variable_label_prefix"))
+      out <-
+        validate_labels(out)
+    }
+    out <- # TASK: SIMPLIFY INDEP IN data_overview
+        attach_indep2(out)
+
+
+      out <- # TASK: SIMPLIFY INDEP IN data_overview
+        remove_non_significant_bivariates2(out,
+                                           data = data,
+                                           hide_bi_entry_if_sig_above = dots$hide_bi_entry_if_sig_above,
+                                           always_show_bi_for_indep = dots$always_show_bi_for_indep,
+                                           progress = progress)
+
+
+    out <- add_element_names(out, element_names = dots$element_names)
+
 
     out <-
-      tidyr::expand_grid(out, .element_name = dots$element_names)
-
-    out$.element_name <- ifelse(is.na(out$.variable_position), NA_character_, out$.element_name)
-
-    out <-
-      dplyr::distinct(out, dplyr::pick(tidyselect::all_of(c("chapter", ".variable_position", ".element_name"))),
+      dplyr::distinct(out,
+                      dplyr::pick(tidyselect::everything()), #all_of(c("chapter", ".variable_position", ".element_name")
                       .keep_all = TRUE)
-    out <-
-      dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by)))
-    # out <-
-    #   dplyr::arrange(out, dplyr::pick(tidyselect::any_of(c(dots$organize_by, names(dots$sort_by)))))
 
-    # to here
+    if(length(unique(out$chapter)) > 1 &&
+       max(tapply(out, out$chapter, FUN = function(df) length(unique(df$.variable_name_dep))))==ncol(data)) {
+      cli::cli_warn("One of your chapters contain all the variables in the dataset. Is this what you intend?")
+    }
+    log_unused_variables(data=data,
+                         chapter_overview=out,
+                         auxiliary_variables=dots$auxiliary_variables,
+                         mesos_var = dots$mesos_var)
 
   }
 
 
   if(!rlang::is_null(out$chapter)) {
     out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
-    out <- dplyr::arrange(out, .data$chapter, .by_group = TRUE)
   }
-
-  if(length(unique(out$chapter)) > 1 &&
-     max(tapply(out, out$chapter, FUN = function(df) length(unique(df$.variable_name))))==ncol(data)) {
-    cli::cli_warn("One of your chapters contain all the variables in the dataset. Is this what you intend?")
-  }
+  out <-
+    dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
+  out <-
+    dplyr::arrange(out, dplyr::pick(tidyselect::all_of(dots$arrange_output_by[dots$arrange_output_by %in% colnames(out)])))
 
   out
 }

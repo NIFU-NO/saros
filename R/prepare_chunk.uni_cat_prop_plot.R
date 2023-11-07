@@ -1,54 +1,37 @@
 prepare_chunk.uni_cat_prop_plot <-
   function(chapter_overview_section,
            data,
-           y_col_pos,
-           mesos_group,
+           mesos_group=NULL,
            filepaths,
            obj_name,
            variable_prefix,
-           element_folderpath_relative,
-           element_folderpath_absolute,
-           filename_prefix,
+           colour_palette,
+           plot_height=15,
            ...) {
 
-    dots <- rlang::list2()
+    dots <- rlang::list2(...)
 
+    if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord")) ||
+       !all(is.na(chapter_overview_section$.variable_name_indep))) return()
 
-    if(!all(chapter_overview_section$.variable_type %in% c("fct", "ord"))) return()
+    if(all(chapter_overview_section$.element_name == "uni_cat_prop_plot")) {
+        embed_cat_plot_docx <- embed_cat_prop_plot_docx
+        embed_cat_plot <- embed_cat_prop_plot
+        element_name_html_snippet <- "uni_cat_prop_plot_html"
+        element_name_pdf_snippet <- "uni_cat_prop_plot_pdf"
+    } else {
+      embed_cat_plot_docx <- embed_cat_freq_plot_docx
+      embed_cat_plot <- embed_cat_freq_plot
+      element_name_html_snippet <- "uni_cat_freq_plot_html"
+      element_name_pdf_snippet <- "uni_cat_freq_plot_pdf"
 
-    filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
-                                     element_folderpath_absolute = element_folderpath_absolute,
-                                     filename_prefix = filename_prefix)
-
-    common_data_type <- get_common_data_type(data, col_pos = y_col_pos)
-    common_levels <- get_common_levels(data, col_pos = y_col_pos)
-
-    colour_palette <- get_colour_set(
-      x = common_levels,
-      common_data_type = common_data_type,
-      colour_palette_nominal = dots$colour_palette_nominal,
-      colour_palette_ordinal = dots$colour_palette_ordinal,
-      colour_na = dots$colour_na,
-      colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
-      categories_treated_as_na = dots$categories_treated_as_na[dots$categories_treated_as_na %in% y_col_names])
-
-    plot_height <- estimate_plot_height(y_col_pos = y_col_pos,
-                                        vertical = dots$vertical,
-                                        label_separator = dots$label_separator,
-                                        x_axis_label_width = dots$x_axis_label_width,
-                                        data = data,
-                                        showNA = dots$showNA,
-                                        plot_height_multiplier = dots$plot_height_multiplier,
-                                        plot_height_fixed_constant = dots$plot_height_fixed_constant,
-                                        plot_height_max = dots$plot_height_max,
-                                        plot_height_min = dots$plot_height_min,
-                                        vertical_height = dots$vertical_height)
+      }
 
     out_docx <-
       rlang::exec(
-        embed_cat_prop_plot_docx,
+        embed_cat_plot_docx,
         data = data,
-        dep = y_col_pos,
+        dep = unique(chapter_overview_section$.variable_name_dep),
         colour_palette = colour_palette,
         mesos_group = mesos_group,
         !!!dots)
@@ -56,9 +39,9 @@ prepare_chunk.uni_cat_prop_plot <-
 
     out_html <-
       rlang::exec(
-        embed_cat_prop_plot,
+        embed_cat_plot,
         data = data,
-        dep = y_col_pos,
+        dep = unique(chapter_overview_section$.variable_name_dep),
         colour_palette = colour_palette,
         mesos_group = mesos_group,
         html_interactive = TRUE,
@@ -85,8 +68,8 @@ prepare_chunk.uni_cat_prop_plot <-
     #                 scale = dots$png_scale, width = dots$png_width, height = dots$png_height,
     #                 units = "cm", dpi = "retina")
 
-    stringi::stri_c(
-      insert_obj_in_qmd(element_name = "uni_cat_prop_plot_html",
+    out <-
+      c(insert_obj_in_qmd(element_name = element_name_html_snippet,
                         index = obj_name,
                         variable_prefix = variable_prefix,
                         mesos_group = mesos_group,
@@ -97,7 +80,7 @@ prepare_chunk.uni_cat_prop_plot <-
                         max_width_file = dots$max_width_file,
                         translations = dots$translations,
                         caption = attr(out_html, "saros_caption")),
-      insert_obj_in_qmd(element_name = "uni_cat_prop_plot_pdf",
+      insert_obj_in_qmd(element_name = element_name_html_snippet,
                         index = obj_name,
                         variable_prefix = variable_prefix,
                         mesos_group = mesos_group,
@@ -106,7 +89,10 @@ prepare_chunk.uni_cat_prop_plot <-
                         max_width_obj = dots$max_width_obj,
                         max_width_file = dots$max_width_file,
                         translations = dots$translations,
-                        caption = attr(out_html, "saros_caption")),
-      sep="\n", ignore_null=TRUE)
+                        caption = attr(out_html, "saros_caption")))
+    stringi::stri_c(out, collapse="\n", ignore_null=TRUE)
 
   }
+
+prepare_chunk.uni_cat_freq_plot <- prepare_chunk.uni_cat_prop_plot
+

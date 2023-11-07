@@ -1,0 +1,13 @@
+log_unused_variables <- function(data, chapter_overview, auxiliary_variables, mesos_var) {
+  used_vars <-
+    unique(c(chapter_overview$.variable_name_dep,
+             chapter_overview$.variable_name_indep,
+             auxiliary_variables,
+             mesos_var))
+  not_used_vars <- colnames(data)[!colnames(data) %in% used_vars]
+  if(length(not_used_vars)>0) {
+    cli::cli_inform("Not using the following variables in {.arg data}: {.var {not_used_vars}}.")
+    cat("Variables in dataset but not used:\n", file = "_log.txt", append = TRUE)
+    cat(not_used_vars, sep = "; ", file = "_log.txt", append = TRUE)
+  }
+}

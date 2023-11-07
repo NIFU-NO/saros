@@ -70,7 +70,7 @@ crosstable3.data.frame <-
            (showNA == "ifany" && any(is.na(indep_col)))) {
           out[[indep_var]] <- forcats::fct_na_value_to_level(f = indep_col, level = "NA")
         } else {
-          out <- subset(out, subset = !is.na(out[[indep_var]]))
+          out <- vctrs::vec_slice(out, !is.na(out[[indep_var]]))
         }
       }
 
@@ -304,7 +304,7 @@ crosstable3.tbl_svy <-
     # }
 
     for(indep_var in indep) {
-      # if(is.null(out[[indep_var]])) browser()
+
       attr(out[[indep_var]], "label") <- indep_labels[[indep_var]]
     }
 

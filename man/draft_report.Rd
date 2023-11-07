@@ -21,7 +21,9 @@ draft_report(
   qmd_start_section_filepath = NULL,
   qmd_end_section_filepath = NULL,
   index_filename = "index.qmd",
-  organize_by = c("chapter", ".variable_label_prefix", ".element_name"),
+  organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
+    ".element_name"),
+  arrange_output_by = c("chapter", ".variable_name_dep", ".variable_name_indep"),
   element_names = c("uni_cat_text", "uni_cat_prop_plot", "uni_cat_freq_plot",
     "uni_cat_table", "uni_chr_table", "uni_sigtest", "hline", "bi_catcat_prop_plot",
     "bi_catcat_freq_plot", "bi_catcat_prop_plot2", "bi_catcat_freq_plot2",
@@ -75,9 +77,9 @@ draft_report(
   digits = 1,
   data_label_decimal_symbol = ".",
   reps = 1000,
-  information = c(".variable_label", ".category", ".count", ".count_se", ".proportion",
-    ".proportion_se", ".mean", ".mean_se", ".data_label", ".comb_categories",
-    ".sum_value"),
+  information = c(".variable_label_dep", ".category", ".count", ".count_se",
+    ".proportion", ".proportion_se", ".mean", ".mean_se", ".data_label",
+    ".comb_categories", ".sum_value"),
   contents = c("intro", "not_used_category", "mode_max", "value_max", "value_min",
     "value_diff", "mean_max", "mean_min", "mean_diff", "median_max", "median_min",
     "median_diff", "variance_max", "variance_min"),
@@ -221,6 +223,12 @@ The name of the main index Quarto file (and its subfolder) used as landing page 
 
 Column names used for identifying chapters and sections.}
 
+\item{arrange_output_by}{\emph{Grouping columns}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names used for sorting output within each organize_by group}
+
 \item{element_names}{\emph{Elements to be reported}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
@@ -345,7 +353,7 @@ Whether to remove all variables (in particular useful for mesos) if all values a
 
 \verb{scalar<boolean>} // \emph{default:} \code{FALSE} (\code{optional})
 
-Whether to hide text on the y-axis label if just a single variabl}
+Whether to hide text on the y-axis label if just a single variable}
 
 \item{label_font_size}{\emph{Data labels font size}
 

@@ -14,7 +14,19 @@ utils::globalVariables(names = c(".", ".data", ".env"))
 .saros.env$data_label_opts <-
   c("proportion", "percentage", "percentage_bare",
     "count", "mean", "median")
-
+.saros.env$refined_chapter_overview_columns <-
+  c("chapter",
+    paste0(c(".variable_role", ".variable_selection", ".variable_position",
+    ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
+    ".variable_label_prefix", ".variable_label_suffix",
+    ".variable_type", ".variable_group_id"), "_dep"),
+    paste0(c(".variable_role", ".variable_selection", ".variable_position",
+             ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
+             ".variable_label_prefix", ".variable_label_suffix",
+             ".variable_type", ".variable_group_id"), "_indep"),
+    ".element_name")
+.saros.env$element_names_simplified <-
+  c("cat_table", "cat_prop_plot", "cat_freq_plot", "chr_table")
 #' Get Valid Data Labels for Figures and Tables
 #'
 #' @return Character vector

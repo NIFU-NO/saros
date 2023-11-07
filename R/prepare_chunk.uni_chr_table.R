@@ -2,30 +2,23 @@
 prepare_chunk.uni_chr_table <-
   function(chapter_overview_section,
            data,
-           y_col_pos,
            mesos_group,
            filepaths,
            obj_name,
            variable_prefix,
-           element_folderpath_relative,
-           element_folderpath_absolute,
-           filename_prefix,
            ...) {
 
-    dots <- rlang::list2()
+    dots <- rlang::list2(...)
 
-    if(!all(chapter_overview_section$.variable_type %in% c("chr")) ||
-       length(y_col_pos) != 1) return()
-
-    filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
-                                     element_folderpath_absolute = element_folderpath_absolute,
-                                     filename_prefix = filename_prefix)
+    if(dplyr::n_distinct(chapter_overview_section$.variable_name_dep, na.rm=TRUE) != 1 ||
+       !all(chapter_overview_section$.variable_type_dep %in% c("chr")) ||
+       !all(is.na(chapter_overview_section$.variable_name_indep))) return()
 
     out <-
       rlang::exec(
         embed_chr_table_html,
         data = data,
-        dep = y_col_pos,
+        dep = chapter_overview_section$.variable_name_dep,
         mesos_group = mesos_group,
         !!!dots)
     qs::qsave(out, file = filepaths$abs$rds)

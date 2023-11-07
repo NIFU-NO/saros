@@ -5,7 +5,7 @@
 \title{Create Data Frame Containing Email Drafts with User Credentials}
 \usage{
 create_email_credentials(
-  local_basepath = "55_fullførte_utkast",
+  local_basepath = getwd(),
   rel_path_base_to_parent_of_user_restricted_folder,
   email_data_frame,
   email_col = "email",
@@ -20,7 +20,7 @@ create_email_credentials(
 \arguments{
 \item{local_basepath}{String. Path to where your QMD-files are located (the site to be rendered).}
 
-\item{rel_path_base_to_parent_of_user_restricted_folder}{String. Path going from basepath to the folder containg folders to password-protect.}
+\item{rel_path_base_to_parent_of_user_restricted_folder}{String. Path going from basepath to the folder containing folders to password-protect.}
 
 \item{email_data_frame}{Data.frame/tibble with (at least) emails and usernames}
 

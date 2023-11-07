@@ -342,6 +342,17 @@ check_category_pairs <-
     TRUE
   }
 
+trim_columns <- function(data, cols = c(".variable_label_prefix_dep", ".variable_label_prefix_dep",
+                                        ".variable_label_prefix_indep", ".variable_label_suffix_indep")) {
+  for(col in cols) {
+    if(is.character(data[[col]])) {
+      data[[col]] <- stringi::stri_trim_both(data[[col]])
+      data[[col]] <- stringi::stri_replace_all_regex(data[[col]], pattern = "[[:space:]]+", replacement = " ")
+    }
+  }
+  data
+}
+
 # get_main_question <-
 #   function(data, cols_pos, label_separator) {
 #   x <- unlist(lapply(data[, cols_pos], FUN = function(.x) attr(.x, "label")))
@@ -432,3 +443,9 @@ create_text_collapse <-
     cli::ansi_collapse(text, last = last_sep)
   }
 
+# are all elements of list x identical to each other?
+compare_many <- function(x) {
+  all(unlist(lapply(as.list(x[-1]),
+                    FUN = function(.x) identical(.x, x[[1]])))) ||
+    nrow(x[[1]])==1
+}

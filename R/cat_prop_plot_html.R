@@ -22,6 +22,7 @@ prep_cat_prop_plot_html <-
                         caller_function = "cat_prop_plot")
 
 
+
     if(is.null(colour_palette)) {
       n <- length(levels(data[[".category"]]))
       hues <- seq(15, 375, length = n + 1)
@@ -218,6 +219,7 @@ embed_cat_prop_plot <-
         # add_n_to_bygroup = TRUE,
         !!!dots
       )
+
 
     if (length(indep_pos) > 0) {
       data_out[[names(indep_pos)]] <- forcats::fct_rev(data_out[[names(indep_pos)]])

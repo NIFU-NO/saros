@@ -38,5 +38,8 @@ read_default_draft_report_args <-
   function(path="settings.yaml") {
     x <- yaml::read_yaml(file = as.character(path))
     x$translations <- unlist(x$translations, recursive = FALSE)
+    for(e in names(x)[names(x) %in% .saros.env$element_names_simplified]) {
+      x[[e]] <- unlist(x[[e]], recursive = FALSE)
+    }
     x
   }

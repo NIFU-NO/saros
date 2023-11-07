@@ -4,7 +4,8 @@ attach_new_output_to_output <- function(new_out,
                                         grouped_data,
                                         heading_line) {
   new_out <- unlist(new_out)
-  new_out <- new_out[!stringi::stri_isempty(new_out)]
+  new_out <- stringi::stri_remove_empty_na(new_out)
+  output <- stringi::stri_remove_empty_na(output)
   new_out <- stringi::stri_c(new_out, collapse = "\n\n", ignore_null=TRUE) # Space between elements
 
   stringi::stri_c(output,

@@ -277,6 +277,12 @@
 #'
 #'   Column names used for identifying chapters and sections.
 #'
+#' @param arrange_output_by *Grouping columns*
+#'
+#'   `vector<character>` // *default:* `NULL` (`optional`)
+#'
+#'   Column names used for sorting output within each organize_by group
+#'
 #' @param information *Pre-computed information*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
@@ -399,7 +405,7 @@
 #'
 #'   `scalar<boolean>` // *default:* `FALSE` (`optional`)
 #'
-#'   Whether to hide text on the y-axis label if just a single variabl
+#'   Whether to hide text on the y-axis label if just a single variable
 #'
 #' @param strip_angle *Angle on the facet strip in plots*
 #'
@@ -484,7 +490,13 @@ draft_report <-
            qmd_start_section_filepath = NULL,
            qmd_end_section_filepath = NULL,
            index_filename = "index.qmd",
-           organize_by = c("chapter", ".variable_label_prefix", ".element_name"),
+           organize_by = c("chapter",
+                           ".variable_label_prefix_dep",
+                           ".variable_name_indep",
+                           ".element_name"),
+           arrange_output_by = c("chapter",
+                                 ".variable_name_dep",
+                                 ".variable_name_indep"),
 
            element_names =
              c(#"opening_text",
@@ -576,7 +588,7 @@ draft_report <-
            data_label_decimal_symbol = ".",
            reps = 1000,
            information =
-             c(".variable_label", #".variable_name",
+             c(".variable_label_dep", #".variable_name",
                ".category",
                ".count", ".count_se",
                ".proportion", ".proportion_se",
@@ -691,15 +703,6 @@ draft_report <-
                               data=data,
                               !!!args[!names(args) %in% c("chapter_overview", "data")])
 
-
-    chapter_overview <-
-      dplyr::filter(chapter_overview,
-                    .data$.variable_role == "dep" |
-                      is.na(.data$.variable_role)) ## TEMPORARY FIX!!!!!!!!!!!!!!!!!!!!!!!
-
-
-    chapter_overview_indep <- dplyr::filter(chapter_overview, .data$.variable_role != "dep")
-
     if(nrow(chapter_overview)==0) cli::cli_abort("{.var chapter_overview} is empty! Something is not right. Are there no factors in your data? Consider `chapter_overview=NULL` for everything in a single phantom chapter")
 
     all_authors <- get_authors(data = chapter_overview, col="author")
@@ -739,6 +742,7 @@ draft_report <-
                  args$title <- stringi::stri_c(args$title,
                                           uniques[.x],
                                           ignore_null=TRUE)
+
 
                }
 
@@ -786,8 +790,8 @@ draft_report <-
 
     if(isTRUE(micro)) {
       gen_micro(data = data,
-                cols = unique(c(chapter_overview$.variable_name,
-                                chapter_overview_indep$.variable_name,
+                cols = unique(c(chapter_overview$.variable_name_dep,
+                                chapter_overview$.variable_name_indep,
                                 args$mesos_var,
                                 args$auxiliary_variables)))
     }

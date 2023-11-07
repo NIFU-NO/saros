@@ -1,7 +1,7 @@
-#' Re-attach label information from qualtrics not obtained from regular data downloads
+#' Re-attach label information from Qualtrics not obtained from regular data downloads
 #'
 #' @param data Data.frame with original variable names.
-#' @param questions Data frame with questions obtained from  qualtRics::survey_questions()
+#' @param questions Data frame with questions obtained from `qualtRics::survey_questions()`
 #' @param reverse_stata_replacement If variable names have already been modified
 #' with full stops changed to underscores, this will reverse them for connection. Rarely needed. Defaults to FALSE.
 #'

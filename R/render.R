@@ -98,7 +98,7 @@ quarto_render_saros <- function(site_path,
 #' @param remote_basepath String. FTP servers often have a subdomain path location different from "/home/". Adjust this here.
 #' @param local_basepath String. Path to where your QMD-files are located (the site to be rendered).
 #' @param site String. Path to where to copy folders and files to setup what Quarto needs to build a project.
-#' @param rel_path_base_to_parent_of_user_restricted_folder String. Path going from basepath to the folder containg folders to password-protect.
+#' @param rel_path_base_to_parent_of_user_restricted_folder String. Path going from basepath to the folder containing folders to password-protect.
 #' @param from_folders,from_files Character vector of folders and files to copy into the site path.
 #' @param overwrite Flag. Defaults to FALSE to ensure you know what you are doing. If TRUE, will delete all files and folders in site!
 #' @param prompt Flag. Whether to ask the user if they are certain. Defaults to TRUE.
@@ -177,7 +177,7 @@ create_email_credentials <- function(local_basepath = getwd(),
   usernames <- basename(list.dirs(mesos_paths, full.names = FALSE, recursive = FALSE))
 
   credentials <- read_main_password_file(file=local_main_password_path)
-  emails <- dplyr::filter(email_data_frame, .data[[email_col]] %in% unique(usernames))
+  emails <- vctrs::vec_slice(email_data_frame, email_data_frame[[email_col]] %in% unique(usernames))
 
   in_email_not_in_cred <- setdiff(emails$username, credentials$username)
   if(length(in_email_not_in_cred)>0) {

@@ -6,12 +6,9 @@
 \usage{
 prepare_safe_render(
   remote_basepath = "/home/",
-  from_folders = c("55_fullførte_utkast", "52_ressurser/_images",
-    "52_ressurser/_extensions"),
-  from_files = c(file.path("52_ressurser/YAML", c("_quarto.yaml", "_nifu_global.yaml")),
-    file.path("52_ressurser/CSS", c("styles.css", "styles.scss")),
-    file.path("52_ressurser/CitationStyles/nifu.csl")),
-  local_basepath = "55_fullførte_utkast",
+  from_folders = NULL,
+  from_files = NULL,
+  local_basepath = getwd(),
   site = tempdir(),
   rel_path_base_to_parent_of_user_restricted_folder = "Reports",
   overwrite = FALSE,
@@ -27,7 +24,7 @@ prepare_safe_render(
 
 \item{site}{String. Path to where to copy folders and files to setup what Quarto needs to build a project.}
 
-\item{rel_path_base_to_parent_of_user_restricted_folder}{String. Path going from basepath to the folder containg folders to password-protect.}
+\item{rel_path_base_to_parent_of_user_restricted_folder}{String. Path going from basepath to the folder containing folders to password-protect.}
 
 \item{overwrite}{Flag. Defaults to FALSE to ensure you know what you are doing. If TRUE, will delete all files and folders in site!}
 
