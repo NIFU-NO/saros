@@ -12,31 +12,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-x   A data.frame (instead of tibble) makes Mesos tabset tables and figures all fucked up
-x   Stop hiding variable_suffix on y-axis in plots with just a single variable. 
-x   Seems that crosstable crashes (aggregate) if .x (dep) consists of a single value and NA. x   "Forstår ikke spørsmålet/\nvet ikke" => categories_treated_as_na not working
-+   Some check that if(nrow(chapter_overview)>1) a chapter should not contain all variables. (can turn check off). 
-x   Option to turn off report.qmd (for Saros). 
-x   rename_chunk_labels as lua filter
-x   Rendering within a package function returns the HTML instead of saving it to disk??
-x   copy_to_render_folder, render_website, etc functions
-x   Plots are still not having appropriate height. 
-x   Gjerne også en fin måte å få ut de åpne svarene (enten export til excel, eller som en tabell som er enkel å lese i en split screen).
-x   Chapters with NA dep are removed...
-x   colour_na
-x   Fylkeskommune settes til NA i alle figurer/tabeller med prosenter. 
-x   Frekvenser for resp==4
-x   Too few bivariates are showing, only the exceptions
-x   chr should not have sigtests!
-x   bi_sigtest not showing any p-value etc! Also, should have x_var
-x   remove_non_significant_bivariates/bi_sigtest now uses all data available
-x   Numbering chapters if more than 10 chapters: use sprintf
-x   SSN: endre variabelnavn
-x   SSN: cat_prop_plot: total = FALSE
-x   SSN: "vennligst spesifiser" skal fjernes
-x   SSN: Sortere output etter variabelnavn, ikke labels
-x   typst: multiple authors
-x   SSN: absolute paths in innledning.qmd and 2_beskrivelse_av_gjennomforing.qmd
+1   plot_html comes twice instead of one html and one pdf
+x   No bivariates at all for s_303 or s_30w (in SSN)
+x   s_303w_8_fct_sentind3d_kom_BY_sentind3d_kom
+1   obj_name: .variable_name_indep shows as NA for univariates (still)
+
+
 
 1   Avoid sorting first on .element_name and then indep
 

@@ -117,8 +117,10 @@ gen_element_and_qmd_snippet2 <-
 
     obj_name_indep <-
       if(dplyr::n_distinct(chapter_overview_section$.variable_name_indep, na.rm = TRUE) == 1) {
-        stringi::stri_c("_BY_", unique(chapter_overview_section$.variable_name_indep))
+        stringi::stri_c("_BY_",
+                        unique(chapter_overview_section$.variable_name_indep)[!is.na(unique(chapter_overview_section$.variable_name_indep))])
       }
+    if(length(obj_name_indep)>0 && all(is.na(obj_name_indep))) obj_name_indep <- NULL
 
     filename_prefix <- stringi::stri_c(filename_prefix,
                                        obj_name_indep,

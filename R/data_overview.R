@@ -316,6 +316,7 @@ refine_chapter_overview <-
         attach_indep2(out)
 
 
+
       out <- # TASK: SIMPLIFY INDEP IN data_overview
         remove_non_significant_bivariates2(out,
                                            data = data,
@@ -331,6 +332,11 @@ refine_chapter_overview <-
       dplyr::distinct(out,
                       dplyr::pick(tidyselect::everything()), #all_of(c("chapter", ".variable_position", ".element_name")
                       .keep_all = TRUE)
+    out <-
+      vctrs::vec_slice(out, # Remove bivariate entries without an indep variable
+                       !(is.na(out$.variable_name_indep) &
+                           !is.na(out$.element_name) &
+                           stringi::stri_detect_regex(out$.element_name, pattern="^bi_")))
 
     if(length(unique(out$chapter)) > 1 &&
        max(tapply(out, out$chapter, FUN = function(df) length(unique(df$.variable_name_dep))))==ncol(data)) {

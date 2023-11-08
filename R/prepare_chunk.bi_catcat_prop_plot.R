@@ -22,12 +22,11 @@ prepare_chunk.bi_catcat_prop_plot <-
       embed_cat_plot_docx <- embed_cat_prop_plot_docx
       embed_cat_plot <- embed_cat_prop_plot
       element_name_html <- "bi_catcat_prop_plot_html"
-      element_name_pdf <- "bi_catcat_prop_plot_pdf"
+
     } else if(all(stringi::stri_detect_regex(chapter_overview_section$.element_name, "bi_catcat_freq2*_plot"))) {
       embed_cat_plot_docx <- embed_cat_freq_plot_docx
       embed_cat_plot <- embed_cat_freq_plot
       element_name_html <- "bi_catcat_freq_plot_html"
-      element_name_pdf <- "bi_catcat_freq_plot_pdf"
     }
     if(all(chapter_overview_section$.element_name %in% c("bi_catcat_prop2_plot", "bi_catcat_freq2_plot"))) {
       inverse <- TRUE
@@ -70,16 +69,6 @@ prepare_chunk.bi_catcat_prop_plot <-
 
     out <-
       c(insert_obj_in_qmd(element_name = element_name_html,
-                          index = obj_name,
-                          mesos_group = mesos_group,
-                          filepath = filepaths$rel$rds,
-                          figure_height = plot_height,
-                          add_text = FALSE,
-                          max_width_obj = dots$max_width_obj,
-                          max_width_file = dots$max_width_file,
-                          translations = dots$translations,
-                          caption = attr(out_html, "saros_caption")),
-        insert_obj_in_qmd(element_name = element_name_pdf,
                           index = obj_name,
                           mesos_group = mesos_group,
                           filepath = filepaths$rel$rds,

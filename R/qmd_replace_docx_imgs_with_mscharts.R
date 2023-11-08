@@ -13,12 +13,12 @@ replace_docx_imgs_with_mscharts <- function(main_file,
 
   doc <- officer::read_docx(path = main_file)
   to_be_replaced <- stringi::stri_subset_regex(officer::docx_bookmarks(doc),
-                                               pattern = "^fig-pdf")
+                                               pattern = "^fig-")
   for(img in to_be_replaced) {
     doc <- officer::cursor_bookmark(doc, id = img)
     doc <- officer::body_remove(x = doc)
     chart_filename <- stringi::stri_replace_all_regex(img,
-                                                    pattern = "^fig-pdf_|_[0-9]{3,3}$",
+                                                    pattern = "^fig-|_[0-9]{3,3}$",
                                                     replacement = "")
     chart_filename <- stringi::stri_c(chart_filename, "\\.docx", ignore_null = TRUE)
     chart_filepath <- dir(path = chart_dir,

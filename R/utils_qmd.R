@@ -37,7 +37,7 @@ list_valid_obj_name <- function(data, max_width = 48) {
 create_obj_name <- function(section_key, max_width, indep_vars, mesos_group,
                             indep_sep_string = "_BY_", mesos_sep_string = "_FOR_") {
   obj_name_dep <- section_key
-  obj_name_dep <- obj_name_dep[!obj_name_dep %in% c(".variable_name_indep")]
+  obj_name_dep <- obj_name_dep[!colnames(obj_name_dep) %in% c(".variable_name_indep")]
   obj_name_dep <- glue::glue_data(obj_name_dep, stringi::stri_c("{", colnames(obj_name_dep), "}", collapse="_", ignore_null=TRUE))
   obj_name_dep <- get_common_name(obj_name_dep)
   obj_name_dep <- stringi::stri_replace_all(obj_name_dep,

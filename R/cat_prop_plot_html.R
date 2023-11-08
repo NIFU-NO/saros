@@ -232,7 +232,7 @@ embed_cat_prop_plot <-
 
     chart <-
       rlang::exec(
-        if (html_interactive) prep_cat_prop_plot_html else prep_cat_prop_plot_pdf,
+        prep_cat_prop_plot_html,
         data = data_out,
         inverse = inverse,
         colour_palette = colour_palette,
