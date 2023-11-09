@@ -209,6 +209,7 @@ gen_qmd_structure2 <-
                           sep="\n\n", ignore_null=TRUE) # Space between each section (before new heading)
       }
 
+      if(length(output)>1) browser()
       output <- if(!is.na(output)) output else ""
 
       return(output)
