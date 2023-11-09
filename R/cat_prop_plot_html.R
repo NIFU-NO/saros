@@ -114,6 +114,7 @@ prep_cat_prop_plot_html <-
         legend.position = "bottom",
         legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
         strip.placement = "outside",
+        strip.text.x = ggplot2::element_text(margin = ggplot2::margin(l = 0, t = 0, r = 0, b = 2, "cm")),
         strip.text = ggiraph::element_text_interactive(data_id = "strip.text", angle = dots$strip_angle, hjust = .5, size = dots$main_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
         strip.background = ggiraph::element_rect_interactive(colour = NA)
       ) +
@@ -232,7 +233,7 @@ embed_cat_prop_plot <-
 
     chart <-
       rlang::exec(
-        if (html_interactive) prep_cat_prop_plot_html else prep_cat_prop_plot_pdf,
+        prep_cat_prop_plot_html,
         data = data_out,
         inverse = inverse,
         colour_palette = colour_palette,

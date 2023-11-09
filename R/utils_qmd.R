@@ -34,31 +34,47 @@ list_valid_obj_name <- function(data, max_width = 48) {
     conv_to_valid_obj_name(max_width = max_width)
 }
 
-create_obj_name <- function(section_key, max_width, indep_vars, mesos_group,
-                            indep_sep_string = "_BY_", mesos_sep_string = "_FOR_") {
+create_obj_name <- function(grouping_structure,
+                            section_key,
+                            max_width,
+                            mesos_group,
+                            indep_sep_string = "_BY_",
+                            mesos_sep_string = "_FOR_") {
+
+  grouping_structure[grouping_structure %in%
+                       c(".variable_label_prefix_dep", ".variable_label_suffix_dep")] <- ".variable_name_dep"
+
   obj_name_dep <- section_key
-  obj_name_dep <- obj_name_dep[!obj_name_dep %in% c(".variable_name_indep")]
+  # obj_name_dep <- obj_name_dep[!colnames(obj_name_dep) %in% c(".variable_name_indep")]
   obj_name_dep <- glue::glue_data(obj_name_dep, stringi::stri_c("{", colnames(obj_name_dep), "}", collapse="_", ignore_null=TRUE))
   obj_name_dep <- get_common_name(obj_name_dep)
-  obj_name_dep <- stringi::stri_replace_all(obj_name_dep,
-                                            regex = "[[:space:][:punct:]]",
-                                            replacement = "_")
-  obj_name_dep <- stringi::stri_replace(obj_name_dep, regex = "^([0-9])", replacement = "x$1")
+  obj_name_dep <- stringi::stri_remove_empty_na(obj_name_dep)
   obj_name_dep <- stringi::stri_sub(obj_name_dep, from = 1, to = max_width,
                                     use_matrix = FALSE, ignore_negative_length = TRUE)
+  obj_name_dep <- stringi::stri_c(obj_name_dep, collapse = "_", ignore_null = TRUE)
 
-  obj_name_indep <-
-    if(dplyr::n_distinct(indep_vars, na.rm = TRUE) == 1) {
-      stringi::stri_c(indep_sep_string, unique(indep_vars))
-    }
-  if(!is.null(obj_name_indep) && any(is.na(obj_name_indep))) obj_name_indep <- NULL
+  ####
+  # obj_name_indep <-
+  #   if(dplyr::n_distinct(section_key$.variable_name_indep, na.rm = TRUE) == 1) {
+  #     stringi::stri_c(indep_sep_string, unique(indep_vars))
+  #   }
+  # if(!is.null(obj_name_indep) && any(is.na(obj_name_indep))) obj_name_indep <- NULL
 
+  ####
   obj_name_mesos <-
     if(rlang::is_string(mesos_group)) stringi::stri_c(mesos_sep_string, mesos_group)
 
-  stringi::stri_c(obj_name_dep, obj_name_indep, obj_name_mesos,
+  ####
+  out <-
+    stringi::stri_c(obj_name_dep, #obj_name_indep,
+                  obj_name_mesos,
                   ignore_null=TRUE)
+  out <- stringi::stri_replace(out, regex = "^([0-9])", replacement = "x$1")
+  filename_sanitizer(out)
 }
+
+
+
 
 create_heading <- function(x, level = NULL,
                            arg = rlang::caller_arg(x),

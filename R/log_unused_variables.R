@@ -1,7 +1,7 @@
 log_unused_variables <- function(data, chapter_overview, auxiliary_variables, mesos_var) {
   used_vars <-
-    unique(c(chapter_overview$.variable_name_dep,
-             chapter_overview$.variable_name_indep,
+    unique(c(as.character(chapter_overview$.variable_name_dep),
+             as.character(chapter_overview$.variable_name_indep),
              auxiliary_variables,
              mesos_var))
   not_used_vars <- colnames(data)[!colnames(data) %in% used_vars]

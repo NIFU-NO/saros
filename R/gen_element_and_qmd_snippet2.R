@@ -38,8 +38,8 @@ gen_element_and_qmd_snippet2 <-
            ...,
            call = rlang::caller_env()) {
 
-    if(all(is.na(chapter_overview_section$.variable_name_dep))) return("")
-    if(any(is.na(chapter_overview_section$.variable_name_dep))) {
+    if(all(is.na(as.character(chapter_overview_section$.variable_name_dep)))) return("")
+    if(any(is.na(as.character(chapter_overview_section$.variable_name_dep)))) {
       cli::cli_abort("chapter_overview_section cannot contain .variable_name_dep NA and non-NA.")
     }
 
@@ -49,7 +49,6 @@ gen_element_and_qmd_snippet2 <-
 
     stopifnot(inherits(data, "data.frame") || inherits(data, "survey"))
     data_cols <- if(inherits(data, "survey")) colnames(data$variables) else colnames(data)
-
 
 
     if(dplyr::n_distinct(chapter_overview_section$.variable_type_dep, na.rm = FALSE) > 1) {
@@ -82,8 +81,8 @@ gen_element_and_qmd_snippet2 <-
     }
 
 
-    element_folderpath_absolute <- file.path(chapter_folderpath_absolute, unique(chapter_overview_section$.element_name))
-    element_folderpath_relative <- file.path(chapter_foldername, unique(chapter_overview_section$.element_name))
+    element_folderpath_absolute <- file.path(chapter_folderpath_absolute)
+    element_folderpath_relative <- file.path(chapter_foldername) #, unique(chapter_overview_section$.element_name)
     dir.create(element_folderpath_absolute, recursive = TRUE, showWarnings = FALSE)
 
     grouping_structure <- dplyr::group_vars(chapter_overview_section)
@@ -92,58 +91,47 @@ gen_element_and_qmd_snippet2 <-
     section_key <- chapter_overview_section
     section_key <- dplyr::ungroup(section_key)
     section_key <- dplyr::distinct(section_key, dplyr::pick(tidyselect::all_of(grouping_structure)))
+    section_key <- dplyr::arrange(section_key, dplyr::pick(tidyselect::all_of(grouping_structure)))
     section_key <- dplyr::group_by(section_key, dplyr::pick(tidyselect::all_of(grouping_structure)))
 
 
     if(nrow(section_key)>1) cli::cli_warn("Something weird going on in grouping.")
 
     # Creating a universal object name
+    obj_name <-
+      make_filename_prefix(
+      grouping_structure = grouping_structure,
+      chapter_overview_section = chapter_overview_section,
+      max_width = dots$max_width_obj,
+      mesos_group = mesos_group,
+      indep_sep_string = "_BY_",
+      mesos_sep_string = "_FOR_")
 
-
-    obj_name <- create_obj_name(section_key = section_key,
-                                max_width = dots$max_width_obj,
-                                indep_vars = chapter_overview_section$.variable_name_indep,
-                                mesos_group = mesos_group,
-                                indep_sep_string = "_BY_",
-                                mesos_sep_string = "_FOR_")
     ## Only for filenames
 
-    filename_prefix <-
-      make_filename_prefix(
-        grouping_structure = grouping_structure,
-        chapter_overview_section = chapter_overview_section,
-        max_width_obj = dots$max_width_obj,
-        mesos_group = mesos_group)
-
-    obj_name_indep <-
-      if(dplyr::n_distinct(chapter_overview_section$.variable_name_indep, na.rm = TRUE) == 1) {
-        stringi::stri_c("_BY_", unique(chapter_overview_section$.variable_name_indep))
-      }
-
-    filename_prefix <- stringi::stri_c(filename_prefix,
-                                       obj_name_indep,
-                                       ignore_null=TRUE)
-
+    # filename_prefix <-
+    #   make_filename_prefix(
+    #     grouping_structure = grouping_structure,
+    #     chapter_overview_section = chapter_overview_section,
+    #     max_width_obj = dots$max_width_obj,
+    #     mesos_group = mesos_group,
+    #     indep_sep_string = "_BY_",
+    #     mesos_sep_string = "_FOR_")
 
     filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
                                      element_folderpath_absolute = element_folderpath_absolute,
-                                     filename_prefix = filename_prefix)
+                                     filename_prefix = obj_name)
 
 
-    y_col_names <- unique(chapter_overview_section$.variable_name_dep)
-    x_col_names <- unique(chapter_overview_section$.variable_name_indep)
+    y_col_names <- unique(as.character(chapter_overview_section$.variable_name_dep))
+    x_col_names <- unique(as.character(chapter_overview_section$.variable_name_indep))
     x_col_names <- x_col_names[!is.na(x_col_names)]
     if(length(x_col_names)==0) x_col_names <- NULL
 
 
-
-    variable_prefix <-
-      if(any(names(section_key) == ".variable_name_prefix_dep") &&
-         dplyr::n_distinct(section_key$.variable_name_prefix_dep)==1) unique(section_key$.variable_name_prefix_dep)
-
     common_data_type <-
       get_common_data_type(data,
-                           col_pos = unique(chapter_overview_section$.variable_name_dep))
+                           col_pos = unique(as.character(chapter_overview_section$.variable_name_dep)))
 
 
     colour_palette <- NULL
@@ -154,7 +142,7 @@ gen_element_and_qmd_snippet2 <-
 
       common_levels <-
         get_common_levels(data,
-                          col_pos = unique(chapter_overview_section$.variable_name_dep))
+                          col_pos = unique(as.character(chapter_overview_section$.variable_name_dep)))
 
       colour_palette <-
         get_colour_set(
@@ -169,13 +157,15 @@ gen_element_and_qmd_snippet2 <-
     }
 
 
-    plot_height <- estimate_plot_height(y_col_pos = unique(chapter_overview_section$.variable_name_dep),
-                                        x_cols = unique(chapter_overview_section$.variable_name_indep),
-                                        element_name = unique(chapter_overview_section$.element_name),
+
+    plot_height <- estimate_plot_height(data = data,
+                                        y_col_pos = unique(as.character(chapter_overview_section$.variable_name_dep)),
+                                        x_cols = unique(as.character(chapter_overview_section$.variable_name_indep)),
+                                        element_name = unique(as.character(chapter_overview_section$.element_name)),
                                         vertical = dots$vertical,
                                         label_separator = dots$label_separator,
                                         x_axis_label_width = dots$x_axis_label_width,
-                                        data = data,
+
                                         showNA = dots$showNA,
                                         plot_height_multiplier = dots$plot_height_multiplier,
                                         plot_height_fixed_constant = dots$plot_height_fixed_constant,
@@ -184,17 +174,16 @@ gen_element_and_qmd_snippet2 <-
                                         vertical_height = dots$vertical_height)
 
 
-    out<-
+
     rlang::exec(prepare_chunk,
-                element_name = unique(chapter_overview_section$.element_name),
+                element_name = unique(as.character(chapter_overview_section$.element_name)),
                 chapter_overview_section = chapter_overview_section,
                 data = data,
                 mesos_group = mesos_group,
                 filepaths = filepaths,
                 obj_name = obj_name,
-                variable_prefix = variable_prefix,
                 plot_height = plot_height,
                 colour_palette = colour_palette,
                 !!!dots)
-      out
+
   }

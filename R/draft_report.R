@@ -513,7 +513,6 @@ draft_report <-
                # "uni_int_table",
                "uni_cat_table",
                "uni_chr_table",
-               "uni_sigtest",
 
                # "bi_opening_text",
                # "bi_catcat_text",
@@ -790,8 +789,8 @@ draft_report <-
 
     if(isTRUE(micro)) {
       gen_micro(data = data,
-                cols = unique(c(chapter_overview$.variable_name_dep,
-                                chapter_overview$.variable_name_indep,
+                cols = unique(c(as.character(chapter_overview$.variable_name_dep),
+                                as.character(chapter_overview$.variable_name_indep),
                                 args$mesos_var,
                                 args$auxiliary_variables)))
     }

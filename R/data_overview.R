@@ -316,6 +316,7 @@ refine_chapter_overview <-
         attach_indep2(out)
 
 
+
       out <- # TASK: SIMPLIFY INDEP IN data_overview
         remove_non_significant_bivariates2(out,
                                            data = data,
@@ -331,6 +332,14 @@ refine_chapter_overview <-
       dplyr::distinct(out,
                       dplyr::pick(tidyselect::everything()), #all_of(c("chapter", ".variable_position", ".element_name")
                       .keep_all = TRUE)
+    out <-
+      vctrs::vec_slice(out, # Remove bivariate entries without an indep variable
+                       !((is.na(out$.variable_name_indep) &
+                           !is.na(out$.element_name) &
+                           stringi::stri_detect_regex(out$.element_name, pattern="^bi_")) |
+                           !is.na(out$.variable_name_indep) &
+                           !is.na(out$.element_name) &
+                           stringi::stri_detect_regex(out$.element_name, pattern = "^uni_")))
 
     if(length(unique(out$chapter)) > 1 &&
        max(tapply(out, out$chapter, FUN = function(df) length(unique(df$.variable_name_dep))))==ncol(data)) {
@@ -343,14 +352,38 @@ refine_chapter_overview <-
 
   }
 
+  if(!is.null(out$.element_name)) {
+    out$.element_name <- forcats::fct(x = out$.element_name, levels = dots$element_names)
+    out$.element_name <- forcats::fct_na_value_to_level(out$.element_name)
+    out$.element_name <- forcats::fct_relevel(out$.element_name, NA)
+  }
+
+  if(!is.null(out$.variable_name_dep)) {
+    out$.variable_name_dep <- forcats::fct(x = out$.variable_name_dep,
+                                           levels = colnames(data)[colnames(data) %in% out$.variable_name_dep])
+    out$.variable_name_dep <- forcats::fct_na_value_to_level(out$.variable_name_dep)
+    out$.variable_name_dep <- forcats::fct_relevel(out$.variable_name_dep, NA)
+  }
+  if(!is.null(out$.variable_name_indep)) {
+    out$.variable_name_indep <- forcats::fct(x = out$.variable_name_indep,
+                                             levels = colnames(data)[colnames(data) %in% out$.variable_name_indep])
+    out$.variable_name_indep <- forcats::fct_na_value_to_level(out$.variable_name_indep)
+    out$.variable_name_indep <- forcats::fct_relevel(out$.variable_name_indep, NA)
+  }
 
   if(!rlang::is_null(out$chapter)) {
     out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
   }
+  sorter_assistant <- function(x) {
+    if(is.character(x) || is.numeric(x)) return(x)
+    if(is.factor(x)) return(as.integer(x))
+  }
+
   out <-
     dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
   out <-
-    dplyr::arrange(out, dplyr::pick(tidyselect::all_of(dots$arrange_output_by[dots$arrange_output_by %in% colnames(out)])))
+    dplyr::arrange(out, dplyr::across(tidyselect::all_of(dots$arrange_output_by[dots$arrange_output_by %in% colnames(out)]),
+                                      ~sorter_assistant(.x)))
 
   out
 }

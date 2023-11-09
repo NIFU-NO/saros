@@ -4,7 +4,6 @@ prepare_chunk.uni_cat_prop_plot <-
            mesos_group=NULL,
            filepaths,
            obj_name,
-           variable_prefix,
            colour_palette,
            plot_height=15,
            ...) {
@@ -12,18 +11,16 @@ prepare_chunk.uni_cat_prop_plot <-
     dots <- rlang::list2(...)
 
     if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord")) ||
-       !all(is.na(chapter_overview_section$.variable_name_indep))) return()
+       !all(is.na(as.character(chapter_overview_section$.variable_name_indep)))) return()
 
     if(all(chapter_overview_section$.element_name == "uni_cat_prop_plot")) {
         embed_cat_plot_docx <- embed_cat_prop_plot_docx
         embed_cat_plot <- embed_cat_prop_plot
-        element_name_html_snippet <- "uni_cat_prop_plot_html"
-        element_name_pdf_snippet <- "uni_cat_prop_plot_pdf"
+        element_name_snippet <- "uni_cat_prop_plot_html"
     } else {
       embed_cat_plot_docx <- embed_cat_freq_plot_docx
       embed_cat_plot <- embed_cat_freq_plot
-      element_name_html_snippet <- "uni_cat_freq_plot_html"
-      element_name_pdf_snippet <- "uni_cat_freq_plot_pdf"
+      element_name_snippet <- "uni_cat_freq_plot_html"
 
       }
 
@@ -31,7 +28,7 @@ prepare_chunk.uni_cat_prop_plot <-
       rlang::exec(
         embed_cat_plot_docx,
         data = data,
-        dep = unique(chapter_overview_section$.variable_name_dep),
+        dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
         colour_palette = colour_palette,
         mesos_group = mesos_group,
         !!!dots)
@@ -41,7 +38,7 @@ prepare_chunk.uni_cat_prop_plot <-
       rlang::exec(
         embed_cat_plot,
         data = data,
-        dep = unique(chapter_overview_section$.variable_name_dep),
+        dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
         colour_palette = colour_palette,
         mesos_group = mesos_group,
         html_interactive = TRUE,
@@ -56,33 +53,9 @@ prepare_chunk.uni_cat_prop_plot <-
     qs::qsave(out_html, file = filepaths$abs$rds)
 
 
-    # out_pdf <-
-    #   rlang::exec(
-    #     embed_cat_prop_plot,
-    #     data = data,
-    #     dep = y_col_pos,
-    #     translations = dots$translations,
-    #     html_interactive = FALSE,
-    #     !!!dots)
-    # ggplot2::ggsave(plot = out_pdf, filename = filepaths$abs$png,
-    #                 scale = dots$png_scale, width = dots$png_width, height = dots$png_height,
-    #                 units = "cm", dpi = "retina")
-
     out <-
-      c(insert_obj_in_qmd(element_name = element_name_html_snippet,
+      c(insert_obj_in_qmd(element_name = element_name_snippet,
                         index = obj_name,
-                        variable_prefix = variable_prefix,
-                        mesos_group = mesos_group,
-                        filepath = filepaths$rel$rds,
-                        figure_height = plot_height,
-                        add_text = FALSE,
-                        max_width_obj = dots$max_width_obj,
-                        max_width_file = dots$max_width_file,
-                        translations = dots$translations,
-                        caption = attr(out_html, "saros_caption")),
-      insert_obj_in_qmd(element_name = element_name_html_snippet,
-                        index = obj_name,
-                        variable_prefix = variable_prefix,
                         mesos_group = mesos_group,
                         filepath = filepaths$rel$rds,
                         figure_height = plot_height,

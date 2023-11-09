@@ -41,14 +41,19 @@ gen_qmd_structure2 <-
           output <-
             stringi::stri_c(output,
                             heading_line,
+                            sep="\n",
                             ignore_null=TRUE)
         }
 
         # Keep only relevant part of meta data
 
+
         sub_df <- vctrs::vec_slice(grouped_data,
-                                   is.na(grouped_data[[colnames(grouped_data)[level]]]) |
-                                   grouped_data[[colnames(grouped_data)[level]]] == value)
+                                   is.na(as.character(grouped_data[[colnames(grouped_data)[level]]])) |
+                                   as.character(grouped_data[[colnames(grouped_data)[level]]]) == value)
+
+        sub_df <- droplevels(sub_df)
+
 
         # Setting a specific sub-chapter (e.g. a label_prefix) as the column name. WHY?
         names(grouping_structure)[level] <- value
@@ -63,10 +68,18 @@ gen_qmd_structure2 <-
             if(!is.na(names(grouping_structure)[i])) {
               chapter_overview_section <-
                 vctrs::vec_slice(chapter_overview_section,
-                                 chapter_overview_section[[grouping_structure[i]]] ==
+                                 as.character(chapter_overview_section[[grouping_structure[[i]]]]) ==
                                    names(grouping_structure)[i])
+            } else {
+              chapter_overview_section <-
+                vctrs::vec_slice(chapter_overview_section,
+                                 is.na(as.character(chapter_overview_section[[grouping_structure[[i]]]])))
+
             }
           }
+          # if(all(chapter_overview$chapter != "Introduction")) browser()
+
+          chapter_overview_section <- droplevels(chapter_overview_section)
 
           if(nrow(chapter_overview_section) >= 1) {
 
@@ -74,6 +87,7 @@ gen_qmd_structure2 <-
             chapter_overview_section <-
               dplyr::group_by(chapter_overview_section,
                               dplyr::pick(tidyselect::all_of(unname(grouping_structure))))
+            chapter_overview_section <- droplevels(chapter_overview_section)
 
 
             new_out <-
@@ -88,6 +102,10 @@ gen_qmd_structure2 <-
                                  if(is.na(!(all(stringi::stri_detect_fixed(str = .y$.element_name, pattern = "chr")) &&
                                                   rlang::is_true(dots$hide_chr_for_others) &&
                                                   rlang::is_string(mesos_group)))) browser()
+                                 # if(all(.x$chapter == "Ambivalence") &&
+                                 #    all(.x$.element_name == "bi_catcat_prop_plot") &&
+                                 #    any(.x$.variable_name_dep == "a_1")) browser()
+
 
                                  qmd_snippet <- NULL
                                  qmd_snippet_mesos <- NULL
@@ -119,7 +137,7 @@ gen_qmd_structure2 <-
                                      qmd_snippet <-
                                        rlang::exec(
                                          gen_element_and_qmd_snippet2,
-                                         chapter_overview_section = .x,
+                                         chapter_overview_section = droplevels(.x),
                                          data = data_for_all,
                                          mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
                                          grouping_structure = grouping_structure,
@@ -134,8 +152,9 @@ gen_qmd_structure2 <-
                                     rlang::is_string(dots$mesos_var) &&
                                     rlang::is_string(mesos_group)) {
 
-                                   data_for_mesos <- vctrs::vec_slice(data, !is.na(data[[dots$mesos_var]]) &
-                                                                        data[[dots$mesos_var]] == mesos_group)
+                                   data_for_mesos <- vctrs::vec_slice(data,
+                                                                      !is.na(data[[dots$mesos_var]]) &
+                                                                      data[[dots$mesos_var]] == mesos_group)
                                    if(!inherits(data_for_mesos, "data.frame")) browser()
 
                                    if(nrow(data_for_mesos) > 0) {
@@ -143,7 +162,7 @@ gen_qmd_structure2 <-
                                      qmd_snippet_mesos <-
                                        rlang::exec(
                                          gen_element_and_qmd_snippet2,
-                                         chapter_overview_section = .x,
+                                         chapter_overview_section = droplevels(.x),
                                          data = data_for_mesos,
                                          mesos_var = dots$mesos_var,
                                          mesos_group = mesos_group,
@@ -190,6 +209,7 @@ gen_qmd_structure2 <-
                           sep="\n\n", ignore_null=TRUE) # Space between each section (before new heading)
       }
 
+      if(length(output)>1) browser()
       output <- if(!is.na(output)) output else ""
 
       return(output)
@@ -197,7 +217,7 @@ gen_qmd_structure2 <-
 
     chapter_overview <- chapter_overview
     if(rlang::is_string(mesos_group)) {
-      unique_vars <- unique(chapter_overview$.variable_name_dep)
+      unique_vars <- unique(as.character(chapter_overview$.variable_name_dep))
       unique_vars <- unique_vars[!is.na(unique_vars)]
       for(var in unique_vars) {
         tmp <- vctrs::vec_slice(data, !is.na(data[[dots$mesos_var]]) &
@@ -206,7 +226,7 @@ gen_qmd_structure2 <-
         if(all(is.na(tmp)) || length(tmp)==0) {
           cli::cli_inform("In mesos_group {mesos_group}, removing empty column {var}.")
           chapter_overview <- vctrs::vec_slice(chapter_overview,
-                                               chapter_overview[[".variable_name_dep"]] != var)
+                                               as.character(chapter_overview[[".variable_name_dep"]]) != var)
         }
       }
     }
@@ -214,10 +234,9 @@ gen_qmd_structure2 <-
     grouping_structure <- dplyr::group_vars(chapter_overview)
     non_grouping_vars <- colnames(chapter_overview)[!colnames(chapter_overview) %in% grouping_structure]
 
-    grouped_data <-
-      chapter_overview %>%
-      dplyr::group_by(dplyr::pick(tidyselect::all_of(grouping_structure))) %>%
-      dplyr::distinct(dplyr::pick(tidyselect::all_of(grouping_structure)))
+    grouped_data <- chapter_overview
+    grouped_data <-dplyr::group_by(grouped_data, dplyr::pick(tidyselect::all_of(grouping_structure)))
+    grouped_data <- dplyr::distinct(grouped_data, dplyr::pick(tidyselect::all_of(grouping_structure)))
 
     out <-
     gen_group_structure2(grouped_data = grouped_data,

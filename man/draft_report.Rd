@@ -25,7 +25,7 @@ draft_report(
     ".element_name"),
   arrange_output_by = c("chapter", ".variable_name_dep", ".variable_name_indep"),
   element_names = c("uni_cat_text", "uni_cat_prop_plot", "uni_cat_freq_plot",
-    "uni_cat_table", "uni_chr_table", "uni_sigtest", "hline", "bi_catcat_prop_plot",
+    "uni_cat_table", "uni_chr_table", "hline", "bi_catcat_prop_plot",
     "bi_catcat_freq_plot", "bi_catcat_prop_plot2", "bi_catcat_freq_plot2",
     "bi_catcat_table", "bi_sigtest"),
   sort_by = ".upper",

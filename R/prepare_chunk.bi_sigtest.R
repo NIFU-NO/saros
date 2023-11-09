@@ -4,23 +4,19 @@ prepare_chunk.bi_sigtest <-
            mesos_group=NULL,
            filepaths,
            obj_name,
-           variable_prefix,
            ...) {
 
     dots <- rlang::list2(...)
 
     if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord", "int", "dbl")) ||
        !all(chapter_overview_section$.variable_type_indep %in% c("fct", "ord", "int", "dbl")) ||
-       any(is.na(chapter_overview_section$.variable_name_indep))) return()
+       any(is.na(as.character(chapter_overview_section$.variable_name_indep)))) return()
 
     out <-
       rlang::exec(
-        embed_bi_sigtest,
+        embed_sigtest,
         data = data,
-        dep = unique(chapter_overview_section$.variable_name_dep),
-        indep = unique(chapter_overview_section$.variable_name_indep),
-        .variable_type = unique(chapter_overview_section$.variable_type_dep),
-        indep_type = unique(chapter_overview_section$.variable_type_indep),
+        chapter_overview = chapter_overview_section,
         mesos_group = mesos_group,
         !!!dots)
 
