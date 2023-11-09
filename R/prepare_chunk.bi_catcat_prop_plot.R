@@ -4,7 +4,6 @@ prepare_chunk.bi_catcat_prop_plot <-
            mesos_group=NULL,
            filepaths,
            obj_name,
-           variable_prefix,
            colour_palette,
            plot_height=15,
            ...) {
@@ -13,7 +12,7 @@ prepare_chunk.bi_catcat_prop_plot <-
 
     if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord")) ||
        !all(chapter_overview_section$.variable_type_indep %in% c("fct", "ord")) ||
-       any(is.na(chapter_overview_section$.variable_name_indep)) ||
+       any(is.na(as.character(chapter_overview_section$.variable_name_indep))) ||
        nrow(chapter_overview_section) == 0) return()
 
     # if(!compare_many(chapter_overview_section$indep_cols_df)) return()
@@ -21,14 +20,14 @@ prepare_chunk.bi_catcat_prop_plot <-
     if(all(stringi::stri_detect_regex(chapter_overview_section$.element_name, "bi_catcat_prop2*_plot"))) {
       embed_cat_plot_docx <- embed_cat_prop_plot_docx
       embed_cat_plot <- embed_cat_prop_plot
-      element_name_html <- "bi_catcat_prop_plot_html"
+      element_name <- "bi_catcat_prop_plot_html"
 
     } else if(all(stringi::stri_detect_regex(chapter_overview_section$.element_name, "bi_catcat_freq2*_plot"))) {
       embed_cat_plot_docx <- embed_cat_freq_plot_docx
       embed_cat_plot <- embed_cat_freq_plot
-      element_name_html <- "bi_catcat_freq_plot_html"
+      element_name <- "bi_catcat_freq_plot_html"
     }
-    if(all(chapter_overview_section$.element_name %in% c("bi_catcat_prop2_plot", "bi_catcat_freq2_plot"))) {
+    if(all(as.character(chapter_overview_section$.element_name) %in% c("bi_catcat_prop2_plot", "bi_catcat_freq2_plot"))) {
       inverse <- TRUE
     } else inverse <- FALSE
 
@@ -37,8 +36,8 @@ prepare_chunk.bi_catcat_prop_plot <-
       rlang::exec(
         embed_cat_plot_docx,
         data = data,
-        dep = unique(chapter_overview_section$.variable_name_dep),
-        indep = unique(chapter_overview_section$.variable_name_indep),
+        dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
+        indep = unique(as.character(chapter_overview_section$.variable_name_indep)),
         colour_palette = colour_palette,
         mesos_group = mesos_group,
         inverse = inverse,
@@ -49,8 +48,8 @@ prepare_chunk.bi_catcat_prop_plot <-
       rlang::exec(
         embed_cat_plot,
         data = data,
-        dep = unique(chapter_overview_section$.variable_name_dep),
-        indep = unique(chapter_overview_section$.variable_name_indep),
+        dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
+        indep = unique(as.character(chapter_overview_section$.variable_name_indep)),
         colour_palette = colour_palette,
         mesos_group = mesos_group,
         inverse = inverse,
@@ -68,7 +67,7 @@ prepare_chunk.bi_catcat_prop_plot <-
     qs::qsave(out_html, file = filepaths$abs$rds)
 
     out <-
-      c(insert_obj_in_qmd(element_name = element_name_html,
+      c(insert_obj_in_qmd(element_name = element_name,
                           index = obj_name,
                           mesos_group = mesos_group,
                           filepath = filepaths$rel$rds,

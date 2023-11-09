@@ -7,7 +7,6 @@ insert_obj_in_qmd <-
            figure_height = 10,
            add_text = TRUE,
            index,
-           variable_prefix = NULL,
            max_width_file = eval(formals(draft_report)$max_width_file),
            max_width_obj = eval(formals(draft_report)$max_width_obj),
            translations = eval(formals(draft_report)$translations),
@@ -22,21 +21,20 @@ insert_obj_in_qmd <-
       return(text)
     }
 
-    obj_name <-
-      stringi::stri_c(conv_to_valid_obj_name(index,
-                                             max_width = max_width_obj),
-                      variable_prefix,
-                      ignore_null=TRUE)
+    obj_name <- index
+      # stringi::stri_c(conv_to_valid_obj_name(index,
+      #                                        max_width = max_width_obj),
+      #                 ignore_null=TRUE)
 
 
 
     function_call_prefix <- # Replace with glue?
-      dplyr::case_when(stringi::stri_detect(element_name, regex = "plot[2-9]*_html") ~ 'ggiraph::girafe(ggobj = ',
+      dplyr::case_when(stringi::stri_detect(element_name, regex = "plot[2-9]*") ~ 'ggiraph::girafe(ggobj = ',
                        stringi::stri_detect(element_name, regex = "table|sigtest") ~ '', #kableExtra::kbl(
 
                        .default = '(')
     function_call_suffix <- # Replace with glue?
-      dplyr::case_when(stringi::stri_detect(element_name, regex = "plot[2-9]*_html") ~ ')',
+      dplyr::case_when(stringi::stri_detect(element_name, regex = "plot[2-9]*") ~ ')',
                        stringi::stri_detect(element_name, regex = "table|sigtest") ~ '', #)
                        .default = ')')
 
@@ -56,8 +54,7 @@ insert_obj_in_qmd <-
 
     label <-
       stringi::stri_c(tbl_fig_prefix,
-                      stringi::stri_sub(obj_name, to = max_width_file), "_",
-                      stringi::stri_c(ignore_null=TRUE, sample(0:9, size=2, replace=TRUE), collapse=""),
+                      obj_name,
                       ignore_null = TRUE)
 
 

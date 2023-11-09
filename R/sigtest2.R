@@ -20,7 +20,7 @@ embed_sigtest <-
 
     main_question <-
       get_raw_labels(data = data,
-                     col_pos = unique(chapter_overview$.variable_name_dep))
+                     col_pos = unique(as.character(chapter_overview$.variable_name_dep)))
     main_question <-
       get_main_question2(main_question,
                          label_separator = dots$label_separator,
@@ -40,8 +40,8 @@ embed_sigtest <-
 
     for(i in seq_len(nrow(chapter_overview))) {
 
-      y_var <- out[i, ".variable_name_dep", drop=TRUE]
-      x_var <- out[i, ".variable_name_indep", drop=TRUE]
+      y_var <- as.character(out[i, ".variable_name_dep", drop=TRUE])
+      x_var <- as.character(out[i, ".variable_name_indep", drop=TRUE])
       if(is.na(x_var)) x_var <- NULL
 
 
@@ -51,6 +51,7 @@ embed_sigtest <-
          !is.na(y_var)) {
 
         if(!is.null(x_var)) {
+
           data2 <- data[!is.na(data[[y_var]]) &
                           !is.na(data[[x_var]]), , drop=FALSE]
         } else {

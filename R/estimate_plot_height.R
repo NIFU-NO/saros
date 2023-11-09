@@ -26,6 +26,7 @@ estimate_plot_height <- function(data,
       n_cats <- 1
     }
     x_max <- if(length(x_cols)>0 && all(!is.na(x_cols))) {
+
       dplyr::n_distinct(data[[x_cols]], na.rm = TRUE)
       }
 
