@@ -171,29 +171,39 @@ create_email_credentials <- function(local_basepath = getwd(),
                               local_main_password_path = ".htpasswd_private",
                               ignore_missing_emails = FALSE,
                               email_body = "Your login credentials for www.example.net are \nUsername: {username},\nPassword: {password}",
-                              email_subject = "User credentials for website.") {
+                              email_subject = "User credentials for website.",
+                              ...) {
 
   mesos_paths <- file.path(local_basepath, rel_path_base_to_parent_of_user_restricted_folder)
   usernames <- basename(list.dirs(mesos_paths, full.names = FALSE, recursive = FALSE))
 
+  # MUST READ IN THE PLAINTEXT PASSWORDS WITH THIS FUNCTION
   credentials <- read_main_password_file(file=local_main_password_path)
-  emails <- vctrs::vec_slice(email_data_frame, email_data_frame[[email_col]] %in% unique(usernames))
 
-  in_email_not_in_cred <- setdiff(emails$username, credentials$username)
+  colnames(credentials) <- c(username_col, "password")
+  emails <- vctrs::vec_slice(email_data_frame,
+                             !is.na(email_data_frame[[username_col]]) &
+                               !is.na(email_data_frame[[email_col]]) &
+                               email_data_frame[[username_col]] %in% unique(as.character(usernames)))
+
+  in_email_not_in_cred <- setdiff(emails[[username_col]], credentials[[username_col]])
   if(length(in_email_not_in_cred)>0) {
     cli::cli_warn("Usernames in emails data set not found in password file ({.path {local_main_password_path}}): {in_email_not_in_cred}")
   }
-  in_cred_not_in_email <- setdiff(credentials$username, emails$username)
+  in_cred_not_in_email <- setdiff(credentials[[username_col]], emails[[username_col]])
   if(length(in_cred_not_in_email)>0 && rlang::is_false(ignore_missing_emails)) {
     cli::cli_warn("Usernames in password file ({.path {local_main_password_path}}) not found in emails data set: {in_cred_not_in_email}")
   }
-  choice <- utils::menu(title = "Continue?", choices = c("Y", "N"))
-  if(toupper(choice)=="N") return()
 
-  out <- dplyr::inner_join(emails, credentials, by=stats::setNames("username", email_col),
-                           relationship = "many-to-one")
-  data.frame(body = glue::glue_data(out, email_body),
-             to = out$email,
-             subject = glue::glue_data(out, email_subject))
+  out <- dplyr::inner_join(emails, credentials, by=username_col, relationship = "many-to-one")
+
+  body <- as.character(glue::glue_data(.x = out, email_body))
+  if(length(body)==1) body <- rep(body, length=nrow(out))
+  subject <- as.character(glue::glue_data(.x = out, email_subject))
+  if(length(subject)==1) subject <- rep(subject, length=nrow(out))
+
+  data.frame(body = body,
+             to = out[[email_col]],
+             subject = subject)
 
 }

@@ -30,6 +30,7 @@ append_main_password_file <- function(x=".main_htpasswd_private",
 
 refer_main_password_file <- function(x=".main_htpasswd_private",
                                     usernames = "admin",
+                                    ...,
                                     log_rounds = 12,
                                     append_users = FALSE,
                                     password_input = c("prompt", "8", "10", "12", "16")) {
@@ -43,6 +44,7 @@ refer_main_password_file <- function(x=".main_htpasswd_private",
   out <-
   lapply(usernames, FUN = function(user) {
     passwd <- master_table[master_table$username == user, "password"]
+    if(length(passwd)>1) cli::cli_abort("Multiple entries found for username {user}.")
     if(!rlang::is_string(passwd) || nchar(passwd)==0) {
       if(isFALSE(append_users)) cli::cli_abort("Unable to find password for username {user}.")
       if(password_input == "prompt") {

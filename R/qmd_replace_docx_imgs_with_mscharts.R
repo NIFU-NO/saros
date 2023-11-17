@@ -12,23 +12,33 @@ replace_docx_imgs_with_mscharts <- function(main_file,
                                             delete_mschart_files = FALSE) {
 
   doc <- officer::read_docx(path = main_file)
+  contents <- officer::docx_summary(doc)
   to_be_replaced <- stringi::stri_subset_regex(officer::docx_bookmarks(doc),
                                                pattern = "^fig-")
-  for(img in to_be_replaced) {
-    doc <- officer::cursor_bookmark(doc, id = img)
+  chart_filenames <- stringi::stri_replace_all_regex(to_be_replaced,
+                                                     pattern = "^fig-",
+                                                     replacement = "")
+  chart_filepaths <- stringi::stri_c(chart_filenames, ".docx", ignore_null = TRUE)
+
+
+  for(i in seq_along(to_be_replaced)) {
+    chart_filepath <- file.path(chart_dir, chart_filepaths[i])
+    if(length(chart_filepath) != 1 || !file.exists(chart_filepath)) {
+      cli::cli_abort("Unable to find {.file {chart_filepath}}.")
+    }
+    caption <- contents[stringi::stri_detect_fixed(contents$text,
+                                                   chart_filenames[i]), "text"]
+
+    doc <- officer::cursor_bookmark(doc, id = to_be_replaced[i])
+
     doc <- officer::body_remove(x = doc)
-    chart_filename <- stringi::stri_replace_all_regex(img,
-                                                    pattern = "^fig-|_[0-9]{3,3}$",
-                                                    replacement = "")
-    chart_filename <- stringi::stri_c(chart_filename, "\\.docx", ignore_null = TRUE)
-    chart_filepath <- dir(path = chart_dir,
-                          pattern = chart_filepath,
-                          full.names = TRUE, recursive = TRUE, ignore.case = TRUE,
-                          include.dirs = FALSE, no.. = TRUE)
-    if(length(chart_filepath) != 1) cli::cli_abort("Unable to find {.file {chart_filepath}}.")
-    doc <- officer::body_add(x = doc,
-                             value = officer::block_pour_docx(chart_filepath))
-    if(delete_mschart_files) file.remove(chart_filepath)
+    doc <- officer::body_bookmark(x =doc, id = to_be_replaced[i])
+    doc <- officer::body_add_docx(x = doc, src = chart_filepath)
+    # doc <- officer::body_add_caption(doc, value =
+    #                                    officer::block_caption(label = caption,
+    #                                                           style = "Normal"))
+    # doc <- officer::cursor_backward(doc)
+    # if(delete_mschart_files) file.remove(chart_filepath)
   }
   print(doc, target = main_file)
   main_file

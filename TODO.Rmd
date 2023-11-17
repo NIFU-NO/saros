@@ -16,32 +16,49 @@ x   plot_html comes twice instead of one html and one pdf
 x   No bivariates at all for s_303 or s_30w (in SSN)
 x   s_303w_8_fct_sentind3d_kom_BY_sentind3d_kom
 x   obj_name: .variable_name_indep shows as NA for univariates (still)
-1   facet strips
+x   Avoid sorting first on .element_name and then indep
+x   Clean up the obj_name and filename_prefix stuff.
+x   Løse skript for stolpediagrammer, kart (signifikante forskjeller på fylke/landsdel/kommune), tabeller
+x   Redesign entire refine_chapter_overview, remove_non_significant_bivariates and sigtest
+x   No bivariates?
+x   not keeping significant relationships! Seems all or nothing?
+x   Can find_test be combined with find_stat_config?
+x   Methodize
+x   Inconsistencies in chisq.test() and etc.
+x   s_801 and s_804 (Maria) are identical?
 
+1   CriThiSE: Fails, possibly due to no NA chapter?
+1   chapter datasets do not contain data and data format is weird?
 
-1   Avoid sorting first on .element_name and then indep
+2   (facet strips 90 deg)
+        Generally, should allow users to adjust as much as possible later. Make less absolute changes?
+1   Word documents are not being saved as a battery but as just one variable...
 
+3   Better workflow: No copying of subfolders. INstead of personal work folders, chapter folders. 
+        Rapporter/2024H/03_Lykke/index.qmd (Problem in that confusing qmd file name...)
+        Rapporter/2024H/03_Lykke/03_lykke/...
+2   Test replace_docx_imgs_with_mscharts
+2   Better password/username system for institutions: Distinguishing folder name and username?
+2   Add to chapter yaml template: format: nifudocx-docx
+2   In nifudocx.docx, turn off numbering? or opposite?
+2   cat_*_plot_docx:
+        
 
-3   Clean up the obj_name and filename_prefix stuff.
-1   Løse skript for stolpediagrammer, kart (signifikante forskjeller på fylke/landsdel/kommune), tabeller
 1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
 3   Construct a global list of filename_prefixes. If it is already there, add "_2"
 3   Avoid running remove_non_significant_bivariates if already excepted
 
 3   Prettier duplicated labels warning, containing variable name, bullet points/new line.
-3   Better checks of input data: Provide feedback/log on not mentioned variables, included variables, excluded due to non-significance, 
+3   Better checks of input data: Provide feedback/log on included variables, excluded due to non-significance, 
 1   mesos: why fails if data.frame but works with tibble??
 2   mesos: Keep sorting of variables in plots equal across target and others. (but will likely change this type of plot anyway)
-1   Call summary_data only once in gen_element_and_qmd_snippet3
-1   Move common procedures in the dataprep scripts into saros to avoid accidental issues
+3   Call summary_data only once in gen_element_and_qmd_snippet3
+2   Move common procedures in the dataprep scripts into saros to avoid accidental issues
         mesos_var => must droplevels()
-        trim and sanitize factor labels
         stop if not all used variables have a label (can be turned off)
         across(where(~is.factor(.x)), ~forcats::fct_relabel(.x, function(x) na_if(x, ""))),
              across(where(~is.character(.x)), ~na_if(.x, ""))
 3   Multiple authors in a chapter_overview cell should be expanded in any YAML: process_yaml.
-2   Always ignore author column for Mesos
-3   Redesign entire refine_chapter_overview, remove_non_significant_bivariates and sigtest
 2   Also export a complete archivable dataset with codebook
         en side med lenker til følgende:
         Datasettet
@@ -51,7 +68,6 @@ x   obj_name: .variable_name_indep shows as NA for univariates (still)
 3   Faster read_main_password_file
         vectorize   lapply(usernames, FUN = function(user) {
     passwd <- master_table[master_table$username == user, "password"]
-1   No bivariates?
 2   Merge and refactor the relabelling functions (qualtrics, stata, SX, etc)
 3   Introduce {targets}, but figure out the R-quarto-render (_freeze) setup
         Must be able to run a new report without rerunning everything.
@@ -64,7 +80,6 @@ x   obj_name: .variable_name_indep shows as NA for univariates (still)
 
 
 # Chapter overview
-1   not keeping significant relationships! Seems all or nothing?
 3   cli_inform: rows removed with hide_bi_entry_if_sig_above
 
 # Structure
@@ -79,8 +94,7 @@ x   obj_name: .variable_name_indep shows as NA for univariates (still)
 3   target and renv initialization with menu selection. =\> {saros.template}
 
 # Internals
-4   Can find_test be combined with find_stat_config?
-2   Methodize
+3   Methodize
         Input validation functions
         Reduce number of arguments
         tryCatch() for file saving
@@ -97,7 +111,6 @@ x   obj_name: .variable_name_indep shows as NA for univariates (still)
           Unknown option to `stri_opts_fixed`.
 
 ## Reverse engineering from Word to Quarto
-2   Test replace_docx_imgs_with_mscharts
 3   reformat_qmd_from_docx_copy() og split_qmd_to_chapters()
         Sjekk slides
 
@@ -121,12 +134,12 @@ x   obj_name: .variable_name_indep shows as NA for univariates (still)
 2 Strange error without trace:
     Error in sample.int(length(x), size, replace, prob) : 
   NA in probability vector
-1   no pval is showing!
-    hide_sigtest_if_n_below seems too strict?
-    Hide entire table if nothing to display?
+x   no pval is showing!
+x    hide_sigtest_if_n_below seems too strict?
+x    Hide entire table if nothing to display?
 3   overkill with main_question in label + as label-column header
-3   variable	.variable_label	test	stat	p
-        - Have some translations-headers?
+x   variable	.variable_label	test	stat	p
+3   Have some translations-headers?
 
 # mesos
 2   Option to specify what is used for tabset: c("element", "mesos_var", "dep") 
@@ -206,8 +219,6 @@ x   obj_name: .variable_name_indep shows as NA for univariates (still)
         -   pkgs: officer, mschart, flextable
     -   saros.html 
         -   pkgs: gt, ggplot2, ggiraph, scales, ggfittext?
-    -   saros.modelsig: 
-        -   pkgs: infer
     -   saros.struct
         -   create__headers_file create_htaccess_file etc copy_dirs copy_from_themepackage
         -   initialize_project_structure (+ Rstudio project template)

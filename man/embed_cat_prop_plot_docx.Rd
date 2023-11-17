@@ -11,6 +11,7 @@ embed_cat_prop_plot_docx(
   indep = NULL,
   colour_palette = NULL,
   mesos_group = NULL,
+  plot_height = 15,
   inverse = FALSE
 )
 }
