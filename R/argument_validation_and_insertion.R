@@ -118,11 +118,11 @@ argument_validation_and_insertion <- function(params) {
                      i = "You provided {.arg {params$organize_by}}."))
   }
   if(!all(params$organize_by %in% .saros.env$refined_chapter_overview_columns)) {
-    cli::cli_abort(c("{.arg organize_by} is not valid. Must be one or more of {.saros.env$refined_chapter_overview_columns}.",
+    cli::cli_abort(c("{.arg organize_by} is not valid. Must be one or more of {(.saros.env$refined_chapter_overview_columns)}.",
                      i = "You provided {.arg {params$organize_by}}."))
   }
   if(!all(params$arrange_output_by %in% .saros.env$refined_chapter_overview_columns)) {
-    cli::cli_abort(c("{.arg arrange_output_by} is not valid. Must be one or more of {.saros.env$refined_chapter_overview_columns}.",
+    cli::cli_abort(c("{.arg arrange_output_by} is not valid. Must be one or more of {(.saros.env$refined_chapter_overview_columns)}.",
                      i = "You provided {.arg {params$arrange_output_by}}."))
   }
 

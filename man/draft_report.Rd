@@ -34,6 +34,8 @@ draft_report(
   variables_always_at_top = NULL,
   variables_always_at_bottom = NULL,
   auxiliary_variables = NULL,
+  ignore_heading_for_group = c(".element_name", ".variable_type_dep", "chapter"),
+  replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep"),
   return_raw = TRUE,
   attach_chapter_dataset = TRUE,
   panel_tabset_mesos = TRUE,

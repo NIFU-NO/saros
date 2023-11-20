@@ -31,6 +31,7 @@ prepare_chunk.uni_cat_prop_plot <-
         dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
         colour_palette = colour_palette,
         mesos_group = mesos_group,
+        plot_height = plot_height,
         !!!dots)
     print(out_docx, target = filepaths$abs$docx)
 

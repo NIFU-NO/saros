@@ -41,6 +41,7 @@ prepare_chunk.bi_catcat_prop_plot <-
         colour_palette = colour_palette,
         mesos_group = mesos_group,
         inverse = inverse,
+        plot_height = plot_height,
         !!!dots)
     print(out_docx, target = filepaths$abs$docx)
 

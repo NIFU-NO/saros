@@ -142,6 +142,7 @@ embed_cat_prop_plot_docx <-
            indep = NULL,
            colour_palette = NULL,
            mesos_group = NULL,
+           plot_height = 15,
            inverse = FALSE) {
 
     dots <- update_dots(dots = rlang::list2(...),
@@ -188,15 +189,16 @@ embed_cat_prop_plot_docx <-
 
     if(!rlang::is_null(dots$label_separator)) {
       indep_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))
-      attr(chart, "saros_caption") <-
-        get_raw_labels(data = data, col_pos = dep_pos) %>%
-        get_main_question2(label_separator = dots$label_separator) %>%
-        create_caption(data_out = data_out,
+      caption <- get_raw_labels(data = data, col_pos = dep_pos)
+      caption <- get_main_question2(caption, label_separator = dots$label_separator)
+      caption <- create_caption(caption,
+                                data_out = data_out,
                               indep_pos = indep_label,
                               mesos_group = mesos_group,
-                       filepath = NULL,
+                              filepath = NULL,
                               translations = dots$translations)
-    }
+      attr(chart, "saros_caption") <- caption
+    } else caption <- NULL
 
     if(FALSE) {
       chart
@@ -209,17 +211,15 @@ embed_cat_prop_plot_docx <-
 
     docx_dims <-
       get_docx_dims(docx_file)
-    determine_height <-
-      get_docx_height(plot_height_fixed_constant = dots$plot_height_fixed_constant,
-                      plot_height_multiplier = dots$plot_height_multiplier,
-                      n_col = length(dep_pos),
-                      minimum_height = docx_dims[["h"]])
-    mschart::body_add_chart(
+
+
+    docx_file <-
+      mschart::body_add_chart(
         x = docx_file,
         chart = chart,
         pos = "after",
         width = docx_dims[["w"]],
-        height = determine_height)
+        height = plot_height)
     docx_file
 
       }

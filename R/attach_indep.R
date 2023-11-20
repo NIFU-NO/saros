@@ -1,23 +1,3 @@
-attach_indep <- function(refined_chapter_overview) {
-  if(!rlang::is_null(refined_chapter_overview$.variable_role)) {
-
-    indep_df <- refined_chapter_overview
-    indep_df <- dplyr::ungroup(indep_df)
-    indep_df <- dplyr::filter(indep_df, .data$.variable_role == "indep")
-    indep_df <- tidyr::nest(indep_df, # TASK: SIMPLIFY INDEP IN data_overview
-                            .by = tidyselect::all_of("chapter"),
-                            .key = "indep_cols_df")
-
-    dplyr::left_join(x = refined_chapter_overview, # TASK: SIMPLIFY INDEP IN data_overview
-                     y = indep_df,
-                     by = dplyr::join_by("chapter"))
-
-  } else {
-    cli::cli_warn("No column {.var .variable_role} found, no bivariates possible.")
-    dplyr::mutate(refined_chapter_overview, indep_cols_df = list(NULL))
-  }
-}
-
 attach_indep2 <- function(refined_chapter_overview) {
   if(!rlang::is_null(refined_chapter_overview$.variable_role)) {
 

@@ -5,8 +5,12 @@ attach_chapter_dataset2 <- function(chapter_overview_chapter,
                                    mesos_var,
                                    auxiliary_variables) {
 
-  data_chapter <- data[, names(data) %in% unique(c(chapter_overview_chapter$.variable_name_dep,
-                                                   chapter_overview_chapter$.variable_name_indep,
+
+  dep_vars <- names(unlist(eval_cols(unique(as.character(chapter_overview_chapter$.variable_selection_dep)), data=data)))
+  indep_vars <- names(unlist(eval_cols(unique(as.character(chapter_overview_chapter$.variable_selection_indep)), data=data)))
+
+  data_chapter <- data[, names(data) %in% unique(c(dep_vars,
+                                                   indep_vars,
                                                    mesos_var,
                                                    auxiliary_variables)), drop = FALSE]
 

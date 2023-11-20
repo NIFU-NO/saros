@@ -14,7 +14,8 @@ create_email_credentials(
   ignore_missing_emails = FALSE,
   email_body =
     "Your login credentials for www.example.net are \\nUsername: {username},\\nPassword: {password}",
-  email_subject = "User credentials for website."
+  email_subject = "User credentials for website.",
+  ...
 )
 }
 \arguments{
