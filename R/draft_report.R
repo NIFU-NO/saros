@@ -193,7 +193,7 @@
 #' \item{".by_group"}{The groups of the by argument.}
 #' \item{Character vector of category labels to sum together.}
 #' }
-#' @param plot_height_multiplier *Height multiplier*
+#' @param plot_height_multiplier_per_vertical_letter,plot_height_multiplier_per_horizontal_line *Height multiplier*
 #'
 #'   `scalar<double>` // *default:* `.1`
 #'
@@ -201,7 +201,7 @@
 #'
 #' @param plot_height_fixed_constant *Height constant addition*
 #'
-#'   `scalar<double>` // *default:* `1`
+#'   `scalar<double>` // *default:* `0`
 #'
 #'   Fixed height in cm to add to all static plots.
 #'
@@ -504,7 +504,7 @@ draft_report <-
                #"method",
 
                #"uni_int_text",
-               "uni_cat_text",
+               # "uni_cat_text",
                #"uni_chr_text",
                #"uni_int_plot",
                "uni_cat_prop_plot",
@@ -520,7 +520,7 @@ draft_report <-
                # "bi_catint_text",
                # "bi_intint_text",
 
-               "hline",
+               # "hline",
 
                "bi_catcat_prop_plot",
                "bi_catcat_freq_plot",
@@ -548,24 +548,28 @@ draft_report <-
            panel_tabset_mesos = TRUE,
            showNA = c("never", "always", "ifany"),
            totals = FALSE,
-           hide_label_if_prop_below = .01,
            hide_bi_entry_if_sig_above = 1,
            hide_test_if_n_below = 10,
            hide_chr_for_others = TRUE,
            hide_variable_if_all_na = TRUE,
+
+           # Figures
+           hide_label_if_prop_below = .01,
            hide_axis_text_if_single_variable = FALSE,
            label_font_size = 8,
            main_font_size = 8,
            x_axis_label_width = 20,
-           plot_height_multiplier = .02,
-           plot_height_fixed_constant = 1,
-           plot_height_max = 20,
+           plot_height_multiplier_per_horizontal_line = .2,
+           plot_height_multiplier_per_vertical_letter = .2,
+           plot_height_fixed_constant = 0,
+           plot_height_max = 8,
            plot_height_min = 1.5,
+           vertical_height = 12,
+           strip_angle = 0,
            png_scale = 1.2,
            png_width = 14,
            png_height = 16,
-           vertical_height = 12,
-           strip_angle = 0,
+
            max_width_obj = 128,
            max_width_file = 64,
            font_family = "sans",

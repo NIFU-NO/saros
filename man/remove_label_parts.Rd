@@ -4,7 +4,12 @@
 \alias{remove_label_parts}
 \title{Remove regex pattern from variable labels}
 \usage{
-remove_label_parts(data, pattern = NULL, data_type_criterion = NULL)
+remove_label_parts(
+  data,
+  pattern = NULL,
+  replacement = "",
+  data_type_criterion = NULL
+)
 }
 \arguments{
 \item{data}{Data.frame}

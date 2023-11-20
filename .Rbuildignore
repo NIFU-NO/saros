@@ -16,3 +16,4 @@
 ^.*\.Rproj$
 ^vignettes/articles$
 ^R$/method_caller\.R$
+^_log.txt$

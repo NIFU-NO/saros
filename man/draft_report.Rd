@@ -24,10 +24,9 @@ draft_report(
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".element_name"),
   arrange_output_by = c("chapter", ".variable_name_dep", ".variable_name_indep"),
-  element_names = c("uni_cat_text", "uni_cat_prop_plot", "uni_cat_freq_plot",
-    "uni_cat_table", "uni_chr_table", "hline", "bi_catcat_prop_plot",
-    "bi_catcat_freq_plot", "bi_catcat_prop_plot2", "bi_catcat_freq_plot2",
-    "bi_catcat_table", "bi_sigtest"),
+  element_names = c("uni_cat_prop_plot", "uni_cat_freq_plot", "uni_cat_table",
+    "uni_chr_table", "bi_catcat_prop_plot", "bi_catcat_freq_plot",
+    "bi_catcat_prop_plot2", "bi_catcat_freq_plot2", "bi_catcat_table", "bi_sigtest"),
   sort_by = ".upper",
   data_label = saros::get_data_label_opts(),
   always_show_bi_for_indep = NULL,
@@ -42,24 +41,25 @@ draft_report(
   panel_tabset_mesos = TRUE,
   showNA = c("never", "always", "ifany"),
   totals = FALSE,
-  hide_label_if_prop_below = 0.01,
   hide_bi_entry_if_sig_above = 1,
   hide_test_if_n_below = 10,
   hide_chr_for_others = TRUE,
   hide_variable_if_all_na = TRUE,
+  hide_label_if_prop_below = 0.01,
   hide_axis_text_if_single_variable = FALSE,
   label_font_size = 8,
   main_font_size = 8,
   x_axis_label_width = 20,
-  plot_height_multiplier = 0.02,
-  plot_height_fixed_constant = 1,
-  plot_height_max = 20,
+  plot_height_multiplier_per_horizontal_line = 0.2,
+  plot_height_multiplier_per_vertical_letter = 0.2,
+  plot_height_fixed_constant = 0,
+  plot_height_max = 8,
   plot_height_min = 1.5,
+  vertical_height = 12,
+  strip_angle = 0,
   png_scale = 1.2,
   png_width = 14,
   png_height = 16,
-  vertical_height = 12,
-  strip_angle = 0,
   max_width_obj = 128,
   max_width_file = 64,
   font_family = "sans",
@@ -317,13 +317,6 @@ Whether to show NA in categorical variables (one of c("ifany", "always", "never"
 
 Whether to include totals in the output.}
 
-\item{hide_label_if_prop_below}{\emph{Hide label threshold}
-
-\verb{scalar<numeric>} // \emph{default:} \code{NULL} (\code{optional})
-
-Whether to hide label if below this value.
-NOTE: Future versions will likely distinguish between element_types.}
-
 \item{hide_bi_entry_if_sig_above}{\emph{p-value threshold for hiding bivariate entry}
 
 \verb{scalar<double>} // \emph{default:} \code{1} (\code{optional})
@@ -351,6 +344,13 @@ group to ensure data privacy (\code{TRUE}).}
 
 Whether to remove all variables (in particular useful for mesos) if all values are NA}
 
+\item{hide_label_if_prop_below}{\emph{Hide label threshold}
+
+\verb{scalar<numeric>} // \emph{default:} \code{NULL} (\code{optional})
+
+Whether to hide label if below this value.
+NOTE: Future versions will likely distinguish between element_types.}
+
 \item{hide_axis_text_if_single_variable}{\emph{Hide y-axis text if just a single variable}
 
 \verb{scalar<boolean>} // \emph{default:} \code{FALSE} (\code{optional})
@@ -375,7 +375,7 @@ Font size for all other text.}
 
 Width of the labels used for the categorical column names.}
 
-\item{plot_height_multiplier}{\emph{Height multiplier}
+\item{plot_height_multiplier_per_vertical_letter, plot_height_multiplier_per_horizontal_line}{\emph{Height multiplier}
 
 \verb{scalar<double>} // \emph{default:} \code{.1}
 
@@ -383,7 +383,7 @@ Height in cm per chart entry, for all static plots.}
 
 \item{plot_height_fixed_constant}{\emph{Height constant addition}
 
-\verb{scalar<double>} // \emph{default:} \code{1}
+\verb{scalar<double>} // \emph{default:} \code{0}
 
 Fixed height in cm to add to all static plots.}
 
@@ -399,6 +399,16 @@ Maximum height for the plot.}
 
 Minimum height for the plot.}
 
+\item{vertical_height}{\emph{Vertical height}
+
+\verb{scalar<double>} // \emph{default:} \code{NULL} (\code{optional})
+
+Height for vertical layout of plot? NEEDS CHECKING}
+
+\item{strip_angle}{\emph{Angle on the facet strip in plots}
+
+\verb{scalar<double>} // \emph{default:} \code{0}}
+
 \item{png_scale}{\emph{PNG scale}
 
 \verb{scalar<double>} // \emph{default:} \code{1} (\code{optional})
@@ -410,16 +420,6 @@ Scale factor for PNG output.}
 \verb{scalar<double>} // \emph{default:} \code{12} (\code{optional})
 
 Width for PNG output.}
-
-\item{vertical_height}{\emph{Vertical height}
-
-\verb{scalar<double>} // \emph{default:} \code{NULL} (\code{optional})
-
-Height for vertical layout of plot? NEEDS CHECKING}
-
-\item{strip_angle}{\emph{Angle on the facet strip in plots}
-
-\verb{scalar<double>} // \emph{default:} \code{0}}
 
 \item{max_width_obj}{\emph{Maximum object width}
 
