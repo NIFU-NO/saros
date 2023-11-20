@@ -9,7 +9,9 @@
 #'
 #' @examples remove_label_parts(ex_survey1, pattern = " living in")
 remove_label_parts <- function(data,
-                               pattern = NULL, data_type_criterion = NULL) {
+                               pattern = NULL,
+                               replacement = "",
+                               data_type_criterion = NULL) {
   if(is.null(data_type_criterion) || !is.function(data_type_criterion)) data_type_criterion <- function(x) !is.null(x)
 
   if(rlang::is_string(pattern)) {
@@ -17,7 +19,7 @@ remove_label_parts <- function(data,
 
       if(data_type_criterion(data[[var]])) {
         label <- attr(data[[var]], "label")
-        label <- stringr::str_replace(label, pattern = pattern, replacement = "")
+        label <- stringr::str_replace(label, pattern = pattern, replacement = replacement)
 
         if(length(label)>0 && rlang::is_string(label)) {
 

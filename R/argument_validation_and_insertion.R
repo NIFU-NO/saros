@@ -61,8 +61,9 @@ argument_validation_and_insertion <- function(params) {
       flexi = list(fun = rlang::is_bool),
       micro = list(fun = rlang::is_bool),
 
-      plot_height_multiplier = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
-      plot_height_fixed_constant = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
+      plot_height_multiplier_per_horizontal_line = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
+      plot_height_multiplier_per_vertical_letter = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
+      plot_height_fixed_constant = list(fun = function(x) (is_scalar_finite_doubleish(x) && x >= 0) || is.na(x)),
       plot_height_max = list(fun = function(x) is_scalar_finite_doubleish(x) && x > 0),
       plot_height_min = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0),
       vertical_height = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0),

@@ -159,19 +159,22 @@ gen_element_and_qmd_snippet2 <-
 
 
     plot_height <- estimate_plot_height(data = data,
-                                        y_col_pos = unique(as.character(chapter_overview_section$.variable_name_dep)),
+                                        y_cols = unique(as.character(chapter_overview_section$.variable_name_dep)),
                                         x_cols = unique(as.character(chapter_overview_section$.variable_name_indep)),
                                         element_name = unique(as.character(chapter_overview_section$.element_name)),
-                                        vertical = dots$vertical,
+                                        is_vertical = dots$vertical,
                                         label_separator = dots$label_separator,
                                         x_axis_label_width = dots$x_axis_label_width,
 
                                         showNA = dots$showNA,
-                                        plot_height_multiplier = dots$plot_height_multiplier,
+
+                                        plot_height_multiplier_per_horizontal_line = dots$plot_height_multiplier_per_horizontal_line,
+                                        plot_height_multiplier_per_vertical_letter = dots$plot_height_multiplier_per_vertical_letter,
                                         plot_height_fixed_constant = dots$plot_height_fixed_constant,
                                         plot_height_max = dots$plot_height_max,
                                         plot_height_min = dots$plot_height_min,
-                                        vertical_height = dots$vertical_height)
+                                        vertical_height = dots$vertical_height,
+                                        strip_angle = dots$strip_angle)
 
 
 

@@ -115,7 +115,8 @@ prep_cat_prop_plot_html <-
         legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
         strip.placement = "outside",
         strip.text.x = ggplot2::element_text(margin = ggplot2::margin(l = 0, t = 0, r = 0, b = 2, "cm")),
-        strip.text = ggiraph::element_text_interactive(data_id = "strip.text", angle = dots$strip_angle, hjust = .5, size = dots$main_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
+        strip.text.y.left = ggiraph::element_text_interactive(data_id = "strip.text", angle = dots$strip_angle,
+                                                              hjust = .5, size = dots$main_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
         strip.background = ggiraph::element_rect_interactive(colour = NA)
       ) +
       ggplot2::labs(x = NULL, y = NULL)

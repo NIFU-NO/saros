@@ -22,9 +22,9 @@ attach_chapter_dataset2 <- function(chapter_overview_chapter,
                                     chapter_foldername_clean,
                                     "'",
                                     sep="", ignore_null = TRUE)
-  import_code <- stringi::stri_c("`data_",
+  import_code <- stringi::stri_c("data_",
                                  chapter_foldername_clean,
-                                 "` <- qs::qread('", filepath_chapter_dataset_relative, "')",
+                                 " <- qs::qread('", filepath_chapter_dataset_relative, "')",
                                  sep="", ignore_null = TRUE)
   stringi::stri_c(r_chunk_header, import_code, "```", sep="\n")
 }
