@@ -26,9 +26,8 @@ add_section_heading_line <- function(
 
     heading <- stringi::stri_remove_empty_na(heading)
     output <- stringi::stri_remove_empty_na(output)
-    output <-
-      stringi::stri_c(output,
-                      heading_line,
+    stringi::stri_c(output,
+                      heading,
                       sep="\n",
                       ignore_null=TRUE)
   }

@@ -16,53 +16,51 @@ gen_qmd_structure2 <-
 
 
     gen_group_structure2 <- function(grouped_data,
-                                    level = 1,
-                                    grouping_structure,
-                                    chapter_overview,
-                                    data,
-                                    dots) {
+                                     level = 1,
+                                     grouping_structure) {
       output <- ""
-
 
       if (level > ncol(grouped_data)) {
         return(output)
       }
 
 
-      for(value in unique(as.character(grouped_data[[level]]))) {
+      for(value in unique(grouped_data[[level]])) {
 
-
-        # Create heading, section tag and random ID if not a .element_name or chapter
-        output <- add_section_heading_line(
-          output = output,
+        heading_line <- add_section_heading_line(
           grouped_data = grouped_data,
           level = level,
           chapter_overview = chapter_overview,
-          value = value,
-          added = NULL,
-          ignore_heading_for_group = dots$ignore_heading_for_group)
+          value = value)
 
+        # Add heading line if not a .element_name or chapter
+        if(!names(grouped_data)[level] %in% dots$ignore_heading_for_group &&
+           level < ncol(grouped_data)) {
 
+          output <-
+            stringi::stri_c(output,
+                            heading_line,
+                            sep="\n",
+                            ignore_null=TRUE)
+        }
 
+        # Keep only relevant part of meta data
 
-        # Keep only relevant part of meta data, e.g. a specific chapter
 
         sub_df <- vctrs::vec_slice(grouped_data,
-                                   is.na(as.character(grouped_data[[level]])) |
-                                   as.character(grouped_data[[level]]) == value)
+                                   is.na(as.character(grouped_data[[colnames(grouped_data)[level]]])) |
+                                     as.character(grouped_data[[colnames(grouped_data)[level]]]) == value)
 
         sub_df <- droplevels(sub_df)
 
 
-        # Setting a specific sub-chapter (e.g. a label_prefix) as the name of the grouping vector. WHY?
+        # Setting a specific sub-chapter (e.g. a label_prefix) as the column name. WHY?
         names(grouping_structure)[level] <- value
 
         # If innermost/deepest level, start producing contents
         if(level == length(grouping_structure)) {
 
-
           # Create new metadata with bare minimum needed, and reapply grouping
-          # WHY NOT USED sub_df?!?
           chapter_overview_section <- chapter_overview
 
           for(i in seq_along(grouping_structure)) {
@@ -78,8 +76,6 @@ gen_qmd_structure2 <-
 
             }
           }
-          # if(all(chapter_overview$chapter != "Introduction")) browser()
-
 
           chapter_overview_section <- droplevels(chapter_overview_section)
 
@@ -90,13 +86,13 @@ gen_qmd_structure2 <-
               dplyr::group_by(chapter_overview_section,
                               dplyr::pick(tidyselect::all_of(unname(grouping_structure))))
             chapter_overview_section <- droplevels(chapter_overview_section)
-            if(all(is.na(as.character(chapter_overview_section$chapter)))) browser()
+
 
             new_out <-
               dplyr::group_map(chapter_overview_section,
                                .keep = TRUE,
-                               .f = get_inner_section(
-                                 .x, .y,
+                               .f = ~gen_inner_section(
+                                 .x=.x, .y=.y,
                                  data = data,
                                  grouping_structure = grouping_structure,
                                  dots = dots,
@@ -118,11 +114,8 @@ gen_qmd_structure2 <-
         added <- # Recursive call
           gen_group_structure2(grouped_data = sub_df,
                                level = level + 1,
-                               grouping_structure = grouping_structure,
-                               chapter_overview = chapter_overview,
-                               data = data,
-                               dots = dots)
-
+                               grouping_structure = grouping_structure)
+        added <- stringi::stri_remove_empty_na(added)
         output <-
           stringi::stri_c(output,
                           added,
@@ -130,20 +123,15 @@ gen_qmd_structure2 <-
       }
 
       if(length(output)>1 || is.na(output)) browser()
-      # output <- if(!is.na(output)) output else ""
 
       return(output)
     }
 
-
-
-    chapter_overview <-
-      remove_empty_col_for_mesos_group(
-      data = data,
-      chapter_overview = chapter_overview,
-      mesos_group = mesos_group,
-      mesos_var = dots$mesos_var
-    )
+    # chapter_overview <- chapter_overview
+    chapter_overview <- remove_empty_col_for_mesos_group(data = data,
+                                                         chapter_overview = chapter_overview,
+                                                         mesos_group = mesos_group,
+                                                         mesos_var = mesos_var)
 
     grouping_structure <- dplyr::group_vars(chapter_overview)
     non_grouping_vars <- colnames(chapter_overview)[!colnames(chapter_overview) %in% grouping_structure]
@@ -153,12 +141,7 @@ gen_qmd_structure2 <-
     grouped_data <- dplyr::distinct(grouped_data, dplyr::pick(tidyselect::all_of(grouping_structure)))
 
     out <-
-    gen_group_structure2(grouped_data = grouped_data,
-                        grouping_structure = grouping_structure,
-                        chapter_overview = chapter_overview,
-                        data = data,
-                        dots = dots)
+      gen_group_structure2(grouped_data = grouped_data,
+                           grouping_structure = grouping_structure)
     out
   }
-
-

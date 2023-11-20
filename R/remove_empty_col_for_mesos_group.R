@@ -16,5 +16,6 @@ remove_empty_col_for_mesos_group <- function(data,
       }
     }
   }
+  chapter_overview
 
 }
