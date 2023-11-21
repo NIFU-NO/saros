@@ -608,6 +608,8 @@ draft_report <-
            include_numbers = TRUE, # not implemented
            n_top_bottom = 1,
 
+           log_file = "_log.txt",
+
            translations =
              list(last_sep = " and ",
                   download_report = "Download report (PDF)",
