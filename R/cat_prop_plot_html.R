@@ -112,6 +112,7 @@ prep_cat_prop_plot_html <-
         axis.text.y = if (hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y"),
         plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
         legend.position = "bottom",
+        legend.justification = c(2,0),
         legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
         strip.placement = "outside",
         strip.text.x = ggplot2::element_text(margin = ggplot2::margin(l = 0, t = 0, r = 0, b = 2, "cm")),
