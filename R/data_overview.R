@@ -348,7 +348,8 @@ refine_chapter_overview <-
     log_unused_variables(data=data,
                          chapter_overview=out,
                          auxiliary_variables=dots$auxiliary_variables,
-                         mesos_var = dots$mesos_var)
+                         mesos_var = dots$mesos_var,
+                         log_file = dots$log_file)
 
   }
 
