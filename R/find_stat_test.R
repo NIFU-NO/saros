@@ -61,41 +61,51 @@ find_test2 <- function(y, x=NULL) {
   } else {
     # Select the test based on the type of y and x
     if(y_type == "numeric" && x_type == "factor") {
+
       # ANOVA
       test_name <- "ANOVA"
       p_value <-
         tryCatch(expr = {
           summary(stats::aov(y ~ x))[[1]]$`Pr(>F)`[1]
     }, error = function(e) return(NA))
+
     } else if(y_type == "factor" && x_type == "numeric") {
+
       # ANOVA (factor as response variable not typical, consider logistic regression)
       test_name <- "ANOVA"
       p_value <-
         tryCatch(expr = {
           summary(stats::aov(x ~ y))[[1]]$`Pr(>F)`[1]
         }, error = function(e) return(NA))
+
     } else if(y_type == "factor" && x_type == "factor") {
+
       # Chi-squared test
       test_name <- "Chi-sq"
       p_value <-
         tryCatch(expr = {
           suppressWarnings(stats::chisq.test(table(y, x, useNA="no")))$p.value
         }, error = function(e) return(NA))
+
     } else if(y_type == "numeric" && x_type == "numeric") {
+
       # Correlation test
       test_name <- "Pearson Cor"
       p_value <-
         tryCatch(expr = {
           stats::cor.test(y, x, use="complete.obs")$p.value
         }, error = function(e) return(NA))
+
     } else if((y_type == "ordered" && x_type == "factor") ||
               (y_type == "factor" && x_type == "ordered")) {
-      # Kruskal-Wallis test
-      test_name <- "Kruskal-Wallis"
+
+      # Kruskal-Wallis chisq test
+      test_name <- "Kruskal-Wallis chisq"
       p_value <-
         tryCatch(expr = {
           stats::kruskal.test(y ~ x)$p.value
         }, error = function(e) return(NA))
+
     } else if(y_type == "ordered" && x_type == "numeric") {
 
       # Spearman's rank correlation test
@@ -113,7 +123,18 @@ find_test2 <- function(y, x=NULL) {
         tryCatch(expr = {
           stats::cor.test(x, y, method = "spearman", use="complete.obs")$p.value
         }, error = function(e) return(NA))
-    } else if(!(y_type == "character" || x_type == "character")) {
+
+    } else if(y_type == "ordered" && x_type == "ordered") {
+
+      # Spearman's rank correlation test
+      test_name <- "Spearman Rank Cor"
+      p_value <-
+        tryCatch(expr = {
+          stats::cor.test(x, y, method = "spearman", use="complete.obs")$p.value
+        }, error = function(e) return(NA))
+
+    } else if(!(y_type == "character" || x_type == "character" ||
+                y_type == "POSIXt" || x_type == "POSIXt")) {
 
       cli::cli_warn("Unable to find a suitable statistical test for outcome {y_type} and {x_type}.")
       return(data.frame(.bi_test = NA, .p_value = NA))
