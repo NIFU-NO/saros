@@ -26,12 +26,14 @@ x   Can find_test be combined with find_stat_config?
 x   Methodize
 x   Inconsistencies in chisq.test() and etc.
 x   s_801 and s_804 (Maria) are identical?
+x   chapter datasets do not contain data and data format is weird?
+x   (facet strips 90 deg)
+x   In nifudocx.docx, turn off numbering? or opposite?
 
-1   CriThiSE: Fails, possibly due to no NA chapter?
-1   chapter datasets do not contain data and data format is weird?
+1   if(all(is.na(chapter_overview_section$.variable_name_dep)) && 
+    rlang::is_string(dots$mesos_group)) => all chapter_overview_section becomes NA
 
-2   (facet strips 90 deg)
-        Generally, should allow users to adjust as much as possible later. Make less absolute changes?
+1   Generally, should allow users to adjust as much as possible later. Make less absolute changes?
 1   Word documents are not being saved as a battery but as just one variable...
 
 3   Better workflow: No copying of subfolders. INstead of personal work folders, chapter folders. 
@@ -40,9 +42,6 @@ x   s_801 and s_804 (Maria) are identical?
 2   Test replace_docx_imgs_with_mscharts
 2   Better password/username system for institutions: Distinguishing folder name and username?
 2   Add to chapter yaml template: format: nifudocx-docx
-2   In nifudocx.docx, turn off numbering? or opposite?
-2   cat_*_plot_docx:
-        
 
 1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
 3   Construct a global list of filename_prefixes. If it is already there, add "_2"
