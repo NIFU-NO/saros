@@ -810,5 +810,8 @@ draft_report <-
 
     cat(proc.time()-timestamp)
     cat("\n")
-    index_filepath
+    if(rlang::is_string(args$log_file)) {
+      cat("Run time: ", proc.time()-timestamp, file=args$log_file)
+    }
+    stringi::stri_replace_all_fixed(index_filepath, pattern="\\+", replacement="/")
   }
