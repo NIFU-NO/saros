@@ -52,7 +52,17 @@ prep_cat_prop_plot_html <-
       dplyr::mutate(.id = seq_len(nrow(.)),
         .tooltip = # Tooltip is opposite of the regular display
           if (prop_family) {
-            sprintf(fmt = "%s\nN = %.0f\n%s", .data[[".category"]], .data[[".count"]], .data[[".variable_label"]])
+            x<-
+            sprintf(fmt = stringi::stri_c("%s", "N = %.0f", "%s",
+                                          sep="\n"),
+                    .data[[".category"]],
+                    .data[[".count"]],
+                    .data[[".variable_label"]])
+            if(rlang::is_string(indep_vars)) {
+              x <- sprintf(fmt = stringi::stri_c("%s", "%s", sep="\n", ignore_null = TRUE),
+                           x, .data[[indep_vars]])
+            }
+            x
           } else {
             sprintf(
               fmt = stringi::stri_c("%s\nP = %.", dots$digits, "f%%\n%s", ignore_null=TRUE),
