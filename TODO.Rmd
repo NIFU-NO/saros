@@ -32,8 +32,8 @@ x   In nifudocx.docx, turn off numbering? or opposite?
 x   Add to chapter yaml template: format: nifudocx-docx
 x   if(all(is.na(chapter_overview_section$.variable_name_dep)) && 
     rlang::is_string(dots$mesos_group)) => all chapter_overview_section becomes NA
+x   figure tooltip should also include x_var
 
-2   figure tooltip should also include x_var
 1   Generally, should allow users to adjust as much as possible later. Make fewer absolute changes?
 1   Word documents are not being saved as a battery but as just one variable...
 1   PDF-figures are way too big
@@ -43,7 +43,7 @@ x   if(all(is.na(chapter_overview_section$.variable_name_dep)) &&
 2   Test replace_docx_imgs_with_mscharts
 2   Better password/username system for institutions: Distinguishing folder name and username?
 2   Quarto issue: for typst, setting fig-height in chunk (without also setting fig-dpi) results in "Error in `s$close()`: ! attempt to apply non-function
-
+3   Return path to index-file => path to folder, replace \ with /
 1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
 3   Construct a global list of filename_prefixes. If it is already there, add "_2"
 3   Avoid running remove_non_significant_bivariates if already excepted
