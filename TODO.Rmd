@@ -36,14 +36,14 @@ knitr::opts_chunk$set(echo = TRUE)
 3   Make download button persistent by replacing opacity: 1; in JS class="ggiraph-toolbar ggiraph-toolbar-top"
 3   colour_2nd_binary_cat is not working consistently with data\$s_43 (gender) and when mesos - legend is missing when there are two categories in cat_prop, but n
 
--   unused levels seem to cause confusion in hide_legend and colours. and tables
+2   unused levels seem to cause confusion in hide_legend and colours. and tables
 3   N in legend for each by group
 4   prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable
 4   add_n_to_bygroup as arg
 
 # Colours
--2   Konsekvent fargepalett på tvers av figurer med samme svarskala
--1   Sikre at nifutheme fungerer manuelt
+2   Konsekvent fargepalett på tvers av figurer med samme svarskala
+1   Sikre at nifutheme fungerer manuelt
 
 4   if .categories %in% names(colour_palette), use associated colour
     -   Bruk så fargepalett på resten
@@ -79,7 +79,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # sarosverse structure
 
--   sarosverse imports:
+3   sarosverse imports:
     -   saros.base
     -   saros.docx 
         -   pkgs: officer, mschart, flextable
@@ -101,17 +101,13 @@ knitr::opts_chunk$set(echo = TRUE)
     
 # cat_text
 
--   incorrect numbers?
--   If only single question, simplify output!
--   respecting data_label
--   long batteries not respecting n_top_bottom?
--   must explain that it is sum of upper categories
--   bool: str_to_sentence, asis
+3   incorrect numbers?
+3   If only single question, simplify output!
+3   respecting data_label
+3   long batteries not respecting n_top_bottom?
+3   must explain that it is sum of upper categories
+3   bool: str_to_sentence, asis
 
-# saros.publish
-
-2   automate creation of hashed passwords
-4   automate copying of .htaccess and .htpasswd files to subfolders
 
 # Raise issues in other packages
 1   RStudio Quarto: Copying table from Word into Visual editor results in empty cols and rows
@@ -120,14 +116,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 4   Issue at <https://github.com/tidymodels/infer> about annoying warning.
 4   Issue at Quarto-cli for: If processing fails, it leaves a temporary .rmarkdown file which if not manually deleted will cause the following error on the next rendering: "The name of the input file cannot contain the special shell characters: [ \<\>()\|:&;#?\*']"
-
-
-# Version-naming system:
--   V1.0.0:   Cay G.
--   V1.1.0:   Siv-Elisabeth S.
--   V1.2.0:   Ann Cecilie 
--   V1.3.0:   Cathrine P.
--   V1.4.0:   Torstein de B
 
 
 # Version 3.0
@@ -199,13 +187,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## saros.instruments
 
-```         
 Improvement over time (p1-p0)
 IRT parameters (a, b, c), with low discriminators, and extremely hard/easy items flagged
 Items with responses above/below 95/5 percentage flagged
 Low CFA loadings
 Loadings improved if item removed
-```
 
 -   Make generalisert TIC, theta, item thresholds-grafmaker som tar mirt, MplusAutomation, lavaan, TAM, etc)
 
@@ -315,7 +301,6 @@ Loadings improved if item removed
 
 # NIFU_efa: EFA av alle utfallsvariabler
 
-```         
 Finner selv ut hvor mange faktorer er teoretisk mulige
 Fjerner iterativt variabler med missing over 20%, forenkler variabler med mindre enn 10% per kategori 
 en egen variabel i Structure forteller hvilke som skal snus i faktoranalyser
@@ -325,16 +310,13 @@ Sorterer slik at sterkeste faktorladningene kommer først
 Fjerner alt mellom -.4-.4 og omrokkerer faktorene
 Printer ut i Excel, fargelegger
 Legger ved rå (Spearman) korrelasjoner i eget regneark
-```
 
 # analyze_psych: Psykometriske analyser av konstrukter
 
-```         
 CFA for hvert spørsmålsbatteri og spørsmålsoverbatteri, m/alpha, CFA, TLI, RMSEA, SRMR, faktorladningsspredning, osv
 Measurement invariance for hver av brytningsvariablene
 Lager en samletabell for alle variableGroup
 Optional item-nivå info, DIF, etc
-```
 
 Rapportere bug til Mplus om at \$1 blir kuttet vekk fra CI-output. Rapportere bug til MplusAutomation: LOGISTIC REGRESSION ODDS RATIO RESULTS kommer ikke med
 
