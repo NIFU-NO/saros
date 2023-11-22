@@ -109,15 +109,6 @@ gen_element_and_qmd_snippet2 <-
 
     ## Only for filenames
 
-    # filename_prefix <-
-    #   make_filename_prefix(
-    #     grouping_structure = grouping_structure,
-    #     chapter_overview_section = chapter_overview_section,
-    #     max_width_obj = dots$max_width_obj,
-    #     mesos_group = mesos_group,
-    #     indep_sep_string = "_BY_",
-    #     mesos_sep_string = "_FOR_")
-
     filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
                                      element_folderpath_absolute = element_folderpath_absolute,
                                      filename_prefix = obj_name)
