@@ -7,12 +7,20 @@ gen_inner_section <- function(.x, .y,
                               chapter_foldername
                               ) {
 
+  if(all(!is.na(.x$chapter)) &&
+     all(is.na(as.character(.x$.element_name)))) return()
+
+  if((all(!is.na(.x$chapter)) && nrow(.x) > 1 &&
+     all(is.na(.x$.variable_name_dep))) ||
+     any(is.na(as.character(.y$.element_name)))) browser()
+
     .x <- dplyr::group_by(.x,
                           dplyr::pick(tidyselect::all_of(unname(grouping_structure))))
     .y$.element_name <- as.character(.y$.element_name)
-    if(is.na(!(all(stringi::stri_detect_fixed(str = .y$.element_name, pattern = "chr")) &&
-               rlang::is_true(dots$hide_chr_for_others) &&
-               rlang::is_string(mesos_group)))) browser()
+    # if(all(!is.na(.y$.element_name)) &&
+    #    all(stringi::stri_detect_fixed(str = .y$.element_name, pattern = "chr", negate = TRUE)) &&
+    #            rlang::is_true(dots$hide_chr_for_others) &&
+    #            rlang::is_string(mesos_group)) browser()
     # if(all(.x$chapter == "Ambivalence") &&
     #    all(.x$.element_name == "bi_catcat_prop_plot") &&
     #    any(.x$.variable_name_dep == "a_1")) browser()

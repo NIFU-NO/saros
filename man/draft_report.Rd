@@ -87,6 +87,7 @@ draft_report(
     "median_diff", "variance_max", "variance_min"),
   include_numbers = TRUE,
   n_top_bottom = 1,
+  log_file = "_log.txt",
   translations = list(last_sep = " and ", download_report = "Download report (PDF)",
     intro_prefix = "We will now look at the questions asked regarding ", intro_suffix =
     "", mode_max_onfix = " on ", mode_max_prefix = "The most common responses were ",

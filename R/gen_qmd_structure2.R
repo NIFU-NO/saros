@@ -63,19 +63,19 @@ gen_qmd_structure2 <-
           # Create new metadata with bare minimum needed, and reapply grouping
           chapter_overview_section <- chapter_overview
 
-          for(i in seq_along(grouping_structure)) {
-            if(!is.na(names(grouping_structure)[i])) {
-              chapter_overview_section <-
-                vctrs::vec_slice(chapter_overview_section,
-                                 as.character(chapter_overview_section[[grouping_structure[[i]]]]) ==
-                                   names(grouping_structure)[i])
-            } else {
-              chapter_overview_section <-
-                vctrs::vec_slice(chapter_overview_section,
-                                 is.na(as.character(chapter_overview_section[[grouping_structure[[i]]]])))
+          if(all(is.na(chapter_overview_section$chapter)) && nrow(chapter_overview_section)>1) browser()
 
-            }
+          for(i in seq_along(grouping_structure)) {
+            variable <- as.character(chapter_overview_section[[grouping_structure[[i]]]])
+            lgl_filter <-
+              (!is.na(names(grouping_structure)[i]) & !is.na(variable) & variable == names(grouping_structure)[i]) |
+              (is.na(names(grouping_structure)[i]) & is.na(variable))
+
+            chapter_overview_section <-
+              vctrs::vec_slice(chapter_overview_section, lgl_filter)
           }
+          if(all(is.na(chapter_overview_section$.variable_name_dep)) &&
+             nrow(chapter_overview_section) > 1) browser()
 
           chapter_overview_section <- droplevels(chapter_overview_section)
 
@@ -122,12 +122,11 @@ gen_qmd_structure2 <-
                           sep="\n\n", ignore_null=TRUE) # Space between each section (before new heading)
       }
 
-      if(length(output)>1 || is.na(output)) browser()
+      if(length(output)>1 || (length(output)==1 && is.na(output))) browser()
 
       return(output)
     }
 
-    # chapter_overview <- chapter_overview
     chapter_overview <- remove_empty_col_for_mesos_group(data = data,
                                                          chapter_overview = chapter_overview,
                                                          mesos_group = mesos_group,
