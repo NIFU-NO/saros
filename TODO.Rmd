@@ -44,6 +44,7 @@ x   figure tooltip should also include x_var
 2   Better password/username system for institutions: Distinguishing folder name and username?
 2   Quarto issue: for typst, setting fig-height in chunk (without also setting fig-dpi) results in "Error in `s$close()`: ! attempt to apply non-function
 3   Return path to index-file => path to folder, replace \ with /
+            stringi::stri_replace_all_fixed(index_filepath, pattern="\\+", replacement="/")
 1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
 3   Construct a global list of filename_prefixes. If it is already there, add "_2"
 3   Avoid running remove_non_significant_bivariates if already excepted
