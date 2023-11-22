@@ -490,13 +490,6 @@ draft_report <-
            qmd_start_section_filepath = NULL,
            qmd_end_section_filepath = NULL,
            index_filename = "index.qmd",
-           organize_by = c("chapter",
-                           ".variable_label_prefix_dep",
-                           ".variable_name_indep",
-                           ".element_name"),
-           arrange_output_by = c("chapter",
-                                 ".variable_name_dep",
-                                 ".variable_name_indep"),
 
            element_names =
              c(#"opening_text",
@@ -540,20 +533,17 @@ draft_report <-
            categories_treated_as_na = NULL,
            variables_always_at_top = NULL,
            variables_always_at_bottom = NULL,
-           auxiliary_variables = NULL,
-           ignore_heading_for_group = c(".element_name", ".variable_type_dep", "chapter"),
-           replace_heading_for_group = c(".variable_label_suffix_dep" = ".variable_name_dep"),
            return_raw = TRUE,
-           attach_chapter_dataset = TRUE,
-           panel_tabset_mesos = TRUE,
            showNA = c("never", "always", "ifany"),
            totals = FALSE,
            hide_bi_entry_if_sig_above = 1,
            hide_test_if_n_below = 10,
            hide_chr_for_others = TRUE,
            hide_variable_if_all_na = TRUE,
+           digits = 1,
+           data_label_decimal_symbol = ".",
 
-           # Figures
+           # Specifically for figures
            hide_label_if_prop_below = .01,
            hide_axis_text_if_single_variable = FALSE,
            label_font_size = 8,
@@ -565,32 +555,51 @@ draft_report <-
            plot_height_max = 8,
            plot_height_min = 1.5,
            vertical_height = 12,
+           vertical = FALSE,
            strip_angle = 0,
            png_scale = 1.2,
            png_width = 14,
            png_height = 16,
-
-           max_width_obj = 128,
-           max_width_file = 64,
            font_family = "sans",
-           open_after_drafting = FALSE,
-
-           vertical = FALSE,
-           mesos_first = TRUE,
-           single_y_bivariate_elements = FALSE,
-           descend = TRUE,
-           require_common_categories = TRUE,
-           pdf = TRUE,
-           flexi = TRUE,
-           micro = FALSE,
-
 
            colour_palette_nominal = NULL,
            colour_palette_ordinal = NULL,
            colour_na = "gray90",
            colour_2nd_binary_cat = NULL,
-           digits = 1,
-           data_label_decimal_symbol = ".",
+
+           # Tables
+           table_main_question_as_header = FALSE,
+
+           max_width_obj = 128,
+           max_width_file = 64,
+           open_after_drafting = FALSE,
+
+           # Structure of report
+           organize_by = c("chapter",
+                           ".variable_label_prefix_dep",
+                           ".variable_name_indep",
+                           ".element_name"),
+           arrange_output_by = c("chapter",
+                                 ".variable_name_dep",
+                                 ".variable_name_indep"),
+
+           ignore_heading_for_group = c(".element_name", ".variable_type_dep", "chapter"),
+           replace_heading_for_group = c(".variable_label_suffix_dep" = ".variable_name_dep"),
+
+           mesos_first = TRUE,
+           single_y_bivariate_elements = FALSE,
+           descend = TRUE,
+           require_common_categories = TRUE,
+           panel_tabset_mesos = TRUE,
+
+           # Formats and attachments
+           pdf = TRUE,
+           attach_chapter_dataset = TRUE,
+           auxiliary_variables = NULL,
+           flexi = TRUE,
+           micro = FALSE,
+
+
            reps = 1000,
            information =
              c(".variable_label_dep", #".variable_name",

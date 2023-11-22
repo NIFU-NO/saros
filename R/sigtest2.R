@@ -28,7 +28,9 @@ embed_sigtest <-
     main_question <- unique(main_question)
     main_question <-
       if(!is.null(dots$label_separator) &&
-         length(main_question)==1) main_question else ".variable_label"
+         length(main_question)==1 &&
+         !is.na(main_question) &&
+         nchar(main_question) > 0) main_question else ".variable_label"
 
     out <- dplyr::ungroup(chapter_overview)
 
@@ -68,6 +70,7 @@ embed_sigtest <-
         }
       }
     }
+
     attr(out, "saros_caption") <- stringi::stri_c(ignore_null=TRUE,
                                                   dots$translations$sigtest_prefix,
                                                   main_question,
