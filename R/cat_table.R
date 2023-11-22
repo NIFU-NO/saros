@@ -148,7 +148,8 @@ embed_cat_table <-
                            .fn = function(x) dots$translations$table_heading_N) %>%
         dplyr::rename_with(.cols = tidyselect::all_of(names(indep_pos)), .fn = function(x) indep_label)
 
-      if(rlang::is_string(main_question) && stringi::stri_length(main_question)>0) {
+      if(rlang::is_string(main_question) && stringi::stri_length(main_question)>0 &&
+         rlang::is_true(dots$table_main_question_as_header)) {
         names(data_out2)[names(data_out)==".variable_label"] <- main_question
       }
       # table_html_detailer <-

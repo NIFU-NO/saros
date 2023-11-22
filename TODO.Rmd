@@ -12,70 +12,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-x   plot_html comes twice instead of one html and one pdf
-x   No bivariates at all for s_303 or s_30w (in SSN)
-x   s_303w_8_fct_sentind3d_kom_BY_sentind3d_kom
-x   obj_name: .variable_name_indep shows as NA for univariates (still)
-x   Avoid sorting first on .element_name and then indep
-x   Clean up the obj_name and filename_prefix stuff.
-x   Løse skript for stolpediagrammer, kart (signifikante forskjeller på fylke/landsdel/kommune), tabeller
-x   Redesign entire refine_chapter_overview, remove_non_significant_bivariates and sigtest
-x   No bivariates?
-x   not keeping significant relationships! Seems all or nothing?
-x   Can find_test be combined with find_stat_config?
-x   Methodize
-x   Inconsistencies in chisq.test() and etc.
-x   s_801 and s_804 (Maria) are identical?
-x   chapter datasets do not contain data and data format is weird?
-x   (facet strips 90 deg)
-x   In nifudocx.docx, turn off numbering? or opposite?
-x   Add to chapter yaml template: format: nifudocx-docx
-x   if(all(is.na(chapter_overview_section$.variable_name_dep)) && 
-    rlang::is_string(dots$mesos_group)) => all chapter_overview_section becomes NA
-x   figure tooltip should also include x_var
-x   Return path to index-file => path to folder, replace \ with /
-            stringi::stri_replace_all_fixed(index_filepath, pattern="\\+", replacement="/")
-
 1   Generally, should allow users to adjust as much as possible later. Make fewer absolute changes?
-1   Word documents are not being saved as a battery but as just one variable...
-1   PDF-figures are way too big
-    2   Quarto issue: for typst, setting fig-height in chunk (without also setting fig-dpi) results in "Error in `s$close()`: ! attempt to apply non-function
 
 
 3   Better workflow: No copying of subfolders. INstead of personal work folders, chapter folders. 
         Rapporter/2024H/03_Lykke/index.qmd (Problem in that confusing qmd file name...)
         Rapporter/2024H/03_Lykke/03_lykke/...
-2   Test replace_docx_imgs_with_mscharts
-2   Better password/username system for institutions: Distinguishing folder name and username?
-1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
-
-
-3   Construct a global list of filename_prefixes. If it is already there, add "_2"
-3   Avoid running remove_non_significant_bivariates if already excepted
-3   Prettier duplicated labels warning, containing variable name, bullet points/new line.
-3   Better checks of input data: Provide feedback/log on included variables, excluded due to non-significance, 
-1   mesos: why fails if data.frame but works with tibble??
-2   mesos: Keep sorting of variables in plots equal across target and others. (but will likely change this type of plot anyway)
-3   Call summary_data only once in gen_element_and_qmd_snippet3
-2   Move common procedures in the dataprep scripts into saros to avoid accidental issues
-        mesos_var => must droplevels()
-        stop if not all used variables have a label (can be turned off)
-        across(where(~is.factor(.x)), ~forcats::fct_relabel(.x, function(x) na_if(x, ""))),
-             across(where(~is.character(.x)), ~na_if(.x, ""))
-3   Multiple authors in a chapter_overview cell should be expanded in any YAML: process_yaml.
-2   Also export a complete archivable dataset with codebook
-        en side med lenker til følgende:
-        Datasettet
-        En kodebok med variabelnavn, variabel-label, unike verdier, antall missing, data-type)
-            Excel, HTML
-        Eventuelle maler vi kommer på senere for dokumentasjon.
-3   Faster read_main_password_file
-        vectorize   lapply(usernames, FUN = function(user) {
-    passwd <- master_table[master_table$username == user, "password"]
-2   Merge and refactor the relabelling functions (qualtrics, stata, SX, etc)
-3   Introduce {targets}, but figure out the R-quarto-render (_freeze) setup
-        Must be able to run a new report without rerunning everything.
-3   setup_access_restrictions rel_path_base_to_parent_of_user_restricted_folder should give warning if NULL (not error)
 
 # nifutemplate
 2   SSN_methodchapter_inlines.R and SSN_methodchapter.qmd
@@ -83,11 +25,6 @@ x   Return path to index-file => path to folder, replace \ with /
 1   functions to quickly download template files to a folder?
 
 
-# Chapter overview
-3   cli_inform: rows removed with hide_bi_entry_if_sig_above
-
-# Structure
-2   single_y_bivariate_elements: if TRUE, then each bivariate will contain only a single y variable, and one x variable, rather than entire batteries.
 
 # saros.structure
 1   data folder structure (in saros.structure)
@@ -98,49 +35,10 @@ x   Return path to index-file => path to folder, replace \ with /
 3   target and renv initialization with menu selection. =\> {saros.template}
 
 # Internals
-3   Methodize
-        Input validation functions
-        Reduce number of arguments
-        tryCatch() for file saving
-        match(.x, data_cols) => What to do if nothing is found?
 3   Remove rlang::exec when calling own functions that take rlang::list2()
-2   No variable label will cause text-output (interpretations) to use NA.
-    2   Review all stringi::stri_c( and check whether there is a possibility of inputs being NA. Should then use stringi::stri_remove_empty_na( before
-    2   Any organize_by set of variables in chapter_overview should not have NA (or deal appropriately with them)
-3    Warning in value[[3L]](cond) :                            
-  cli progress bar update failed: subscript out of bounds
-      Only for mesos reports.
-3   Warning messages:
-        In (function (case_insensitive = FALSE, overlap = FALSE,  ... :
-          Unknown option to `stri_opts_fixed`.
-
-## Reverse engineering from Word to Quarto
-3   reformat_qmd_from_docx_copy() og split_qmd_to_chapters()
-        Sjekk slides
-
-# Documentation (all written such that slides become easy to produce):
-
-2   for_editor article
-2   for_chapter_author article
-2   for_data_cleaner article
-        guidelines for variable names, labels, etc
-            stick to english whenever possible. underscore to distinguish levels
-            avoid years (a survey may cross a year, be published later, etc)
-            use cycle-numbering, cohort, etc which are more stable
-2   for_end_user article
-3   Flytte TODO til Github issues...
 
 
 # Sigtest
-2   warning: n min(table(data[, c(dep_pos, indep_pos)])) :
-  no non-missing arguments to min; returning Inf
-    Why would data be empty?
-2 Strange error without trace:
-    Error in sample.int(length(x), size, replace, prob) : 
-  NA in probability vector
-x   no pval is showing!
-x    hide_sigtest_if_n_below seems too strict?
-x    Hide entire table if nothing to display?
 3   overkill with main_question in label + as label-column header
 x   variable	.variable_label	test	stat	p
 3   Have some translations-headers?

@@ -61,6 +61,7 @@ argument_validation_and_insertion <- function(params) {
       pdf = list(fun = rlang::is_bool),
       flexi = list(fun = rlang::is_bool),
       micro = list(fun = rlang::is_bool),
+      table_main_question_as_header = list(fun = rlang::is_bool),
 
       plot_height_multiplier_per_horizontal_line = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
       plot_height_multiplier_per_vertical_letter = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
