@@ -11,7 +11,9 @@ prepare_chunk.uni_cat_prop_plot <-
     dots <- rlang::list2(...)
 
     if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord")) ||
-       !all(is.na(as.character(chapter_overview_section$.variable_name_indep)))) return()
+       !all(is.na(as.character(chapter_overview_section$.variable_name_indep))) ||
+       (is_colour(dots$colour_2nd_binary_cat) && # To avoid both types of plots
+        length(unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))) <= 3)) return()
 
     if(all(chapter_overview_section$.element_name == "uni_cat_prop_plot")) {
         embed_cat_plot_docx <- embed_cat_prop_plot_docx

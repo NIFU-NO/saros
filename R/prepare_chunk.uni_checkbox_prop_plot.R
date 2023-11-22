@@ -10,8 +10,10 @@ prepare_chunk.uni_checkbox_prop_plot <-
 
     dots <- rlang::list2(...)
 
+    # Early quit
     if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord")) ||
        !all(is.na(as.character(chapter_overview_section$.variable_name_indep))) ||
+       !is_colour(dots$colour_2nd_binary_cat) ||
        length(unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))) > 3) return()
 
     if(all(chapter_overview_section$.element_name == "uni_checkbox_prop_plot")) {

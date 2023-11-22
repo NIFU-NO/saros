@@ -13,7 +13,6 @@
 prep_checkbox_prop_plot_html <-
   function(data,
            ...,
-           colour_2nd_binary_cat = NULL,
            inverse = FALSE,
            call = rlang::caller_env()) {
 
@@ -21,11 +20,11 @@ prep_checkbox_prop_plot_html <-
     dots <- update_dots(dots = rlang::list2(...),
                         caller_function = "checkbox_prop_plot")
 
-
-
-    if(is.null(colour_2nd_binary_cat)) {
-      colour_2nd_binary_cat <- "#090909"
+    if(!dplyr::n_distinct(data[[".category"]], na.rm = dots$showNA == "never") == 2 ||
+       !is_colour(dots$colour_2nd_binary_cat)) {
+      cli::cli_abort("{.arg dep} {names(dep_pos)} do(es) not contain two categories (excluding missing), or is missing {.arg colour_2nd_binary_cat} (set to {dots$colour_2nd_binary_cat}).")
     }
+
 
     indep_vars <- colnames(data)[!colnames(data) %in%
                                    .saros.env$summary_data_sort2]
@@ -35,7 +34,7 @@ prep_checkbox_prop_plot_html <-
       dplyr::n_distinct(data[[".variable_label"]]) == 1
 
     hide_legend <- TRUE
-    colour_palette <- rlang::set_names(c(NA, colour_2nd_binary_cat),
+    colour_palette <- rlang::set_names(c(NA, dots$colour_2nd_binary_cat),
                                        nm = levels(data[[".category"]]))
 
 
@@ -96,7 +95,7 @@ prep_checkbox_prop_plot_html <-
         mapping = ggplot2::aes(
           colour =
             ggplot2::after_scale(x = hex_bw(.data$fill,
-              colour_2nd_binary_cat = colour_2nd_binary_cat
+              colour_2nd_binary_cat = dots$colour_2nd_binary_cat
             ))
         ),
         position = ggplot2::position_stack(vjust = .5, reverse = TRUE),
@@ -242,11 +241,6 @@ embed_checkbox_prop_plot <-
     if (length(indep_pos) > 0) {
       data_out[[names(indep_pos)]] <- forcats::fct_rev(data_out[[names(indep_pos)]])
     }
-
-    if (dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
-      is_colour(dots$colour_2nd_binary_cat)) {
-      data_out$.category <- forcats::fct_rev(data_out$.category)
-    } else cli::cli_abort("{.arg dep} {names(dep_pos)} do(es) not contain two categories (excluding missing), or is missing {.arg colour_2nd_binary_cat} (set to {colour_2nd_binary_cat}).")
 
     chart <-
       rlang::exec(
