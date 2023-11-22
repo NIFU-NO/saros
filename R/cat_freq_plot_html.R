@@ -36,6 +36,9 @@ prep_cat_freq_plot_html <-
       length(indep_vars) == 0 &&
       dplyr::n_distinct(data[[".variable_label"]]) == 1
 
+
+    max_nchar_cat <- max(nchar(levels(data[[".category"]])), na.rm = TRUE)
+
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
 
@@ -94,14 +97,18 @@ prep_cat_freq_plot_html <-
                                              tooltip = function(x) x, drop = FALSE) +
       ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white")) +
       ggplot2::scale_x_discrete(limits = rev, labels = function(x) string_wrap(x, width = dots$x_axis_label_width)) +
-      ggplot2::guides(fill = ggiraph::guide_legend_interactive(data_id="fill.guide", byrow = TRUE),
+      ggplot2::guides(fill = ggiraph::guide_legend_interactive(data_id="fill.guide",
+                                                               byrow = TRUE,
+                                                               nrow = max(c(ceiling(length(colour_palette) / 5),
+                                                                            (max_nchar_cat > 10)+1), na.rm = TRUE)),
                       colour = "none") +
       ggplot2::theme_classic() +
       ggplot2::theme(text = ggiraph::element_text_interactive(family = dots$font_family),
                      axis.text.y = if(hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y"),
                      plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
                      legend.position = "bottom",
-                     legend.justification = c(2,0),
+                     legend.justification = if(!rlang::is_string(indep_vars)) c(-.1, 0) else c(-.3, 0),
+                     legend.direction = "horizontal",
                      legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
                      strip.placement = "outside",
                      strip.text.y.left =  ggiraph::element_text_interactive(data_id = "strip.text",
