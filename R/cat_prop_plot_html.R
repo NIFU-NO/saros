@@ -44,6 +44,8 @@ prep_cat_prop_plot_html <-
       dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
         !rlang::is_null(dots$colour_2nd_binary_cat)
 
+    max_nchar_cat <- max(nchar(levels(data[[".category"]])), na.rm = TRUE)
+
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
 
@@ -114,7 +116,10 @@ prep_cat_prop_plot_html <-
       ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white")) +
       ggplot2::scale_x_discrete(limits = rev, labels = function(x) string_wrap(x, width = dots$x_axis_label_width)) +
       ggplot2::guides(
-        fill = if (hide_legend) "none" else ggiraph::guide_legend_interactive(data_id = "fill.guide", byrow = TRUE),
+        fill = if (hide_legend) "none" else ggiraph::guide_legend_interactive(data_id = "fill.guide",
+                                                                              byrow = TRUE,
+                                                                              nrow = max(c(ceiling(length(colour_palette) / 5),
+                                                                                           (max_nchar_cat > 10)+1), na.rm = TRUE)),
         colour = "none"
       ) +
       ggplot2::theme_classic() +
@@ -123,9 +128,8 @@ prep_cat_prop_plot_html <-
         axis.text.y = if (hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y"),
         plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
         legend.position = "bottom",
-        legend.justification = "left",
+        legend.justification = if(!rlang::is_string(indep_vars)) c(-.1, 0) else c(-.3, 0),
         legend.direction = "horizontal",
-        legend.box.just = "left",
         legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
         strip.placement = "outside",
         strip.text.x = ggplot2::element_text(margin = ggplot2::margin(l = 0, t = 0, r = 0, b = 2, "cm")),
