@@ -13,19 +13,20 @@ make_filename_prefix <- function(
   grouping_structure <- unique(grouping_structure)
   # grouping_structure <- grouping_structure[!grouping_structure %in% c(".element_name")]
 
-  filename_prefix <- chapter_overview_section
-  filename_prefix <- dplyr::ungroup(filename_prefix)
-  filename_prefix <- dplyr::distinct(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure)))
-  filename_prefix <- dplyr::arrange(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure)))
-  filename_prefix <- dplyr::group_by(filename_prefix, dplyr::pick(tidyselect::all_of(grouping_structure)))
-  filename_prefix <- lapply(filename_prefix, function(x) get_common_name(x=unique(as.character(x))))
-  filename_prefix <- filename_prefix[order(lengths(filename_prefix))]
-  filename_prefix <- unlist(filename_prefix)
-  filename_prefix <- unname(filename_prefix)
-  filename_prefix <- stringi::stri_remove_empty_na(filename_prefix)
-  filename_prefix <- stringi::stri_sub(str = filename_prefix, from = 1, to = max_width_obj,
+  prefix <- chapter_overview_section
+  prefix <- dplyr::ungroup(prefix)
+  prefix <- dplyr::distinct(prefix, dplyr::pick(tidyselect::all_of(grouping_structure)))
+  prefix <- dplyr::arrange(prefix, dplyr::pick(tidyselect::all_of(grouping_structure)))
+  prefix <- dplyr::group_by(prefix, dplyr::pick(tidyselect::all_of(grouping_structure)))
+  prefix <- lapply(prefix, function(x) get_common_name(x=unique(as.character(x))))
+  prefix <- prefix[order(lengths(prefix))]
+  prefix <- unlist(prefix)
+  prefix <- unname(prefix)
+  prefix <- stringi::stri_remove_empty_na(prefix)
+  prefix <- stringi::stri_sub(str = prefix, from = 1, to = max_width_obj,
                                        use_matrix = FALSE, ignore_negative_length = TRUE)
-  filename_prefix <- stringi::stri_c(filename_prefix, collapse = "_", ignore_null = TRUE)
+  prefix <- stringi::stri_c(prefix, collapse = "_", ignore_null = TRUE)
+  prefix <- stringi::stri_replace_first_regex(prefix, pattern = "^[[:punct:]]", replacement = "")
 
 
   obj_name_mesos <-
@@ -37,7 +38,7 @@ make_filename_prefix <- function(
   random_id <- stringi::stri_c(sample(0:9, size=2, replace=TRUE), collapse="")
   ####
   out <-
-    stringi::stri_c(filename_prefix, #obj_name_indep,
+    stringi::stri_c(prefix, #obj_name_indep,
                   obj_name_mesos,
                   random_id,
                   ignore_null=TRUE)
