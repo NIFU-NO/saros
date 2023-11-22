@@ -7,11 +7,12 @@ gen_inner_section <- function(.x, .y,
                               chapter_foldername
                               ) {
 
-  if(all(!is.na(.x$chapter)) && nrow(.x)==1 &&
-     all(is.na(.x$.variable_name_dep))) return()
+  if(all(!is.na(.x$chapter)) &&
+     all(is.na(as.character(.x$.element_name)))) return()
 
-  if(all(!is.na(.x$chapter)) && nrow(.x) > 1 &&
-     all(is.na(.x$.variable_name_dep))) browser()
+  if((all(!is.na(.x$chapter)) && nrow(.x) > 1 &&
+     all(is.na(.x$.variable_name_dep))) ||
+     any(is.na(as.character(.y$.element_name)))) browser()
 
     .x <- dplyr::group_by(.x,
                           dplyr::pick(tidyselect::all_of(unname(grouping_structure))))

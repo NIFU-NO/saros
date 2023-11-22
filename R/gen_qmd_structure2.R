@@ -122,7 +122,7 @@ gen_qmd_structure2 <-
                           sep="\n\n", ignore_null=TRUE) # Space between each section (before new heading)
       }
 
-      if(length(output)>1 || is.na(output)) browser()
+      if(length(output)>1 || (length(output)==1 && is.na(output))) browser()
 
       return(output)
     }
