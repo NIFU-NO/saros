@@ -42,14 +42,27 @@ prep_cat_freq_plot_html <-
     p <-
       data %>%
       dplyr::mutate(.id = seq_len(nrow(.)),
-        Tooltip =     # Tooltip is opposite of the regular display
-          if(prop_family) {
-            sprintf(fmt = "%s\nN = %.0f\n%s", .data[[".category"]], .data[[".count"]], .data[[".variable_label"]])
-            } else {
-            sprintf(fmt = stringi::stri_c("%s\nP = %.", dots$digits, "f%%\n%s", ignore_null=TRUE),
-                    .data[[".category"]], .data[[".proportion"]]*100, .data[[".variable_label"]])
-            },
-        onclick = paste0('alert(\"variable: ', .data[['.variable_name']], '\")')
+                    .tooltip = # Tooltip contains all data except variable name
+                      sprintf(fmt = stringi::stri_c("%s",
+                                                    "N = %.0f",
+                                                    stringi::stri_c("P = %.", dots$digits, "f%%", ignore_null=TRUE),
+                                                    "%s",
+                                                    sep="\n", ignore_null = TRUE),
+                              .data[[".category"]],
+                              .data[[".count"]],
+                              .data[[".proportion"]]*100,
+                              .data[[".variable_label"]]),
+                    .tooltip = ifelse(rlang::is_string(indep_vars),
+                                      yes = sprintf(fmt = stringi::stri_c("%s", "%s", sep="\n", ignore_null = TRUE),
+                                                    .data[[".tooltip"]],
+                                                    .data[[indep_vars]]),
+                                      no = .data[[".tooltip"]]),
+                    .onclick = sprintf(fmt = stringi::stri_c("%s", "Variable: %s", sep="\n", ignore_null = TRUE),
+                                       .data[['.tooltip']], .data[['.variable_name']]),
+                    .onclick = paste0('alert(\"', .data[['.onclick']], '\");'),
+                    .onclick = stringi::stri_replace_all_regex(.data[[".onclick"]],
+                                                               pattern = "\n",
+                                                               replacement = "\\\\n")
       ) %>%
       ggplot2::ggplot(
         mapping = ggplot2::aes(
@@ -59,11 +72,11 @@ prep_cat_freq_plot_html <-
           group = .data[[".category"]],
           label = .data[[".data_label"]],
           data_id = .data[[".id"]],
-          onclick = .data[["onclick"]]
+          onclick = .data[[".onclick"]]
           ),
         cumulative = TRUE) +
       ggiraph::geom_col_interactive(
-        mapping = ggplot2::aes(tooltip = .data[["Tooltip"]]), # BUG: Messes up order of categories if enabled.
+        mapping = ggplot2::aes(tooltip = .data[[".tooltip"]]), # BUG: Messes up order of categories if enabled.
         position = ggplot2::position_dodge(width = .9),
         na.rm = TRUE
         ) +

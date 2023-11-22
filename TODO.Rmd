@@ -29,19 +29,20 @@ x   s_801 and s_804 (Maria) are identical?
 x   chapter datasets do not contain data and data format is weird?
 x   (facet strips 90 deg)
 x   In nifudocx.docx, turn off numbering? or opposite?
-
-1   if(all(is.na(chapter_overview_section$.variable_name_dep)) && 
+x   Add to chapter yaml template: format: nifudocx-docx
+x   if(all(is.na(chapter_overview_section$.variable_name_dep)) && 
     rlang::is_string(dots$mesos_group)) => all chapter_overview_section becomes NA
 
-1   Generally, should allow users to adjust as much as possible later. Make less absolute changes?
+2   figure tooltip should also include x_var
+1   Generally, should allow users to adjust as much as possible later. Make fewer absolute changes?
 1   Word documents are not being saved as a battery but as just one variable...
-
+1   PDF-figures are way too big
 3   Better workflow: No copying of subfolders. INstead of personal work folders, chapter folders. 
         Rapporter/2024H/03_Lykke/index.qmd (Problem in that confusing qmd file name...)
         Rapporter/2024H/03_Lykke/03_lykke/...
 2   Test replace_docx_imgs_with_mscharts
 2   Better password/username system for institutions: Distinguishing folder name and username?
-2   Add to chapter yaml template: format: nifudocx-docx
+2   Quarto issue: for typst, setting fig-height in chunk (without also setting fig-dpi) results in "Error in `s$close()`: ! attempt to apply non-function
 
 1   Trivariater: landsdel X resp, skolestørrelse X resp, kommune størrelse X resp osv.
 3   Construct a global list of filename_prefixes. If it is already there, add "_2"
@@ -145,10 +146,11 @@ x   variable	.variable_label	test	stat	p
 
 # plots
 2   gglikert()
+2   checkbox-graphs
 2   kontinuerlig avhengig => histogram
 2   kontinuerlig avhengig x kategorisk uavhengig => boxplot
 2   kontinuerlig avhengig x kontinuerlig uavhengig => scatter plot
-2   Also, a lighter inactive shadow alpha. 
+3   Also, a lighter inactive shadow alpha. 
 3   La brukerne selv sortere etter sin egen preferanse
 -   tri_catcatcat_plot (z)
     -   Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys.

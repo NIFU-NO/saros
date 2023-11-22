@@ -33,7 +33,7 @@ prep_cat_prop_plot_html <-
     multi <- length(colour_palette) > 2
 
     indep_vars <- colnames(data)[!colnames(data) %in%
-      .saros.env$summary_data_sort2]
+                                   .saros.env$summary_data_sort2]
 
     hide_axis_text <-
       isTRUE(dots$hide_axis_text_if_single_variable) &&
@@ -50,16 +50,27 @@ prep_cat_prop_plot_html <-
     p <-
       data %>%
       dplyr::mutate(.id = seq_len(nrow(.)),
-        .tooltip = # Tooltip is opposite of the regular display
-          if (prop_family) {
-            sprintf(fmt = "%s\nN = %.0f\n%s", .data[[".category"]], .data[[".count"]], .data[[".variable_label"]])
-          } else {
-            sprintf(
-              fmt = stringi::stri_c("%s\nP = %.", dots$digits, "f%%\n%s", ignore_null=TRUE),
-              .data[[".category"]], .data[[".proportion"]] * 100, .data[[".variable_label"]]
-            )
-          },
-        .onclick = paste0('alert(\"variable: ', .data[['.variable_name']], '\")')
+        .tooltip = # Tooltip contains all data except variable name
+                sprintf(fmt = stringi::stri_c("%s",
+                                            "N = %.0f",
+                                            stringi::stri_c("P = %.", dots$digits, "f%%", ignore_null=TRUE),
+                                            "%s",
+                                          sep="\n", ignore_null = TRUE),
+                    .data[[".category"]],
+                    .data[[".count"]],
+                    .data[[".proportion"]]*100,
+                    .data[[".variable_label"]]),
+        .tooltip = ifelse(rlang::is_string(indep_vars),
+                          yes = sprintf(fmt = stringi::stri_c("%s", "%s", sep="\n", ignore_null = TRUE),
+                                  .data[[".tooltip"]],
+                                  .data[[indep_vars]]),
+                          no = .data[[".tooltip"]]),
+        .onclick = sprintf(fmt = stringi::stri_c("%s", "Variable: %s", sep="\n", ignore_null = TRUE),
+                           .data[['.tooltip']], .data[['.variable_name']]),
+        .onclick = paste0('alert(\"', .data[['.onclick']], '\");'),
+        .onclick = stringi::stri_replace_all_regex(.data[[".onclick"]],
+                                                   pattern = "\n",
+                                                   replacement = "\\\\n")
       ) %>%
       ggplot2::ggplot(
         mapping = ggplot2::aes(
