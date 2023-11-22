@@ -12,18 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Version 1.0
-1   Generally, should allow users to adjust as much as possible later. Make fewer absolute changes?
-
-
-3   Better workflow: No copying of subfolders. INstead of personal work folders, chapter folders. 
-        Rapporter/2024H/03_Lykke/index.qmd (Problem in that confusing qmd file name...)
-        Rapporter/2024H/03_Lykke/03_lykke/...
 
 # nifutemplate
 2   SSN_methodchapter_inlines.R and SSN_methodchapter.qmd
         Turn method chapter into a more generic function?
 1   functions to quickly download template files to a folder?
-
 
 
 # saros.structure
@@ -34,26 +27,8 @@ knitr::opts_chunk$set(echo = TRUE)
     in nifutheme (resources)
 3   target and renv initialization with menu selection. =\> {saros.template}
 
-# Internals
-3   Remove rlang::exec when calling own functions that take rlang::list2()
-
-
-# Sigtest
-3   overkill with main_question in label + as label-column header
-x   variable	.variable_label	test	stat	p
-3   Have some translations-headers?
-
-# mesos
-2   Option to specify what is used for tabset: c("element", "mesos_var", "dep") 
-
 # plots
-2   gglikert()
-2   checkbox-graphs
-2   kontinuerlig avhengig => histogram
-2   kontinuerlig avhengig x kategorisk uavhengig => boxplot
-2   kontinuerlig avhengig x kontinuerlig uavhengig => scatter plot
 3   Also, a lighter inactive shadow alpha. 
-3   La brukerne selv sortere etter sin egen preferanse
 -   tri_catcatcat_plot (z)
     -   Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys.
 
@@ -65,12 +40,6 @@ x   variable	.variable_label	test	stat	p
 3   N in legend for each by group
 4   prep_cat_prop_plot_pdf: Implement N= in labels when tooltips are unavailable
 4   add_n_to_bygroup as arg
--   implement uni_plot_int_ bi_plot_intint_ bi_plot_intcat_
-
-# tables
-3   La brukerne selv sortere etter sin egen preferanse
-3   For tabeller for det samme så tenker jeg prosent missing, snitt, SD, og antall outliers som default.* samt brutt ned på kategorisk uavhengig ved behov. *Men her skal man kunne sette bestilling på forhånd før rapport genereres.
-
 
 # Colours
 -2   Konsekvent fargepalett på tvers av figurer med samme svarskala
@@ -102,14 +71,8 @@ x   variable	.variable_label	test	stat	p
 3   Sjekk ut hypothes-is muligheter, skru av, moderator, osv.
 
 
-# Folder structure
-
-4   Separate subfolders in saros-output for PNG, DOCX (grraphs), TXT, XLSX
-    - could use extension as input to function that saves, which adds folder name and extension
-
 # tables
 
-2   tri_catcatcat_table
 3   vertical argument in tables provides a pivot-string similar to SSB: 1,2,3
     -   As any element_type so one can get all at once. OR, let reader decide?
 
