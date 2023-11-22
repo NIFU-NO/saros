@@ -1,4 +1,4 @@
-prepare_chunk.uni_cat_prop_plot <-
+prepare_chunk.uni_checkbox_prop_plot <-
   function(chapter_overview_section,
            data,
            mesos_group=NULL,
@@ -10,25 +10,26 @@ prepare_chunk.uni_cat_prop_plot <-
 
     dots <- rlang::list2(...)
 
+    # Early quit
     if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord")) ||
        !all(is.na(as.character(chapter_overview_section$.variable_name_indep))) ||
-       (is_colour(dots$colour_2nd_binary_cat) && # To avoid both types of plots
-        length(unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))) <= 3)) return()
+       !is_colour(dots$colour_2nd_binary_cat) ||
+       length(unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))) > 3) return()
 
-    if(all(chapter_overview_section$.element_name == "uni_cat_prop_plot")) {
-        embed_cat_plot_docx <- embed_cat_prop_plot_docx
-        embed_cat_plot <- embed_cat_prop_plot
-        element_name_snippet <- "uni_cat_prop_plot_html"
+    if(all(chapter_overview_section$.element_name == "uni_checkbox_prop_plot")) {
+        embed_checkbox_plot_docx <- embed_checkbox_prop_plot_docx
+        embed_checkbox_plot <- embed_checkbox_prop_plot
+        element_name_snippet <- "uni_checkbox_prop_plot_html"
     } else {
-      embed_cat_plot_docx <- embed_cat_freq_plot_docx
-      embed_cat_plot <- embed_cat_freq_plot
-      element_name_snippet <- "uni_cat_freq_plot_html"
+      embed_checkbox_plot_docx <- embed_checkbox_freq_plot_docx
+      embed_checkbox_plot <- embed_checkbox_freq_plot
+      element_name_snippet <- "uni_checkbox_freq_plot_html"
 
       }
 
     out_docx <-
       rlang::exec(
-        embed_cat_plot_docx,
+        embed_checkbox_plot_docx,
         data = data,
         dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
         colour_palette = colour_palette,
@@ -39,7 +40,7 @@ prepare_chunk.uni_cat_prop_plot <-
 
     out_html <-
       rlang::exec(
-        embed_cat_plot,
+        embed_checkbox_plot,
         data = data,
         dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
         colour_palette = colour_palette,
@@ -70,5 +71,5 @@ prepare_chunk.uni_cat_prop_plot <-
 
   }
 
-prepare_chunk.uni_cat_freq_plot <- prepare_chunk.uni_cat_prop_plot
+prepare_chunk.uni_checkbox_freq_plot <- prepare_chunk.uni_checkbox_prop_plot
 
