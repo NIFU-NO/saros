@@ -22,7 +22,7 @@ prep_checkbox_prop_plot_html <-
 
     if(!dplyr::n_distinct(data[[".category"]], na.rm = dots$showNA == "never") == 2 ||
        !is_colour(dots$colour_2nd_binary_cat)) {
-      cli::cli_abort("{.arg dep} {names(dep_pos)} do(es) not contain two categories (excluding missing), or is missing {.arg colour_2nd_binary_cat} (set to {dots$colour_2nd_binary_cat}).")
+      cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing), or is missing {.arg colour_2nd_binary_cat} (currently set to {dots$colour_2nd_binary_cat}).")
     }
 
 
