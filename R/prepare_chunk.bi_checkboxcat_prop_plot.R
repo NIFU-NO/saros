@@ -17,7 +17,7 @@ prepare_chunk.bi_checkboxcat_prop_plot <-
        !is_colour(dots$colour_2nd_binary_cat)) return()
 
     dep_cats <-
-      unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))
+      get_common_levels(data, unique(as.character(chapter_overview_section$.variable_name_dep)))
 
     if(length(dep_cats[!is.na(dep_cats)]) != 2) return()
 

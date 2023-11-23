@@ -16,7 +16,7 @@ prepare_chunk.uni_checkbox_prop_plot <-
        !is_colour(dots$colour_2nd_binary_cat) ||
        nrow(chapter_overview_section) == 0) return()
     dep_cats <-
-      unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))
+      get_common_levels(data, unique(as.character(chapter_overview_section$.variable_name_dep)))
     if(length(dep_cats[!is.na(dep_cats)]) != 2) return()
 
     if(all(chapter_overview_section$.element_name == "uni_checkbox_prop_plot")) {
