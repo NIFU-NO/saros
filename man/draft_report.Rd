@@ -21,30 +21,25 @@ draft_report(
   qmd_start_section_filepath = NULL,
   qmd_end_section_filepath = NULL,
   index_filename = "index.qmd",
-  organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
-    ".element_name"),
-  arrange_output_by = c("chapter", ".variable_name_dep", ".variable_name_indep"),
-  element_names = c("uni_cat_prop_plot", "uni_cat_freq_plot", "uni_cat_table",
-    "uni_chr_table", "bi_catcat_prop_plot", "bi_catcat_freq_plot",
-    "bi_catcat_prop_plot2", "bi_catcat_freq_plot2", "bi_catcat_table", "bi_sigtest"),
+  element_names = c("uni_cat_prop_plot", "uni_cat_freq_plot", "uni_checkbox_prop_plot",
+    "uni_cat_table", "uni_chr_table", "bi_catcat_prop_plot", "bi_catcat_freq_plot",
+    "bi_catcat_prop_plot2", "bi_catcat_freq_plot2", "bi_checkboxcat_prop_plot",
+    "bi_catcat_table", "bi_sigtest"),
   sort_by = ".upper",
   data_label = saros::get_data_label_opts(),
   always_show_bi_for_indep = NULL,
   categories_treated_as_na = NULL,
   variables_always_at_top = NULL,
   variables_always_at_bottom = NULL,
-  auxiliary_variables = NULL,
-  ignore_heading_for_group = c(".element_name", ".variable_type_dep", "chapter"),
-  replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep"),
   return_raw = TRUE,
-  attach_chapter_dataset = TRUE,
-  panel_tabset_mesos = TRUE,
   showNA = c("never", "always", "ifany"),
   totals = FALSE,
   hide_bi_entry_if_sig_above = 1,
   hide_test_if_n_below = 10,
   hide_chr_for_others = TRUE,
   hide_variable_if_all_na = TRUE,
+  digits = 1,
+  data_label_decimal_symbol = ".",
   hide_label_if_prop_below = 0.01,
   hide_axis_text_if_single_variable = FALSE,
   label_font_size = 8,
@@ -56,28 +51,35 @@ draft_report(
   plot_height_max = 8,
   plot_height_min = 1.5,
   vertical_height = 12,
+  vertical = FALSE,
   strip_angle = 0,
   png_scale = 1.2,
   png_width = 14,
   png_height = 16,
-  max_width_obj = 128,
-  max_width_file = 64,
   font_family = "sans",
-  open_after_drafting = FALSE,
-  vertical = FALSE,
-  mesos_first = TRUE,
-  single_y_bivariate_elements = FALSE,
-  descend = TRUE,
-  require_common_categories = TRUE,
-  pdf = TRUE,
-  flexi = TRUE,
-  micro = FALSE,
   colour_palette_nominal = NULL,
   colour_palette_ordinal = NULL,
   colour_na = "gray90",
   colour_2nd_binary_cat = NULL,
-  digits = 1,
-  data_label_decimal_symbol = ".",
+  table_main_question_as_header = FALSE,
+  max_width_obj = 128,
+  max_width_file = 64,
+  open_after_drafting = FALSE,
+  organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
+    ".element_name"),
+  arrange_output_by = c("chapter", ".variable_name_dep", ".variable_name_indep"),
+  ignore_heading_for_group = c(".element_name", ".variable_type_dep", "chapter"),
+  replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep"),
+  mesos_first = TRUE,
+  single_y_bivariate_elements = FALSE,
+  descend = TRUE,
+  require_common_categories = TRUE,
+  panel_tabset_mesos = TRUE,
+  pdf = TRUE,
+  attach_chapter_dataset = TRUE,
+  auxiliary_variables = NULL,
+  flexi = TRUE,
+  micro = FALSE,
   reps = 1000,
   information = c(".variable_label_dep", ".category", ".count", ".count_se",
     ".proportion", ".proportion_se", ".mean", ".mean_se", ".data_label",
@@ -220,18 +222,6 @@ Path to qmd-snippet placed before/after body of all chapter qmds.}
 
 The name of the main index Quarto file (and its subfolder) used as landing page for each report. Will link to a PDF (report.qmd) which collects all chapters.}
 
-\item{organize_by}{\emph{Grouping columns}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column names used for identifying chapters and sections.}
-
-\item{arrange_output_by}{\emph{Grouping columns}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column names used for sorting output within each organize_by group}
-
 \item{element_names}{\emph{Elements to be reported}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
@@ -281,30 +271,11 @@ Categories that should be treated as NA.}
 
 Column names in \code{data} that should always be placed at the top or bottom of figures/tables.}
 
-\item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column names in \code{data} that should always be included in datasets for chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
-
 \item{return_raw}{\emph{NOT IN USE}
 
 \verb{scalar<integer>} // \emph{default:} \code{FALSE}
 
 Whether to return the raw static element.}
-
-\item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE}
-
-Whether to save in each chapter folder an 'Rds'-file with the chapter-specific dataset, and load it at the top of each QMD-file.}
-
-\item{panel_tabset_mesos}{\emph{mesos panel tabset}
-
-\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
-
-Whether in mesos reports the comparison group should be displayed as
-a Quarto panel tabset (\code{TRUE}), or above each other (\code{FALSE}).}
 
 \item{showNA}{\emph{Show/hide NA in categorical variables}
 
@@ -344,6 +315,19 @@ group to ensure data privacy (\code{TRUE}).}
 \verb{scalar<boolean>} // \emph{default:} \code{TRUE} (\code{optional})
 
 Whether to remove all variables (in particular useful for mesos) if all values are NA}
+
+\item{digits}{\emph{Decimal places}
+
+\verb{scalar<integer>} // \emph{default:} \code{0L} (\code{optional})
+
+Number of decimal places.}
+
+\item{data_label_decimal_symbol}{\emph{Decimal symbol}
+
+\verb{scalar<character>} // \emph{default:} \code{"."} (\code{optional})
+
+Decimal marker, some might prefer a comma ',' or something else entirely.
+NOTE: Future version will likely postpone formatting this until \code{gt()}, \code{kable()}, etc.}
 
 \item{hide_label_if_prop_below}{\emph{Hide label threshold}
 
@@ -406,6 +390,12 @@ Minimum height for the plot.}
 
 Height for vertical layout of plot? NEEDS CHECKING}
 
+\item{vertical}{\emph{Orientation of plots}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+If FALSE (default), then horizontal plots.}
+
 \item{strip_angle}{\emph{Angle on the facet strip in plots}
 
 \verb{scalar<double>} // \emph{default:} \code{0}}
@@ -421,6 +411,30 @@ Scale factor for PNG output.}
 \verb{scalar<double>} // \emph{default:} \code{12} (\code{optional})
 
 Width for PNG output.}
+
+\item{font_family}{\emph{Font family}
+
+\verb{scalar<character>} // \emph{default:} \code{"sans"} (\code{optional})
+
+Word font family. See officer::fp_text.}
+
+\item{colour_palette_nominal, colour_palette_ordinal}{\emph{Colour palettes (nominal and ordinal)}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Must contain at least the number of unique values (including missing) in the data set.}
+
+\item{colour_na}{\emph{Colour for NA category}
+
+\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Colour as a single string for NA values.}
+
+\item{colour_2nd_binary_cat}{\emph{Colour for second binary category}
+
+\verb{scalar<character>} // \emph{default:} \code{"#ffffff"} (\code{optional})
+
+Colour for second category in binary variables. Often useful to hide this.}
 
 \item{max_width_obj}{\emph{Maximum object width}
 
@@ -438,23 +452,23 @@ Maximum width for any filename. Due to OneDrive having a max path of about
 long file names if using labels as part of structure, and hashing with
 Quarto's \code{cache: true} feature. This argument truncates the filenames.}
 
-\item{font_family}{\emph{Font family}
-
-\verb{scalar<character>} // \emph{default:} \code{"sans"} (\code{optional})
-
-Word font family. See officer::fp_text.}
-
 \item{open_after_drafting}{\emph{Whether to open index.qmd}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
 Whether to open the main output file (index.qmd) after completion.}
 
-\item{vertical}{\emph{Orientation of plots}
+\item{organize_by}{\emph{Grouping columns}
 
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-If FALSE (default), then horizontal plots.}
+Column names used for identifying chapters and sections.}
+
+\item{arrange_output_by}{\emph{Grouping columns}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names used for sorting output within each organize_by group}
 
 \item{mesos_first}{\emph{mesos first}
 
@@ -480,11 +494,30 @@ Reverse sorting of \code{sort_by}.}
 
 Whether to check if all items share common categories.}
 
+\item{panel_tabset_mesos}{\emph{mesos panel tabset}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether in mesos reports the comparison group should be displayed as
+a Quarto panel tabset (\code{TRUE}), or above each other (\code{FALSE}).}
+
 \item{pdf}{\emph{Create PDF of full report?}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
 Whether to create a PDF of the entire report (all chapters included in a single file).}
+
+\item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE}
+
+Whether to save in each chapter folder an 'Rds'-file with the chapter-specific dataset, and load it at the top of each QMD-file.}
+
+\item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names in \code{data} that should always be included in datasets for chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
 
 \item{flexi}{\emph{Create page with user-editable categorical plots and tables}
 
@@ -497,37 +530,6 @@ Whether to create a folder with a Shiny flexi app containing all the variables i
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
 Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).}
-
-\item{colour_palette_nominal, colour_palette_ordinal}{\emph{Colour palettes (nominal and ordinal)}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Must contain at least the number of unique values (including missing) in the data set.}
-
-\item{colour_na}{\emph{Colour for NA category}
-
-\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Colour as a single string for NA values.}
-
-\item{colour_2nd_binary_cat}{\emph{Colour for second binary category}
-
-\verb{scalar<character>} // \emph{default:} \code{"#ffffff"} (\code{optional})
-
-Colour for second category in binary variables. Often useful to hide this.}
-
-\item{digits}{\emph{Decimal places}
-
-\verb{scalar<integer>} // \emph{default:} \code{0L} (\code{optional})
-
-Number of decimal places.}
-
-\item{data_label_decimal_symbol}{\emph{Decimal symbol}
-
-\verb{scalar<character>} // \emph{default:} \code{"."} (\code{optional})
-
-Decimal marker, some might prefer a comma ',' or something else entirely.
-NOTE: Future version will likely postpone formatting this until \code{gt()}, \code{kable()}, etc.}
 
 \item{reps}{\emph{Number of permutations}
 
