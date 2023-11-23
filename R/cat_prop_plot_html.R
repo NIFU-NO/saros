@@ -139,7 +139,11 @@ prep_cat_prop_plot_html <-
       ) +
       ggplot2::labs(x = NULL, y = NULL)
 
-    if (length(indep_vars) > 1L || (length(indep_vars) >= 1L && dplyr::n_distinct(data[[".variable_label"]]) > 1)) {
+    if (length(indep_vars) > 1L ||
+        (length(indep_vars) >= 1L &&
+         (dplyr::n_distinct(data[[".variable_label"]]) > 1 ||
+          (dplyr::n_distinct(data[[".variable_label"]]) == 1 &&
+           isFALSE(dots$hide_axis_text_if_single_variable))))) {
       if(!inverse) {
       p <- p +
         ggiraph::facet_grid_interactive(
