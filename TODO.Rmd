@@ -11,59 +11,6 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Version 1.0
-
-# General improvements
-
--   speed performance
-    +   early fails
-    -   normalization with hash/ID lookup:
-        -   chapter overview (input only)
-        -   data frame (or string matrix?) of variables and their fixed information (labels, variable names, univariates?)
-        -   data frame (or string matrix?) of bivariate combinations with sigtest info (long format)
-        -   data frame (or numeric matrix?) of all summary_data stuff for univariates
-        -   data frame (or numeric matrix?) of all summary_data stuff for bivariates
-        -   NB: Matrices are hard to work with and do not allow grouping storage
-        -   vectorization, avoid looping (can be parallellized in outer loop)
-        -   profiling
-        -   avoid copying
-        -   vctrs, rlang, base
-        -   premake summarized_data and reuse it across elements, filtering as needed
-        -   pipe =\> no pipe
-        -   if not grouping:
-            -   dplyr::filter =\> vctrs::vec_slice()
-            -   dplyr::mutate =\> base
-            -   dplyr::select =\> base
-            -   dplyr::pull =\> base
-            -   bind_rows =\> vctrs::vec_rbind
-            -   remove tidyselect/data masking: all using strings for columns names internally
-            -   dtplyr?
--   refactoring
--   more memorable and logical naming of functions, arguments, etc.
--   rename files so they are logical for developers
-    -   alphabetical order of operations
--   documentation and examples
-    -   inheritParams
-    -   exemplify all non-trivial argument inputs (lists, vectors, objects)
-    -   better hints in error/warning messages
-    -   progress bars
--   more robustness
-    -   increase test coverage
-    -   moduling / code refactoring
-    -   target package / renv
-    -   argument checks
--   flexible arguments
--   reduce size of package (in MB)
--   reduce dependencies
-    -   find upstream packages
-    -   copy code when applicable
-    -   split functions into smaller and more robust packages
-        -   analyze co-dependencies
--   simplify to reduce build/install time
-    -   Examples, tests, data, inst-folder templates/attachments
-
-
-############################################################## 
 
 # OLD STUFF, IGNORE
 
@@ -165,23 +112,15 @@ Loadings improved if item removed
 -   Kontroller og Feilmeldinger (rlang)
 
 
-# Gamle notater, kan være noen ideer verdt å beholde her
 
-############################################################################# 
+2 SVG eller vektorgrafikk i Word 
 
-# NIFUstolper: Produksjon (direkte lagring til disk) av stolpediagrammer for spørsmålsbatterier gruppert etter supergrupper, grupper, osv og brutt ned på liste med brytningsvariabler
-
-1 Unngå overskriving: Legg til siffer, sjekk på nytt, etc. 1 Algoritme for høyden (minste størrelse når strip-tekst går over flere linjer) 2 SVG eller vektorgrafikk i Word 2 facet-tekst justeres slik at den aldri forsvinner om den blir for mange linjer 2 Sjekk at det er færre verdier enn farger
-
-# Produksjon av alle mulige tabeller for sett med variabler brutt ned på liste med brytningsvariabler, fordelt på batteri
-
-1 function(. data, .outcome_vars=TIDY SELECT list.vars_break=NULL, .vars_break2=null, brytning_ved_rader=T, batteri_var="")
 
 # Tekstgenerering av signifikanstester for sett med ordinale variabler brutt ned på liste med brytningsvariabler.
 
 1 Fikse feil når det er flere grupper som sammenlignes (N og m= synes å være samme for 1. og 3. oppføring? 1 Lagre analysen per variableGroup - altså en ytterloop - kontinuerlig 1 Raskere, går tregt 2 Sortere gruppene etter faktor-levels, eller etter hva som er høyest. 1 Lagre krysstabeller i samme slengen. Setningen kan legges umiddelbart under tabellen. 2 Legge til totalen for å sammenligne gruppene med totalen, men er dette fortsatt uavhengige grupper? (add_total=T) 1 ta sjekk på om ordinalvariabel er ordered factor, gi informativ feilmelding 1 Sjekk om variabler inneholder NA, fjerne med advarsel 2 unngå coin-pakken, finne referanser til metoden (Agresti, 2007) 3 Hvilke grupper har høyest/lavest verdi, på hver variabel? 2 Andre ikke-parametriske distribusjoner (nominal-nominal, binær, interval, etc) 3 Omnibus-tester? 3 Ulike type fraser for ulike batterier (enten character vector of length 1 or character vector =length(unique(variableGroup) 3 Randomisere mellom fraser compareGroups-pakken? Bør også eksportere som CSV-fil resultatene da det kan være letter eå lese. "mer enig enn" kan da bli \> eller \<.
 
-# NIFU_efa: EFA av alle utfallsvariabler
+# EFA av alle utfallsvariabler
 
 Finner selv ut hvor mange faktorer er teoretisk mulige
 Fjerner iterativt variabler med missing over 20%, forenkler variabler med mindre enn 10% per kategori 
@@ -204,11 +143,7 @@ Rapportere bug til Mplus om at \$1 blir kuttet vekk fra CI-output. Rapportere bu
 
 # Tekstgenerering av Mplusmodeller
 
-```         
 Total, så hver spesifikk indirekte, innenfor disse vise deleffektene, så total indirekte, så direkte.
 Benytter STDYX og STDY avhengig av type variabel
-```
 
-# Automatisk generering av hvert av det ovenstående for hvert batteri (samlefunksjon) i et Word-dokument med NIFU-template, gruppert etter headings,
-
-3 Legger inn grafene, tabellene, signifikanstester, m.m. under korrekt overskrift. Må sortere riktig. Hm Må ha et register i CSV-fil eller lignende med fraser man kan benytte til variasjon, for introduksjon av grafer, tabeller, osv.
+Må ha et register i CSV-fil eller lignende med fraser man kan benytte til variasjon, for introduksjon av grafer, tabeller, osv.
