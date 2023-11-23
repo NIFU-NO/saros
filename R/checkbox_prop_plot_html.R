@@ -20,10 +20,8 @@ prep_checkbox_prop_plot_html <-
     dots <- update_dots(dots = rlang::list2(...),
                         caller_function = "checkbox_prop_plot")
 
-    if(!dplyr::n_distinct(data[[".category"]], na.rm = dots$showNA == "never") == 2 ||
-       !is_colour(dots$colour_2nd_binary_cat)) {
-      cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing), or is missing {.arg colour_2nd_binary_cat} (currently set to {dots$colour_2nd_binary_cat}).")
-    }
+    if(dplyr::n_distinct(data[[".category"]], na.rm = TRUE) != 2) cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing).")
+    if(!is_colour(dots$colour_2nd_binary_cat)) cli::cli_abort("{unique(data$.variable_label)} is missing {.arg colour_2nd_binary_cat}.")
 
 
     indep_vars <- colnames(data)[!colnames(data) %in%

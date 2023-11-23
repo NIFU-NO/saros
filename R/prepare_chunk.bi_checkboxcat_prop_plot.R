@@ -13,7 +13,14 @@ prepare_chunk.bi_checkboxcat_prop_plot <-
     if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord")) ||
        !all(chapter_overview_section$.variable_type_indep %in% c("fct", "ord")) ||
        any(is.na(as.character(chapter_overview_section$.variable_name_indep))) ||
-       nrow(chapter_overview_section) == 0) return()
+       nrow(chapter_overview_section) == 0 ||
+       !is_colour(dots$colour_2nd_binary_cat)) return()
+
+    dep_cats <-
+      unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))
+
+    if(length(dep_cats[!is.na(dep_cats)]) != 2) return()
+
 
     # if(!compare_many(chapter_overview_section$indep_cols_df)) return()
 
