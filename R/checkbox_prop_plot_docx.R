@@ -18,7 +18,7 @@ prep_checkbox_prop_plot_docx <-
     dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
                               val = dots[!names(dots) %in% c("...")], keep.null = TRUE)
 
-    if(dplyr::n_distinct(data[[".category"]], na.rm = TRUE) != 2) cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing).")
+    if(dplyr::n_distinct(levels(data[[".category"]]), na.rm = TRUE) != 2) cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing).")
     if(!is_colour(dots$colour_2nd_binary_cat)) cli::cli_abort("{unique(data$.variable_label)} is missing {.arg colour_2nd_binary_cat}.")
 
 

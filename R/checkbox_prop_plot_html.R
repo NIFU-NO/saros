@@ -20,7 +20,7 @@ prep_checkbox_prop_plot_html <-
     dots <- update_dots(dots = rlang::list2(...),
                         caller_function = "checkbox_prop_plot")
 
-    if(dplyr::n_distinct(data[[".category"]], na.rm = TRUE) != 2) cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing).")
+    if(dplyr::n_distinct(levels(data[[".category"]]), na.rm = TRUE) != 2) cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing).")
     if(!is_colour(dots$colour_2nd_binary_cat)) cli::cli_abort("{unique(data$.variable_label)} is missing {.arg colour_2nd_binary_cat}.")
 
 
@@ -210,7 +210,8 @@ embed_checkbox_prop_plot <-
            inverse = FALSE,
            call = rlang::caller_env()) {
 
-    if(interactive()) cli::cli_inform("Have you remembered to recode missing on all variables in battery if none of them have been checked?")
+    if(interactive()) cli::cli_inform("Have you remembered to recode missing on all variables in battery if none of them have been checked?",
+                                      .frequency = "regularly", .frequency_id = "recode_checkbox_items")
 
     dots <- update_dots(dots = rlang::list2(...),
                         caller_function = "checkbox_prop_plot")
