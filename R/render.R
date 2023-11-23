@@ -190,10 +190,10 @@ create_email_credentials <- function(local_basepath = getwd(),
   if(length(in_email_not_in_cred)>0) {
     cli::cli_warn("Usernames in emails data set not found in password file ({.path {local_main_password_path}}): {in_email_not_in_cred}")
   }
-  in_cred_not_in_email <- setdiff(credentials[[username_col]], emails[[username_col]])
-  if(length(in_cred_not_in_email)>0 && rlang::is_false(ignore_missing_emails)) {
-    cli::cli_warn("Usernames in password file ({.path {local_main_password_path}}) not found in emails data set: {in_cred_not_in_email}")
-  }
+  # in_cred_not_in_email <- setdiff(credentials[[username_col]], emails[[username_col]])
+  # if(length(in_cred_not_in_email)>0 && rlang::is_false(ignore_missing_emails)) {
+  #   cli::cli_warn("Usernames in password file ({.path {local_main_password_path}}) not found in emails data set: {in_cred_not_in_email}")
+  # }
 
   out <- dplyr::inner_join(emails, credentials, by=username_col, relationship = "many-to-one")
 
