@@ -29,7 +29,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # plots
 3   Also, a lighter inactive shadow alpha. 
--   tri_catcatcat_plot (z)
+2   tri_catcatcat_plot (z)
     -   Spørringene: resp x Ys - KU: fagfelt og institusjon x Ys - AGU: sektor x Ys.
 
 2   estimate_plot_height: consider totals=TRUE
