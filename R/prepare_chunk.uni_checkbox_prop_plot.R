@@ -14,7 +14,10 @@ prepare_chunk.uni_checkbox_prop_plot <-
     if(!all(chapter_overview_section$.variable_type_dep %in% c("fct", "ord")) ||
        !all(is.na(as.character(chapter_overview_section$.variable_name_indep))) ||
        !is_colour(dots$colour_2nd_binary_cat) ||
-       length(unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))) > 3) return()
+       nrow(chapter_overview_section) == 0) return()
+    dep_cats <-
+      unique(unlist(data[, unique(as.character(chapter_overview_section$.variable_name_dep)), drop=FALSE]))
+    if(length(dep_cats[!is.na(dep_cats)]) != 2) return()
 
     if(all(chapter_overview_section$.element_name == "uni_checkbox_prop_plot")) {
         embed_checkbox_plot_docx <- embed_checkbox_prop_plot_docx

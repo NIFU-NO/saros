@@ -7,7 +7,7 @@
 #'
 #' @return mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
 #' @keywords internal
-prep_cat_prop_plot_docx <-
+prep_checkbox_prop_plot_docx <-
   function(data,
            ...,
            colour_palette = NULL,
@@ -18,26 +18,24 @@ prep_cat_prop_plot_docx <-
     dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
                               val = dots[!names(dots) %in% c("...")], keep.null = TRUE)
 
+    if(dplyr::n_distinct(data[[".category"]], na.rm = TRUE) != 2) cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing).")
+    if(!is_colour(dots$colour_2nd_binary_cat)) cli::cli_abort("{unique(data$.variable_label)} is missing {.arg colour_2nd_binary_cat}.")
 
-    if(is.null(colour_palette)) {
-      n <- length(levels(data[[".category"]]))
-      hues <- seq(15, 375, length = n + 1)
-      colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
-    }
 
-    multi <- length(colour_palette) > 2
 
     indep_vars <- colnames(data)[!colnames(data) %in%
-                                .saros.env$summary_data_sort2]
-
+                                   .saros.env$summary_data_sort2]
     hide_axis_text <-
       isTRUE(dots$hide_axis_text_if_single_variable) &&
       length(indep_vars) == 0 &&
       dplyr::n_distinct(data[[".variable_label"]]) == 1
 
-    hide_legend <-
-      dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
-      !rlang::is_null(dots$colour_na)
+    hide_legend <- TRUE
+    colour_palette <- rlang::set_names(c(NA, dots$colour_2nd_binary_cat),
+                                       nm = levels(data[[".category"]]))
+
+
+    max_nchar_cat <- max(nchar(levels(data[[".category"]])), na.rm = TRUE)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
@@ -46,7 +44,7 @@ prep_cat_prop_plot_docx <-
       lapply(colour_palette,
              function(color) {
                officer::fp_text(font.size = dots$label_font_size,
-                                color = hex_bw(color, colour_2nd_binary_cat = if(!multi) dots$colour_2nd_binary_cat),
+                                color = hex_bw(color, colour_2nd_binary_cat = dots$colour_2nd_binary_cat),
                                 font.family = dots$font_family)
              })
 
@@ -101,7 +99,7 @@ prep_cat_prop_plot_docx <-
 #' @inheritParams draft_report
 #' @inheritParams summarize_data
 #' @inheritParams gen_qmd_chapters
-#' @inheritParams embed_cat_prop_plot
+#' @inheritParams embed_checkbox_prop_plot
 #'
 #' @importFrom tidyselect everything eval_select
 #' @importFrom officer read_docx docx_dim block_caption body_add_caption
@@ -117,7 +115,7 @@ prep_cat_prop_plot_docx <-
 #'
 #'  test_docx_b13 <-
 #'    ex_survey1 |>
-#'    embed_cat_prop_plot_docx(dep = b_1:b_3,
+#'    embed_checkbox_prop_plot_docx(dep = b_1:b_3,
 #'               showNA = "never",
 #'               descend = TRUE,
 #'               return_raw = FALSE,
@@ -135,7 +133,7 @@ prep_cat_prop_plot_docx <-
 #' print(test_docx_b13, target = "test_docx_b13.docx")
 #' file.remove("test_docx_b13.docx")
 #' }
-embed_cat_prop_plot_docx <-
+embed_checkbox_prop_plot_docx <-
   function(data,
            ...,
            dep = tidyselect::everything(),
@@ -146,7 +144,7 @@ embed_cat_prop_plot_docx <-
            inverse = FALSE) {
 
     dots <- update_dots(dots = rlang::list2(...),
-                        caller_function = "cat_prop_plot")
+                        caller_function = "checkbox_prop_plot")
 
     check_multiple_indep(data, indep = {{indep}})
 
@@ -166,21 +164,14 @@ embed_cat_prop_plot_docx <-
         # add_n_to_bygroup = TRUE,
         !!!dots)
 
-    # if(length(indep_pos)>0) {
-    #   data_out[[names(indep_pos)]] <- forcats::fct_rev(data_out[[names(indep_pos)]])
-    # }
     if(length(indep_pos)==0) {
       data_out[[".variable_label"]] <- forcats::fct_rev(data_out[[".variable_label"]])
     }
 
-    if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
-       !rlang::is_null(dots$colour_2nd_binary_cat)) {
-      data_out$.category <- forcats::fct_rev(data_out$.category)
-    }
 
     chart <-
       rlang::exec(
-        prep_cat_prop_plot_docx,
+        prep_checkbox_prop_plot_docx,
         data = data_out,
         inverse = inverse,
         colour_palette = colour_palette,
@@ -205,7 +196,7 @@ embed_cat_prop_plot_docx <-
     } else {
 
 
-    ## Consider moving all the below into prep_cat_prop_plot_docx
+    ## Consider moving all the below into prep_checkbox_prop_plot_docx
     ## so that embed_chart becomes one function
     docx_file <- use_docx(docx_template = dots$docx_template)
 
