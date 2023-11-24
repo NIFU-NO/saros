@@ -53,44 +53,51 @@ look_for_extended <- function(data,
     cli::cli_ul(duplicates)
   }
 
-  if(!is.null(name_separator)) {
-    if(rlang::is_character(name_separator, n = 1)) {
-      x <-
-        tidyr::separate_wider_delim(x,
-                                    cols = ".variable_name",
-                                    delim = name_separator,
-                                    names = c(".variable_name_prefix", ".variable_name_suffix"),
-                                    cols_remove = FALSE,
-                                    too_few = "align_end", too_many = "merge")
-      if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = " - "), na.rm=TRUE) > 0) {
-        cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
-                        i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
-      }
+  if(rlang::is_character(name_separator)) {
+    separator_fun <-
+      if(rlang::is_character(names(name_separator))) {
+        tidyr::separate_wider_regex
+      } else tidyr::separate_wider_delim
 
-    } else cli::cli_abort("Non-string {.arg name_separator} currently not supported.")
-  } else x <- dplyr::mutate(x,
-                            .variable_name_prefix = .data$.variable_name,
-                            .variable_name_suffix = .data$.variable_name)
+    x <-
+      separator_fun(x,
+                    cols = ".variable_name",
+                    delim = name_separator,
+                    names = c(".variable_name_prefix", ".variable_name_suffix"),
+                    cols_remove = FALSE,
+                    too_few = "align_end", too_many = "merge")
+    if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = name_separator), na.rm=TRUE) > 0) {
+      cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
+                      i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
+    }
+  } else {
+    x$.variable_name_prefix <- x$.variable_name
+    x$.variable_name_suffix <- x$.variable_name
+  }
 
-  if(!is.null(label_separator)) {
-    if(rlang::is_character(label_separator, n = 1)) {
-      x <-
-        tidyr::separate_wider_delim(x,
-                                    cols = ".variable_label",
-                                    names = c(".variable_label_prefix", ".variable_label_suffix"),
-                                    delim = label_separator,
-                                    too_few = "align_end", too_many = "merge")
-      if(sum(stringi::stri_count_fixed(str = x$.variable_label_suffix, pattern = " - "), na.rm=TRUE) > 0) {
-        cli::cli_warn(c("{.arg label_separator} matches more than one delimiter, your output is likely ugly.",
-                        i="Consider renaming your variable labels with e.g. {.fun labelled::set_variable_labels}."))
-      }
+  if(rlang::is_character(label_separator)) {
+    separator_fun <-
+      if(rlang::is_character(names(label_separator))) {
+        tidyr::separate_wider_regex
+      } else tidyr::separate_wider_delim
 
-    }  else cli::cli_abort("Non-string {.arg label_separator} currently not supported.")
+    x <-
+      separator_fun(x,
+                    cols = ".variable_label",
+                    delim = label_separator,
+                    names = c(".variable_label_prefix", ".variable_label_suffix"),
+                    cols_remove = FALSE,
+                    too_few = "align_end", too_many = "merge")
+    if(sum(stringi::stri_count_fixed(str = x$.variable_label_suffix, pattern = label_separator), na.rm=TRUE) > 0) {
+      cli::cli_warn(c("{.arg label_separator} matches more than one delimiter, your output is likely ugly.",
+                      i="Consider renaming your variables with e.g. {.fun labelled::set_variable_labels}."))
+    }
   } else {
     x$.variable_label_prefix <- x$.variable_label
     x$.variable_label_suffix <- x$.variable_label
     x$.variable_label <- NULL
   }
+
   grouping_vars <-
     c(if(!is.null(label_separator)) ".variable_label_prefix",
       if(!is.null(name_separator)) ".variable_name_prefix")

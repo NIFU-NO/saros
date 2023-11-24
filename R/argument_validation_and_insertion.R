@@ -24,8 +24,8 @@ argument_validation_and_insertion <- function(params) {
       data = list(fun = function(x) inherits(x, "data.frame") || inherits(x, "survey")),
       chapter_overview = list(fun = function(x) is.null(x) || inherits(x, "data.frame")),
 
-      label_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
-      name_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
+      label_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_character(x)),
+      name_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_character(x)),
       mesos_var = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
       element_names = list(fun = function(x) rlang::is_character(x) && all(x %in% env$element_names)),
       auxiliary_variables = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
