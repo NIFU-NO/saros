@@ -55,9 +55,13 @@ look_for_extended <- function(data,
 
   if(rlang::is_character(name_separator)) {
     separator_fun <-
-      if(rlang::is_character(names(name_separator))) {
+      if(rlang::is_character(names(name_separator)) &&
+         names(name_separator) == c(".variable_name_prefix", ".variable_name_suffix")) {
         tidyr::separate_wider_regex
-      } else tidyr::separate_wider_delim
+      } else if(rlang::is_string(name_separator)) {
+        tidyr::separate_wider_delim
+      } else cli::cli_abort("Unrecognizable {.arg name_separator}: {name_separator}.")
+
 
     x <-
       separator_fun(x,
@@ -77,9 +81,12 @@ look_for_extended <- function(data,
 
   if(rlang::is_character(label_separator)) {
     separator_fun <-
-      if(rlang::is_character(names(label_separator))) {
+      if(rlang::is_character(names(label_separator)) &&
+         names(label_separator) == c(".variable_label_prefix", ".variable_label_suffix")) {
         tidyr::separate_wider_regex
-      } else tidyr::separate_wider_delim
+      } else if(rlang::is_string(label_separator)) {
+        tidyr::separate_wider_delim
+      } else cli::cli_abort("Unrecognizable {.arg label_separator}: {label_separator}.")
 
     x <-
       separator_fun(x,
