@@ -130,7 +130,8 @@ gen_qmd_structure2 <-
     chapter_overview <- remove_empty_col_for_mesos_group(data = data,
                                                          chapter_overview = chapter_overview,
                                                          mesos_group = mesos_group,
-                                                         mesos_var = dots$mesos_var)
+                                                         mesos_var = dots$mesos_var,
+                                                         hide_result_if_n_below = dots$hide_result_if_n_below)
 
     grouping_structure <- dplyr::group_vars(chapter_overview)
     non_grouping_vars <- colnames(chapter_overview)[!colnames(chapter_overview) %in% grouping_structure]
