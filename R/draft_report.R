@@ -783,7 +783,7 @@ draft_report <-
                      gen_qmd_index,
                      title = args$title,
                      authors = all_authors,
-                     index_filepath = file.path(path, stringi::stri_c(args$title, ".qmd", ignore_null = TRUE)),
+                     index_filepath = file.path(path, stringi::stri_c("_", args$title, ".qmd", ignore_null = TRUE)),
                      chapter_filepaths = chapter_filepaths,
                      yaml_file = args$report_yaml_file,
                      !!!args[!names(args) %in% c("title", "authors", "report_yaml_file")],
