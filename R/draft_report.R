@@ -540,6 +540,7 @@ draft_report <-
            totals = FALSE,
            hide_bi_entry_if_sig_above = 1,
            hide_test_if_n_below = 10,
+           hide_result_if_n_below = 10,
            hide_chr_for_others = TRUE,
            hide_variable_if_all_na = TRUE,
            digits = 1,
