@@ -51,7 +51,7 @@ gen_inner_section <- function(.x, .y,
         data_for_all <- data
       }
 
-      if(nrow(data_for_all) > 0) {
+      if(nrow(data_for_all) > dots$hide_result_if_n_below) {
 
 
         qmd_snippet <-
@@ -77,7 +77,7 @@ gen_inner_section <- function(.x, .y,
                                            data[[dots$mesos_var]] == mesos_group)
       if(!inherits(data_for_mesos, "data.frame")) browser()
 
-      if(nrow(data_for_mesos) > 0) {
+      if(nrow(data_for_mesos) > dots$hide_result_if_n_below) {
 
         qmd_snippet_mesos <-
           rlang::exec(
