@@ -55,7 +55,7 @@ prep_cat_freq_plot_html <-
                               .data[[".count"]],
                               .data[[".proportion"]]*100,
                               .data[[".variable_label"]]),
-                    .tooltip = ifelse(rlang::is_string(indep_vars),
+                    .tooltip = ifelse(!is.na(.data[[".tooltip"]]) & rlang::is_string(indep_vars),
                                       yes = sprintf(fmt = stringi::stri_c("%s", "%s", sep="\n", ignore_null = TRUE),
                                                     .data[[".tooltip"]],
                                                     .data[[indep_vars]]),
