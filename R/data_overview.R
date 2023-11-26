@@ -62,8 +62,14 @@ look_for_extended <- function(data,
                                       patterns = name_separator,
                                       cols_remove = FALSE,
                                       too_few = "align_start")
+        # if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = name_separator), na.rm=TRUE) > 0) {
+        #   cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
+        #                   i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
+        # }
 
-      } else if(rlang::is_string(name_separator)) {
+
+      } else if(rlang::is_string(name_separator) &&
+                rlang::is_null(names(name_separator))) {
         x <-
           tidyr::separate_wider_delim(x,
                                       cols = ".variable_name",
@@ -72,13 +78,14 @@ look_for_extended <- function(data,
                                       cols_remove = FALSE,
                                       too_few = "align_end",
                                       too_many = "merge")
+        if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = name_separator), na.rm=TRUE) > 0) {
+          cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
+                          i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
+        }
+
       } else cli::cli_abort("Unrecognizable {.arg name_separator}: {name_separator}.")
 
 
-    if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = name_separator), na.rm=TRUE) > 0) {
-      cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
-                      i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
-    }
   } else {
     x$.variable_name_prefix <- x$.variable_name
     x$.variable_name_suffix <- x$.variable_name
@@ -88,22 +95,30 @@ look_for_extended <- function(data,
     separator_fun <-
       if(rlang::is_character(names(label_separator)) &&
          all(c(".variable_label_prefix", ".variable_label_suffix") %in% names(label_separator))) {
-        tidyr::separate_wider_regex
-      } else if(rlang::is_string(label_separator)) {
-        tidyr::separate_wider_delim
+        x <-
+          tidyr::separate_wider_regex(x,
+                                      cols = ".variable_label",
+                                      patterns = label_separator,
+                                      cols_remove = FALSE,
+                                      too_few = "align_start")
+
+      } else if(rlang::is_string(label_separator) &&
+                rlang::is_null(names(label_separator))) {
+        x <-
+          tidyr::separate_wider_delim(x,
+                        cols = ".variable_label",
+                        delim = label_separator,
+                        names = c(".variable_label_prefix", ".variable_label_suffix"),
+                        cols_remove = FALSE,
+                        too_few = "align_end",
+                        too_many = "merge")
+        if(sum(stringi::stri_count_fixed(str = x$.variable_label_suffix, pattern = label_separator), na.rm=TRUE) > 0) {
+          cli::cli_warn(c("{.arg label_separator} matches more than one delimiter, your output is likely ugly.",
+                          i="Consider renaming your variables with e.g. {.fun labelled::set_variable_labels}."))
+        }
       } else cli::cli_abort("Unrecognizable {.arg label_separator}: {label_separator}.")
 
-    x <-
-      separator_fun(x,
-                    cols = ".variable_label",
-                    delim = label_separator,
-                    names = c(".variable_label_prefix", ".variable_label_suffix"),
-                    cols_remove = FALSE,
-                    too_few = "align_end", too_many = "merge")
-    if(sum(stringi::stri_count_fixed(str = x$.variable_label_suffix, pattern = label_separator), na.rm=TRUE) > 0) {
-      cli::cli_warn(c("{.arg label_separator} matches more than one delimiter, your output is likely ugly.",
-                      i="Consider renaming your variables with e.g. {.fun labelled::set_variable_labels}."))
-    }
+
   } else {
     x$.variable_label_prefix <- x$.variable_label
     x$.variable_label_suffix <- x$.variable_label
