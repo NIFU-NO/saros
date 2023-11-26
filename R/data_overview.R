@@ -54,22 +54,27 @@ look_for_extended <- function(data,
   }
 
   if(rlang::is_character(name_separator)) {
-    separator_fun <-
       if(rlang::is_character(names(name_separator)) &&
          all(c(".variable_name_prefix", ".variable_name_suffix") %in% names(name_separator))) {
-        tidyr::separate_wider_regex
+        x <-
+          tidyr::separate_wider_regex(x,
+                                      cols = ".variable_name",
+                                      patterns = name_separator,
+                                      cols_remove = FALSE,
+                                      too_few = "align_start")
+
       } else if(rlang::is_string(name_separator)) {
-        tidyr::separate_wider_delim
+        x <-
+          tidyr::separate_wider_delim(x,
+                                      cols = ".variable_name",
+                                      delim = name_separator,
+                                      names = c(".variable_name_prefix", ".variable_name_suffix"),
+                                      cols_remove = FALSE,
+                                      too_few = "align_end",
+                                      too_many = "merge")
       } else cli::cli_abort("Unrecognizable {.arg name_separator}: {name_separator}.")
 
 
-    x <-
-      separator_fun(x,
-                    cols = ".variable_name",
-                    delim = name_separator,
-                    names = c(".variable_name_prefix", ".variable_name_suffix"),
-                    cols_remove = FALSE,
-                    too_few = "align_end", too_many = "merge")
     if(sum(stringi::stri_count_fixed(str = x$.variable_name_suffix, pattern = name_separator), na.rm=TRUE) > 0) {
       cli::cli_warn(c("{.arg name_separator} matches more than one delimiter, your output is likely ugly.",
                       i="Consider renaming your variables with e.g. {.fun dplyr::rename_with()}."))
