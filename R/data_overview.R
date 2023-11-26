@@ -56,7 +56,7 @@ look_for_extended <- function(data,
   if(rlang::is_character(name_separator)) {
     separator_fun <-
       if(rlang::is_character(names(name_separator)) &&
-         c(".variable_name_prefix", ".variable_name_suffix") %in% names(name_separator)) {
+         all(c(".variable_name_prefix", ".variable_name_suffix") %in% names(name_separator))) {
         tidyr::separate_wider_regex
       } else if(rlang::is_string(name_separator)) {
         tidyr::separate_wider_delim
@@ -82,7 +82,7 @@ look_for_extended <- function(data,
   if(rlang::is_character(label_separator)) {
     separator_fun <-
       if(rlang::is_character(names(label_separator)) &&
-         c(".variable_label_prefix", ".variable_label_suffix") %in% names(label_separator)) {
+         all(c(".variable_label_prefix", ".variable_label_suffix") %in% names(label_separator))) {
         tidyr::separate_wider_regex
       } else if(rlang::is_string(label_separator)) {
         tidyr::separate_wider_delim
