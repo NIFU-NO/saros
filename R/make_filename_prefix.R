@@ -7,11 +7,11 @@ make_filename_prefix <- function(
     mesos_sep_string = "_FOR_"
 ) {
 
-  # browser()
   grouping_structure[grouping_structure %in%
                         c(".variable_label_prefix_dep", ".variable_label_suffix_dep")] <- ".variable_name_dep"
+  grouping_structure[grouping_structure %in%
+                       c(".variable_label_prefix_indep", ".variable_label_suffix_indep")] <- ".variable_name_indep"
   grouping_structure <- unique(grouping_structure)
-  # grouping_structure <- grouping_structure[!grouping_structure %in% c(".element_name")]
 
   prefix <- chapter_overview_section
   prefix <- dplyr::ungroup(prefix)
