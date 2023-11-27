@@ -765,7 +765,7 @@ draft_report <-
 
                }
 
-
+browser()
                chapter_filepaths <-
                  rlang::exec(
                    gen_qmd_chapters,
