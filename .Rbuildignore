@@ -17,3 +17,4 @@
 ^vignettes/articles$
 ^R$/method_caller\.R$
 ^_log.txt$
+^CODE_OF_CONDUCT\.md$
