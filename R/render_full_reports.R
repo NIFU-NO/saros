@@ -53,9 +53,9 @@ render_full_reports <- function(
       replacement = site_path)
 
   fs::dir_copy(path = extensions_path,
-               new_path = processable_files_folders)
+               new_path = processable_files_folders, overwrite = TRUE)
   fs::dir_copy(path = images_path,
-               new_path = processable_files_folders)
+               new_path = processable_files_folders, overwrite = TRUE)
 
   for(i in seq_along(processable_files)) {
     quarto::quarto_render(input = processable_files[i], output_format = "all")
@@ -64,8 +64,8 @@ render_full_reports <- function(
                 new_path = new_file_destinations_pdf, overwrite = TRUE)
   fs::file_copy(path = new_files_docx,
                 new_path = new_file_destinations_docx, overwrite = TRUE)
-  fs::dir_delete(fs::path(processable_files_folders, "_extensions"))
-  fs::dir_delete(fs::path(processable_files_folders, "_images"))
-  fs::file_delete(new_files_docx)
-  fs::file_delete(new_files_pdf)
+  unlink(fs::path(processable_files_folders, "_extensions"))
+  unlink(fs::path(processable_files_folders, "_images"))
+  unlink(new_files_docx)
+  unlink(new_files_pdf)
 }
