@@ -1,11 +1,3 @@
-#' @keywords internal
-#' @return String
-#'
-#'
-
-# Heading added if not at innermost-level, or if inner-most level and rlang::is_string(output)
-# dots$hide_chr_for_others if mesos_group and chr
-#
 gen_within_chapter_structure <-
   function(chapter_overview,
            data,
