@@ -13,6 +13,7 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
 
 
     patterns <- c("^Q[0-9]+_[0-9]+_[0-9a-z]+", "^Q[0-9]+_[0-9a-z]+", "^Q[0-9a-z]+")
+    col2 <- col
     for(pat in patterns) {
       if(stringi::stri_count_fixed(col, pattern = "_") == 4-match(pat, patterns)) {
         col2 <- stringi::stri_extract_first_regex(col, pattern = pat)
