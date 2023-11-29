@@ -72,12 +72,11 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
 
   data <- lapply(rlang::set_names(colnames(data)), FUN = function(var) {
     label <- attr(data[[var]], "label")
-    if(var == "Q10_1_1") browser()
     if(rlang::is_string(label)) {
       for(i in nrow(char_table)) {
         label <- stringi::stri_replace_all_fixed(str = label,
-                                        pattern = char_table[i, cols[2]],
-                                        replacement = char_table[i, cols[1]])
+                                        pattern = char_table[i, cols[2], drop=TRUE],
+                                        replacement = char_table[i, cols[1], drop=TRUE])
       }
 
       label <- stringi::stri_replace_all_regex(label, pattern = "- Selected Choice ", replacement = "- ")
