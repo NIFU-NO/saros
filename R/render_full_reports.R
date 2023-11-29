@@ -31,7 +31,7 @@ render_full_reports <- function(
     processable_files <- list.files(path = processable_path,
                                     pattern = "^_[^z].+\\.qmd",
                                     recursive = TRUE, full.names = TRUE)
-  } else cli::cli_abort("Either {.arg files} or {.arg processable_path} must be specified.")
+  } else cli::cli_abort("Either {.arg files} or {.arg processable_path} must be specified and exist.")
   processable_files <-
     processable_files[stringi::stri_detect_regex(basename(processable_files), pattern = "^_[^z].+")]
 
