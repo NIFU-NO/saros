@@ -64,8 +64,8 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
   char_table <- rbind(char_table)
   char_table <- char_table[!duplicated(char_table[[cols[2]]]), ]
   # fix names
-  names(char_table) <- stringi::stri_trans_tolower(names(char_table))
-  names(char_table) <- stringi::stri_replace_all_fixed(names(char_table), pattern = ' ', replacement = '_')
+  # names(char_table) <- stringi::stri_trans_tolower(names(char_table))
+  # names(char_table) <- stringi::stri_replace_all_fixed(names(char_table), pattern = ' ', replacement = '_')
   char_table <- char_table[char_table[[cols[2]]] != "", ]
 
   # here's a test string loaded with different html accents
