@@ -23,7 +23,9 @@ render_full_reports <- function(
     processable_path = file.path(path, "Reports"),
     site_path = file.path(path, "_site"),
     extensions_path = file.path(path, "_extensions"),
-    images_path = file.path(path, "_images")) {
+    images_path = file.path(path, "_images"),
+    ...) {
+  dots <- rlang::list2(...)
 
   if(rlang::is_character(files) && all(nchar(files)>0)) {
     processable_files <- files
@@ -31,7 +33,7 @@ render_full_reports <- function(
     processable_files <- list.files(path = processable_path,
                                     pattern = "^_[^z].+\\.qmd",
                                     recursive = TRUE, full.names = TRUE)
-  }
+  } else cli::cli_abort("Either {.arg files} or {.arg processable_path} must be specified and exist.")
   processable_files <-
     processable_files[stringi::stri_detect_regex(basename(processable_files), pattern = "^_[^z].+")]
 
@@ -52,20 +54,22 @@ render_full_reports <- function(
       pattern = path,
       replacement = site_path)
 
-  fs::dir_copy(path = extensions_path,
-               new_path = processable_files_folders)
-  fs::dir_copy(path = images_path,
-               new_path = processable_files_folders)
+  fs::dir_copy(path = rep(extensions_path, times=length(processable_files_folders)),
+               new_path = file.path(processable_files_folders, basename(extensions_path)), overwrite = TRUE)
+  fs::dir_copy(path = rep(images_path, times=length(processable_files_folders)),
+               new_path = file.path(processable_files_folders, basename(images_path)), overwrite = TRUE)
 
   for(i in seq_along(processable_files)) {
-    quarto::quarto_render(input = processable_files[i], output_format = "all")
+    rlang::exec(quarto::quarto_render,
+                input = processable_files[i],
+                output_format = "all",
+                !!!dots)
   }
   fs::file_copy(path = new_files_pdf,
                 new_path = new_file_destinations_pdf, overwrite = TRUE)
   fs::file_copy(path = new_files_docx,
                 new_path = new_file_destinations_docx, overwrite = TRUE)
-  fs::dir_delete(fs::path(processable_files_folders, basename(extensions_path)))
-  fs::dir_delete(fs::path(processable_files_folders, basename(images_path)))
-  fs::file_delete(new_files_docx)
-  fs::file_delete(new_files_pdf)
+  unlink(file.path(processable_files_folders, basename(extensions_path)))
+  unlink(file.path(processable_files_folders, basename(images_path)))
+  unlink(new_files_docx)
 }
