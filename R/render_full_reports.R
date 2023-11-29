@@ -53,9 +53,9 @@ render_full_reports <- function(
       replacement = site_path)
 
   fs::dir_copy(path = rep(extensions_path, times=length(processable_files_folders)),
-               new_path = processable_files_folders, overwrite = TRUE)
+               new_path = file.path(processable_files_folders, basename(extensions_path)), overwrite = TRUE)
   fs::dir_copy(path = rep(images_path, times=length(processable_files_folders)),
-               new_path = processable_files_folders, overwrite = TRUE)
+               new_path = file.path(processable_files_folders, basename(images_path)), overwrite = TRUE)
 
   for(i in seq_along(processable_files)) {
     quarto::quarto_render(input = processable_files[i], output_format = "all")
