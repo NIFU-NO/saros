@@ -64,8 +64,8 @@ render_full_reports <- function(
                 new_path = new_file_destinations_pdf, overwrite = TRUE)
   fs::file_copy(path = new_files_docx,
                 new_path = new_file_destinations_docx, overwrite = TRUE)
-  fs::dir_delete(fs::path(processable_files_folders, "_extensions"))
-  fs::dir_delete(fs::path(processable_files_folders, "_images"))
+  fs::dir_delete(fs::path(processable_files_folders, basename(extensions_path)))
+  fs::dir_delete(fs::path(processable_files_folders, basename(images_path)))
   fs::file_delete(new_files_docx)
   fs::file_delete(new_files_pdf)
 }
