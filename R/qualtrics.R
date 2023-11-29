@@ -12,17 +12,22 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
   for(col in colnames(data)) {
 
 
-    patterns <- c("^Q[0-9]+_[0-9]+_[0-9a-z]+", "^Q[0-9]+_[0-9a-z]+", "^Q[0-9a-z]+")
+    patterns <- c("^Q[0-9]+_[0-9]+_[0-9a-z]+",
+                  "^Q[0-9]+_[0-9a-z]+",
+                  "^Q[0-9a-z]+")
     col2 <- col
     for(pat in patterns) {
-      if(stringi::stri_count_fixed(col, pattern = "_") == 4-match(pat, patterns)) {
-        col2 <- stringi::stri_extract_first_regex(col, pattern = pat)
+      if(stringi::stri_count_fixed(col2, pattern = "_") == 4-match(pat, patterns)) {
+        col2 <- stringi::stri_extract_first_regex(col2, pattern = pat)
+        break
       }
     }
-    if(reverse_stata_replacement) col2 <- stringi::stri_extract_first_fixed(col2, pattern = "_", replacement = ".")
+    if(reverse_stata_replacement) col2 <- stringi::stri_replace_first_fixed(col2, pattern = "_", replacement = ".")
+
 
     if(!is.na(col2)) {
-      main_question <- questions[questions$qname == col2, "question", drop=TRUE]
+      main_question <- unname(questions[questions$qname == col2, "question", drop=TRUE])
+      main_question <- stringi::stri_trim_both(main_question)
       if(length(main_question)>0 && !is.na(main_question)) {
         attr(data[[col]], "label") <- stringi::stri_c(main_question, " - ", attr(data[[col]], "label"), ignore_null = TRUE)
       }
