@@ -69,8 +69,7 @@ render_full_reports <- function(
                 new_path = new_file_destinations_pdf, overwrite = TRUE)
   fs::file_copy(path = new_files_docx,
                 new_path = new_file_destinations_docx, overwrite = TRUE)
-  unlink(fs::path(processable_files_folders, "_extensions"))
-  unlink(fs::path(processable_files_folders, "_images"))
+  unlink(file.path(processable_files_folders, basename(extensions_path)))
+  unlink(file.path(processable_files_folders, basename(images_path)))
   unlink(new_files_docx)
-  unlink(new_files_pdf)
 }
