@@ -56,16 +56,17 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
 
   # scrape lookup table of accented char html codes, from the 2nd table on this page
   ref_url <- 'http://www.w3schools.com/charsets/ref_html_8859.asp'
+  cols <- c("Character", "Entity Name")
   char_table <- rvest::read_html(ref_url)
   char_table <- rvest::html_table(char_table)
   char_table <- char_table[1:4]
-  char_table <- lapply(char_table, function(x) x[, c("Character", "Entity Name")])
+  char_table <- lapply(char_table, function(x) x[, cols])
   char_table <- rbind(char_table)
-  char_table <- char_table[!duplicated(char_table$`Entity Name`), ]
+  char_table <- char_table[!duplicated(char_table[[cols[2]]]), ]
   # fix names
   names(char_table) <- stringi::stri_trans_tolower(names(char_table))
   names(char_table) <- stringi::stri_replace_all_fixed(names(char_table), pattern = ' ', replacement = '_')
-  char_table <- char_table[char_table$entity_name != "", ]
+  char_table <- char_table[char_table[[cols[2]]] != "", ]
 
   # here's a test string loaded with different html accents
   # test_str <- '&Agrave; &Aacute; &Acirc; &Atilde; &Auml; &Aring; &AElig; &Ccedil; &Egrave; &Eacute; &Ecirc; &Euml; &Igrave; &Iacute; &Icirc; &Iuml; &ETH; &Ntilde; &Ograve; &Oacute; &Ocirc; &Otilde; &Ouml; &times; &Oslash; &Ugrave; &Uacute; &Ucirc; &Uuml; &Yacute; &THORN; &szlig; &agrave; &aacute; &acirc; &atilde; &auml; &aring; &aelig; &ccedil; &egrave; &eacute; &ecirc; &euml; &igrave; &iacute; &icirc; &iuml; &eth; &ntilde; &ograve; &oacute; &ocirc; &otilde; &ouml; &divide; &oslash; &ugrave; &uacute; &ucirc; &uuml; &yacute; &thorn; &yuml;'
@@ -78,8 +79,8 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
     if(rlang::is_string(label)) {
       for(i in nrow(char_table)) {
         label <- stringi::stri_replace_all_fixed(str = label,
-                                        pattern = char_table[i, "entity_name"],
-                                        replacement = char_table[i, "character"])
+                                        pattern = char_table[i, cols[2]],
+                                        replacement = char_table[i, cols[1]])
       }
 
       label <- stringi::stri_replace_all_regex(label, pattern = "- Selected Choice ", replacement = "- ")
