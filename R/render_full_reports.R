@@ -63,7 +63,30 @@ render_full_reports <- function(
     rlang::exec(quarto::quarto_render,
                 input = processable_files[i],
                 output_format = "all",
-                !!!dots)
+                execute_params =
+                  list(execute =
+                         list("echo" = FALSE,
+                              "warning" = FALSE),
+                       "number-sections" = TRUE,
+                       "number-depth" = 3,
+                       "toc" = TRUE,
+                       "toc-depth" = 4,
+                       "fig-dpi" = 500,
+                       "df-print" = "kable",
+                       "crossref" = list(
+                         "chapters" = TRUE,
+                         "fig-title" = '**Figur**',
+                         "tbl-title" = '**Tabell**',
+                         "lof-title" = 'Figuroversikt',
+                         "lot-title" = 'Tabelloversikt',
+                         "title-delim" = '**.**',
+                         "fig-prefix" = "Figur",
+                         "tbl-prefix" = "Tabell",
+                         "ref-hyperlink" = TRUE,
+                         "labels" = "arabic"),
+                       "fig-cap-location" = "bottom",
+                       "tbl-cap-location" = "top",
+                       "lang" = "nb"))
   }
   fs::file_copy(path = new_files_pdf,
                 new_path = new_file_destinations_pdf, overwrite = TRUE)
