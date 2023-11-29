@@ -23,7 +23,9 @@ render_full_reports <- function(
     processable_path = file.path(path, "Reports"),
     site_path = file.path(path, "_site"),
     extensions_path = file.path(path, "_extensions"),
-    images_path = file.path(path, "_images")) {
+    images_path = file.path(path, "_images"),
+    ...) {
+  dots <- rlang::list2(...)
 
   if(rlang::is_character(files) && all(nchar(files)>0)) {
     processable_files <- files
@@ -58,7 +60,10 @@ render_full_reports <- function(
                new_path = file.path(processable_files_folders, basename(images_path)), overwrite = TRUE)
 
   for(i in seq_along(processable_files)) {
-    quarto::quarto_render(input = processable_files[i], output_format = "all")
+    rlang::exec(quarto::quarto_render,
+                input = processable_files[i],
+                output_format = "all",
+                !!!dots)
   }
   fs::file_copy(path = new_files_pdf,
                 new_path = new_file_destinations_pdf, overwrite = TRUE)
