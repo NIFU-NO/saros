@@ -58,7 +58,10 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
   ref_url <- 'http://www.w3schools.com/charsets/ref_html_8859.asp'
   char_table <- rvest::read_html(ref_url)
   char_table <- rvest::html_table(char_table)
-  char_table <- char_table[[2]]
+  char_table <- char_table[1:4]
+  char_table <- lapply(char_table, function(x) x[, c("Character", "Entity Name")])
+  char_table <- rbind(char_table)
+  char_table <- char_table[!duplicated(char_table$`Entity Name`), ]
   # fix names
   names(char_table) <- stringi::stri_trans_tolower(names(char_table))
   names(char_table) <- stringi::stri_replace_all_fixed(names(char_table), pattern = ' ', replacement = '_')
@@ -85,9 +88,9 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
       label <- stringi::stri_replace_all_regex(label, pattern = "\\{%name:([[:alnum:]]+) expression:.+?%\\}", replacement = "$1")
       label <- stringi::stri_replace_all_regex(label, pattern = "\\{%expression:.+?%\\}", replacement = "")
       label <- stringi::stri_replace_all_regex(label, pattern = "[[:space:]\n\r\t]+", replacement = " ")
-      if(stringi::stri_count_fixed(label, " - ")>=2) label <- stringi::stri_replace_all_fixed(label, pattern = sep, replacement = multi_sep_replacement)
-      if(stringi::stri_count_fixed(label, " - ")>=2) label <- stringi::stri_replace_all_fixed(label, pattern = sep, replacement = multi_sep_replacement)
-      label <- stringi::stri_replace_all_regex(label, pattern = "^[[:space:]]|[[:space:]-:]+$", replacement = "")
+      if(stringi::stri_count_fixed(label, " - ")>=2) label <- stringi::stri_replace_first_fixed(label, pattern = sep, replacement = multi_sep_replacement)
+      if(stringi::stri_count_fixed(label, " - ")>=2) label <- stringi::stri_replace_first_fixed(label, pattern = sep, replacement = multi_sep_replacement)
+      label <- stringi::stri_replace_all_regex(label, pattern = "^[[:space:]]|[[:space:]-:\\.]+$", replacement = "")
 
       attr(data[[var]], "label") <- label
     }
