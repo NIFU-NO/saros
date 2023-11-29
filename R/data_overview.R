@@ -435,9 +435,10 @@ refine_chapter_overview <-
                         sep = "___", remove = FALSE, na.rm = TRUE)
     out$.variable_group_dep <-
       ifelse(!is.na(out$.single_y_bivariate) & out$.single_y_bivariate,
-             out$.variable_group_dep, .variable_name_dep)
+             out$.variable_group_dep, out$.variable_name_dep)
     out$.single_y_bivariate <- NULL
-    dots$organize_by <- c(dots$organize_by[dots$organize_by != ".element_name"], ".variable_group_dep", ".element_name")
+    dots$organize_by <- c(dots$organize_by[dots$organize_by != ".element_name"],
+                          ".variable_group_dep", ".element_name")
   }
 
   out <-
