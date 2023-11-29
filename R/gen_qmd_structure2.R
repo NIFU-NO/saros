@@ -34,7 +34,7 @@ gen_qmd_structure2 <-
           value = value)
 
         # Add heading line if not a .element_name or chapter
-        if(!names(grouped_data)[level] %in% dots$ignore_heading_for_group &&
+        if(!names(grouped_data)[level] %in% c(dots$ignore_heading_for_group, ".variable_group_dep") &&
            level < ncol(grouped_data)) {
 
           output <-
