@@ -423,6 +423,22 @@ refine_chapter_overview <-
     if(is.character(x) || is.numeric(x)) return(x)
     if(is.factor(x)) return(as.integer(x))
   }
+  if(!is.na(dots$single_y_bivariates_if_indep_cats_above)) {
+    out$.single_y_bivariate <-
+      unlist(lapply(out$.variable_name_indep,
+                    function(col) {
+                      if(!is.na(col)) dplyr::n_distinct(data[[col]], na.rm = TRUE) else NA_integer_
+                      })) > dots$single_y_bivariates_if_indep_cats_above
+
+    out <- tidyr::unite(out, col = ".variable_group_dep",
+                        tidyselect::all_of(c(".variable_name_dep", ".variable_name_indep")),
+                        sep = "___", remove = FALSE, na.rm = TRUE)
+    out$.variable_group_dep <-
+      ifelse(!is.na(out$.single_y_bivariate) & out$.single_y_bivariate,
+             out$.variable_group_dep, .variable_name_dep)
+    out$.single_y_bivariate <- NULL
+    dots$organize_by <- c(dots$organize_by[dots$organize_by != ".element_name"], ".variable_group_dep", ".element_name")
+  }
 
   out <-
     dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
