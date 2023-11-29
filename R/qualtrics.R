@@ -52,7 +52,8 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
 #' @export
 #'
 #' @examples sanitize_labels(ex_survey1)
-sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
+sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ",
+                            questions = NULL) {
 
   # scrape lookup table of accented char html codes, from the 2nd table on this page
   ref_url <- 'http://www.w3schools.com/charsets/ref_html_8859.asp'
@@ -73,14 +74,29 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
   data <- lapply(rlang::set_names(colnames(data)), FUN = function(var) {
     label <- attr(data[[var]], "label")
     if(rlang::is_string(label)) {
-
-      for(i in seq_len(nrow(char_table))) {
+      for(i in nrow(char_table)) {
         label <- stringi::stri_replace_all_fixed(str = label,
-                                        pattern = char_table[i, cols[2], drop=TRUE],
-                                        replacement = char_table[i, cols[1], drop=TRUE])
-        # if(var == "Q8_9_1" && i == 120) browser()
+                                                 pattern = char_table[i, cols[2], drop=TRUE],
+                                                 replacement = char_table[i, cols[1], drop=TRUE])
       }
 
+      if(!rlang::is_null(questions) &&
+         is.data.frame(questions) &&
+         colnames(questions) == c("qid", "qname", "question", "force_resp")) {
+        reference_id <- stringi::stri_match_all_regex(label,
+                                                      pattern = "\\$\\{q://([[:alnum:]]+)/ChoiceGroup/SelectedChoices\\}")[[1]][1,2]
+        reference_var <- questions[questions$qid == reference_id, "qname"]
+        if(rlang::is_string(reference_var) && !is.na(reference_var) &&
+           any(reference_var %in% colnames(data))) {
+          reference_values <- unique(data[[reference_var]])
+          reference_values <- reference_values[!is.na(reference_values)]
+          reference_values <- cli::ansi_collapse(reference_values, last = " & ", trunc = 6)
+          reference_values <- stringi::stri_c(" (", reference_values, ") ")
+          label <- stringi::stri_replace_all_regex(label,
+                                                 pattern = "\\$\\{q://[[:alnum:]]+/ChoiceGroup/SelectedChoices\\}",
+                                                 replacement = reference_values)
+        }
+      }
       label <- stringi::stri_replace_all_regex(label, pattern = "- Selected Choice ", replacement = "- ")
       label <- stringi::stri_replace_all_regex(label, pattern = "<.+?>|\\[.*\\]| - tekst", replacement = "")
       label <- stringi::stri_replace_all_regex(label, pattern = "\\$\\{[[:alnum:]]+[^[:alnum:]]([[:alnum:]]+)\\}", replacement = "$1")
@@ -89,9 +105,7 @@ sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ") {
       label <- stringi::stri_replace_all_regex(label, pattern = "[[:space:]\n\r\t]+", replacement = " ")
       if(stringi::stri_count_fixed(label, " - ")>=2) label <- stringi::stri_replace_first_fixed(label, pattern = sep, replacement = multi_sep_replacement)
       if(stringi::stri_count_fixed(label, " - ")>=2) label <- stringi::stri_replace_first_fixed(label, pattern = sep, replacement = multi_sep_replacement)
-      label <- stringi::stri_replace_all_regex(label, pattern = "^[[:space:]-:\\.]|[[:space:]-:\\.]+$", replacement = "")
-      label <- stringi::stri_replace_all_regex(label, pattern = "[[:space:]]{2,}", replacement = " ")
-      label <- stringi::stri_replace_all_regex(label, pattern = ":{2,}", replacement = ":")
+      label <- stringi::stri_replace_all_regex(label, pattern = "^[[:space:]]|[[:space:]-:\\.]+$", replacement = "")
 
       attr(data[[var]], "label") <- label
     }
