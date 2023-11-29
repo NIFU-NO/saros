@@ -543,6 +543,7 @@ draft_report <-
            hide_result_if_n_below = 10,
            hide_chr_for_others = TRUE,
            hide_variable_if_all_na = TRUE,
+           single_y_bivariates_if_indep_cats_above = 3,
            digits = 1,
            data_label_decimal_symbol = ".",
 

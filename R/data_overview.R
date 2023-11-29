@@ -423,6 +423,9 @@ refine_chapter_overview <-
     if(is.character(x) || is.numeric(x)) return(x)
     if(is.factor(x)) return(as.integer(x))
   }
+  if(rlang::is_true(dots$single_y_bivariates_if_indep_cats_above)) {
+    out <- out
+  }
 
   out <-
     dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
