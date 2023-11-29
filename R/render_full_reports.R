@@ -52,9 +52,9 @@ render_full_reports <- function(
       pattern = path,
       replacement = site_path)
 
-  fs::dir_copy(path = extensions_path,
+  fs::dir_copy(path = rep(extensions_path, times=length(processable_files_folders)),
                new_path = processable_files_folders, overwrite = TRUE)
-  fs::dir_copy(path = images_path,
+  fs::dir_copy(path = rep(images_path, times=length(processable_files_folders)),
                new_path = processable_files_folders, overwrite = TRUE)
 
   for(i in seq_along(processable_files)) {
