@@ -10,7 +10,8 @@ render_full_reports(
   processable_path = file.path(path, "Reports"),
   site_path = file.path(path, "_site"),
   extensions_path = file.path(path, "_extensions"),
-  images_path = file.path(path, "_images")
+  images_path = file.path(path, "_images"),
+  ...
 )
 }
 \arguments{
