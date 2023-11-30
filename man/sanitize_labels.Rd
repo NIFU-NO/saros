@@ -4,7 +4,12 @@
 \alias{sanitize_labels}
 \title{Sanitize labels originating from e.g. Qualtrics for use in Saros}
 \usage{
-sanitize_labels(data, sep = " - ", multi_sep_replacement = ": ")
+sanitize_labels(
+  data,
+  sep = " - ",
+  multi_sep_replacement = ": ",
+  questions = NULL
+)
 }
 \arguments{
 \item{data}{data.frame or tibble}

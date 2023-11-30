@@ -9,6 +9,7 @@ refine_chapter_overview(
   data = NULL,
   ...,
   progress = TRUE,
+  variable_group_dep = ".variable_group_dep",
   call = rlang::caller_env()
 )
 }
