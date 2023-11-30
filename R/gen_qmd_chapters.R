@@ -91,7 +91,8 @@ gen_qmd_chapters <-
 
           chapter_foldername_clean <-
             stringi::stri_c(chapter_number_text, "_",
-                            filename_sanitizer(chapter_foldername),
+                            filename_sanitizer(chapter_foldername,
+                                               max_clean_folder_name = dots$max_clean_folder_name),
                             ignore_null = TRUE)
 
           cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")

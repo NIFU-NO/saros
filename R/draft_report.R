@@ -576,6 +576,7 @@ draft_report <-
 
            max_width_obj = 128,
            max_width_file = 64,
+           max_clean_folder_name = 12,
            open_after_drafting = FALSE,
 
            # Structure of report
