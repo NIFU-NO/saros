@@ -66,6 +66,7 @@ draft_report(
   table_main_question_as_header = FALSE,
   max_width_obj = 128,
   max_width_file = 64,
+  max_clean_folder_name = 12,
   open_after_drafting = FALSE,
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".element_name"),

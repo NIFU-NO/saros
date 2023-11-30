@@ -85,6 +85,7 @@ argument_validation_and_insertion <- function(params) {
       png_height = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x > 0),
       max_width_file = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
       max_width_obj = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
+      max_clean_folder_name = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
       font_family = list(fun = rlang::is_string),
       data_label_decimal_symbol = list(fun = rlang::is_string),
       data_label = list(fun = function(x) rlang::is_character(x) && any(env$data_label == x[1])),
