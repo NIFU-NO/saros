@@ -197,6 +197,41 @@ add_element_names <- function(refined_chapter_overview, element_names) {
   dplyr::bind_rows(out_na, out)
 }
 
+
+split_if_single_y_bivariates <-
+  function(chapter_overview,
+           data,
+           single_y_bivariates_if_indep_cats_above = NA,
+           organize_by,
+           variable_group_dep = ".variable_group_dep") {
+
+    chapter_overview$.single_y_bivariate <-
+      unlist(lapply(chapter_overview$.variable_name_indep,
+                    function(col) {
+                      if(!is.na(col)) dplyr::n_distinct(data[[col]], na.rm = TRUE) else NA_integer_
+                    })) > single_y_bivariates_if_indep_cats_above
+
+    chapter_overview <- tidyr::unite(chapter_overview, col = variable_group_dep,
+                        tidyselect::all_of(c(".variable_name_dep", ".variable_name_indep")),
+                        sep = "___", remove = FALSE, na.rm = TRUE)
+
+    chapter_overview[[variable_group_dep]] <-
+      ifelse(!is.na(chapter_overview$.single_y_bivariate) & chapter_overview$.single_y_bivariate,
+             as.character(chapter_overview[[variable_group_dep]]),
+             as.character(chapter_overview[[".variable_name_dep_prefix"]]))
+
+    chapter_overview[[variable_group_dep]] <-
+      factor(chapter_overview[[variable_group_dep]],
+                        levels = unique(chapter_overview[[variable_group_dep]]))
+    chapter_overview[[variable_group_dep]] <-
+      as.integer(chapter_overview[[variable_group_dep]])
+    chapter_overview$.single_y_bivariate <- NULL
+
+    chapter_overview
+
+}
+
+
 #' Processes A 'chapter_overview' Data Frame
 #'
 #' @inheritParams draft_report
@@ -217,6 +252,7 @@ refine_chapter_overview <-
            data = NULL,
            ...,
            progress = TRUE,
+           variable_group_dep = ".variable_group_dep",
            call = rlang::caller_env()) {
 
     dots <- update_dots(dots = rlang::list2(...),
@@ -419,27 +455,23 @@ refine_chapter_overview <-
   if(!rlang::is_null(out$chapter)) {
     out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
   }
+
+  if(!is.na(single_y_bivariates_if_indep_cats_above)) {
+    out <-
+      split_if_single_y_bivariates(
+        chapter_overview = out,
+        data = data,
+        single_y_bivariates_if_indep_cats_above = dots$single_y_bivariates_if_indep_cats_above,
+        organize_by = dots$organize_by,
+        variable_group_dep = variable_group_dep)
+    organize_by <- c(organize_by, variable_group_dep)
+  }
+
   sorter_assistant <- function(x) {
     if(is.character(x) || is.numeric(x)) return(x)
     if(is.factor(x)) return(as.integer(x))
   }
-  if(!is.na(dots$single_y_bivariates_if_indep_cats_above)) {
-    out$.single_y_bivariate <-
-      unlist(lapply(out$.variable_name_indep,
-                    function(col) {
-                      if(!is.na(col)) dplyr::n_distinct(data[[col]], na.rm = TRUE) else NA_integer_
-                      })) > dots$single_y_bivariates_if_indep_cats_above
 
-    out <- tidyr::unite(out, col = ".variable_group_dep",
-                        tidyselect::all_of(c(".variable_name_dep", ".variable_name_indep")),
-                        sep = "___", remove = FALSE, na.rm = TRUE)
-    out$.variable_group_dep <-
-      ifelse(!is.na(out$.single_y_bivariate) & out$.single_y_bivariate,
-             out$.variable_group_dep, out$.variable_name_dep)
-    out$.single_y_bivariate <- NULL
-    dots$organize_by <- c(dots$organize_by[dots$organize_by != ".element_name"],
-                          ".variable_group_dep", ".element_name")
-  }
 
   out <-
     dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
