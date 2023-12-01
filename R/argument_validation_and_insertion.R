@@ -56,7 +56,6 @@ argument_validation_and_insertion <- function(params) {
       hide_axis_text_if_single_variable = list(fun = rlang::is_bool),
       mesos_first = list(fun = rlang::is_bool),
       panel_tabset_mesos = list(fun = rlang::is_bool),
-      single_y_bivariate_elements = list(fun = rlang::is_bool),
       totals = list(fun = rlang::is_bool),
       pdf = list(fun = rlang::is_bool),
       flexi = list(fun = rlang::is_bool),

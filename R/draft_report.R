@@ -592,7 +592,6 @@ draft_report <-
            replace_heading_for_group = c(".variable_label_suffix_dep" = ".variable_name_dep"),
 
            mesos_first = TRUE,
-           single_y_bivariate_elements = FALSE,
            descend = TRUE,
            require_common_categories = TRUE,
            panel_tabset_mesos = TRUE,
