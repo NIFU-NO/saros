@@ -88,14 +88,15 @@ gen_qmd_chapters <-
           digits <- floor(log10(dplyr::n_distinct(chapter_overview_chapter_groups[[grouping_structure[1]]])))+1
           chapter_number_text <- sprintf(paste0("%0", digits, "d"), as.integer(chapter_number))
 
-
           chapter_foldername_clean <-
-            stringi::stri_c(chapter_number_text, "_",
-                            filename_sanitizer(chapter_foldername,
-                                               max_clean_folder_name = dots$max_clean_folder_name),
+            filename_sanitizer(chapter_foldername)
+          chapter_foldername_clean <-
+            stringi::stri_sub(chapter_foldername_clean, from = 1, to = dots$max_clean_folder_name)
+          chapter_foldername_clean <-
+            stringi::stri_c(chapter_number_text, "_", chapter_foldername_clean,
                             ignore_null = TRUE)
 
-          cli::cli_progress_message(msg = "Generating chapter {chapter_foldername}")
+          cli::cli_progress_message(msg = "Generating for chapter {chapter_foldername}: {chapter_foldername_clean}")
 
 
           chapter_folderpath_absolute <- file.path(path, chapter_foldername_clean)
