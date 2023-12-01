@@ -544,6 +544,7 @@ draft_report <-
            hide_chr_for_others = TRUE,
            hide_variable_if_all_na = TRUE,
            single_y_bivariates_if_indep_cats_above = 3,
+           single_y_bivariates_if_deps_above = 8,
            digits = 1,
            data_label_decimal_symbol = ".",
 
