@@ -462,7 +462,7 @@ refine_chapter_overview <-
         data = data,
         single_y_bivariates_if_indep_cats_above = dots$single_y_bivariates_if_indep_cats_above,
         variable_group_dep = variable_group_dep)
-    organize_by <- c(organize_by, variable_group_dep)
+    dots$organize_by <- c(dots$organize_by, variable_group_dep)
   }
 
   sorter_assistant <- function(x) {
