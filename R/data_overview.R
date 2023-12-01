@@ -433,20 +433,26 @@ refine_chapter_overview <-
 
   if(!is.null(out$.variable_name_dep)) {
     has_na <- any(is.na(out$.variable_name_dep))
-    out$.variable_name_dep <- forcats::fct(x = out$.variable_name_dep,
-                                           levels = colnames(data)[colnames(data) %in% out$.variable_name_dep])
-    if(has_na) {
-    out$.variable_name_dep <- forcats::fct_na_value_to_level(out$.variable_name_dep)
-    out$.variable_name_dep <- forcats::fct_relevel(out$.variable_name_dep, NA)
+    all_na <- all(is.na(out$.variable_name_dep))
+    if(!all_na) {
+      out$.variable_name_dep <- forcats::fct(x = out$.variable_name_dep,
+                                             levels = colnames(data)[colnames(data) %in% out$.variable_name_dep])
+      if(has_na) {
+        out$.variable_name_dep <- forcats::fct_na_value_to_level(out$.variable_name_dep)
+        out$.variable_name_dep <- forcats::fct_relevel(out$.variable_name_dep, NA)
+      }
     }
   }
   if(!is.null(out$.variable_name_indep)) {
     has_na <- any(is.na(out$.variable_name_dep))
-    out$.variable_name_indep <- forcats::fct(x = out$.variable_name_indep,
-                                             levels = colnames(data)[colnames(data) %in% out$.variable_name_indep])
-    if(has_na) {
-    out$.variable_name_indep <- forcats::fct_na_value_to_level(out$.variable_name_indep)
-    out$.variable_name_indep <- forcats::fct_relevel(out$.variable_name_indep, NA)
+    all_na <- all(is.na(out$.variable_name_dep))
+    if(!all_na) {
+      out$.variable_name_indep <- forcats::fct(x = out$.variable_name_indep,
+                                               levels = colnames(data)[colnames(data) %in% out$.variable_name_indep])
+      if(has_na) {
+        out$.variable_name_indep <- forcats::fct_na_value_to_level(out$.variable_name_indep)
+        out$.variable_name_indep <- forcats::fct_relevel(out$.variable_name_indep, NA)
+      }
     }
   }
 
