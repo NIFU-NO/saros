@@ -217,7 +217,7 @@ split_if_single_y_bivariates <-
     chapter_overview[[variable_group_dep]] <-
       ifelse(!is.na(chapter_overview$.single_y_bivariate) & chapter_overview$.single_y_bivariate,
              as.character(chapter_overview[[variable_group_dep]]),
-             as.character(chapter_overview[[".variable_name_dep_prefix"]]))
+             as.character(chapter_overview[[".variable_label_prefix_dep"]]))
 
     chapter_overview[[variable_group_dep]] <-
       factor(chapter_overview[[variable_group_dep]],
@@ -475,7 +475,6 @@ refine_chapter_overview <-
     if(is.character(x) || is.numeric(x)) return(x)
     if(is.factor(x)) return(as.integer(x))
   }
-
 
   out <-
     dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
