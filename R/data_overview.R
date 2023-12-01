@@ -198,27 +198,75 @@ add_element_names <- function(refined_chapter_overview, element_names) {
 }
 
 
+set_vars_as_factor_with_na <- function(chapter_overview,
+                                       data,
+                                       element_names) {
+
+  if(!is.null(chapter_overview$.element_name)) {
+    has_na <- any(is.na(chapter_overview$.element_name))
+    chapter_overview$.element_name <- forcats::fct(x = chapter_overview$.element_name, levels = element_names)
+    if(has_na) {
+      chapter_overview$.element_name <- forcats::fct_na_value_to_level(chapter_overview$.element_name)
+      chapter_overview$.element_name <- forcats::fct_relevel(chapter_overview$.element_name, NA)
+    }
+  }
+
+  if(!is.null(chapter_overview$.variable_name_dep)) {
+    has_na <- any(is.na(chapter_overview$.variable_name_dep))
+    all_na <- all(is.na(chapter_overview$.variable_name_dep))
+    if(!all_na) {
+      chapter_overview$.variable_name_dep <- forcats::fct(x = chapter_overview$.variable_name_dep,
+                                             levels = colnames(data)[colnames(data) %in% chapter_overview$.variable_name_dep])
+      if(has_na) {
+        chapter_overview$.variable_name_dep <- forcats::fct_na_value_to_level(chapter_overview$.variable_name_dep)
+        chapter_overview$.variable_name_dep <- forcats::fct_relevel(chapter_overview$.variable_name_dep, NA)
+      }
+    }
+  }
+  if(!is.null(chapter_overview$.variable_name_indep)) {
+    has_na <- any(is.na(chapter_overview$.variable_name_dep))
+    all_na <- all(is.na(chapter_overview$.variable_name_dep))
+    if(!all_na) {
+      chapter_overview$.variable_name_indep <- forcats::fct(x = chapter_overview$.variable_name_indep,
+                                               levels = colnames(data)[colnames(data) %in% chapter_overview$.variable_name_indep])
+      if(has_na) {
+        chapter_overview$.variable_name_indep <- forcats::fct_na_value_to_level(chapter_overview$.variable_name_indep)
+        chapter_overview$.variable_name_indep <- forcats::fct_relevel(chapter_overview$.variable_name_indep, NA)
+      }
+    }
+  }
+  chapter_overview
+}
+
+
 split_if_single_y_bivariates <-
   function(chapter_overview,
            data,
            single_y_bivariates_if_indep_cats_above = NA,
+           single_y_bivariates_if_deps_above = NA,
            variable_group_dep = ".variable_group_dep") {
 
     chapter_overview$.single_y_bivariate <-
       unlist(lapply(chapter_overview$.variable_name_indep,
                     function(col) {
-                      if(!is.na(col)) dplyr::n_distinct(data[[col]], na.rm = TRUE) else NA_integer_
-                    })) > single_y_bivariates_if_indep_cats_above
+                      !is.na(col) && dplyr::n_distinct(data[[col]], na.rm = TRUE) > single_y_bivariates_if_indep_cats_above
+                    })) |
+      ave(chapter_overview$.variable_group_id_dep,
+          chapter_overview$.variable_group_id_dep,
+          FUN = length) > single_y_bivariates_if_deps_above
 
-    chapter_overview <- tidyr::unite(chapter_overview, col = variable_group_dep,
-                        tidyselect::all_of(c(".variable_name_dep", ".variable_name_indep")),
-                        sep = "___", remove = FALSE, na.rm = TRUE)
+    chapter_overview <-
+      tidyr::unite(chapter_overview,
+                   col = !!variable_group_dep,
+                   tidyselect::all_of(c(".variable_name_dep", ".variable_name_indep")),
+                   sep = "___", remove = FALSE, na.rm = TRUE)
 
     chapter_overview[[variable_group_dep]] <-
-      ifelse(!is.na(chapter_overview$.single_y_bivariate) & chapter_overview$.single_y_bivariate,
+      ifelse(chapter_overview$.single_y_bivariate,
              as.character(chapter_overview[[variable_group_dep]]),
              as.character(chapter_overview[[".variable_label_prefix_dep"]]))
 
+# browser()
     chapter_overview[[variable_group_dep]] <-
       factor(chapter_overview[[variable_group_dep]],
                         levels = unique(chapter_overview[[variable_group_dep]]))
@@ -229,6 +277,9 @@ split_if_single_y_bivariates <-
     chapter_overview
 
 }
+
+
+
 
 
 #' Processes A 'chapter_overview' Data Frame
@@ -422,39 +473,10 @@ refine_chapter_overview <-
 
   }
 
-  if(!is.null(out$.element_name)) {
-    has_na <- any(is.na(out$.element_name))
-    out$.element_name <- forcats::fct(x = out$.element_name, levels = dots$element_names)
-    if(has_na) {
-    out$.element_name <- forcats::fct_na_value_to_level(out$.element_name)
-    out$.element_name <- forcats::fct_relevel(out$.element_name, NA)
-    }
-  }
-
-  if(!is.null(out$.variable_name_dep)) {
-    has_na <- any(is.na(out$.variable_name_dep))
-    all_na <- all(is.na(out$.variable_name_dep))
-    if(!all_na) {
-      out$.variable_name_dep <- forcats::fct(x = out$.variable_name_dep,
-                                             levels = colnames(data)[colnames(data) %in% out$.variable_name_dep])
-      if(has_na) {
-        out$.variable_name_dep <- forcats::fct_na_value_to_level(out$.variable_name_dep)
-        out$.variable_name_dep <- forcats::fct_relevel(out$.variable_name_dep, NA)
-      }
-    }
-  }
-  if(!is.null(out$.variable_name_indep)) {
-    has_na <- any(is.na(out$.variable_name_dep))
-    all_na <- all(is.na(out$.variable_name_dep))
-    if(!all_na) {
-      out$.variable_name_indep <- forcats::fct(x = out$.variable_name_indep,
-                                               levels = colnames(data)[colnames(data) %in% out$.variable_name_indep])
-      if(has_na) {
-        out$.variable_name_indep <- forcats::fct_na_value_to_level(out$.variable_name_indep)
-        out$.variable_name_indep <- forcats::fct_relevel(out$.variable_name_indep, NA)
-      }
-    }
-  }
+  out <-
+    set_vars_as_factor_with_na(chapter_overview = out,
+                               data = data,
+                               element_names = dots$element_names)
 
 
   if(!rlang::is_null(out$chapter)) {
@@ -467,6 +489,7 @@ refine_chapter_overview <-
         chapter_overview = out,
         data = data,
         single_y_bivariates_if_indep_cats_above = dots$single_y_bivariates_if_indep_cats_above,
+        single_y_bivariates_if_deps_above = dots$single_y_bivariates_if_deps_above,
         variable_group_dep = variable_group_dep)
     dots$organize_by <- c(dots$organize_by, variable_group_dep)
   }

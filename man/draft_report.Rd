@@ -40,6 +40,7 @@ draft_report(
   hide_chr_for_others = TRUE,
   hide_variable_if_all_na = TRUE,
   single_y_bivariates_if_indep_cats_above = 3,
+  single_y_bivariates_if_deps_above = 8,
   digits = 1,
   data_label_decimal_symbol = ".",
   hide_label_if_prop_below = 0.01,
@@ -74,7 +75,6 @@ draft_report(
   ignore_heading_for_group = c(".element_name", ".variable_type_dep", "chapter"),
   replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep"),
   mesos_first = TRUE,
-  single_y_bivariate_elements = FALSE,
   descend = TRUE,
   require_common_categories = TRUE,
   panel_tabset_mesos = TRUE,
@@ -479,12 +479,6 @@ Column names used for sorting output within each organize_by group}
 
 Whether to place the mesos group element before or after the entire sample.}
 
-\item{single_y_bivariate_elements}{\emph{Single Y bivariate elements}
-
-\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
-
-Whether to display bivariates with a single dependent variable. NEEDS CHECKING.}
-
 \item{descend}{\emph{Sorting order}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
@@ -569,6 +563,12 @@ The number of top and bottom entries to report.}
 \code{list} // \emph{default:} \code{saros:::.saros.env$defaults$translations} (\code{optional})
 
 Named list of strings for translations.}
+
+\item{single_y_bivariate_elements}{\emph{Single Y bivariate elements}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether to display bivariates with a single dependent variable. NEEDS CHECKING.}
 }
 \value{
 Path to index qmd-file. If not specified in the yaml_path file, will default to index.qmd.
