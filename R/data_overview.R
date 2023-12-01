@@ -202,7 +202,6 @@ split_if_single_y_bivariates <-
   function(chapter_overview,
            data,
            single_y_bivariates_if_indep_cats_above = NA,
-           organize_by,
            variable_group_dep = ".variable_group_dep") {
 
     chapter_overview$.single_y_bivariate <-
@@ -456,13 +455,12 @@ refine_chapter_overview <-
     out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
   }
 
-  if(!is.na(single_y_bivariates_if_indep_cats_above)) {
+  if(!is.na(dots$single_y_bivariates_if_indep_cats_above)) {
     out <-
       split_if_single_y_bivariates(
         chapter_overview = out,
         data = data,
         single_y_bivariates_if_indep_cats_above = dots$single_y_bivariates_if_indep_cats_above,
-        organize_by = dots$organize_by,
         variable_group_dep = variable_group_dep)
     organize_by <- c(organize_by, variable_group_dep)
   }
