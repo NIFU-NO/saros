@@ -544,7 +544,7 @@ draft_report <-
            hide_chr_for_others = TRUE,
            hide_variable_if_all_na = TRUE,
            single_y_bivariates_if_indep_cats_above = 3,
-           single_y_bivariates_if_deps_above = 8,
+           single_y_bivariates_if_deps_above = 20,
            digits = 1,
            data_label_decimal_symbol = ".",
 
@@ -556,7 +556,7 @@ draft_report <-
            x_axis_label_width = 20,
            plot_height_multiplier_per_horizontal_line = NA,
            plot_height_multiplier_per_vertical_letter = .2,
-           plot_height_multiplier_per_facet = .6,
+           plot_height_multiplier_per_facet = .95,
            plot_height_multiplier_per_legend_line = 1.1,
            plot_height_fixed_constant = 0,
            plot_height_max = 8,
