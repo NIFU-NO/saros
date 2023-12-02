@@ -158,12 +158,17 @@ gen_element_and_qmd_snippet2 <-
                                         x_axis_label_width = dots$x_axis_label_width,
 
                                         showNA = dots$showNA,
+                                        totals = dots$totals,
 
                                         plot_height_multiplier_per_horizontal_line = dots$plot_height_multiplier_per_horizontal_line,
                                         plot_height_multiplier_per_vertical_letter = dots$plot_height_multiplier_per_vertical_letter,
+
+                                        plot_height_multiplier_per_facet = dots$plot_height_multiplier_per_facet,
+                                        plot_height_multiplier_per_legend_line = dots$plot_height_multiplier_per_legend_line,
                                         plot_height_fixed_constant = dots$plot_height_fixed_constant,
                                         plot_height_max = dots$plot_height_max,
                                         plot_height_min = dots$plot_height_min,
+                                        main_font_size = dots$main_font_size,
                                         vertical_height = dots$vertical_height,
                                         strip_angle = dots$strip_angle)
 
