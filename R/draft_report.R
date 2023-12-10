@@ -744,6 +744,11 @@ draft_report <-
                         i="This creates filepaths that are likely too long for Sharepoint to handle..."))
       }
     }
+
+    report_foldername_clean <- filename_sanitizer(uniques)
+    report_foldername_clean <- stringi::stri_sub(report_foldername_clean, from = 1, to = args$max_clean_folder_name)
+
+
     index_filepath <-
       lapply(X =
                cli::cli_progress_along(uniques,
@@ -761,7 +766,7 @@ draft_report <-
                } else {  # Mesos
 
                  mesos_group <- uniques[.x]
-                 path <- file.path(path, uniques[.x])
+                 path <- file.path(path, report_foldername_clean[.x])
                  args$title <- stringi::stri_c(args$title,
                                           uniques[.x],
                                           ignore_null=TRUE)
