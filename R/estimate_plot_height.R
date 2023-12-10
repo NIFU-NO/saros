@@ -11,7 +11,7 @@ estimate_plot_height <- function(data,
                                  plot_height_multiplier_per_horizontal_line = NA,
                                  plot_height_multiplier_per_vertical_letter = .15,
                                  plot_height_multiplier_per_facet = .95,
-                                 plot_height_multiplier_per_legend_line = 1.1,
+                                 plot_height_multiplier_per_legend_line = 1.5,
                                  plot_height_fixed_constant = 0,
                                  plot_height_max = 8,
                                  plot_height_min = 1,
@@ -19,7 +19,7 @@ estimate_plot_height <- function(data,
                                  strip_angle = 0) {
 
   if(is.na(plot_height_multiplier_per_horizontal_line)) {
-    plot_height_multiplier_per_horizontal_line <- main_font_size/72.27+.01
+    plot_height_multiplier_per_horizontal_line <- main_font_size/72.27
   }
 
   get_max_lines <- function(data, column, width, separator) {
@@ -101,5 +101,5 @@ estimate_plot_height <- function(data,
                                            plot_height_multiplier_per_legend_line = plot_height_multiplier_per_legend_line,
                                            plot_height_fixed_constant = plot_height_fixed_constant)
   plot_height <- max(c(min(c(plot_height_estimate, plot_height_max)), plot_height_min))
-  plot_height
+  round(plot_height, digits=2)
 }

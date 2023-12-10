@@ -244,16 +244,18 @@ split_if_single_y_bivariates <-
            data,
            single_y_bivariates_if_indep_cats_above = NA,
            single_y_bivariates_if_deps_above = NA,
-           variable_group_dep = ".variable_group_dep") {
+           variable_group_dep = ".variable_group_dep",
+           organize_by = NULL) {
 
-    chapter_overview$.single_y_bivariate <-
-      unlist(lapply(chapter_overview$.variable_name_indep,
-                    function(col) {
-                      !is.na(col) && dplyr::n_distinct(data[[col]], na.rm = TRUE) > single_y_bivariates_if_indep_cats_above
-                    })) |
-      ave(chapter_overview$.variable_group_id_dep,
-          chapter_overview$.variable_group_id_dep,
-          FUN = length) > single_y_bivariates_if_deps_above
+    chapter_overview <-
+      dplyr::mutate(chapter_overview,
+                    .single_y_bivariate =
+                      unlist(lapply(.data$.variable_name_indep,
+                                    function(col) {
+                                      !is.na(col) && dplyr::n_distinct(data[[col]], na.rm = TRUE) > single_y_bivariates_if_indep_cats_above
+                                    })) |
+                      dplyr::n() > single_y_bivariates_if_deps_above,
+                    .by = tidyselect::all_of(organize_by))
 
     chapter_overview <-
       tidyr::unite(chapter_overview,
@@ -490,7 +492,8 @@ refine_chapter_overview <-
         data = data,
         single_y_bivariates_if_indep_cats_above = dots$single_y_bivariates_if_indep_cats_above,
         single_y_bivariates_if_deps_above = dots$single_y_bivariates_if_deps_above,
-        variable_group_dep = variable_group_dep)
+        variable_group_dep = variable_group_dep,
+        organize_by = dots$organize_by)
     dots$organize_by <- c(dots$organize_by, variable_group_dep)
   }
 

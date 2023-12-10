@@ -68,7 +68,7 @@ insert_obj_in_qmd <-
       if(tbl_fig_prefix == "fig-" &&
          !is.na(figure_height)) {
         stringi::stri_c("#| fig-height: ", figure_height, "\n",
-                        "#| fig-dpi: 450", ignore_null=TRUE)
+                        ignore_null=TRUE)
       }
 
     hashpipe_label <-
