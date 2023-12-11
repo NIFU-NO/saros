@@ -144,8 +144,9 @@ testthat::test_that("check_colour", {
     )
 
     test_arg <- 42
-    testthat::expect_no_error(
-      object = saros:::check_colour(test_arg))
+    testthat::expect_error(
+      object = saros:::check_colour(test_arg),
+      regexp = "If not NULL, `test_arg` must be a character")
 })
 
 testthat::test_that("check_colours", {

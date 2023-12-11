@@ -22,6 +22,8 @@ get_colour_palette(
 A data frame (or a srvyr-object) with the columns specified in the
 chapter_overview 'dep_cat', etc columns.}
 
+\item{col_pos}{Character vector of column names for which colours will be found.}
+
 \item{colour_palette_nominal, colour_palette_ordinal}{\emph{User specified colour set}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
@@ -45,18 +47,6 @@ Categories that should be treated as NA.}
 \verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
 
 Both the absolute and relative folderpaths are required, as strings.}
-
-\item{x}{Vector for which colours will be found.}
-
-\item{common_data_type}{\emph{factor or ordered data type}
-
-\verb{scalar<character>} // \emph{default:} \code{factor} (\code{optional})
-
-Currently only supports factor and ordered.}
-
-\item{ordinal}{\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
-
-Is palette ordinal?}
 }
 \value{
 A colour set as character vector, where \code{NA} has the \code{colour_na}, and the rest are taken from colour_palette_nominal if available.
@@ -66,5 +56,7 @@ Possibly using colour_palette_nominal if available. If not sufficient, uses a se
 palette from RColorBrewer.
 }
 \examples{
-get_colour_palette(x=1:4)
+get_colour_palette(ex_survey1, col_pos=c("b_1", "b_2"))
+get_colour_palette(ex_survey1, col_pos=c("b_1", "b_2"),
+                  colour_palette_nominal = c("red", "blue", "orange"))
 }
