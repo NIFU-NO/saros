@@ -39,13 +39,13 @@ testthat::test_that("get_colour_set", {
     get_colour_set(x = c(1:2, NA),
                    colour_palette_nominal = c("#440154FF", "#40BC72FF", "#CBE11EFF"),
                    colour_na = "gray")
-  testthat::expect_equal(x, c("1" = "#440154FF", "2" = "#40BC72FF", `NA` = "#CBE11EFF"))
+  testthat::expect_equal(x, setNames(c("#440154FF", "#40BC72FF", "#CBE11EFF"), c("1", "2", NA)))
 
   x <-
     get_colour_set(x = c(1:2, NA),
                    colour_palette_nominal = c("#440154FF", "#40BC72FF", "#CBE11EFF"),
                    colour_na = "gray",
                    colour_2nd_binary_cat = "white")
-  testthat::expect_equal(x, c("1" = "#440154FF", "2" = "#40BC72FF", "#CBE11EFF"))
+  testthat::expect_equal(x, setNames(c("#440154FF", "#40BC72FF", "#CBE11EFF"), c("1", "2", NA)))
 
 })

@@ -205,29 +205,19 @@ get_colour_set <-
 #'
 #' @inheritParams draft_report
 #' @inheritParams summarize_data
-#' @param x Vector for which colours will be found.
+#' @param col_pos Character vector of column names for which colours will be found.
 #' @param colour_palette_nominal,colour_palette_ordinal *User specified colour set*
 #'
 #'  `vector<character>` // *default:* `NULL` (`optional`)
 #'
 #'   User-supplied default palette, excluding `colour_na`.
 #'
-#' @param common_data_type *factor or ordered data type*
-#'
-#'  `scalar<character>` // *default:* `factor` (`optional`)
-#'
-#'  Currently only supports factor and ordered.
-#'
-#' @param ordinal
-#'
-#'  `scalar<logical>` // *default:* `FALSE` (`optional`)
-#'
-#'  Is palette ordinal?
-#'
 #' @return A colour set as character vector, where `NA` has the `colour_na`, and the rest are taken from colour_palette_nominal if available.
 #' @export
 #' @examples
-#' get_colour_palette(x=1:4)
+#' get_colour_palette(ex_survey1, col_pos=c("b_1", "b_2"))
+#' get_colour_palette(ex_survey1, col_pos=c("b_1", "b_2"),
+#'                   colour_palette_nominal = c("red", "blue", "orange"))
 get_colour_palette <-
   function(
     data,
@@ -242,7 +232,7 @@ get_colour_palette <-
     lapply(col_pos, function(col) {
       attr(data[[col]], "colour_palette")
     })
-    out <- unique(out)
+    out <- unique(out)[lengths(out) > 0]
     if(length(out) > 1) {
       cli::cli_warn("Multiple colour palettes embedded in {col_pos}. Using first one.")
     }
@@ -273,6 +263,7 @@ get_colour_palette <-
     #   return(user_colour_set)
     # }
 
+    categories_treated_as_na <- categories_treated_as_na[categories_treated_as_na %in% common_levels]
     if(rlang::is_character(colour_na)) {
       if(length(colour_na)>= length(categories_treated_as_na)) {
         for(i in seq_along(categories_treated_as_na)) {

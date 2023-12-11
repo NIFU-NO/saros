@@ -137,7 +137,7 @@ gen_element_and_qmd_snippet2 <-
           colour_palette_ordinal = dots$colour_palette_ordinal,
           colour_na = dots$colour_na,
           # colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
-          categories_treated_as_na = dots$categories_treated_as_na[dots$categories_treated_as_na %in% common_levels])
+          categories_treated_as_na = dots$categories_treated_as_na)
 
     }
 
