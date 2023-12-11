@@ -12,8 +12,10 @@ remove_empty_col_for_mesos_group <- function(data,
       tmp <- vctrs::vec_slice(data,
                               !is.na(data[[mesos_var]]) &
                                 data[[mesos_var]] == mesos_group)
-      tmp <- tmp[[var]]
-      if(all(is.na(tmp)) || length(tmp) < hide_result_if_n_below) {
+
+      if(all(is.na(tmp[[var]])) ||
+         (length(tmp[[var]]) < hide_result_if_n_below) &&
+         !is.character(tmp[[var]])) {
         msg <- "In mesos_group {mesos_group}, removing empty column {var}."
         cli::cli_inform(msg)
         if(rlang::is_string(log_file)) {
