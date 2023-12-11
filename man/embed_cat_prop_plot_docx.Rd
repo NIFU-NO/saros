@@ -43,6 +43,8 @@ Columns in \code{data}. Currently allows tidyselect-syntax, which will be remove
 
 Both the absolute and relative folderpaths are required, as strings.}
 
+\item{plot_height}{Fixed height of the plot in cm. Defaults to 15.}
+
 \item{inverse}{Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.}
 }
 \value{

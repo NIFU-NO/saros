@@ -39,6 +39,12 @@ Arguments forwarded to the corresponding functions that create the elements.}
 
 \verb{scalar<logical>} // \emph{default:} \code{TRUE}}
 
+\item{variable_group_dep}{\emph{Name for the variable_group_dep column}
+
+\verb{scalar<string>} // \emph{default:} \code{".variable_group_dep"}
+
+This column is used to group variables that are part of the same bivariate analysis.}
+
 \item{call}{\emph{Internal call}
 
 \verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})

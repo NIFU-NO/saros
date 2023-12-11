@@ -160,7 +160,7 @@ prepare_safe_render <- function(remote_basepath = "/home/",
 #' @param local_main_password_path Path to a local .htpasswd file containing username:password header and : as separator.
 #' @param ignore_missing_emails Flag, defaults to FALSE. Whether usernames existing in password file but not email file will result in warnings.
 #' @param email_body,email_subject String, subject line and email body respectively. Supports glue syntax referring to columns found in the email data frame or password file.
-#'
+#' @param ... Dynamic dots forwarded to quarto::quarto_render
 #' @return Data.frame
 #' @export
 create_email_credentials <- function(local_basepath = getwd(),

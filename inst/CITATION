@@ -1,5 +1,5 @@
 bibentry(
-  bibtype  = "Software",
+  bibtype  = "Unpublished",
   title    = "saros: Semi-Automated Reporting of Ordinary Surveys",
   author   = "Stephan Daus",
   year     = 2024

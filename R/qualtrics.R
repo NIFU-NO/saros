@@ -47,12 +47,15 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
 #' @param data data.frame or tibble
 #' @param sep String, separates main question from subquestion
 #' @param multi_sep_replacement String. If multiple sep are found, replace the first ones with this.
+#' @param questions Data frame with questions obtained from `qualtRics::survey_questions()`
 #'
 #' @return Identical data.frame as input, with only variable labels changed.
 #' @export
 #'
 #' @examples sanitize_labels(ex_survey1)
-sanitize_labels <- function(data, sep = " - ", multi_sep_replacement = ": ",
+sanitize_labels <- function(data,
+                            sep = " - ",
+                            multi_sep_replacement = ": ",
                             questions = NULL) {
 
   # scrape lookup table of accented char html codes, from the 2nd table on this page

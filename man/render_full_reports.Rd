@@ -23,7 +23,9 @@ render_full_reports(
 
 \item{site_path}{Path to _site}
 
-\item{extensions_path, images_path}{Path to where _extensions and _images folders can be found and copied to whereever needed}
+\item{extensions_path, images_path}{Path to where _extensions and _images folders can be found and copied to wherever needed}
+
+\item{...}{Additional arguments passed to \code{quarto::render()}}
 }
 \description{
 If one wishes to render complete reports that are linked to

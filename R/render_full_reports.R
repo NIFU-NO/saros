@@ -12,8 +12,8 @@
 #' @param path If no files are given, a path to the root folder of the local "site".
 #' @param processable_path Path to where report files can be (recursively) found.
 #' @param site_path Path to _site
-#' @param extensions_path,images_path Path to where _extensions and _images folders can be found and copied to whereever needed
-#'
+#' @param extensions_path,images_path Path to where _extensions and _images folders can be found and copied to wherever needed
+#' @param ... Additional arguments passed to `quarto::render()`
 #' @return NULL
 #' @export
 #'
@@ -62,7 +62,8 @@ render_full_reports <- function(
   for(i in seq_along(processable_files)) {
     rlang::exec(quarto::quarto_render,
                 input = processable_files[i],
-                output_format = "all")
+                output_format = "all",
+                !!!dots)
   }
   fs::file_copy(path = new_files_pdf,
                 new_path = new_file_destinations_pdf, overwrite = TRUE)
