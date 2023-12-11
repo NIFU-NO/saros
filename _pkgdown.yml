@@ -51,4 +51,4 @@ reference:
   - summarize_data
 - title: "Internal functions"
   contents:
-  - matches("^prep_|process_yaml|^gen_|stopwords")
+  - matches("^prep_|process_yaml|^gen_")
