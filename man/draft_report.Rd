@@ -307,6 +307,15 @@ Defaults to showing all.}
 
 If N is below this value, p-value will not be shown.}
 
+\item{hide_result_if_n_below}{\emph{Hide result if N below}
+
+\verb{scalar<integer>} // \emph{default:} \code{10} (\code{optional})
+
+Whether to hide result if N for a given datasets (or mesos group) is below
+this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
+typically exempted in the first place. This might change in the future with
+a separate argument.}
+
 \item{hide_chr_for_others}{\emph{Hide open response displays for others}
 
 \verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
@@ -320,6 +329,22 @@ group to ensure data privacy (\code{TRUE}).}
 \verb{scalar<boolean>} // \emph{default:} \code{TRUE} (\code{optional})
 
 Whether to remove all variables (in particular useful for mesos) if all values are NA}
+
+\item{single_y_bivariates_if_indep_cats_above}{\emph{Single y bivariates if indep-cats above ...}
+
+\verb{scalar<integer>} // \emph{default:} \code{3} (\code{optional})
+
+Figures and tables for bivariates can become very long if the independent
+variable has many categories. This argument specifies the number of indep categories
+above which only single y bivariates should be shown.}
+
+\item{single_y_bivariates_if_deps_above}{\emph{Single y bivariates if dep-vars above ...}
+
+\verb{scalar<integer>} // \emph{default:} \code{20} (\code{optional})
+
+Figures and tables for bivariates can become very long if there are many dependent
+variables in a battery/question matrix. This argument specifies the number of dep variables
+above which only single y bivariates should be shown. Set to 0 to always show single y bivariates.}
 
 \item{digits}{\emph{Decimal places}
 
@@ -370,6 +395,19 @@ Width of the labels used for the categorical column names.}
 \verb{scalar<double>} // \emph{default:} \code{.1}
 
 Height in cm per chart entry, for all static plots.}
+
+\item{plot_height_multiplier_per_facet}{\emph{Plot height multiplier per facet}
+
+\verb{scalar<double>} // \emph{default:} \code{0.95} (\code{optional})
+
+Multiplier for plot height per facet. Defaults to optimal at .95, i.e. slightly less than no change (1).}
+
+\item{plot_height_multiplier_per_legend_line}{\emph{Plot height multiplier per legend line}
+
+\verb{scalar<double>} // \emph{default:} \code{1.1} (\code{optional})
+
+Multiplier for plot height per horizontal line of legend.
+Defaults to optimal at 1.1, i.e. slightly more than no change (1).}
 
 \item{plot_height_fixed_constant}{\emph{Height constant addition}
 
@@ -441,6 +479,12 @@ Colour as a single string for NA values.}
 
 Colour for second category in binary variables. Often useful to hide this.}
 
+\item{table_main_question_as_header}{\emph{Table main question as header}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to include the main question as a header in the table.}
+
 \item{max_width_obj}{\emph{Maximum object width}
 
 \verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
@@ -456,6 +500,14 @@ Maximum width for any filename. Due to OneDrive having a max path of about
 400 characters, this can quickly be exceeded with a long path base path,
 long file names if using labels as part of structure, and hashing with
 Quarto's \code{cache: true} feature. This argument truncates the filenames.}
+
+\item{max_clean_folder_name}{\emph{Maximum clean folder name length}
+
+\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
+
+Whereas \code{max_width_file} truncates the file name, this argument truncates
+the folder name. It will not impact the report or chapter names in website,
+only the folders.}
 
 \item{open_after_drafting}{\emph{Whether to open index.qmd}
 
@@ -474,6 +526,22 @@ Column names used for identifying chapters and sections.}
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
 Column names used for sorting output within each organize_by group}
+
+\item{ignore_heading_for_group}{\emph{Ignore heading for group}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Type of refined chapter_overview data for which to suppress the heading
+in the report output. Typically variable_name_dep, variable_name_indep, etc.}
+
+\item{replace_heading_for_group}{\emph{Replacing heading for group}
+
+\verb{named vector<character>} // \emph{default:} \code{c(".variable_label_suffix_dep" = ".variable_name_dep")}
+
+Occasionally, one needs to replace the heading with another piece of information
+in the refined chapter_overview. For instance, one may want to organize output
+by variable_name_indep, but to display the variable_label_indep instead. Use
+the name for the replacement and the value for the original.}
 
 \item{mesos_first}{\emph{mesos first}
 
@@ -560,17 +628,17 @@ Whether or not to include the actual numbers in parentheses.}
 
 The number of top and bottom entries to report.}
 
+\item{log_file}{\emph{Path to log file}
+
+\verb{scalar<string>} // \emph{default:} \code{"_log.txt"} (\code{optional})
+
+Path to log file. Set to NULL to disable logging.}
+
 \item{translations}{\emph{Translations}
 
 \code{list} // \emph{default:} \code{saros:::.saros.env$defaults$translations} (\code{optional})
 
 Named list of strings for translations.}
-
-\item{single_y_bivariate_elements}{\emph{Single Y bivariate elements}
-
-\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
-
-Whether to display bivariates with a single dependent variable. NEEDS CHECKING.}
 }
 \value{
 Path to index qmd-file. If not specified in the yaml_path file, will default to index.qmd.

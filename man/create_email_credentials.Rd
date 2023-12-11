@@ -34,6 +34,8 @@ create_email_credentials(
 \item{ignore_missing_emails}{Flag, defaults to FALSE. Whether usernames existing in password file but not email file will result in warnings.}
 
 \item{email_body, email_subject}{String, subject line and email body respectively. Supports glue syntax referring to columns found in the email data frame or password file.}
+
+\item{...}{Dynamic dots forwarded to quarto::quarto_render}
 }
 \value{
 Data.frame

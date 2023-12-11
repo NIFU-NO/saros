@@ -105,14 +105,8 @@ sigtest <-
 
 
       stat_config <-
-        find_stat_config(dep_pos = dep_pos,
-                         .variable_type = .variable_type,
-                         dep_n = dep_n,
-                         dep_unique = unique(data[[dep_pos]]),
-                         indep_type = indep_type,
-                         indep_pos = indep_pos,
-                         indep_n = indep_n,
-                         indep_unique = unique(data[[indep_pos]]))
+        find_test2(y=data[[dep_pos]],
+                   x = data[[indep_pos]])
       if(rlang::is_string(indep_pos)) browser()
 
       if(stat_config$test == "NA") return(NULL)

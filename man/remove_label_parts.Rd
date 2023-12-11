@@ -16,6 +16,8 @@ remove_label_parts(
 
 \item{pattern}{String, regex pattern.}
 
+\item{replacement}{String, replacement for pattern.}
+
 \item{data_type_criterion}{Can be a function that specifies what kind of variables to select, e.g. is.factor}
 }
 \value{

@@ -17,6 +17,8 @@ sanitize_labels(
 \item{sep}{String, separates main question from subquestion}
 
 \item{multi_sep_replacement}{String. If multiple sep are found, replace the first ones with this.}
+
+\item{questions}{Data frame with questions obtained from \code{qualtRics::survey_questions()}}
 }
 \value{
 Identical data.frame as input, with only variable labels changed.

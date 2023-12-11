@@ -283,6 +283,22 @@
 #'
 #'   Column names used for sorting output within each organize_by group
 #'
+#' @param ignore_heading_for_group *Ignore heading for group*
+#'
+#'  `vector<character>` // *default:* `NULL` (`optional`)
+#'
+#'  Type of refined chapter_overview data for which to suppress the heading
+#'  in the report output. Typically variable_name_dep, variable_name_indep, etc.
+#'
+#' @param replace_heading_for_group *Replacing heading for group*
+#'
+#'  `named vector<character>` // *default:* `c(".variable_label_suffix_dep" = ".variable_name_dep")`
+#'
+#'  Occasionally, one needs to replace the heading with another piece of information
+#'  in the refined chapter_overview. For instance, one may want to organize output
+#'  by variable_name_indep, but to display the variable_label_indep instead. Use
+#'  the name for the replacement and the value for the original.
+#'
 #' @param information *Pre-computed information*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
@@ -294,6 +310,23 @@
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
 #'   Specific combinations with a by-variable where bivariates should always be shown.
+#'
+#' @param single_y_bivariates_if_indep_cats_above *Single y bivariates if indep-cats above ...*
+#'
+#'  `scalar<integer>` // *default:* `3` (`optional`)
+#'
+#'  Figures and tables for bivariates can become very long if the independent
+#'  variable has many categories. This argument specifies the number of indep categories
+#'  above which only single y bivariates should be shown.
+#'
+#' @param single_y_bivariates_if_deps_above *Single y bivariates if dep-vars above ...*
+#'
+#'  `scalar<integer>` // *default:* `20` (`optional`)
+#'
+#'  Figures and tables for bivariates can become very long if there are many dependent
+#'  variables in a battery/question matrix. This argument specifies the number of dep variables
+#'  above which only single y bivariates should be shown. Set to 0 to always show single y bivariates.
+#'
 #'
 #' @param categories_treated_as_na *NA categories*
 #'
@@ -363,6 +396,15 @@
 #'   Whether to hide bivariate entry if significance is above this value.
 #'   Defaults to showing all.
 #'
+#' @param hide_result_if_n_below *Hide result if N below*
+#'
+#'  `scalar<integer>` // *default:* `10` (`optional`)
+#'
+#'  Whether to hide result if N for a given datasets (or mesos group) is below
+#'  this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
+#'  typically exempted in the first place. This might change in the future with
+#'  a separate argument.
+#'
 #' @param hide_chr_for_others *Hide open response displays for others*
 #'
 #'   `scalar<logical>` // *default:* `TRUE` (`optional`)
@@ -370,6 +412,19 @@
 #'   For mesos reports using the element "chr_table", open responses are
 #'   displayed for also the entire sample (`FALSE`) or only for the mesos
 #'   group to ensure data privacy (`TRUE`).
+#'
+#' @param plot_height_multiplier_per_facet *Plot height multiplier per facet*
+#'
+#'  `scalar<double>` // *default:* `0.95` (`optional`)
+#'
+#'  Multiplier for plot height per facet. Defaults to optimal at .95, i.e. slightly less than no change (1).
+#'
+#' @param plot_height_multiplier_per_legend_line *Plot height multiplier per legend line*
+#'
+#'  `scalar<double>` // *default:* `1.1` (`optional`)
+#'
+#'  Multiplier for plot height per horizontal line of legend.
+#'  Defaults to optimal at 1.1, i.e. slightly more than no change (1).
 #'
 #' @param plot_height_max *Maximum plot height*
 #'
@@ -417,6 +472,12 @@
 #'
 #'   Height for vertical layout of plot? NEEDS CHECKING
 #'
+#' @param table_main_question_as_header *Table main question as header*
+#'
+#' `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'
+#' Whether to include the main question as a header in the table.
+#'
 #' @param max_width_obj *Maximum object width*
 #'
 #'   `scalar<integer>` // *default:* `NULL` (`optional`)
@@ -433,17 +494,25 @@
 #'   long file names if using labels as part of structure, and hashing with
 #'   Quarto's `cache: true` feature. This argument truncates the filenames.
 #'
+#' @param max_clean_folder_name *Maximum clean folder name length*
+#'
+#'  `scalar<integer>` // *default:* `NULL` (`optional`)
+#'
+#'  Whereas `max_width_file` truncates the file name, this argument truncates
+#'  the folder name. It will not impact the report or chapter names in website,
+#'  only the folders.
+#'
 #' @param mesos_first *mesos first*
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
 #'
 #'   Whether to place the mesos group element before or after the entire sample.
 #'
-#' @param single_y_bivariate_elements *Single Y bivariate elements*
+#' @param log_file *Path to log file*
 #'
-#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
+#'   `scalar<string>` // *default:* `"_log.txt"` (`optional`)
 #'
-#'   Whether to display bivariates with a single dependent variable. NEEDS CHECKING.
+#'   Path to log file. Set to NULL to disable logging.
 #'
 #' @param translations *Translations*
 #'

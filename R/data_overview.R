@@ -291,6 +291,11 @@ split_if_single_y_bivariates <-
 #' @param progress *Whether to display progress message*
 #'
 #'    `scalar<logical>` // *default:* `TRUE`
+#' @param variable_group_dep *Name for the variable_group_dep column*
+#'
+#'   `scalar<string>` // *default:* `".variable_group_dep"`
+#'
+#'   This column is used to group variables that are part of the same bivariate analysis.
 #'
 #' @return Data frame
 #' @export

@@ -2,6 +2,7 @@
 #'
 #' @param data Data.frame
 #' @param pattern String, regex pattern.
+#' @param replacement String, replacement for pattern.
 #' @param data_type_criterion Can be a function that specifies what kind of variables to select, e.g. is.factor
 #'
 #' @return Data

@@ -102,7 +102,7 @@ gen_element_and_qmd_snippet2 <-
       make_filename_prefix(
       grouping_structure = grouping_structure,
       chapter_overview_section = chapter_overview_section,
-      max_width = dots$max_width_obj,
+      max_width_obj = dots$max_width_obj,
       mesos_group = mesos_group,
       indep_sep_string = "_BY_",
       mesos_sep_string = "_FOR_")

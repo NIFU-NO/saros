@@ -113,25 +113,12 @@ prep_checkbox_prop_plot_docx <-
 #' @examples
 #' library(officer) # To save the rdocx object to disk
 #'
-#'  test_docx_b13 <-
+#'  test_docx_a13 <-
 #'    ex_survey1 |>
-#'    embed_checkbox_prop_plot_docx(dep = b_1:b_3,
-#'               showNA = "never",
-#'               descend = TRUE,
-#'               return_raw = FALSE,
-#'               hide_label_if_prop_below=0,
-#'               data_label = "percentage_bare",
-#'               data_label_decimal_symbol = ",",
-#'               digits = 1,
-#'               label_font_size = 12,
-#'               main_font_size = 12,
-#'              plot_height_multiplier = .3,
-#'              plot_height_fixed_constant = 1,
-#'               vertical = FALSE,
-#'               font_family = "sans")
+#'    embed_checkbox_prop_plot_docx(dep = a_1:a_3)
 #' \dontrun{
-#' print(test_docx_b13, target = "test_docx_b13.docx")
-#' file.remove("test_docx_b13.docx")
+#' print(test_docx_a13, target = "test_docx_a13.docx")
+#' file.remove("test_docx_a13.docx")
 #' }
 embed_checkbox_prop_plot_docx <-
   function(data,

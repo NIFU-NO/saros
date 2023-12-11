@@ -102,6 +102,7 @@ prep_cat_prop_plot_docx <-
 #' @inheritParams summarize_data
 #' @inheritParams gen_qmd_chapters
 #' @inheritParams embed_cat_prop_plot
+#' @param plot_height Fixed height of the plot in cm. Defaults to 15.
 #'
 #' @importFrom tidyselect everything eval_select
 #' @importFrom officer read_docx docx_dim block_caption body_add_caption
