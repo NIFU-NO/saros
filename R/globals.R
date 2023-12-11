@@ -26,7 +26,7 @@ utils::globalVariables(names = c(".", ".data", ".env"))
              ".variable_type", ".variable_group_id"), "_indep"),
     ".element_name")
 .saros.env$element_names_simplified <-
-  c("cat_table", "cat_prop_plot", "cat_freq_plot", "chr_table", "checkbox_plot")
+  c("cat_table", "cat_prop_plot", "cat_freq_plot", "chr_table")
 #' Get Valid Data Labels for Figures and Tables
 #'
 #' @return Character vector
