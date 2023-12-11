@@ -77,7 +77,8 @@ gen_inner_section <- function(.x, .y,
                                            data[[dots$mesos_var]] == mesos_group)
       if(!inherits(data_for_mesos, "data.frame")) browser()
 
-      if(nrow(data_for_mesos) > dots$hide_result_if_n_below) {
+      if(nrow(data_for_mesos) > dots$hide_result_if_n_below ||
+         all(stringi::stri_detect_fixed(str = .y$.element_name, pattern = "chr"))) {
 
         qmd_snippet_mesos <-
           rlang::exec(
