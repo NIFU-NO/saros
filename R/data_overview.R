@@ -478,28 +478,30 @@ refine_chapter_overview <-
                          mesos_var = dots$mesos_var,
                          log_file = dots$log_file)
 
+    out <-
+      set_vars_as_factor_with_na(chapter_overview = out,
+                                 data = data,
+                                 element_names = dots$element_names)
+
+
+    if(!is.na(dots$single_y_bivariates_if_indep_cats_above)) {
+      out <-
+        split_if_single_y_bivariates(
+          chapter_overview = out,
+          data = data,
+          single_y_bivariates_if_indep_cats_above = dots$single_y_bivariates_if_indep_cats_above,
+          single_y_bivariates_if_deps_above = dots$single_y_bivariates_if_deps_above,
+          variable_group_dep = variable_group_dep,
+          organize_by = dots$organize_by)
+      dots$organize_by <- c(dots$organize_by, variable_group_dep)
+    }
+
   }
 
-  out <-
-    set_vars_as_factor_with_na(chapter_overview = out,
-                               data = data,
-                               element_names = dots$element_names)
 
 
   if(!rlang::is_null(out$chapter)) {
     out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
-  }
-
-  if(!is.na(dots$single_y_bivariates_if_indep_cats_above)) {
-    out <-
-      split_if_single_y_bivariates(
-        chapter_overview = out,
-        data = data,
-        single_y_bivariates_if_indep_cats_above = dots$single_y_bivariates_if_indep_cats_above,
-        single_y_bivariates_if_deps_above = dots$single_y_bivariates_if_deps_above,
-        variable_group_dep = variable_group_dep,
-        organize_by = dots$organize_by)
-    dots$organize_by <- c(dots$organize_by, variable_group_dep)
   }
 
   sorter_assistant <- function(x) {
