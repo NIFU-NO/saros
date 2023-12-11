@@ -208,7 +208,7 @@ prep_cat_prop_plot_html <-
 #'
 #' @examples
 #' \dontrun{
-#' embed_cat_prop_plot(data = ex_survey1, dep = b_1:b_3)
+#' plot_b13 <- embed_cat_prop_plot(data = ex_survey1, dep = b_1:b_3)
 #' }
 embed_cat_prop_plot <-
   function(data,
