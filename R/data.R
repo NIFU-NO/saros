@@ -47,12 +47,6 @@
 #' }
 "ex_survey1"
 
-#' Stopwords
-#' @format Stopwords as list of character vectors
-#' \describe{contains a list of 58 languages}
-#' @keywords internal
-"stopwords"
-
 #' ex_survey_ch_overview: Mock overview of chapter structure
 #'
 #' Note that indep, and other columns are also welcome.

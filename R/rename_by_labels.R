@@ -20,7 +20,7 @@ rename_by_labels <-
 			 label_sep = " - ",
 			 sort_var = c("pos", "variable", "label"),
 			 new_var_sep = "_",
-			 stop_words = unique(c(stopwords[["en"]], "where", "is", "do", "which", "how", "to"))) {
+			 stop_words = NULL) {
 
 		sort_var <- rlang::arg_match(sort_var)
 
