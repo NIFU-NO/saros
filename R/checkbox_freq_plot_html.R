@@ -10,7 +10,7 @@
 #'
 #' @return ggiraph object, plottable with plot()
 #' @keywords internal
-prep_checkbox_prop_plot_html <-
+prep_checkbox_freq_plot_html <-
   function(data,
            ...,
            inverse = FALSE,
@@ -18,10 +18,10 @@ prep_checkbox_prop_plot_html <-
 
 
     dots <- update_dots(dots = rlang::list2(...),
-                        caller_function = "checkbox_prop_plot")
+                        caller_function = "checkbox_freq_plot")
 
     if(dplyr::n_distinct(levels(data[[".category"]]), na.rm = TRUE) != 2) cli::cli_abort("{unique(data$.variable_label)} do(es) not contain two categories (excluding missing).")
-    if(!is_colour(dots$colour_2nd_binary_cat)) dots$colour_2nd_binary_cat <- "darkred"
+    if(!is_colour(dots$colour_2nd_binary_cat)) dots$colour_2nd_binary_cat <- NA
 
 
     indep_vars <- colnames(data)[!colnames(data) %in%
@@ -185,7 +185,8 @@ prep_checkbox_prop_plot_html <-
 #' @inheritParams draft_report
 #' @inheritParams summarize_data
 #' @inheritParams gen_qmd_chapters
-#' @param colour_palette Character vector of colours.
+#' @inheritParams embed_checkbox_prop_plot
+#'
 #' @param inverse Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.
 #'
 #' @return ggplot
@@ -193,8 +194,8 @@ prep_checkbox_prop_plot_html <-
 #' @export
 #'
 #' @examples
-#' check_plot <- embed_checkbox_prop_plot(data = ex_survey1, dep = a_1:a_3)
-embed_checkbox_prop_plot <-
+#' check_plot <- embed_checkbox_freq_plot(data = ex_survey1, dep = a_1:a_3)
+embed_checkbox_freq_plot <-
   function(data,
            ...,
            dep = tidyselect::everything(),
@@ -208,7 +209,7 @@ embed_checkbox_prop_plot <-
                                       .frequency = "regularly", .frequency_id = "recode_checkbox_items")
 
     dots <- update_dots(dots = rlang::list2(...),
-                        caller_function = "checkbox_prop_plot")
+                        caller_function = "checkbox_freq_plot")
 
 
     check_multiple_indep(data, indep = {{ indep }}, call = call)
@@ -237,10 +238,12 @@ embed_checkbox_prop_plot <-
 
     chart <-
       rlang::exec(
-        prep_checkbox_prop_plot_html,
+        prep_checkbox_freq_plot_html,
         data = data_out,
         inverse = inverse,
-        !!!dots)
+        colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
+        !!!dots[!names(dots) %in% "colour_2nd_binary_cat"]
+      )
 
     if(!rlang::is_null(dots$label_separator)) {
       indep_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))

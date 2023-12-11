@@ -7,7 +7,7 @@
 #'
 #' @return mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
 #' @keywords internal
-prep_checkbox_prop_plot_docx <-
+prep_checkbox_freq_plot_docx <-
   function(data,
            ...,
            colour_palette = NULL,
@@ -100,7 +100,8 @@ prep_checkbox_prop_plot_docx <-
 #' @inheritParams summarize_data
 #' @inheritParams gen_qmd_chapters
 #' @inheritParams embed_checkbox_prop_plot
-#' @param plot_height Height of the plot in cm. Defaults to 15.
+#' @inheritParams embed_checkbox_prop_plot_docx
+#'
 #' @importFrom tidyselect everything eval_select
 #' @importFrom officer read_docx docx_dim block_caption body_add_caption
 #' @importFrom mschart body_add_chart
@@ -115,12 +116,12 @@ prep_checkbox_prop_plot_docx <-
 #'
 #'  test_docx_a13 <-
 #'    ex_survey1 |>
-#'    embed_checkbox_prop_plot_docx(dep = a_1:a_3)
+#'    embed_checkbox_freq_plot_docx(dep = a_1:a_3)
 #' \dontrun{
 #' print(test_docx_a13, target = "test_docx_a13.docx")
 #' file.remove("test_docx_a13.docx")
 #' }
-embed_checkbox_prop_plot_docx <-
+embed_checkbox_freq_plot_docx <-
   function(data,
            ...,
            dep = tidyselect::everything(),
@@ -131,7 +132,7 @@ embed_checkbox_prop_plot_docx <-
            inverse = FALSE) {
 
     dots <- update_dots(dots = rlang::list2(...),
-                        caller_function = "checkbox_prop_plot")
+                        caller_function = "checkbox_freq_plot")
 
     check_multiple_indep(data, indep = {{indep}})
 
@@ -158,7 +159,7 @@ embed_checkbox_prop_plot_docx <-
 
     chart <-
       rlang::exec(
-        prep_checkbox_prop_plot_docx,
+        prep_checkbox_freq_plot_docx,
         data = data_out,
         inverse = inverse,
         colour_palette = colour_palette,
@@ -183,7 +184,7 @@ embed_checkbox_prop_plot_docx <-
     } else {
 
 
-    ## Consider moving all the below into prep_checkbox_prop_plot_docx
+    ## Consider moving all the below into prep_checkbox_freq_plot_docx
     ## so that embed_chart becomes one function
     docx_file <- use_docx(docx_template = dots$docx_template)
 
