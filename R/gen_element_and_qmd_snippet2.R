@@ -120,9 +120,6 @@ gen_element_and_qmd_snippet2 <-
     if(length(x_col_names)==0) x_col_names <- NULL
 
 
-    common_data_type <-
-      get_common_data_type(data,
-                           col_pos = unique(as.character(chapter_overview_section$.variable_name_dep)))
 
 
     colour_palette <- NULL
@@ -131,18 +128,15 @@ gen_element_and_qmd_snippet2 <-
 
     if(all(unique(chapter_overview_section$.variable_type_dep) %in% c("fct", "ord"))) {
 
-      common_levels <-
-        get_common_levels(data,
-                          col_pos = unique(as.character(chapter_overview_section$.variable_name_dep)))
 
       colour_palette <-
-        get_colour_set(
-          x = common_levels,
-          common_data_type = common_data_type,
+        get_colour_palette(
+          data = data,
+          col_pos = unique(as.character(chapter_overview_section$.variable_name_dep)),
           colour_palette_nominal = dots$colour_palette_nominal,
           colour_palette_ordinal = dots$colour_palette_ordinal,
           colour_na = dots$colour_na,
-          colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
+          # colour_2nd_binary_cat = dots$colour_2nd_binary_cat,
           categories_treated_as_na = dots$categories_treated_as_na[dots$categories_treated_as_na %in% common_levels])
 
     }

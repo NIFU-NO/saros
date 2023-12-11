@@ -72,14 +72,18 @@ hex_bw <- function(hex_code, colour_2nd_binary_cat = NULL) {
 }
 
 check_colour_palette <- function(colour_palette, call = rlang::caller_env()) {
-  if(!is.null(colour_palette) && !all(is_colour(colour_palette))) {
+  if(!is.null(colour_palette) && (!all(is_colour(colour_palette)) ||
+                                  rlang::is_function(colour_palette))) {
     cli::cli_abort(
       c("Invalid user-specified colours.",
-        i="{.arg colour_palette} must be a character vector of valid colours in hex-format (e.g. #000000).",
-        i="Problems with {{colour_palette[!is_colour(colour_palette)]}}."),
+        i="{.arg colour_palette} must be a character vector of valid colours in hex-format (e.g. #000000), or a function.",
+        i="Problems with {colour_palette}."),
       call = call)
   }
 }
+
+
+
 
 get_remaining_colours <- function(user_colour_set,
                                   n_colours_needed,
@@ -87,6 +91,10 @@ get_remaining_colours <- function(user_colour_set,
   check_colour_palette(user_colour_set)
 
   if(!is.null(user_colour_set)) {
+
+    if(rlang::is_function(user_colour_set)) {
+      user_colour_set <- user_colour_set()
+    }
 
     if(length(user_colour_set) >= n_colours_needed) {
       if(ordinal) {
@@ -102,13 +110,6 @@ get_remaining_colours <- function(user_colour_set,
   }
   hues <- seq(15, 375, length = n_colours_needed + 1)
   return(grDevices::hcl(h = hues, l = 65, c = 100)[1:n_colours_needed])
-  # if(n_colours_needed <= 12 && requireNamespace("RColorBrewer")) {
-  #
-  #     return(sample(x = RColorBrewer::brewer.pal(n = 12, name = "Paired"),
-  #                   size = n_colours_needed))
-  # } else if(requireNamespace("viridisLite")) {
-  #   return(viridisLite::viridis(n = n_colours_needed))
-  # }
 }
 
 
@@ -196,113 +197,105 @@ get_colour_set <-
     x
   }
 
-# get_colour_set2 <-
-#   function(x,
-#            colour_palette_nominal=NULL,
-#            colour_na = NULL,
-#            colour_2nd_binary_cat = NULL,
-#            call = rlang::caller_env()) {
-#
-#     n_colours_needed <- length(x)
-#     if(!is.null(colour_palette_nominal)) {
-#       check_colour_palette(colour_palette = colour_palette_nominal)
-#
-#       if(length(colour_palette_nominal) >= n_colours_needed) {
-#         out <- subset_vector(vec = colour_palette_nominal, set = ".spread",
-#                              spread_n = n_colours_needed)
-#
-#       } else {
-#         cli::cli_warn("Fewer colours in user-provided colour palette than needed.",
-#                       call = call)
-#       }
-#     } else if(n_colours_needed <= 12 && requireNamespace("RColorBrewer")) {
-#         out <- sample(x = RColorBrewer::brewer.pal(n = 12, name = "Paired"), size = n_colours_needed)
-#     } else if(requireNamespace("viridisLite")) {
-#       out <- viridisLite::viridis(n = n_colours_needed)
-#     }
-#
-#     out <- stats::setNames(out, nm = x)
-#
-#     if(!is.null(colour_na) && !is.na(colour_na)) {
-#       check_colour_palette(colour_palette = colour_na)
-#       out[names(out)=="NA"] <- colour_na
-#     }
-#
-#     if(n_colours_needed == 2L &&
-#        !is.null(colour_2nd_binary_cat)) {
-#
-#       check_colour_palette(colour_palette = colour_2nd_binary_cat)
-#       out[2] <- colour_2nd_binary_cat
-#     }
-#
-#     out
-#   }
+
+#' Provide A Colour Set for A Number of Requested Colours
+#'
+#' Possibly using colour_palette_nominal if available. If not sufficient, uses a set
+#'     palette from RColorBrewer.
+#'
+#' @inheritParams draft_report
+#' @inheritParams summarize_data
+#' @param x Vector for which colours will be found.
+#' @param colour_palette_nominal,colour_palette_ordinal *User specified colour set*
+#'
+#'  `vector<character>` // *default:* `NULL` (`optional`)
+#'
+#'   User-supplied default palette, excluding `colour_na`.
+#'
+#' @param common_data_type *factor or ordered data type*
+#'
+#'  `scalar<character>` // *default:* `factor` (`optional`)
+#'
+#'  Currently only supports factor and ordered.
+#'
+#' @param ordinal
+#'
+#'  `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'
+#'  Is palette ordinal?
+#'
+#' @return A colour set as character vector, where `NA` has the `colour_na`, and the rest are taken from colour_palette_nominal if available.
+#' @export
+#' @examples
+#' get_colour_palette(x=1:4)
+get_colour_palette <-
+  function(
+    data,
+    col_pos,
+    colour_palette_nominal = NULL,
+    colour_palette_ordinal = NULL,
+    colour_na = NULL,
+    categories_treated_as_na = NULL,
+    call = rlang::caller_env()) {
+
+    out <-
+    lapply(col_pos, function(col) {
+      attr(data[[col]], "colour_palette")
+    })
+    out <- unique(out)
+    if(length(out) > 1) {
+      cli::cli_warn("Multiple colour palettes embedded in {col_pos}. Using first one.")
+    }
+    if(length(out) >= 1) {
+      out <- out[[1]]
+      if(rlang::is_null(names(out))) {
+        out <- rlang::set_names(out, col_pos)
+      }
+      return(out)
+    }
+
+    common_data_type <-
+      get_common_data_type(data = data,
+                           col_pos = col_pos)
+
+    ## If nothing specified, use the default palette
+    common_levels <-
+      get_common_levels(data = data,
+                        col_pos = col_pos)
+
+    out <- stats::setNames(common_levels, common_levels)
+
+    user_colour_set <-
+      switch(common_data_type,
+             ordered = colour_palette_ordinal,
+             factor = colour_palette_nominal)
+    # if(rlang::is_function(user_colour_set)) {
+    #   return(user_colour_set)
+    # }
+
+    if(rlang::is_character(colour_na)) {
+      if(length(colour_na)>= length(categories_treated_as_na)) {
+        for(i in seq_along(categories_treated_as_na)) {
+          out[names(out) == categories_treated_as_na[i]] <- colour_na[i]
+        }
+      } else {
+        out[names(out) %in% categories_treated_as_na] <- colour_na[1]
+      }
+    }
+    n_colours_needed <- length(out[!out %in% colour_na])
+
+    colours_available <-
+      get_remaining_colours(
+        user_colour_set = user_colour_set,
+        n_colours_needed = n_colours_needed,
+        ordinal = common_data_type == "ordered")
 
 
+      tryCatch(
+        out[!out %in% colour_na] <- colours_available[seq_along(out[!out %in% colour_na])], ## PERHAPS NOT PERFECT HERE?
+        warning = function(e) cli::cli_warn(stringi::stri_c(ignore_null=TRUE, "colours_available: {colours_available}. 'out' yields {out}.", e)),
+        error = function(e) cli::cli_warn(stringi::stri_c(ignore_null=TRUE, "colours_available: {colours_available}. 'out' yields {out}.", e)))
 
-#' Get Colour Palette
-#'
-#' Give two
-#'
-#' @param type Character vector of variable types ("ordinal", "nominal",
-#'   "interval").
-#' @param unique_set_group Character vector of unique values across the battery.
-#' @param unique_set Character vector of unique values within the variable.
-#' @param colour_set_ordinal,colour_set_nominal Character vector with hex
-#'   colours. Must be provided.
-#'
-#' @return Named character vector of hex colours for each element of unique_set.
-#'
-# colour_picker <-
-#   function(type,
-#            unique_set_group,
-#            unique_set,
-#            colour_set_ordinal,
-#            colour_set_nominal) {
-#     vctrs::vec_assert(x = type, ptype = character())
-#     vctrs::vec_assert(x = unique_set_group, ptype = list())
-#     vctrs::vec_assert(x = unique_set, ptype = list())
-#
-#     if(length(type) != length(unique_set_group)) {
-#       rlang::abort(c("type and unique_set_group are not of equal length.",
-#                      x=stringi::stri_c(ignore_null=TRUE, "type is of length ", length(type),
-#                               " whereas unique_set_group is of length ", length(unique_set_group))))
-#     }
-#     if(length(unique_set) != length(unique_set_group)) {
-#       rlang::abort(c("unique_set and unique_set_group are not of equal length.",
-#                      x=stringi::stri_c(ignore_null=TRUE, "unique_set is of length ", length(unique_set),
-#                               " whereas unique_set_group is of length ", length(unique_set_group))))
-#     }
-#     lengths_comparisons <- lengths(unique_set) <= lengths(unique_set_group)
-#     if(!all(lengths_comparisons)) {
-#       rlang::abort(c("unique_set and unique_set_group contain vectors of pairwise unequal lengths.",
-#                      x=stringi::stri_c(ignore_null=TRUE, "Problem(s) at row ", which(!lengths_comparisons),
-#                               " when unique_set is ", lengths(unique_set)[!lengths_comparisons],
-#                               " and unique_set_group is ", lengths(unique_set_group)[!lengths_comparisons])))
-#     }
-#     # out <-
-#     lapply(seq_along(type),# .y = unique_set,
-#                function(i) {
-#                  vctrs::vec_assert(x = unique_set_group[[i]], ptype = character())
-#                  vctrs::vec_assert(x = unique_set[[i]], ptype = character())
-#
-#                  n_unique_set_i <- length(unique_set[[i]])
-#                  n_unique_set_group_i <- length(unique_set_group[[i]])
-#
-#                  if(!is.na(type[i]) && type[i] %in% c("ordinal", "interval")) {
-#                    unname(get_colour_set(
-#                      n_colours_needed = length(unique_set[[i]]),
-#                      colour_palette_nominal = colour_set_ordinal,
-#                      names = unique_set_group[[i]]))[unique_set[[i]]]
-#
-#                  } else if(!is.na(type[i]) && type[i] == "nominal" &&
-#                            n_unique_set_group_i <= 12) { # Why this limit here only?
-#                    unname(get_colour_set(
-#                      n_colours_needed = n_unique_set_group_i,
-#                      colour_palette_nominal = colour_set_nominal,
-#                      names = unique_set_group[[i]]))[unique_set[[i]]]
-#                  } else NA_character_
-#                })
-#     # out
-#   }
+    out
+  }
 
