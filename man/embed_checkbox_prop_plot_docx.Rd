@@ -35,13 +35,15 @@ Arguments forwarded to the corresponding functions that create the elements.}
 
 Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
 
-\item{colour_palette}{Character vector of colour codes.}
+\item{colour_palette}{Character vector of colours.}
 
 \item{mesos_group}{\emph{Specific group to compare with}
 
 \verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
 
 Both the absolute and relative folderpaths are required, as strings.}
+
+\item{plot_height}{Height of the plot in cm. Defaults to 15.}
 
 \item{inverse}{Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.}
 }
