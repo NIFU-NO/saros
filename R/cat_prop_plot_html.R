@@ -31,6 +31,15 @@ prep_cat_prop_plot_html <-
 
 
     multi <- length(colour_palette) > 2
+    checkbox <-
+      length(unname(colour_palette)[!is.na(unname(colour_palette))]) == 1 && # Contains a colour
+      length(unname(colour_palette)[is.na(unname(colour_palette))]) == 1 # Contains a NA
+
+    if(checkbox) {
+      data[[".category"]] <- forcats::fct_relevel(data[[".category"]],
+                                                  names(colour_palette)[is.na(unname(colour_palette))],
+                                                  after = 1)
+    }
 
     indep_vars <- colnames(data)[!colnames(data) %in%
                                    .saros.env$summary_data_sort2]
@@ -41,8 +50,7 @@ prep_cat_prop_plot_html <-
       dplyr::n_distinct(data[[".variable_label"]]) == 1
 
     hide_legend <-
-      dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
-        !rlang::is_null(dots$colour_2nd_binary_cat)
+      checkbox
 
     max_nchar_cat <- max(nchar(levels(data[[".category"]])), na.rm = TRUE)
 
@@ -93,11 +101,7 @@ prep_cat_prop_plot_html <-
       ) +
       ggiraph::geom_text_interactive(
         mapping = ggplot2::aes(
-          colour =
-            ggplot2::after_scale(x = hex_bw(.data$fill,
-              colour_2nd_binary_cat = if (!multi) dots$colour_2nd_binary_cat
-            ))
-        ),
+          colour = ggplot2::after_scale(x = hex_bw(.data$fill))),
         position = ggplot2::position_stack(vjust = .5, reverse = TRUE),
         show.legend = FALSE, na.rm = TRUE
       ) +

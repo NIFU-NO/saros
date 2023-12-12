@@ -80,11 +80,7 @@ prep_uni_int_plot <-
       ) +
       ggiraph::geom_text_interactive(
         mapping = ggplot2::aes(
-          colour =
-            ggplot2::after_scale(x = hex_bw(.data$fill,
-              colour_2nd_binary_cat = if (!multi) dots$colour_2nd_binary_cat
-            ))
-        ),
+          colour = ggplot2::after_scale(x = hex_bw(.data$fill))),
         position = ggplot2::position_stack(vjust = .5, reverse = TRUE),
         show.legend = FALSE, na.rm = TRUE
       ) +
