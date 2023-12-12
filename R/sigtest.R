@@ -15,17 +15,17 @@
 #' set.seed(1)
 #' library(dplyr)
 #' bind_rows(
-#' sigtest(data=ex_survey1, dep = a_1) # t-test of proportions (.5): p=.98
-#' sigtest(data=ex_survey1, dep = b_1), # Chi-square (all=.333): p=<.001
-#' sigtest(data=ex_survey1, dep = c_1), # one-sample t-test p<.001
-#' sigtest(data=ex_survey1, dep = b_1, indep = x1_sex), # Chi-square: p = .548
-#' sigtest(data=ex_survey1, dep = b_1, indep = f_uni), # Chi-square: p = .102
-#' sigtest(data=ex_survey1, dep = c_1, indep = x1_sex), # two-sample t-test: p = .97
-#' sigtest(data=ex_survey1, dep = c_1, indep = f_uni), # ANOVA/F-test: p = .22
-#' sigtest(data=ex_survey1, dep = c_1, indep = c_2)) # correlation: p = .976
+#' sigtest(data=ex_survey, dep = a_1) # t-test of proportions (.5): p=.98
+#' sigtest(data=ex_survey, dep = b_1), # Chi-square (all=.333): p=<.001
+#' sigtest(data=ex_survey, dep = c_1), # one-sample t-test p<.001
+#' sigtest(data=ex_survey, dep = b_1, indep = x1_sex), # Chi-square: p = .548
+#' sigtest(data=ex_survey, dep = b_1, indep = f_uni), # Chi-square: p = .102
+#' sigtest(data=ex_survey, dep = c_1, indep = x1_sex), # two-sample t-test: p = .97
+#' sigtest(data=ex_survey, dep = c_1, indep = f_uni), # ANOVA/F-test: p = .22
+#' sigtest(data=ex_survey, dep = c_1, indep = c_2)) # correlation: p = .976
 #'
-#' sigtest(data=ex_survey1, dep = a_1, indep = c_1) # NA
-#' sigtest(data=ex_survey1, dep = b_1, indep = c_1) # NA
+#' sigtest(data=ex_survey, dep = a_1, indep = c_1) # NA
+#' sigtest(data=ex_survey, dep = b_1, indep = c_1) # NA
 #'}
 #'
 sigtest <-
@@ -165,12 +165,12 @@ sigtest <-
 #' @export
 #'
 #' @examples
-#' embed_uni_sigtest(data=ex_survey1,
+#' embed_uni_sigtest(data=ex_survey,
 #'                   dep = a_1:a_9, reps=10, hide_test_if_n_below=10)
-#' embed_uni_sigtest(data=ex_survey1,
+#' embed_uni_sigtest(data=ex_survey,
 #'                   dep = b_1:b_3, reps=10, hide_test_if_n_below=10,
 #'                   label_separator=" - ")
-#' embed_uni_sigtest(data=ex_survey1,
+#' embed_uni_sigtest(data=ex_survey,
 #'                   dep = c_1:c_2, reps=10, hide_test_if_n_below=10)
 embed_uni_sigtest <-
   function(data,
@@ -245,11 +245,11 @@ embed_uni_sigtest <-
 #' @export
 #'
 #' @examples
-#' embed_bi_sigtest(data=ex_survey1, dep = a_1:a_9, indep = x1_sex,
+#' embed_bi_sigtest(data=ex_survey, dep = a_1:a_9, indep = x1_sex,
 #'                  reps=10, hide_test_if_n_below=1)
-#' embed_bi_sigtest(data=ex_survey1, dep = b_1:b_3, indep = x1_sex,
+#' embed_bi_sigtest(data=ex_survey, dep = b_1:b_3, indep = x1_sex,
 #'                  reps=10, hide_test_if_n_below=1, label_separator=" - ")
-#' embed_bi_sigtest(data=ex_survey1, dep = c_1:c_2, indep = x1_sex,
+#' embed_bi_sigtest(data=ex_survey, dep = c_1:c_2, indep = x1_sex,
 #'                  reps=10, hide_test_if_n_below=1)
 embed_bi_sigtest <-
   function(data,

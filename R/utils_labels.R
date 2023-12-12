@@ -133,7 +133,7 @@ set_var_labels <- function(data, cols=colnames(data), overwrite=TRUE) {
 #' @export
 #'
 #' @examples
-#' rename_by_labels(ex_survey1)
+#' rename_by_labels(ex_survey)
 
 rename_by_labels <-
   function(data,

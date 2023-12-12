@@ -34,5 +34,5 @@ Easily mutate a single column into multiple columns (~dummies+1),
 while retaining variable labels and order of the original factor variable.
 }
 \examples{
-col_to_binaries(ex_survey1, col = b_3, label_separator = "  -  ")
+col_to_binaries(ex_survey, col = b_3, label_separator = "  -  ")
 }

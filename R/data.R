@@ -1,4 +1,4 @@
-#' ex_survey1: Mockup dataset of a survey.
+#' ex_survey: Mockup dataset of a survey.
 #'
 #' A dataset containing fake respondents' answers to survey questions.
 #' The first two, x_sex and x_human, are intended to be independent variables,
@@ -11,6 +11,7 @@
 #' \describe{
 #'   \item{x1_sex}{Gender}
 #'   \item{x2_human}{Is respondent human?}
+#'   \item{x3_nationality}{Where is the respondent born?}
 #'   \item{a_1}{Do you consent to the following? - Agreement #1}
 #'   \item{a_2}{Do you consent to the following? - Agreement #2}
 #'   \item{a_3}{Do you consent to the following? - Agreement #3}
@@ -43,9 +44,10 @@
 #'   following policies - Blue Party}
 #'   \item{f_uni}{Which of the following universities would you
 #'   prefer to study at?}
+#'   \item{open_comments}{Do you have any comments to the survey?}
 #'   \item{resp_status}{Response status}
 #' }
-"ex_survey1"
+"ex_survey"
 
 #' ex_survey_ch_overview: Mock overview of chapter structure
 #'
@@ -55,8 +57,8 @@
 #' \describe{
 #'   \item{chapter}{Manual entry chapter title}
 #'   \item{author}{Single or multiple authors, separated by comma}
-#'   \item{dep}{Columns in ex_survey1 having the role of dependent variable}
-#'   \item{indep}{Columns in ex_survey1 having the role of independent variable}
+#'   \item{dep}{Columns in ex_survey having the role of dependent variable}
+#'   \item{indep}{Columns in ex_survey having the role of independent variable}
 #'   \item{irrelevant_col}{Just a column about something else to verify that the system works also with superfluous information.}
 #' }
 "ex_survey_ch_overview"

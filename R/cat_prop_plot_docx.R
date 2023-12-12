@@ -117,7 +117,7 @@ prep_cat_prop_plot_docx <-
 #' library(officer) # To save the rdocx object to disk
 #'
 #'  test_docx_b13 <-
-#'    ex_survey1 |>
+#'    ex_survey |>
 #'    embed_cat_prop_plot_docx(dep = b_1:b_3,
 #'               showNA = "never",
 #'               descend = TRUE,

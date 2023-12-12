@@ -27,5 +27,5 @@ Data
 Remove regex pattern from variable labels
 }
 \examples{
-remove_label_parts(ex_survey1, pattern = " living in")
+remove_label_parts(ex_survey, pattern = " living in")
 }

@@ -60,5 +60,5 @@ Processes A 'chapter_overview' Data Frame
 \examples{
 ref_df <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview)
 ref_df2 <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview,
-                     data = ex_survey1)
+                     data = ex_survey)
 }

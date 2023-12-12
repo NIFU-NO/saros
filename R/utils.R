@@ -390,7 +390,7 @@ trim_columns <- function(data, cols = c(".variable_label_prefix_dep", ".variable
 #' @return Original data frame with the binary columns attached, containing new labels.
 #' @export
 #'
-#' @examples col_to_binaries(ex_survey1, col = b_3, label_separator = "  -  ")
+#' @examples col_to_binaries(ex_survey, col = b_3, label_separator = "  -  ")
 col_to_binaries <- function(data, col,
                             var_separator = "___",
                             label_separator = " - ") {

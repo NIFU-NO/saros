@@ -46,6 +46,6 @@ software where the data originates. This function renames variable names
 based on patterns in the variable labels, after ignoring some stop words.
 }
 \examples{
-rename_by_labels(ex_survey1)
-rename_by_labels(ex_survey1)
+rename_by_labels(ex_survey)
+rename_by_labels(ex_survey)
 }

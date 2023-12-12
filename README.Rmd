@@ -65,7 +65,7 @@ pak::pak("sda030/saros")
 library(saros)
 output_index_qmd <-
   draft_report(chapter_overview = ex_survey_ch_overview, 
-             data = ex_survey1, 
+             data = ex_survey, 
              mesos_var = "f_uni",
              path = tempdir()
              )
@@ -87,7 +87,7 @@ output_index_qmd <-
                                indep = ifelse(.data$indep == "x1_sex",
                                               "x1_sex,x2_human", 
                                               .data$indep)),
-              data = ex_survey1[ex_survey1$f_uni %in% c("Uni of A", "Uni of B"), ], 
+              data = ex_survey[ex_survey$f_uni %in% c("Uni of A", "Uni of B"), ], 
                title = "My first report - ",
                mesos_var = "f_uni",
                label_separator = " - ",

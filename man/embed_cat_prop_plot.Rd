@@ -82,9 +82,9 @@ Embed Interactive Categorical Plot
 }
 \examples{
 \dontrun{
-plot_b13 <- embed_cat_prop_plot(data = ex_survey1, dep = b_1:b_3)
+plot_b13 <- embed_cat_prop_plot(data = ex_survey, dep = b_1:b_3)
 }
 \dontrun{
-embed_cat_prop_plot(data = ex_survey1, dep = b_1:b_3)
+embed_cat_prop_plot(data = ex_survey, dep = b_1:b_3)
 }
 }

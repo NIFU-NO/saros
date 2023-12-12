@@ -3,10 +3,10 @@ library(dplyr)
 #   list(
 #     uni_cat_prop_plot_html =
 #       saros::lst_saros_elements(
-#         data = saros::ex_survey1,
+#         data = saros::ex_survey,
 #         chapter_overview =
 #           saros::ex_survey_ch_overview %>%
-#           saros::refine_chapter_overview(data = saros::ex_survey1,
+#           saros::refine_chapter_overview(data = saros::ex_survey,
 #                                       label_separator = " - ",
 #                                       name_separator = "_"),
 #         element_name = "uni_cat_prop_plot_html",
@@ -16,11 +16,11 @@ library(dplyr)
 #       saros::lst_saros_elements(
 #         chapter_overview =
 #           saros::ex_survey_ch_overview %>%
-#           saros::refine_chapter_overview(data = saros::ex_survey1,
+#           saros::refine_chapter_overview(data = saros::ex_survey,
 #                                       label_separator = " - ",
 #                                       name_separator = "_"),
 #         element_name = "bi_catcat_prop_plot_html",
-#         data = saros::ex_survey1,
+#         data = saros::ex_survey,
 #         label_separator = " - ",
 #         showNA = "never"
 #       ),
@@ -28,11 +28,11 @@ library(dplyr)
 #       saros::lst_saros_elements(
 #         chapter_overview =
 #           saros::ex_survey_ch_overview %>%
-#           saros::refine_chapter_overview(data = saros::ex_survey1,
+#           saros::refine_chapter_overview(data = saros::ex_survey,
 #                                       label_separator = " - ",
 #                                       name_separator = "_"),
 #         element_name = "bi_catcat_prop_plot_docx",
-#         data = saros::ex_survey1,
+#         data = saros::ex_survey,
 #         label_separator = " - ",
 #         showNA = "never"
 #       )
@@ -46,11 +46,11 @@ library(dplyr)
 #                             # unlist(),
 #                           chapter_overview =
 #                             saros::ex_survey_ch_overview %>%
-#                             saros::refine_chapter_overview(data = saros::ex_survey1,
+#                             saros::refine_chapter_overview(data = saros::ex_survey,
 #                                                         organize_by = c("chapter", ".variable_label_prefix"),
 #                                                         label_separator = " - ",
 #                                                         name_separator = "_"),
-#                           data = saros::ex_survey1,
+#                           data = saros::ex_survey,
 #                           label_separator = " - ",
 #                           showNA = "never")
 # )

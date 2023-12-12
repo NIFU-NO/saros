@@ -174,7 +174,7 @@ prep_cat_freq_plot_html <-
 #'
 #' @examples
 #' \dontrun{
-#' embed_cat_freq_plot(data = ex_survey1, dep = b_1:b_3)
+#' embed_cat_freq_plot(data = ex_survey, dep = b_1:b_3)
 #' }
 embed_cat_freq_plot <-
   function(data,

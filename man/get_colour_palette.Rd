@@ -56,7 +56,7 @@ Possibly using colour_palette_nominal if available. If not sufficient, uses a se
 palette from RColorBrewer.
 }
 \examples{
-get_colour_palette(ex_survey1, col_pos=c("b_1", "b_2"))
-get_colour_palette(ex_survey1, col_pos=c("b_1", "b_2"),
+get_colour_palette(ex_survey, col_pos=c("b_1", "b_2"))
+get_colour_palette(ex_survey, col_pos=c("b_1", "b_2"),
                   colour_palette_nominal = c("red", "blue", "orange"))
 }
