@@ -46,7 +46,7 @@ prep_cat_prop_plot_docx <-
       lapply(colour_palette,
              function(color) {
                officer::fp_text(font.size = dots$label_font_size,
-                                color = hex_bw(color, colour_2nd_binary_cat = if(!multi) dots$colour_2nd_binary_cat),
+                                color = hex_bw(color),
                                 font.family = dots$font_family)
              })
 

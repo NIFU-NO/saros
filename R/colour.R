@@ -30,25 +30,7 @@ is_colour <- function(x) {
 #'
 #' @examples
 #' hex_bw("#0dadfd")
-# hex_bw <- function(hex_code, colour_2nd_binary_cat = NULL) {
-#
-#   myrgb <- as.integer(col2rgb(hex_code))
-#
-#   rgb_conv <- lapply(myrgb, function(x) {
-#     i <- x / 255
-#     if (i <= 0.04045) i / 12.92 else ((i + 0.055) / 1.055) ^ 2.4
-#   })
-#   rgb_calc <- (0.2126*rgb_conv[[1]]) + (0.7152*rgb_conv[[2]]) + (0.0722*rgb_conv[[3]])
-#
-#   hex <- ifelse(rgb_calc > 0.179, "#000000", "#ffffff")
-#   if(!is.null(colour_2nd_binary_cat)) {
-#     hex[hex_code == colour_2nd_binary_cat] <- colour_2nd_binary_cat
-#   }
-#   hex
-#
-# }
-
-hex_bw <- function(hex_code, colour_2nd_binary_cat = NULL) {
+hex_bw <- function(hex_code) {
 
   rgb_conv <-
     lapply(grDevices::col2rgb(hex_code), FUN = function(.x) {
@@ -64,9 +46,8 @@ hex_bw <- function(hex_code, colour_2nd_binary_cat = NULL) {
   hex <- ifelse(rgb_conv > 0.179,
                 "#000000",
                 "#ffffff")
-  if(!is.null(colour_2nd_binary_cat)) {
-    hex[hex_code == colour_2nd_binary_cat] <- colour_2nd_binary_cat
-  }
+
+  hex[is.na(hex_code)] <- NA
   hex
 
 }
