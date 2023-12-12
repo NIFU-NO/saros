@@ -4,9 +4,13 @@ template:
 reference:
 - title: "Main use"
   desc: >
-    The only functions you will probably use
+    The only functions you will probably use, in the order listed
   contents:
   - draft_report
+  - prepare_safe_render
+  - quarto_render_saros
+  - render_full_reports
+  - post_render_docx_img_replacer
 - title: "Example data and metadata"
   desc: "You would need to create these two types of data frames."
   contents:
@@ -21,34 +25,36 @@ reference:
   contents:
   - get_data_label_opts
   - list_available_element_types
-- title: "Useful data preparation tools"
-  desc: "These functions will hopefully be moved to another package"
+- title: "Useful data preparation tools for variable labels"
+  desc: "These functions will hopefully be moved to another package for variable labels"
   contents:
-  - refine_chapter_overview
-  - col_to_binaries
   - swap_label_colnames
   - replace_stata_labels
   - rename_by_labels
+  - remove_label_parts
+  - sanitize_labels
   - remove_special_chars_in_labels
+  - attach_qualtrics_labels
+- title: "Useful website management tools"
+  contents:
+  - create_email_credentials
+  - setup_access_restrictions
+- title: "Create individual elements (usually called automatically)"
+  contents:
+  - starts_with("embed")
+- title: "Useful helper functions that will be later moved to respective packages"
+  contents:
+  - refine_chapter_overview
+  - col_to_binaries
   - handpick
   - omitted_recoder_df
   - subset_vector
   - center_string
   - combn_upto
-  - create_caption
+  - get_colour_palette
   - get_colour_set
   - hex_bw
   - is_colour
-- title: "Useful website management tools"
-  contents:
-  - create_htaccess
-  - create__headers_file
-  - upload_to_ftp
-- title: "Create individual elements (usually called automatically)"
-  contents:
-  - starts_with("embed")
-  - sigtest
-  - summarize_data
 - title: "Internal functions"
   contents:
-  - matches("^prep_|process_yaml|^gen_")
+  - matches("create_caption|^prep_|process_yaml|^gen_|summarize_data|create_htaccess|create__headers_file|get_colour_palette|replace_docx_imgs_with_mscharts|sigtest|prepare_chunk")
