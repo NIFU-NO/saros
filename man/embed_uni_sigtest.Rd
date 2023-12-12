@@ -56,11 +56,11 @@ Data frame
 Run univariate significance tests and collect them in a table
 }
 \examples{
-embed_uni_sigtest(data=ex_survey1,
+embed_uni_sigtest(data=ex_survey,
                   dep = a_1:a_9, reps=10, hide_test_if_n_below=10)
-embed_uni_sigtest(data=ex_survey1,
+embed_uni_sigtest(data=ex_survey,
                   dep = b_1:b_3, reps=10, hide_test_if_n_below=10,
                   label_separator=" - ")
-embed_uni_sigtest(data=ex_survey1,
+embed_uni_sigtest(data=ex_survey,
                   dep = c_1:c_2, reps=10, hide_test_if_n_below=10)
 }

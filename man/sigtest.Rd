@@ -53,17 +53,17 @@ Test Significance Based on Randomization Theory
 set.seed(1)
 library(dplyr)
 bind_rows(
-sigtest(data=ex_survey1, dep = a_1) # t-test of proportions (.5): p=.98
-sigtest(data=ex_survey1, dep = b_1), # Chi-square (all=.333): p=<.001
-sigtest(data=ex_survey1, dep = c_1), # one-sample t-test p<.001
-sigtest(data=ex_survey1, dep = b_1, indep = x1_sex), # Chi-square: p = .548
-sigtest(data=ex_survey1, dep = b_1, indep = f_uni), # Chi-square: p = .102
-sigtest(data=ex_survey1, dep = c_1, indep = x1_sex), # two-sample t-test: p = .97
-sigtest(data=ex_survey1, dep = c_1, indep = f_uni), # ANOVA/F-test: p = .22
-sigtest(data=ex_survey1, dep = c_1, indep = c_2)) # correlation: p = .976
+sigtest(data=ex_survey, dep = a_1) # t-test of proportions (.5): p=.98
+sigtest(data=ex_survey, dep = b_1), # Chi-square (all=.333): p=<.001
+sigtest(data=ex_survey, dep = c_1), # one-sample t-test p<.001
+sigtest(data=ex_survey, dep = b_1, indep = x1_sex), # Chi-square: p = .548
+sigtest(data=ex_survey, dep = b_1, indep = f_uni), # Chi-square: p = .102
+sigtest(data=ex_survey, dep = c_1, indep = x1_sex), # two-sample t-test: p = .97
+sigtest(data=ex_survey, dep = c_1, indep = f_uni), # ANOVA/F-test: p = .22
+sigtest(data=ex_survey, dep = c_1, indep = c_2)) # correlation: p = .976
 
-sigtest(data=ex_survey1, dep = a_1, indep = c_1) # NA
-sigtest(data=ex_survey1, dep = b_1, indep = c_1) # NA
+sigtest(data=ex_survey, dep = a_1, indep = c_1) # NA
+sigtest(data=ex_survey, dep = b_1, indep = c_1) # NA
 }
 
 }

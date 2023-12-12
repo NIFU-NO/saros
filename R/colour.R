@@ -195,8 +195,8 @@ get_colour_set <-
 #' @return A colour set as character vector, where `NA` has the `colour_na`, and the rest are taken from colour_palette_nominal if available.
 #' @export
 #' @examples
-#' get_colour_palette(ex_survey1, col_pos=c("b_1", "b_2"))
-#' get_colour_palette(ex_survey1, col_pos=c("b_1", "b_2"),
+#' get_colour_palette(ex_survey, col_pos=c("b_1", "b_2"))
+#' get_colour_palette(ex_survey, col_pos=c("b_1", "b_2"),
 #'                   colour_palette_nominal = c("red", "blue", "orange"))
 get_colour_palette <-
   function(

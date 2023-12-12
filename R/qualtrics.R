@@ -52,7 +52,7 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
 #' @return Identical data.frame as input, with only variable labels changed.
 #' @export
 #'
-#' @examples sanitize_labels(ex_survey1)
+#' @examples sanitize_labels(ex_survey)
 sanitize_labels <- function(data,
                             sep = " - ",
                             multi_sep_replacement = ": ",

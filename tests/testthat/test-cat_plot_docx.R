@@ -6,7 +6,7 @@ testthat::test_that("chart cat_docx", {
 
   testthat::expect_s3_class(object = {
   test <-
-    ex_survey1 |>
+    ex_survey |>
     embed_cat_prop_plot_docx(dep = b_1:b_3,
                         font_family = "Calibri",
                         label_font_size = 9,
@@ -36,13 +36,13 @@ testthat::test_that("chart cat_docx", {
                                                            dep = c(cyl, vs, gear, carb),
                                                       return_raw = FALSE),
                          regexp = "Column `cyl` and column `vs` lack common categories")
-  testthat::expect_error(object = embed_cat_prop_plot_docx(ex_survey1, dep = tidyselect::matches("^[ab]"),
+  testthat::expect_error(object = embed_cat_prop_plot_docx(ex_survey, dep = tidyselect::matches("^[ab]"),
                                                       return_raw = FALSE),
                          regexp = "Column `a_1` and column `b_1` lack common categories")
 
   testthat::expect_s3_class(object = {
   test <-
-    ex_survey1 |>
+    ex_survey |>
     embed_cat_prop_plot_docx(dep = a_1:a_9,
                              font_family = "Calibri",
                              label_font_size = 9,
@@ -67,7 +67,7 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_s3_class(object = {
     test <-
-      ex_survey1 |>
+      ex_survey |>
       embed_cat_prop_plot_docx(dep = a_1:a_9,
                                showNA = "never",
                                font_family = "Calibri",
@@ -94,9 +94,9 @@ testthat::test_that("chart cat_docx", {
     testthat::expect_s3_class(object = {
 
     test <-
-      ex_survey1 |>
+      ex_survey |>
       dplyr::mutate(across(p_4, ~forcats::fct_recode(.x, NULL = "Strongly disagree"))) |>
-      labelled::copy_labels_from(from = ex_survey1) |>
+      labelled::copy_labels_from(from = ex_survey) |>
       embed_cat_prop_plot_docx(dep = p_1:p_4,
                                showNA = "never",
                                font_family = "Calibri",
@@ -124,9 +124,9 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_s3_class(object = {
     test <- # The dangerous one
-      ex_survey1 |>
+      ex_survey |>
       dplyr::mutate(across(p_1, ~forcats::fct_recode(.x, NULL = "Somewhat disagree"))) |>
-      labelled::copy_labels_from(from = ex_survey1) |>
+      labelled::copy_labels_from(from = ex_survey) |>
       embed_cat_prop_plot_docx(dep = p_1:p_4,
                           height_per_col = .3,
                           height_fixed = 1,
@@ -154,9 +154,9 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_s3_class(object = {
     test <-
-      ex_survey1 |>
+      ex_survey |>
       dplyr::mutate(across(p_4, ~forcats::fct_recode(.x, NULL = "Strongly agree"))) |>
-      labelled::copy_labels_from(from = ex_survey1) |>
+      labelled::copy_labels_from(from = ex_survey) |>
       embed_cat_prop_plot_docx(dep = p_1:p_4,
                                showNA = "never",
                                font_family = "Calibri",
@@ -184,9 +184,9 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_s3_class(object = {
     test <-
-      ex_survey1 |>
+      ex_survey |>
       dplyr::mutate(dplyr::across(p_1, ~forcats::fct_recode(.x, NULL = "Strongly agree"))) |>
-      labelled::copy_labels_from(from = ex_survey1) |>
+      labelled::copy_labels_from(from = ex_survey) |>
       embed_cat_prop_plot_docx(dep = p_1:p_4,
                                showNA = "never",
                                font_family = "Calibri",
@@ -214,7 +214,7 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_s3_class(object = {
     test <-
-      ex_survey1 |>
+      ex_survey |>
       embed_cat_prop_plot_docx(dep = a_1:a_9, digits = 0L,
                                data_label = "percentage_bare",
                                font_family = "Calibri",
@@ -242,7 +242,7 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_s3_class(object = {
     test <-
-      ex_survey1 |>
+      ex_survey |>
       embed_cat_prop_plot_docx(dep = a_1:a_9, sort_by = ".count",
                           descend = FALSE,
                           vertical=FALSE,
@@ -271,7 +271,7 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_s3_class(object = {
     test <-
-      ex_survey1 |>
+      ex_survey |>
       embed_cat_prop_plot_docx(dep = a_1:a_9,
                                sort_by = ".count",
                           descend = TRUE,
@@ -301,7 +301,7 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_s3_class(object = {
     test <-
-      ex_survey1 |>
+      ex_survey |>
       embed_cat_prop_plot_docx(dep = b_1:b_3,
                                sort_by = ".count",
 
@@ -333,7 +333,7 @@ testthat::test_that("chart cat_docx", {
 
     testthat::expect_error(object = {
       test <-
-        ex_survey1 |>
+        ex_survey |>
         embed_cat_prop_plot_docx(dep = b_1,
                                  indep = x1_sex:x2_human,
                             return_raw = FALSE)

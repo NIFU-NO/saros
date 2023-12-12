@@ -49,10 +49,10 @@ Data frame
 Bivariate significance tests
 }
 \examples{
-embed_bi_sigtest(data=ex_survey1, dep = a_1:a_9, indep = x1_sex,
+embed_bi_sigtest(data=ex_survey, dep = a_1:a_9, indep = x1_sex,
                  reps=10, hide_test_if_n_below=1)
-embed_bi_sigtest(data=ex_survey1, dep = b_1:b_3, indep = x1_sex,
+embed_bi_sigtest(data=ex_survey, dep = b_1:b_3, indep = x1_sex,
                  reps=10, hide_test_if_n_below=1, label_separator=" - ")
-embed_bi_sigtest(data=ex_survey1, dep = c_1:c_2, indep = x1_sex,
+embed_bi_sigtest(data=ex_survey, dep = c_1:c_2, indep = x1_sex,
                  reps=10, hide_test_if_n_below=1)
 }

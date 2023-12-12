@@ -1,7 +1,7 @@
 testthat::test_that("col_to_binaries", {
   suppressMessages(library(dplyr))
   test <-
-    ex_survey1 %>%
+    ex_survey %>%
     col_to_binaries(col = b_3, label_separator = "  -  ") %>%
     pull(`b_3___A bit`)
   testthat::expect_true(object = all(as.vector(test) %in% 0:1))

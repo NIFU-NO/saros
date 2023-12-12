@@ -8,8 +8,6 @@ hex_bw(hex_code)
 }
 \arguments{
 \item{hex_code}{Colour in hex-format.}
-
-\item{colour_2nd_binary_cat}{If hex_code equals this, return hex_code as is.}
 }
 \value{
 Colours in hex-format, either black or white.

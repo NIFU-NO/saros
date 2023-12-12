@@ -52,7 +52,7 @@ List
 Creates a structured list with text interpretations for a set of variables.
 }
 \examples{
-embed_cat_text_html(ex_survey1,
+embed_cat_text_html(ex_survey,
 dep = tidyselect::matches("e_"),
 contents = c("intro", "mode_max", "value_max",
 "value_min", "not_used_category", "mean_max", "mean_min"),

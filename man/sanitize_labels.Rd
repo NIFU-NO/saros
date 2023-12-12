@@ -27,5 +27,5 @@ Identical data.frame as input, with only variable labels changed.
 This function is quite specific to a few problems, users might find it lacking in functionality.
 }
 \examples{
-sanitize_labels(ex_survey1)
+sanitize_labels(ex_survey)
 }
