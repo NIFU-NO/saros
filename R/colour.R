@@ -23,7 +23,6 @@ is_colour <- function(x) {
 #' Code is taken from XXX.
 #'
 #' @param hex_code Colour in hex-format.
-#' @param colour_2nd_binary_cat If hex_code equals this, return hex_code as is.
 #'
 #' @return Colours in hex-format, either black or white.
 #' @export
