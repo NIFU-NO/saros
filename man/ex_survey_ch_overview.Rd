@@ -5,7 +5,7 @@
 \alias{ex_survey_ch_overview}
 \title{ex_survey_ch_overview: Mock overview of chapter structure}
 \format{
-A data frame with 3 rows and 6 variables:
+A data frame with 5 rows (chapters) and 5 variables:
 \describe{
 \item{chapter}{Manual entry chapter title}
 \item{author}{Single or multiple authors, separated by comma}
@@ -18,6 +18,6 @@ A data frame with 3 rows and 6 variables:
 ex_survey_ch_overview
 }
 \description{
-Note that indep, and other columns are also welcome.
+Note that only chapter and dep are compulsory.
 }
 \keyword{datasets}

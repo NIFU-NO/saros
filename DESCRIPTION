@@ -14,7 +14,8 @@ Authors@R: c(
 Maintainer: Stephan Daus <stephus.daus@gmail.com>
 Description: Produces highly customizable figures, text, analyses and
     reports for a batch of possible dependent-independent relations of
-    possible interest.
+    possible interest. 
+Note: Restricted use applies to Norwegian institutions, free elsewhere.
 License: MIT + file LICENSE
 URL: https://github.com/NIFU-NO/saros, https://nifu-no.github.io/saros/
 BugReports: https://github.com/NIFU-NO/saros/issues
