@@ -31,14 +31,22 @@ prep_cat_prop_plot_html <-
 
 
     multi <- length(colour_palette) > 2
+
     checkbox <-
       length(unname(colour_palette)[!is.na(unname(colour_palette))]) == 1 && # Contains a colour
       length(unname(colour_palette)[is.na(unname(colour_palette))]) == 1 # Contains a NA
 
     if(checkbox) {
+      na_category <- names(colour_palette)[is.na(unname(colour_palette))]
       data[[".category"]] <- forcats::fct_relevel(data[[".category"]],
-                                                  names(colour_palette)[is.na(unname(colour_palette))],
+                                                  na_category,
                                                   after = 1)
+      colour_palette[is.na(unname(colour_palette))] <- "#ffffff"
+      data[[".data_label"]] <- ifelse(data[[".category"]] == na_category,
+                                      NA_character_, data[[".data_label"]])
+    }
+    if(length(names(colour_palette))==0) {
+      colour_palette <- stats::setNames(colour_palette, colour_palette)
     }
 
     indep_vars <- colnames(data)[!colnames(data) %in%
@@ -80,13 +88,15 @@ prep_cat_prop_plot_html <-
         .onclick = paste0('alert(\"', .data[['.onclick']], '\");'),
         .onclick = stringi::stri_replace_all_regex(.data[[".onclick"]],
                                                    pattern = "\n",
-                                                   replacement = "\\\\n")
+                                                   replacement = "\\\\n"),
+        .alpha = ifelse(.data[[".category"]] == names(colour_palette)[2] & checkbox, 0, 1)
       ) %>%
       ggplot2::ggplot(
         mapping = ggplot2::aes(
           y = .data[[if (prop_family) ".proportion" else stringi::stri_c(ignore_null=TRUE, ".", dots$data_label)]],
           x = if(length(indep_vars) == 1 && isFALSE(inverse)) .data[[indep_vars]] else .data[[".variable_label"]],
           fill = .data[[".category"]],
+          # alpha = .data[[".alpha"]],
           group = .data[[".category"]],
           label = .data[[".data_label"]],
           data_id = .data[[".id"]],
@@ -120,6 +130,7 @@ prep_cat_prop_plot_html <-
       ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white")) +
       ggplot2::scale_x_discrete(limits = rev, labels = function(x) string_wrap(x, width = dots$x_axis_label_width)) +
       ggplot2::guides(
+        alpha = "none",
         fill = if (hide_legend) "none" else ggiraph::guide_legend_interactive(data_id = "fill.guide",
                                                                               byrow = TRUE,
                                                                               nrow = max(c(ceiling(length(colour_palette) / 5),
