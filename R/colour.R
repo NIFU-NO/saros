@@ -29,7 +29,7 @@ is_colour <- function(x) {
 #'
 #' @examples
 #' hex_bw("#0dadfd")
-hex_bw <- function(hex_code) {
+hex_bw <- function(hex_code, colour_2nd_binary_cat = NULL) {
 
   rgb_conv <-
     lapply(grDevices::col2rgb(hex_code), FUN = function(.x) {
@@ -46,7 +46,7 @@ hex_bw <- function(hex_code) {
                 "#000000",
                 "#ffffff")
 
-  hex[is.na(hex_code)] <- NA
+  hex[is.na(hex_code)] <- "#ffffff"
   hex
 
 }
@@ -212,7 +212,8 @@ get_colour_palette <-
     lapply(col_pos, function(col) {
       attr(data[[col]], "colour_palette")
     })
-    out <- unique(out)[lengths(out) > 0]
+    out <- unique(out)
+    out <- out[lengths(out) > 0]
     if(length(out) > 1) {
       cli::cli_warn("Multiple colour palettes embedded in {col_pos}. Using first one.")
     }

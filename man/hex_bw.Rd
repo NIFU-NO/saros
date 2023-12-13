@@ -4,7 +4,7 @@
 \alias{hex_bw}
 \title{Identify Suitable Font Given Background Hex Colour}
 \usage{
-hex_bw(hex_code)
+hex_bw(hex_code, colour_2nd_binary_cat = NULL)
 }
 \arguments{
 \item{hex_code}{Colour in hex-format.}
