@@ -44,5 +44,5 @@ make_filename_prefix <- function(
                   ignore_null=TRUE)
   if(is.na(out)) browser()
 
-  filename_sanitizer(out)
+  filename_sanitizer(out) # No max_char shortening
 }

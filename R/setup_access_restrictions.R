@@ -1,3 +1,4 @@
+
 read_main_password_file <- function(file) {
   utils::read.table(file = file, header = TRUE,
                     sep=":", tryLogical = FALSE)
@@ -82,7 +83,7 @@ write_htpasswd_file <- function(x, file, header=FALSE) {
 
 }
 
-obtain_usernames_from_foldernames <- function(x) {
+obtain_mesos_folders_from_parent_folder <- function(x) {
   if(!rlang::is_string(x) || !file.exists(x)) {
     cli::cli_abort("{.arg x} does not exist: {.file {x}}")
   }
@@ -110,6 +111,7 @@ create_htaccess <-
            local_basepath = "_site",
            rel_path_base_to_parent_of_user_restricted_folder = file.path("Reports", "2022", "Mesos"),
            local_main_password_path = ".main_htpasswd_public",
+           username_folder_matching_df = NULL,
            universal_usernames = c("admin"),
            log_rounds = 12,
            append_users = TRUE,
@@ -119,32 +121,41 @@ create_htaccess <-
       file.path(local_basepath,
               rel_path_base_to_parent_of_user_restricted_folder)
 
-
-    local_subfolders_sets <- lapply(abs_path_parents, obtain_usernames_from_foldernames)
+    local_subfolders_sets <- lapply(abs_path_parents, obtain_mesos_folders_from_parent_folder)
     names(local_subfolders_sets) <- rel_path_base_to_parent_of_user_restricted_folder
 
     lapply(seq_along(local_subfolders_sets), function(i) {
 
-      lapply(X = local_subfolders_sets[[i]], function(.x) {
+      lapply(X = seq_along(local_subfolders_sets[[i]]), function(j) {
         ### .htaccess
+        folder_name <- local_subfolders_sets[[i]][j]
+        user_names <-
+          if(is.data.frame(username_folder_matching_df)) {
+            username_folder_matching_df$username[username_folder_matching_df$folder == folder_name]
+          } else {
+            folder_name
+          }
 
-        content <- paste0('AuthName "Saros-report access: ', .x, '"
+        content <- paste0('AuthName "Saros-report access: ', folder_name,
+                          '"
 AuthUserFile ', file.path(remote_basepath,
                           names(local_subfolders_sets)[i],
-                          .x, '.htpasswd'), '
+                          folder_name,
+                          '.htpasswd'), '
 AuthType Basic
 Require valid-user
 AddHandler server-parsed .html')
         outpath <- file.path(local_basepath,
                              names(local_subfolders_sets)[i],
-                             .x, ".htaccess")
+                             folder_name,
+                             ".htaccess")
 
         writeLines(text = content, con = outpath)
 
         ### .htpasswd
 
         credentials <- refer_main_password_file(x = local_main_password_path,
-                                               usernames = unique(c(.x, universal_usernames)),
+                                               usernames = unique(c(user_names, universal_usernames)),
                                                log_rounds = log_rounds,
                                                append_users = append_users,
                                                password_input = password_input)
@@ -155,7 +166,8 @@ AddHandler server-parsed .html')
         write_htpasswd_file(x= credentials,
                             file = file.path(local_basepath,
                                              names(local_subfolders_sets)[i],
-                                             .x, ".htpasswd"),
+                                             folder_name,
+                                             ".htpasswd"),
                             header=FALSE)
       })
     })
@@ -167,6 +179,7 @@ create__headers_file <- function(remote_basepath = "/home/", # Not used in this 
                                  local_basepath = "_site",
                                  rel_path_base_to_parent_of_user_restricted_folder = file.path("Reports", "2022", "Mesos"),
                                  local_main_password_path = ".main_htpasswd_public",
+                                 username_folder_matching_df = NULL,
                                  universal_usernames = c("admin"),
                                  log_rounds = 12,
                                  append_users = TRUE,
@@ -177,24 +190,31 @@ create__headers_file <- function(remote_basepath = "/home/", # Not used in this 
               rel_path_base_to_parent_of_user_restricted_folder)
 
 
-  local_subfolders_sets <- lapply(abs_path_parents, obtain_usernames_from_foldernames)
+  local_subfolders_sets <- lapply(abs_path_parents, obtain_mesos_folders_from_parent_folder)
   names(local_subfolders_sets) <- rel_path_base_to_parent_of_user_restricted_folder
 
 
   out <-
     lapply(seq_along(local_subfolders_sets), function(i) {
 
-    lapply(local_subfolders_sets[[i]], FUN = function(.x) {
+    lapply(seq_along(local_subfolders_sets[[i]]), FUN = function(j) {
 
+      folder_name <- local_subfolders_sets[[i]][j]
+      user_names <- if(is.data.frame(username_folder_matching_df)) {
+        username_folder_matching_df$username[username_folder_matching_df$folder == folder_name]
+      } else {
+        folder_name
+      }
 
       credentials <- refer_main_password_file(x = local_main_password_path,
-                                             usernames = unique(c(.x, universal_usernames)),
+                                             usernames = unique(c(user_names, universal_usernames)),
                                              log_rounds = log_rounds,
                                              append_users = append_users,
                                              password_input = password_input)
 
-      path <- file.path(names(local_subfolders_sets)[i], .x)
-      credentials_flattened <- stringi::stri_c(.x, ":", credentials[[.x]],
+      path <- file.path(names(local_subfolders_sets)[i], folder_name)
+      credentials_flattened <- stringi::stri_c(user_names,
+                                               ":", unname(credentials[user_names]),
                                                collapse = " ", ignore_null = TRUE)
       stringi::stri_c(path, "/*\n  Basic-Auth: ", credentials_flattened)
     })
@@ -221,6 +241,7 @@ create__headers_file <- function(remote_basepath = "/home/", # Not used in this 
 #' @param local_basepath String. Local folder for website, typically "_site".
 #' @param rel_path_base_to_parent_of_user_restricted_folder String, relative path from basepath to the folder where the restricted folders are located. (E.g. the "mesos"-folder)
 #' @param local_main_password_path String. Path to main file containing all usernames and passwords formatted with a colon between username and password.
+#' @param username_folder_matching_df Data frame. If NULL (default), will use folder names as usernames. Otherwise, a data frame with two columns: "folder" and "username" where "folder" is the name of the folder and "username" is the username for that folder.
 #' @param universal_usernames Character vector. Usernames in local_main_htpasswd_path which always have access to folder
 #' @param log_rounds Integer, number of rounds in the bcrypt algorithm. The higher the more time consuming and harder to brute-force.
 #' @param append_users Boolean, if TRUE (default) will create new users and add them to local_main_password_path. See also password_input.
@@ -233,6 +254,7 @@ setup_access_restrictions <- function(remote_basepath = "/home/",
                                       local_basepath = "_site",
                                       rel_path_base_to_parent_of_user_restricted_folder = file.path("Reports", "2022", "Mesos"),
                                       local_main_password_path = ".main_htpasswd_public",
+                                      username_folder_matching_df = NULL,
                                       universal_usernames = c("admin"),
                                       log_rounds = 12,
                                       append_users = TRUE,
@@ -247,12 +269,20 @@ setup_access_restrictions <- function(remote_basepath = "/home/",
                                  rel_path_base_to_parent_of_user_restricted_folder = rel_path_base_to_parent_of_user_restricted_folder)
   }
 
+  if(!rlang::is_null(username_folder_matching_df) &&
+     (!inherits(username_folder_matching_df, "data.frame") ||
+     !all(c("folder", "username") %in% colnames(username_folder_matching_df)))) {
+    cli::cli_abort("{.arg username_folder_matching_df} must be a data.frame with columns 'folder' and 'username', not {.obj_type_friendly {username_folder_matching_df}}.")
+    ## Assume df has multiple usernames per folder, and multiple folders per username
+  }
+
 
   if(any("netlify" == type)) {
     create__headers_file(remote_basepath = remote_basepath, # Not used in this function, included for consistency
                          local_basepath = local_basepath,
                          rel_path_base_to_parent_of_user_restricted_folder = rel_path_base_to_parent_of_user_restricted_folder,
                          local_main_password_path = local_main_password_path,
+                         username_folder_matching_df = username_folder_matching_df,
                          universal_usernames = universal_usernames,
                          log_rounds = log_rounds,
                          append_users = append_users,
@@ -260,13 +290,14 @@ setup_access_restrictions <- function(remote_basepath = "/home/",
   }
   if(any("apache" == type)) {
     create_htaccess(remote_basepath = remote_basepath, # Not used in this function, included for consistency
-                         local_basepath = local_basepath,
-                         rel_path_base_to_parent_of_user_restricted_folder = rel_path_base_to_parent_of_user_restricted_folder,
-                         local_main_password_path = local_main_password_path,
-                         universal_usernames = universal_usernames,
-                         log_rounds = log_rounds,
-                         append_users = append_users,
-                         password_input = password_input)
+                    local_basepath = local_basepath,
+                    rel_path_base_to_parent_of_user_restricted_folder = rel_path_base_to_parent_of_user_restricted_folder,
+                    local_main_password_path = local_main_password_path,
+                    username_folder_matching_df = username_folder_matching_df,
+                    universal_usernames = universal_usernames,
+                    log_rounds = log_rounds,
+                    append_users = append_users,
+                    password_input = password_input)
   }
 
 }

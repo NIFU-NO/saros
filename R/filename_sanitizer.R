@@ -1,10 +1,20 @@
-filename_sanitizer <- function(x, max_clean_folder_name = 8) {
+#' Filename sanitizer replacing space and punctuation with underscore
+#'
+#' @param x Character vector of filenames/foldernames
+#' @param max_chars Maximum character length
+#'
+#' @return Character vector of same length as x
+#' @export
+#'
+#' @examples filename_sanitizer(c("Too long a name", "with invalid *^/&#"))
+filename_sanitizer <- function(x, max_chars = NA_integer_) {
   out <-
     stringi::stri_replace_all_regex(x,
                                     pattern = "[[:punct:][:space:]]",
                                     replacement = "_")
   out <- iconv(out, from ="UTF-8", to="windows-1250")
 
+  if(!is.na(max_chars)) out <- stringi::stri_sub(out, from = 1, to = max_chars)
 
   # out <- make.names(out)
   out
