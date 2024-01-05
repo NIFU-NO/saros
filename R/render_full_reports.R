@@ -128,5 +128,6 @@ render_full_reports <- function(
     })
 
     processed_files[i] <- TRUE
+
   }
 }
