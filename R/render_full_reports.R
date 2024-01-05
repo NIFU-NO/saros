@@ -130,4 +130,5 @@ render_full_reports <- function(
     processed_files[i] <- TRUE
 
   }
+  cli::cli_alert_success("Completed processing of full reports")
 }
