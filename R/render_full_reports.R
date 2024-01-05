@@ -12,7 +12,8 @@
 #' @param path If no files are given, a path to the root folder of the local "site".
 #' @param processable_path Path to where report files can be (recursively) found.
 #' @param site_path Path to _site
-#' @param extensions_path,images_path Path to where _extensions and _images folders can be found and copied to wherever needed
+#' @param resource_paths Paths to where _extensions and _images folders can be found and copied to wherever needed
+#' @param warn_on_file_error If TRUE, will collect warnings if a file fails to render or be copied. If FALSE (default), will stop the rendering process.
 #' @param ... Additional arguments passed to `quarto::render()`
 #' @return NULL
 #' @export
@@ -22,8 +23,8 @@ render_full_reports <- function(
     path = getwd(),
     processable_path = file.path(path, "Reports"),
     site_path = file.path(path, "_site"),
-    extensions_path = file.path(path, "_extensions"),
-    images_path = file.path(path, "_images"),
+    resource_paths = file.path(path, c("_extensions", "_images")),
+    warn_on_file_error = FALSE,
     ...) {
   dots <- rlang::list2(...)
 
@@ -40,36 +41,92 @@ render_full_reports <- function(
   processable_files_folders <- dirname(processable_files)
 
   new_files_docx <- fs::path_ext_set(fs::path_ext_remove(processable_files), ext = ".docx")
-  new_files_pdf <- fs::path_ext_set(fs::path_ext_remove(processable_files), ext = ".pdf")
-
   new_file_destinations_docx <-
     stringi::stri_replace_first_fixed(
       str = new_files_docx,
       pattern = path,
       replacement = site_path)
 
+  new_files_pdf <- fs::path_ext_set(fs::path_ext_remove(processable_files), ext = ".pdf")
   new_file_destinations_pdf <-
     stringi::stri_replace_first_fixed(
       str = new_files_pdf,
       pattern = path,
       replacement = site_path)
 
-  fs::dir_copy(path = rep(extensions_path, times=length(processable_files_folders)),
-               new_path = file.path(processable_files_folders, basename(extensions_path)), overwrite = TRUE)
-  fs::dir_copy(path = rep(images_path, times=length(processable_files_folders)),
-               new_path = file.path(processable_files_folders, basename(images_path)), overwrite = TRUE)
+  on.exit(add = TRUE, after = TRUE, expr ={
+    for(res in resource_paths) {
+      unlink(file.path(processable_files_folders, basename(res)), force = TRUE, recursive = TRUE)
+    }
+  })
+
+  # for(res in resource_paths) {
+  #   fs::dir_copy(path = rep(res, times=length(processable_files_folders)),
+  #                new_path = file.path(processable_files_folders, basename(res)), overwrite = TRUE)
+  # }
+
+  processed_files <- rep(FALSE, length(processable_files))
+
+  on.exit(add = TRUE, after = TRUE, expr ={
+    if(any(!processed_files)) {
+      cli::cli_warn("Failed to render these files: {processable_files[!processed_files]}")
+    }
+  })
 
   for(i in seq_along(processable_files)) {
-    rlang::exec(quarto::quarto_render,
-                input = processable_files[i],
-                output_format = "all",
-                !!!dots)
+
+    for(res in resource_paths) {
+      fs::dir_copy(path = res,
+                   new_path = file.path(processable_files_folders[i], basename(res)), overwrite = TRUE)
+    }
+    rlang::try_fetch(expr = {
+      rlang::exec(quarto::quarto_render,
+                  input = processable_files[i],
+                  output_format = "all",
+                  !!!dots)
+    },
+    error = function(cnd) {
+      msg <- "Failed to render: {processable_files[i]}"
+      if(warn_on_file_error) {
+        cli::cli_warn(msg, parent = cnd)
+      } else {
+        cli::cli_abort(msg, parent = cnd)
+      }
+    })
+
+    ## Should preferably identify what kind of outputs have been produced and copy whatever there is
+    ##   (e.g. if only html, only copy html, if html and pdf, copy both, etc.)
+    ##   For now, just copy both docx and pdf
+
+    rlang::try_fetch(expr = {
+      if(fs::file_exists(new_files_docx[i])) {
+        fs::file_copy(path = new_files_docx[i],
+                      new_path = new_file_destinations_docx[i],
+                      overwrite = TRUE)
+      }
+    }, error = function(cnd) {
+      msg <- "Failed to copy {new_files_docx[i]} to {new_file_destinations_docx[i]}."
+      if(warn_on_file_error) {
+        cli::cli_warn(msg, parent = cnd)
+      } else {
+        cli::cli_abort(msg, parent = cnd)
+      }
+    })
+    rlang::try_fetch(expr = {
+      if(fs::file_exists(new_files_pdf[i])) {
+        fs::file_copy(path = new_files_pdf[i],
+                      new_path = new_file_destinations_pdf[i],
+                      overwrite = TRUE)
+      }
+    }, error = function(cnd) {
+      msg <- "Failed to copy {new_files_pdf[i]} to {new_file_destinations_pdf[i]}."
+      if(warn_on_file_error) {
+        cli::cli_warn(msg, parent = cnd)
+      } else {
+        cli::cli_abort(msg, parent = cnd)
+      }
+    })
+
+    processed_files[i] <- TRUE
   }
-  fs::file_copy(path = new_files_pdf,
-                new_path = new_file_destinations_pdf, overwrite = TRUE)
-  fs::file_copy(path = new_files_docx,
-                new_path = new_file_destinations_docx, overwrite = TRUE)
-  unlink(file.path(processable_files_folders, basename(extensions_path)))
-  unlink(file.path(processable_files_folders, basename(images_path)))
-  unlink(new_files_docx)
 }

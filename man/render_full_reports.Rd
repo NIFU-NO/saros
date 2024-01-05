@@ -9,8 +9,8 @@ render_full_reports(
   path = getwd(),
   processable_path = file.path(path, "Reports"),
   site_path = file.path(path, "_site"),
-  extensions_path = file.path(path, "_extensions"),
-  images_path = file.path(path, "_images"),
+  resource_paths = file.path(path, c("_extensions", "_images")),
+  warn_on_file_error = FALSE,
   ...
 )
 }
@@ -23,7 +23,9 @@ render_full_reports(
 
 \item{site_path}{Path to _site}
 
-\item{extensions_path, images_path}{Path to where _extensions and _images folders can be found and copied to wherever needed}
+\item{resource_paths}{Paths to where _extensions and _images folders can be found and copied to wherever needed}
+
+\item{warn_on_file_error}{If TRUE, will collect warnings if a file fails to render or be copied. If FALSE (default), will stop the rendering process.}
 
 \item{...}{Additional arguments passed to \code{quarto::render()}}
 }

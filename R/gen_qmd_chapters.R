@@ -89,7 +89,7 @@ gen_qmd_chapters <-
           chapter_number_text <- sprintf(paste0("%0", digits, "d"), as.integer(chapter_number))
 
           chapter_foldername_clean <-
-            filename_sanitizer(chapter_foldername, max_char = dots$max_clean_folder_name)
+            filename_sanitizer(chapter_foldername, max_chars = dots$max_clean_folder_name)
           chapter_foldername_clean <-
             stringi::stri_c(chapter_number_text, "_", chapter_foldername_clean,
                             ignore_null = TRUE)

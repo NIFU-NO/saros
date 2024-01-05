@@ -812,7 +812,7 @@ draft_report <-
       }
     }
 
-    report_foldername_clean <- filename_sanitizer(uniques, max_char = args$max_clean_folder_name)
+    report_foldername_clean <- filename_sanitizer(uniques, max_chars = args$max_clean_folder_name)
 
     index_filepath <-
       lapply(X =
