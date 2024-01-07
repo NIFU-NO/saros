@@ -12,9 +12,9 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
   for(col in colnames(data)) {
 
 
-    patterns <- c("^Q[0-9]+_[0-9]+_[0-9a-z]+",
-                  "^Q[0-9]+_[0-9a-z]+",
-                  "^Q[0-9a-z]+")
+    patterns <- c("^[[:alpha:]]+[0-9]+_[0-9]+_[[:alnum:]]+",
+                  "^[[:alpha:]]+[0-9]+_[[:alnum:]]+",
+                  "^[[:alpha:]]+[[:alnum:]]+")
     col2 <- col
     for(pat in patterns) {
       if(stringi::stri_count_fixed(col2, pattern = "_") == 4-match(pat, patterns)) {
