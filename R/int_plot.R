@@ -19,7 +19,7 @@ prep_uni_int_plot <-
 
 
     dots <- update_dots(dots = rlang::list2(...),
-                        caller_function = "cat_prop_plot")
+                        caller_function = "int_prop_plot")
 
 
 
@@ -161,7 +161,7 @@ prep_uni_int_plot <-
 
 
 
-#' Embed Interactive Categorical Plot
+#' Embed Interactive Interval/Continuous Plot
 #'
 #'
 #' @inheritParams draft_report
@@ -181,9 +181,9 @@ prep_uni_int_plot <-
 #'
 #' @examples
 #' \dontrun{
-#' embed_cat_prop_plot(data = ex_survey, dep = b_1:b_3)
+#' embed_int_prop_plot(data = ex_survey, dep = b_1:b_3)
 #' }
-embed_cat_prop_plot <-
+embed_int_prop_plot <-
   function(data,
            ...,
            dep = tidyselect::everything(),
@@ -195,7 +195,7 @@ embed_cat_prop_plot <-
            call = rlang::caller_env()) {
 
     dots <- update_dots(dots = rlang::list2(...),
-                        caller_function = "cat_prop_plot")
+                        caller_function = "int_prop_plot")
 
 
     check_multiple_indep(data, indep = {{ indep }}, call = call)
@@ -229,7 +229,7 @@ embed_cat_prop_plot <-
 
     chart <-
       rlang::exec(
-        prep_cat_prop_plot_html,
+        prep_uni_int_plot,
         data = data_out,
         inverse = inverse,
         colour_palette = colour_palette,

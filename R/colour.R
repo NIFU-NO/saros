@@ -29,7 +29,7 @@ is_colour <- function(x) {
 #'
 #' @examples
 #' hex_bw("#0dadfd")
-hex_bw <- function(hex_code, colour_2nd_binary_cat = NULL) {
+hex_bw <- function(hex_code) {
 
   rgb_conv <-
     lapply(grDevices::col2rgb(hex_code), FUN = function(.x) {
