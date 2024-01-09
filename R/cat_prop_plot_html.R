@@ -33,7 +33,7 @@ prep_cat_prop_plot_html <-
     multi <- length(colour_palette) > 2
 
     checkbox <-
-      length(unname(colour_palette)[!is.na(unname(colour_palette))]) == 1 && # Contains a colour
+      length(unname(colour_palette)[!is.na(unname(colour_palette))]) == 1 && # Contains a single colour
       length(unname(colour_palette)[is.na(unname(colour_palette))]) == 1 # Contains a NA
 
     if(checkbox) {
@@ -46,7 +46,7 @@ prep_cat_prop_plot_html <-
                                       NA_character_, data[[".data_label"]])
     }
     if(length(names(colour_palette))==0) {
-      colour_palette <- stats::setNames(colour_palette, colour_palette)
+      colour_palette <- stats::setNames(colour_palette, levels(data[[".category"]]))
     }
 
     indep_vars <- colnames(data)[!colnames(data) %in%
