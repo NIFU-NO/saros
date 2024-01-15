@@ -1,5 +1,14 @@
-crosstable3 <- function(x, ...) UseMethod("crosstable3", x)
+#' Internal function for fast crosstables
+#' @param x data.frame, svy object
+#'
+#' @param ... Dynamic dots
+#'
+#' @export
+crosstable3 <- function(x, ...) {
+  UseMethod("crosstable3", x)
+}
 
+#' @export
 crosstable3.data.frame <-
   function(data,
            dep = colnames(data),
@@ -164,8 +173,10 @@ crosstable3.data.frame <-
 
   }
 
+#' @export
 crosstable3.tbl_df <- crosstable3.data.frame
 
+#' @export
 crosstable3.tbl_svy <-
   function(data,
            dep = colnames(data),

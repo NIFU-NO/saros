@@ -1,3 +1,5 @@
+
+#' @export
 prepare_chunk.uni_cat_prop_plot <-
   function(chapter_overview_section,
            data,
@@ -70,5 +72,6 @@ prepare_chunk.uni_cat_prop_plot <-
 
   }
 
+#' @export
 prepare_chunk.uni_cat_freq_plot <- prepare_chunk.uni_cat_prop_plot
 

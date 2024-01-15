@@ -1,3 +1,4 @@
+#' @export
 prepare_chunk.uni_cat_text <-
   function(chapter_overview_section,
            data,

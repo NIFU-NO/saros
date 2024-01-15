@@ -177,14 +177,9 @@ gen_qmd_chapters <-
     if(rlang::is_true(dots$flexi) && !rlang::is_string(dots$mesos_var) &&
        !all(is.na(chapter_overview_chapter_groups$.variable_name_dep))) {
 
-      cli::cli_progress_message(msg = "Generating flexi-app")
-
-      out <-
-        embed_flexi(data = data,
+      embed_flexi(data = data,
                   chapter_overview = chapter_overview_chapter_groups,
                   !!!dots)
-      flexi_filepath <- "_flexi/_zzz_flexi.qmd"
-      cat(out, file = file.path(dots$path, flexi_filepath), sep="\n")
     }
     cli::cli_process_done(msg_done = "Completed report{if(rlang::is_string(mesos_group)) paste0(' for ', mesos_group)}.")
 

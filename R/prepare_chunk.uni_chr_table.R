@@ -1,4 +1,5 @@
 
+#' @export
 prepare_chunk.uni_chr_table <-
   function(chapter_overview_section,
            data,

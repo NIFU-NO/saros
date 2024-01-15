@@ -2,12 +2,12 @@
 % Please edit documentation in R/filename_sanitizer.R
 \name{filename_sanitizer}
 \alias{filename_sanitizer}
-\title{Filename sanitizer replacing space and punctuation with underscore}
+\title{File/folder name sanitizer replacing space and punctuation with underscore}
 \usage{
 filename_sanitizer(x, max_chars = NA_integer_)
 }
 \arguments{
-\item{x}{Character vector of filenames/foldernames}
+\item{x}{Character vector of file/folder names}
 
 \item{max_chars}{Maximum character length}
 }
@@ -15,7 +15,7 @@ filename_sanitizer(x, max_chars = NA_integer_)
 Character vector of same length as x
 }
 \description{
-Filename sanitizer replacing space and punctuation with underscore
+File/folder name sanitizer replacing space and punctuation with underscore
 }
 \examples{
 filename_sanitizer(c("Too long a name", "with invalid *^/&#"))

@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 0.9.9
+Version: 0.9.9.9001
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -62,7 +62,7 @@ Suggests:
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.0
 Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/Needs/website: rmarkdown
