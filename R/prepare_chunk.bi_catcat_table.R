@@ -1,4 +1,3 @@
-#' @export
 prepare_chunk.bi_catcat_table <-
   function(chapter_overview_section,
            data,

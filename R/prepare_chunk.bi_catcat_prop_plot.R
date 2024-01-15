@@ -1,4 +1,3 @@
-#' @export
 prepare_chunk.bi_catcat_prop_plot <-
   function(chapter_overview_section,
            data,
@@ -84,9 +83,6 @@ prepare_chunk.bi_catcat_prop_plot <-
   }
 
 
-#' @export
 prepare_chunk.bi_catcat_freq_plot <- prepare_chunk.bi_catcat_prop_plot
-#' @export
 prepare_chunk.bi_catcat_prop_plot2 <- prepare_chunk.bi_catcat_prop_plot
-#' @export
 prepare_chunk.bi_catcat_freq_plot2 <- prepare_chunk.bi_catcat_prop_plot

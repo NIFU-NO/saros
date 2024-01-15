@@ -1,4 +1,3 @@
-#' @export
 prepare_chunk.bi_sigtest <-
   function(chapter_overview_section,
            data,
