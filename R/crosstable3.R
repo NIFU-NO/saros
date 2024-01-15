@@ -1,4 +1,12 @@
-crosstable3 <- function(x, ...) UseMethod("crosstable3", x)
+#' Internal function for fast cross-table
+#' @param x data.frame, survey object (svy)
+#'
+#' @param ... Dynamic dots
+#' @return Data.frame
+#' @export
+crosstable3 <- function(x, ...) {
+  UseMethod("crosstable3", x)
+}
 
 crosstable3.data.frame <-
   function(data,

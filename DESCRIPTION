@@ -9,13 +9,19 @@ Authors@R: c(
            email = "stephus.daus@gmail.com", 
            comment = c(ORCID = "0000-0003-0230-6997")),
     person("Nordic Institute for The Studies of Innovation, Research and Education (NIFU)", 
+           role = c("fnd")),
+    person("Kristiania University College", 
            role = c("fnd"))
   )
 Maintainer: Stephan Daus <stephus.daus@gmail.com>
-Description: Produces highly customizable figures, text, analyses and
-    reports for a batch of possible dependent-independent relations of
-    possible interest. 
-Note: Restricted use applies to Norwegian institutions, free elsewhere.
+Description: Produces highly customizable reports, primarily intended for survey research. 
+    Building on 'Quarto' (<https://quarto.org>), it generates draft chapters of all specified dependent/independent variables, 
+    which can be further edited by hand, containing figures, tables and analyses 
+    (currently only uni-/bivariate tests of equivalent means/proportions). 
+    The feature 'mesos'-reports offer tailor-made batch report production where e.g. an institution can compare 
+    itself to all other participants. Publication tools are also included, 
+    such as password generation for 'mesos'-report sections on a 'Quarto' Website.
+Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
 License: MIT + file LICENSE
 URL: https://github.com/NIFU-NO/saros, https://nifu-no.github.io/saros/
 BugReports: https://github.com/NIFU-NO/saros/issues
@@ -54,7 +60,7 @@ Suggests:
     readxl,
     htmltools,
     reactable,
-	stringr,
+	  stringr,
     openai,
     withr,
     quarto,
@@ -62,7 +68,8 @@ Suggests:
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.0
 Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/Needs/website: rmarkdown
+Config/testthat/parallel: true

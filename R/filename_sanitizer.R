@@ -1,6 +1,6 @@
-#' Filename sanitizer replacing space and punctuation with underscore
+#' File/folder name sanitizer replacing space and punctuation with underscore
 #'
-#' @param x Character vector of filenames/foldernames
+#' @param x Character vector of file/folder names
 #' @param max_chars Maximum character length
 #'
 #' @return Character vector of same length as x

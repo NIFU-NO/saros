@@ -20,11 +20,8 @@ embed_flexi <- function(data,
                                            dots$mesos_var))]
 
   dir.create(file.path(dots$path, "_flexi"), recursive = TRUE, showWarnings = FALSE)
-  filepath_rds_data <- file.path(dots$path, "_flexi", "flexi_data.RDs")
-  save(list=c("data", "dots", "chapter_overview"), file = filepath_rds_data)
-
-  template <- system.file("template", "telescope.qmd", package = "saros")
-  readLines(con = file(template))
-
-
+  for(element in c("data", "chapter_overview", "dots")) {
+    filepath_rds <- file.path(dots$path, "_flexi", paste0("flexi_", element, ".RDs"))
+    saveRDS(object = get(element), file = filepath_rds)
+  }
 }

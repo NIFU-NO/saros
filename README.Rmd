@@ -21,9 +21,9 @@ knitr::opts_chunk$set(
 
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![Codecov test coverage](https://codecov.io/gh/NIFU-NO/saros/branch/main/graph/badge.svg)](https://app.codecov.io/gh/NIFU-NO/saros?branch=main)
-[![CRAN status](https://www.r-pkg.org/badges/version/saros)](https://CRAN.R-project.org/package=SAROS)
-[![CRAN release](https://www.r-pkg.org/badges/version-ago/saros)](https://CRAN.R-project.org/package=SAROS)
-[![CRAN total downloads](https://cranlogs.r-pkg.org/badges/grand-total/saros)](https://CRAN.R-project.org/package=SAROS)
+[![CRAN status](https://www.r-pkg.org/badges/version/saros)](https://CRAN.R-project.org/package=saros)
+[![CRAN release](https://www.r-pkg.org/badges/version-ago/saros)](https://CRAN.R-project.org/package=saros)
+[![CRAN total downloads](https://cranlogs.r-pkg.org/badges/grand-total/saros)](https://CRAN.R-project.org/package=saros)
 [![R-CMD-check](https://github.com/NIFU-NO/saros/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/NIFU-NO/saros/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -59,7 +59,7 @@ pak::pak("sda030/saros")
 #> saros::initialize(folder = getwd())
 ```
 
-
+## Draft a report
 ```{r example2}
 # Define temporary folder for storing the elements
 library(saros)
@@ -79,7 +79,6 @@ if(interactive()) {
     
 
 ```{r example3}
-# Define temporary folder for storing the elements
 library(saros)
 output_index_qmd <-
   draft_report(chapter_overview = 
@@ -92,15 +91,16 @@ output_index_qmd <-
                mesos_var = "f_uni",
                label_separator = " - ",
                name_separator = "_",
-              groupby = c("chapter", ".element_name", ".variable_label_prefix"),
+              organize_by = c("chapter", ".element_name", ".variable_label_prefix_dep"),
                index_filename = "main_index.qmd",
                data_label = "percentage_bare",
-               always_show_bi_for_by = "x1_sex",
+               always_show_bi_for_indep = "x1_sex",
                totals = TRUE,
                hide_label_if_prop_below = .05, 
                hide_test_if_n_below = 10,
                mesos_first = TRUE,
-               colour_palette = nifutheme::nifu_cols(),
+               colour_palette_nominal = nifutheme::nifu_cols(),
+               colour_palette_ordinal = nifutheme::nifu_cols("reds"),
                digits = 0,
                data_label_decimal_symbol = ",",
              path = tempdir())
@@ -121,8 +121,8 @@ if(interactive()) {
 ## Documentation
 Please see the [documentation](https://NIFU-NO.github.io/saros/).
 
-## Licence: saros is NOT free to use (yet, for Norwegian institutions).
-In contrast to many R packages, this package is NOT free to use for any Norwegian institution or person unless explicit written permission has been given by the author, or NIFU. For anyone else in the world, it is free to use for commercial and non-commercial purposes. However, reproduction is not allowed.
+## IMPORTANT: saros is free, except in Norway
+Outside of Norway, this package can be used in accordance with the MIT license. However, persons affiliated with Norwegian non-profit or profit/commercial organizations must have the explicit written permission from the author for use. Simply put, if your department/organization competes with NIFU on commissioned or open research calls within Norway, you are probably not going to get permission unfortunately.
 
 ## Code of Conduct
 

@@ -1,3 +1,11 @@
+#' Internal function to prepare a chunk for a Quarto report.
+#'
+#' @param element_name String, see draft_report
+#'
+#' @param ... Dynamic dots passed onto the methods.
+#' @return Returns a text string for the chunk, but
+#' also has side-effects for generating files.
+#' @export
 prepare_chunk <- function(element_name, ...) {
   class(element_name) <- element_name
   UseMethod("prepare_chunk", element_name)
