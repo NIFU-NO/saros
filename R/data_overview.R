@@ -40,6 +40,7 @@ look_for_extended <- function(data,
   if(length(.variable_position) != length(.variable_name) ||
      length(.variable_name) != length(.variable_label) ||
      length(.variable_label) != length(.variable_type)) browser()
+
   x <- data.frame(.variable_position = .variable_position,
                   .variable_name = .variable_name,
                   .variable_label = .variable_label,
@@ -122,7 +123,6 @@ look_for_extended <- function(data,
   } else {
     x$.variable_label_prefix <- x$.variable_label
     x$.variable_label_suffix <- x$.variable_label
-    x$.variable_label <- NULL
   }
 
   grouping_vars <-
@@ -155,9 +155,11 @@ look_for_extended <- function(data,
 
     ) %>%
     dplyr::relocate(tidyselect::any_of(c(".variable_position", ".variable_name", ".variable_name_prefix", ".variable_name_suffix",
-                                         ".variable_label_prefix", ".variable_label_suffix", ".variable_type"))) %>%
+                                         ".variable_label", ".variable_label_prefix", ".variable_label_suffix",
+                                         ".variable_type"))) %>%
     dplyr::mutate(.variable_group_id = dplyr::cur_group_id(),
-                  .by = tidyselect::all_of(if(length(grouping_vars)>0) grouping_vars else ".variable_position"))
+                  .by = tidyselect::all_of(if(length(grouping_vars)>0) grouping_vars else ".variable_position")) %>%
+    as.data.frame()
 
   ### Return a grouped data frame with
   ### main question variable name prefix,

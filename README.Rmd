@@ -91,7 +91,7 @@ output_index_qmd <-
                mesos_var = "f_uni",
                label_separator = " - ",
                name_separator = "_",
-              organize_by = c("chapter", ".element_name", ".variable_label_prefix_dep"),
+              organize_by = c("chapter", ".element_name", ".variable_label_prefix_dep", ".variable_label_prefix_indep"),
                index_filename = "main_index.qmd",
                data_label = "percentage_bare",
                always_show_bi_for_indep = "x1_sex",
