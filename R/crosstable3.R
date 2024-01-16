@@ -4,6 +4,7 @@
 #' @param ... Dynamic dots
 #' @return Data.frame
 #' @export
+#' @keywords internal
 crosstable3 <- function(x, ...) {
   UseMethod("crosstable3", x)
 }
