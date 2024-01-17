@@ -20,7 +20,7 @@ prepare_chunk.bi_catcat_table <-
         indep = unique(as.character(chapter_overview_section$.variable_name_indep)),
         mesos_group = mesos_group,
         !!!dots)
-    writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
+    tabular_write(object = out, path = filepaths$abs[[dots$tabular_format]], format = dots$tabular_format)
     serialize_write(out, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
 
@@ -34,6 +34,7 @@ prepare_chunk.bi_catcat_table <-
                         max_width_obj = dots$max_width_obj,
                         max_width_file = dots$max_width_file,
                         serialized_format = dots$serialized_format,
+                        tabular_format = dots$tabular_format,
                         translations = dots$translations,
                         caption = attr(out, "saros_caption"))
     # stringi::stri_c(out, ignore_null=TRUE, collapse = "\n")

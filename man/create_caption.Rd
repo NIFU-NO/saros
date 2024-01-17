@@ -22,7 +22,7 @@ create_caption(
 
 \item{mesos_group}{String, indicating the name of the mesos group}
 
-\item{filepath}{String, xlsx-file}
+\item{filepath}{String, path to pretty tabular file}
 
 \item{translations}{List of named strings for by and (N=, etc. see getOption("saros")$translations.}
 }

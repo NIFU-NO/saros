@@ -527,6 +527,16 @@
 #'   qs is usually the fastest and most space efficient, but sets package
 #'   dependencies on the report.
 #'
+#' @param tabular_format *Serialized format*
+#'
+#'   `scalar<string>` // *default:* `"xlsx"`
+#'
+#'   Format for pretty tabular data, meant for end-user to peruse and will be
+#'   linked to in reports (the graph data, etc). One of `"xlsx"` (default,
+#'   requires `writexl`-package), `"csv"` or `"csv2"` (requires `readr`-package.
+#'   `"dta"` or `"sav"` requires `haven`-package. Currently must be specified,
+#'   in the future this will become an optional argument.
+#'
 #' @param translations *Translations*
 #'
 #'   `list` // *default:* `saros:::.saros.env$defaults$translations` (`optional`)
@@ -704,6 +714,7 @@ draft_report <-
 
            log_file = NULL,
            serialized_format = c("rds", "qs"),
+           tabular_format = c("xlsx", "csv", "csv2", "tsv", "sav", "dta"),
 
            translations =
              list(last_sep = " and ",
@@ -899,7 +910,8 @@ draft_report <-
                                 as.character(chapter_overview$.variable_name_indep),
                                 args$mesos_var,
                                 args$auxiliary_variables)),
-                serialized_format = args$serialized_format)
+                serialized_format = args$serialized_format,
+                tabular_format = args$tabular_format)
     }
 
     index_filepath <- as.character(unlist(index_filepath))

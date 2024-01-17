@@ -21,7 +21,7 @@ prepare_chunk.uni_chr_table <-
         mesos_group = mesos_group,
         !!!dots)
     serialize_write(out, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
-    writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
+    tabular_write(object = out, path = filepaths$abs[[dots$tabular_format]], format = dots$tabular_format)
     insert_obj_in_qmd(element_name = "uni_chr_table",
                       index = obj_name,
                       mesos_group = mesos_group,
@@ -30,6 +30,7 @@ prepare_chunk.uni_chr_table <-
                       max_width_obj = dots$max_width_obj,
                       max_width_file = dots$max_width_file,
                       serialized_format = dots$serialized_format,
+                      tabular_format = dots$tabular_format,
                       translations = dots$translations,
                       caption = attr(out, "saros_caption"))
 

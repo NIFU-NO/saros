@@ -10,6 +10,7 @@ insert_obj_in_qmd <-
            max_width_file = eval(formals(draft_report)$max_width_file),
            max_width_obj = eval(formals(draft_report)$max_width_obj),
            serialized_format = eval(formals(draft_report)$serialized_format)[1],
+           tabular_format = eval(formals(draft_report)$tabular_format)[1],
            function_call_prefix = NULL,
            function_call_suffix = NULL,
            translations = eval(formals(draft_report)$translations),
@@ -32,12 +33,12 @@ insert_obj_in_qmd <-
     tbl_fig_prefix <- if(stringi::stri_detect(element_name, fixed = "plot")) "fig-" else "tbl-"
 
 
-    filepath_xlsx <- stringi::stri_replace_all_regex(str = filepath,
+    filepath_tabular <- stringi::stri_replace_all_regex(str = filepath,
                                                      pattern = "(.*)\\.[[:alnum:]]+$",
-                                                     replacement = "$1.xlsx")
+                                                     replacement = paste0("$1.", tabular_format))
 
     if(stringi::stri_detect(element_name, regex = "plot|table")) {
-      caption <- stringi::stri_c(ignore_null=TRUE, caption, " [xlsx](", filepath_xlsx, ")")
+      caption <- stringi::stri_c(ignore_null=TRUE, caption, " [", tabular_format, "](", filepath_tabular, ")")
     }
 
     ### Create lines for the chunk
