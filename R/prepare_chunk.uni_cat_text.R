@@ -32,6 +32,7 @@ prepare_chunk.uni_cat_text <-
                       max_width_obj = dots$max_width_obj,
                       max_width_file = dots$max_width_file,
                       serialized_format = dots$serialized_format,
+                      tabular_format = dots$tabular_format,
                       translations = dots$translations,
                       caption = attr(out, "saros_caption"))
 

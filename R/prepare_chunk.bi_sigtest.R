@@ -21,7 +21,7 @@ prepare_chunk.bi_sigtest <-
         !!!dots)
 
     if(nrow(out)>0) {
-      writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
+      tabular_write(object = out, path = filepaths$abs[[dots$tabular_format]], format = dots$tabular_format)
       serialize_write(out, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
       insert_obj_in_qmd(element_name = "bi_sigtest",
                         index = obj_name,
@@ -31,6 +31,7 @@ prepare_chunk.bi_sigtest <-
                         max_width_obj = dots$max_width_obj,
                         max_width_file = dots$max_width_file,
                         serialized_format = dots$serialized_format,
+                        tabular_format = dots$tabular_format,
                         translations = dots$translations,
                         caption = attr(out, "saros_caption"))
     } else "\n<!--# NO SIGTABLE TO SHOW -->\n"

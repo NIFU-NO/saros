@@ -112,7 +112,8 @@ gen_element_and_qmd_snippet2 <-
     filepaths <- make_filenames_list(element_folderpath_relative = element_folderpath_relative,
                                      element_folderpath_absolute = element_folderpath_absolute,
                                      filename_prefix = obj_name,
-                                     serialized_format = dots$serialized_format)
+                                     serialized_format = dots$serialized_format,
+                                     tabular_format = dots$tabular_format)
 
 
     y_col_names <- unique(as.character(chapter_overview_section$.variable_name_dep))

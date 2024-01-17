@@ -41,7 +41,6 @@ Imports:
     yaml,
     forcats,
      srvyr,
-     writexl,
      ggplot2,
      ggiraph,
      mschart,
@@ -52,6 +51,9 @@ Imports:
      rvest
 Suggests:
     covr,
+    writexl,
+    haven,
+    readr,
     ggfittext,
     labelled,
     testthat (>= 3.0.0),

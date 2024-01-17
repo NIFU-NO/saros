@@ -5,7 +5,7 @@
 #' @param indep_pos Named integer for the by-variable.
 #' @param translations List of named strings for by and (N=, etc. see getOption("saros")$translations.
 #' @param mesos_group String, indicating the name of the mesos group
-#' @param filepath String, xlsx-file
+#' @param filepath String, path to pretty tabular file
 #'
 #' @return String
 #' @export
@@ -45,12 +45,7 @@ create_caption <- function(main_question,
 
   caption <- stringi::stri_c(contents, ignore_null=TRUE, collapse = "")
   caption <- stringi::stri_replace_all(str = caption, regex = "\n", replacement = " ")
-  # if(rlang::is_string(filepath)) {
-  #   filepath_xlsx <- stringi::stri_replace_all_regex(str = filepath,
-  #                                                    pattern = "(.*)\\.[[:alnum:]]+$",
-  #                                                    replacement = "$1.xlsx")
-  #   caption <- stringi::stri_c(ignore_null=TRUE, caption, " [xlsx](", filepath_xlsx, ")")
-  # }
+
 
   caption
 }

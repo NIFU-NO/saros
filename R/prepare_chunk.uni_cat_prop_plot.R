@@ -53,7 +53,7 @@ prepare_chunk.uni_cat_prop_plot <-
                     width = dots$png_width,
                     height = dots$png_height,
                     units = "cm", dpi = "retina")
-    writexl::write_xlsx(x = out_html$data, filepaths$abs$xlsx)
+    tabular_write(object = out_html$data, path = filepaths$abs[[dots$tabular_format]], format = dots$tabular_format)
     serialize_write(out_html, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
 
@@ -66,6 +66,7 @@ prepare_chunk.uni_cat_prop_plot <-
                         max_width_obj = dots$max_width_obj,
                         max_width_file = dots$max_width_file,
                         serialized_format = dots$serialized_format,
+                        tabular_format = dots$tabular_format,
                         function_call_prefix = 'ggiraph::girafe(ggobj = ',
                         function_call_suffix = ')',
                         translations = dots$translations,

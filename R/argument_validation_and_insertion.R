@@ -103,6 +103,7 @@ argument_validation_and_insertion <- function(params) {
       showNA = list(fun = function(x) rlang::is_character(x) && any(env$showNA == x[1])),
       element_names = list(fun = function(x) rlang::is_character(x) && all(x %in% env$element_names)),
       serialized_format = list(fun = function(x) rlang::is_character(x) && any(env$serialized_format == x[1])),
+      tabular_format = list(fun = function(x) rlang::is_character(x) && any(env$tabular_format == x[1])),
 
       # Colour enums
       colour_palette_nominal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
@@ -122,6 +123,7 @@ argument_validation_and_insertion <- function(params) {
   params$data_label <- params$data_label[1]
   params$showNA <- params$showNA[1]
   params$serialized_format <- params$serialized_format[1]
+  params$tabular_format <- params$tabular_format[1]
 
   check_sort_by(params$sort_by)
   if(rlang::is_string(params$mesos_var)) {
@@ -156,6 +158,16 @@ argument_validation_and_insertion <- function(params) {
      !requireNamespace(params$serialized_format, quietly = TRUE)) {
     cli::cli_abort("You need to install {.pkg {params$serialized_format}} to use {.arg serialized_format}={params$serialized_format}.")
    }
+
+  pkg <- switch(params$tabular_format,
+                  "xlsx" = "openxlsx",
+                  "csv" = "readr",
+                  "tsv" = "readr",
+                  "sav" = "haven",
+                  "dta" = "haven")
+  if(!requireNamespace(pkg, quietly = TRUE)) {
+    cli::cli_abort("You need to install {.pkg {pkg}} to use {.arg tabular_format}={params$tabular_format}.")
+  }
 
   params
 }
