@@ -18,7 +18,7 @@ prepare_chunk.uni_cat_table <-
         dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
         mesos_group = mesos_group,
         !!!dots)
-    qs::qsave(out, file = filepaths$abs$rds)
+    serialize_write(out, path = filepaths$abs[[serialized_format]], format = dots$serialized_format)
     writexl::write_xlsx(x = out, path = filepaths$abs$xlsx)
     insert_obj_in_qmd(element_name = "uni_cat_table",
                       index = obj_name,
@@ -27,6 +27,7 @@ prepare_chunk.uni_cat_table <-
                       filepath = filepaths$rel$rds,
                       max_width_obj = dots$max_width_obj,
                       max_width_file = dots$max_width_file,
+                      serialized_format = dots$serialized_format,
                       translations = dots$translations,
                       caption = attr(out, "saros_caption"))
   }

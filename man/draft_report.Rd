@@ -93,7 +93,8 @@ draft_report(
     "median_diff", "variance_max", "variance_min"),
   include_numbers = TRUE,
   n_top_bottom = 1,
-  log_file = "_log.txt",
+  log_file = NULL,
+  serialized_format = c("rds", "qs"),
   translations = list(last_sep = " and ", download_report = "Download report (PDF)",
     intro_prefix = "We will now look at the questions asked regarding ", intro_suffix =
     "", mode_max_onfix = " on ", mode_max_prefix = "The most common responses were ",
@@ -224,7 +225,8 @@ Path to qmd-snippet placed before/after body of all chapter qmds.}
 
 \verb{scalar<character>} // \emph{default:} \code{"index.qmd"} (\code{optional})
 
-The name of the main index Quarto file (and its subfolder) used as landing page for each report. Will link to a PDF (report.qmd) which collects all chapters.}
+The name of the main index Quarto file (and its subfolder) used as landing
+page for each report. Will link to a PDF (report.qmd) which collects all chapters.}
 
 \item{element_names}{\emph{Elements to be reported}
 
@@ -238,7 +240,7 @@ Elements to be reported for all sets (batteries) of y-variables.}
 
 Sort output (and collapse if requested).
 
-\itemize{
+\describe{
 \item{".top"}{The proportion for the highest category available in the variable.}
 \item{".upper"}{The sum of the proportions for the categories above the middle category.}
 \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
@@ -248,7 +250,7 @@ Sort output (and collapse if requested).
 \item{".variable_label"}{Sort by the variable labels.}
 \item{".id"}{Sort by the variable names.}
 \item{".by_group"}{The groups of the by argument.}
-\item{Character vector of category labels to sum together.}
+\item{character()}{Character vector of category labels to sum together.}
 }}
 
 \item{data_label}{\emph{Data label}
@@ -577,19 +579,22 @@ Whether to create a PDF of the entire report (all chapters included in a single 
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE}
 
-Whether to save in each chapter folder an 'Rds'-file with the chapter-specific dataset, and load it at the top of each QMD-file.}
+Whether to save in each chapter folder an 'Rds'-file with the
+chapter-specific dataset, and load it at the top of each QMD-file.}
 
 \item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Column names in \code{data} that should always be included in datasets for chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
+Column names in \code{data} that should always be included in datasets for
+chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
 
 \item{flexi}{\emph{Create page with user-editable categorical plots and tables}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
-Whether to create a folder with a Shiny flexi app containing all the variables in the chapter_overview and auxiliary_variables.}
+Whether to create a folder with a Shiny flexi app containing all the
+variables in the chapter_overview and auxiliary_variables.}
 
 \item{micro}{\emph{Create page with raw data (micro data) and codebook}
 
@@ -632,6 +637,15 @@ The number of top and bottom entries to report.}
 \verb{scalar<string>} // \emph{default:} \code{"_log.txt"} (\code{optional})
 
 Path to log file. Set to NULL to disable logging.}
+
+\item{serialized_format}{\emph{Serialized format}
+
+\verb{scalar<string>} // \emph{default:} \code{"rds"}
+
+Format for serialized data. One of \code{"rds"} (default), \code{"qs"} or \code{"fst"}.
+The latter two requires the respective packages to be installed.
+qs is usually the fastest and most space efficient, but sets package
+dependencies on the report.}
 
 \item{translations}{\emph{Translations}
 

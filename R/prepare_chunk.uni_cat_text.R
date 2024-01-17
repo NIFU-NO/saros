@@ -22,7 +22,7 @@ prepare_chunk.uni_cat_text <-
         mesos_group = mesos_group,
         !!!dots)
     out <- unlist(out)
-    qs::qsave(out, file = filepaths$abs$rds)
+    serialize_write(out, path = filepaths$abs[[serialized_format]], format = dots$serialized_format)
     writeLines(text = out, con = filepaths$abs$txt)
     insert_obj_in_qmd(element_name = "uni_cat_text",
                       index = obj_name,
@@ -31,6 +31,7 @@ prepare_chunk.uni_cat_text <-
                       filepath = filepaths$rel$rds,
                       max_width_obj = dots$max_width_obj,
                       max_width_file = dots$max_width_file,
+                      serialized_format = dots$serialized_format,
                       translations = dots$translations,
                       caption = attr(out, "saros_caption"))
 

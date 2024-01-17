@@ -49,7 +49,6 @@ Imports:
      officer,
      fs,
      clipr,
-     qs,
      rstudioapi,
      rvest
 Suggests:
@@ -62,6 +61,7 @@ Suggests:
     reactable,
 	  stringr,
 	  tibble,
+    qs,
     openai,
     withr,
     quarto,

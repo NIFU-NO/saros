@@ -148,7 +148,8 @@ gen_qmd_chapters <-
                                      chapter_foldername_clean = chapter_foldername_clean,
                                      path = path,
                                      mesos_var = dots$mesos_var,
-                                     auxiliary_variables = dots$auxiliary_variables)
+                                     auxiliary_variables = dots$auxiliary_variables,
+                                     serialized_format = dots$serialized_format)
             }
 
           # if(chapter_foldername != "Introduction") browser()

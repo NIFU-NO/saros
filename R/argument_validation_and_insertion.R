@@ -41,6 +41,7 @@ argument_validation_and_insertion <- function(params) {
       qmd_end_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       index_filename = list(fun = function(x) rlang::is_string(x) || rlang::is_null(x)),
       log_file = list(fun = rlang::is_string),
+      serialized_format = list(fun = function(x) rlang::is_string(x) && any(env$serialized_format == x[1])),
       translations = list(fun = function(x) rlang::is_bare_list(x) && all(unlist(lapply(x, function(.x) is.character(.x))))), ### SHOULD BE MORE SPECIFIC FOR EACH ITEM?
 
       mesos_report = list(fun = rlang::is_bool),
@@ -138,6 +139,10 @@ argument_validation_and_insertion <- function(params) {
       data.frame(chapter = "", dep = "everything()")
   }
 
+  if(serialized_format != "rds" &&
+     !requireNamespace(serialized_format, quietly = TRUE)) {
+    cli::cli_abort("You need to install {.pkg {serialized_format}} to use {.arg serialized_format}={serialized_format}.")
+   }
 
   params
 }
