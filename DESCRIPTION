@@ -42,7 +42,6 @@ Imports:
     forcats,
      srvyr,
      writexl,
-     infer,
      ggplot2,
      ggiraph,
      mschart,
