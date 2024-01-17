@@ -163,18 +163,17 @@ prepare_safe_render <- function(remote_basepath = "/home/",
 #' @param ... Dynamic dots forwarded to quarto::quarto_render
 #' @return Data.frame
 #' @export
-create_email_credentials <- function(local_basepath = getwd(),
-                              rel_path_base_to_parent_of_user_restricted_folder,
-                              email_data_frame,
-                              email_col= "email",
-                              username_col = "username",
-                              local_main_password_path = ".htpasswd_private",
-                              ignore_missing_emails = FALSE,
-                              email_body = "Your login credentials for
-                              www.example.net are \nUsername: {username},
-                              \nPassword: {password}",
-                              email_subject = "User credentials for website.",
-                              ...) {
+create_email_credentials <-
+  function(local_basepath = getwd(),
+           rel_path_base_to_parent_of_user_restricted_folder,
+           email_data_frame,
+           email_col= "email",
+           username_col = "username",
+           local_main_password_path = ".htpasswd_private",
+           ignore_missing_emails = FALSE,
+           email_body = "Login credentials are \nUsername: {username},\nPassword: {password}",
+           email_subject = "User credentials for website example.net.",
+           ...) {
 
   mesos_paths <- file.path(local_basepath, rel_path_base_to_parent_of_user_restricted_folder)
   usernames <- basename(list.dirs(mesos_paths, full.names = FALSE, recursive = FALSE))

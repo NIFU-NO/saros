@@ -19,6 +19,7 @@ attach_chapter_dataset2 <- function(chapter_overview_chapter,
   filepath_chapter_dataset_absolute <- file.path(path, chapter_foldername_clean, filename_chapter_dataset)
   filepath_chapter_dataset_relative <- file.path(chapter_foldername_clean, filename_chapter_dataset)
 
+
   qs::qsave(data_chapter, file = filepath_chapter_dataset_absolute)
 
   r_chunk_header <- stringi::stri_c("```{r}\n",

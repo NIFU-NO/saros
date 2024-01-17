@@ -12,9 +12,8 @@ create_email_credentials(
   username_col = "username",
   local_main_password_path = ".htpasswd_private",
   ignore_missing_emails = FALSE,
-  email_body =
-    "Your login credentials for www.example.net are \\nUsername: {username},\\nPassword: {password}",
-  email_subject = "User credentials for website.",
+  email_body = "Login credentials are \\nUsername: {username},\\nPassword: {password}",
+  email_subject = "User credentials for website example.net.",
   ...
 )
 }

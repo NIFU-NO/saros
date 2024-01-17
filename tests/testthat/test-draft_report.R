@@ -11,7 +11,7 @@ testthat::test_that("draft_report", {
   testthat::expect_equal(
       object = length(output_files),
       expected = nrow(saros::ex_survey_ch_overview[1:3, ]))
-  if(nchar(quarto::quarto_path())>1) {
+  if(!is.null(quarto::quarto_path()) && nchar(quarto::quarto_path())>1) {
     testthat::expect_no_error(quarto::quarto_render(input = output_files[2]))
     testthat::expect_gt(file.size(output_files[2]), 3600)
   }
