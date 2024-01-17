@@ -10,6 +10,8 @@ insert_obj_in_qmd <-
            max_width_file = eval(formals(draft_report)$max_width_file),
            max_width_obj = eval(formals(draft_report)$max_width_obj),
            serialized_format = eval(formals(draft_report)$serialized_format)[1],
+           function_call_prefix = NULL,
+           function_call_suffix = NULL,
            translations = eval(formals(draft_report)$translations),
            call = rlang::caller_env()) {
 
@@ -26,18 +28,6 @@ insert_obj_in_qmd <-
       # stringi::stri_c(conv_to_valid_obj_name(index,
       #                                        max_width = max_width_obj),
       #                 ignore_null=TRUE)
-
-
-
-    function_call_prefix <- # Replace with glue?
-      dplyr::case_when(stringi::stri_detect(element_name, regex = "plot[2-9]*") ~ 'ggiraph::girafe(ggobj = ',
-                       stringi::stri_detect(element_name, regex = "table|sigtest") ~ '', #kableExtra::kbl(
-
-                       .default = '(')
-    function_call_suffix <- # Replace with glue?
-      dplyr::case_when(stringi::stri_detect(element_name, regex = "plot[2-9]*") ~ ')',
-                       stringi::stri_detect(element_name, regex = "table|sigtest") ~ '', #)
-                       .default = ')')
 
     tbl_fig_prefix <- if(stringi::stri_detect(element_name, fixed = "plot")) "fig-" else "tbl-"
 
