@@ -57,4 +57,4 @@ reference:
   - is_colour
 - title: "Internal functions"
   contents:
-  - matches("create_caption|^prep_|process_yaml|^gen_|summarize_data|create_htaccess|create__headers_file|get_colour_palette|replace_docx_imgs_with_mscharts|sigtest|prepare_chunk")
+  - matches("create_caption|^prep_|process_yaml|^gen_|summarize_data|create_htaccess|create__headers_file|get_colour_palette|replace_docx_imgs_with_mscharts|sigtest|prepare_chunk|filename_sanitizer|crosstable3")

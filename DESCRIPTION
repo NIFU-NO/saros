@@ -61,6 +61,7 @@ Suggests:
     htmltools,
     reactable,
 	  stringr,
+	  tibble,
     openai,
     withr,
     quarto,

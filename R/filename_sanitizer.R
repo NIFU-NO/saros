@@ -10,7 +10,7 @@
 filename_sanitizer <- function(x, max_chars = NA_integer_) {
   out <-
     stringi::stri_replace_all_regex(x,
-                                    pattern = "[[:punct:][:space:]]",
+                                    pattern = "[^[:alnum:]-+]",
                                     replacement = "_")
   out <- iconv(out, from ="UTF-8", to="windows-1250")
 
