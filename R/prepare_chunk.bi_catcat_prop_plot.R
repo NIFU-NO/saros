@@ -77,6 +77,8 @@ prepare_chunk.bi_catcat_prop_plot <-
                           max_width_obj = dots$max_width_obj,
                           max_width_file = dots$max_width_file,
                           serialized_format = dots$serialized_format,
+                          function_call_prefix = 'ggiraph::girafe(ggobj = ',
+                          function_call_suffix = ')',
                           translations = dots$translations,
                           caption = attr(out_html, "saros_caption")))
 
