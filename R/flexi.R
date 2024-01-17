@@ -22,6 +22,6 @@ embed_flexi <- function(data,
   dir.create(file.path(dots$path, "_flexi"), recursive = TRUE, showWarnings = FALSE)
   for(element in c("data", "chapter_overview", "dots")) {
     filepath_rds <- file.path(dots$path, "_flexi", paste0("flexi_", element, ".RDs"))
-    saveRDS(object = get(element), file = filepath_rds)
+    serialize_write(get(element), path = filepath_rds, format = dots$serialized_format)
   }
 }
