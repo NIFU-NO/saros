@@ -7,7 +7,7 @@
 crosstable3 <- function(x, ...) {
   if(inherits(x, "tbl_svy") &&
      !requireNamespace("srvyr", quietly = TRUE)) {
-    cli::cli_abort("Needs {.pkg srvyr} to use tbl_svy objects: {.code install.packages('srvyr')}.")
+    cli::cli_abort("Needs {.pkg srvyr} to use tbl_svy objects: {.run install.packages('srvyr')}.")
   }
   UseMethod("crosstable3", x)
 }

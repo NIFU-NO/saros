@@ -7,7 +7,7 @@
 crosstable3(x, ...)
 }
 \arguments{
-\item{x}{data.frame, survey object (svy)}
+\item{x}{data.frame, survey object (requires \code{srvyr}-package)}
 
 \item{...}{Dynamic dots}
 }
