@@ -681,7 +681,7 @@ draft_report <-
            pdf = TRUE,
            attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
-           flexi = TRUE,
+           flexi = FALSE,
            micro = FALSE,
 
 
