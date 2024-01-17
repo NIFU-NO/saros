@@ -170,7 +170,9 @@ create_email_credentials <- function(local_basepath = getwd(),
                               username_col = "username",
                               local_main_password_path = ".htpasswd_private",
                               ignore_missing_emails = FALSE,
-                              email_body = "Your login credentials for www.example.net are \nUsername: {username},\nPassword: {password}",
+                              email_body = "Your login credentials for
+                              www.example.net are \nUsername: {username},
+                              \nPassword: {password}",
                               email_subject = "User credentials for website.",
                               ...) {
 

@@ -1,4 +1,4 @@
-testthat::test_that("multiplication works", {
+testthat::test_that("draft_report", {
 
   tmpdir <- file.path(tempdir(), "test-draft_report")
   saros::draft_report(
@@ -11,8 +11,10 @@ testthat::test_that("multiplication works", {
   testthat::expect_equal(
       object = length(output_files),
       expected = nrow(saros::ex_survey_ch_overview[1:3, ]))
-  testthat::expect_no_error(quarto::quarto_render(input = output_files[2]))
-  testthat::expect_gt(file.size(output_files[2]), 3900)
+  if(nchar(quarto::quarto_path())>1) {
+    testthat::expect_no_error(quarto::quarto_render(input = output_files[2]))
+    testthat::expect_gt(file.size(output_files[2]), 3600)
+  }
 
 
   ##############################

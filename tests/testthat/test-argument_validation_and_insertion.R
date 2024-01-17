@@ -1,8 +1,9 @@
 testthat::test_that("argument_validation_and_insertion function", {
-    library(magrittr)
+
   args <-
-    formals(saros::draft_report) %>%
-    .[!names(.) %in% c("data", "chapter_overview", "...")] |>
+    formals(saros::draft_report)
+  args <-
+     args[!names(args) %in% c("data", "chapter_overview", "...")] |>
     lapply(FUN = eval) |>
     utils::modifyList(keep.null = TRUE,
                       val =
@@ -38,30 +39,29 @@ testthat::test_that("argument_validation_and_insertion function", {
      testthat::expect_warning(regexp = "`data` is invalid")
 
    # Test Case 5: 'element_names' not a character vector
-   args %>%
+   args |>
      utils::modifyList(keep.null = TRUE,
-                       val = list(element_names = 123)) %>%
-     saros:::argument_validation_and_insertion() %>%
+                       val = list(element_names = 123)) |>
+     saros:::argument_validation_and_insertion() |>
      testthat::expect_warning(regexp = "`element_names` is invalid \\(it is a number, and specified as 123\\)")
 
    # Test Case 15: 'element_names' contains non-existent elements
-   args %>%
+   args |>
      utils::modifyList(keep.null = TRUE,
-                       val = list(element_names = c("nonexistent_element"))) %>%
-     saros:::argument_validation_and_insertion() %>%
+                       val = list(element_names = c("nonexistent_element"))) |>
+     saros:::argument_validation_and_insertion() |>
      testthat::expect_warning(regexp = "`element_names` is invalid \\(it is a string, and specified as nonexistent_element\\).")
 
    # Test Case 16: 'showNA' not one of the allowed values
-   args %>%
+   args |>
      utils::modifyList(keep.null = TRUE,
-                       val = list(showNA = "invalid_value")) %>%
-     saros:::argument_validation_and_insertion() %>%
+                       val = list(showNA = "invalid_value")) |>
+     saros:::argument_validation_and_insertion() |>
      testthat::expect_warning(regexp = "`showNA` is invalid \\(it is a string, and specified as invalid_value\\)\\. Using default: never, always, and ifany")
-#
-#
-   args %>%
+
+   args |>
      utils::modifyList(keep.null = TRUE,
-                       val = list(descend = NA)) %>%
-     saros:::argument_validation_and_insertion() %>%
+                       val = list(descend = NA)) |>
+     saros:::argument_validation_and_insertion() |>
      testthat::expect_warning("`descend` is invalid \\(it is `NA`, and specified as NA\\)\\. Using default: TRUE")
   })

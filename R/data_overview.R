@@ -470,8 +470,9 @@ refine_chapter_overview <-
                            !is.na(out$.element_name) &
                            stringi::stri_detect_regex(out$.element_name, pattern = "^uni_")))
 
+    tapplied <- tapply(out, out$chapter, FUN = function(df) length(unique(df$.variable_name_dep)))
     if(length(unique(out$chapter)) > 1 &&
-       max(tapply(out, out$chapter, FUN = function(df) length(unique(df$.variable_name_dep))))==ncol(data)) {
+       max(tapplied) == ncol(data)) {
       cli::cli_warn("One of your chapters contain all the variables in the dataset. Is this what you intend?")
     }
     log_unused_variables(data=data,
