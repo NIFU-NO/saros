@@ -2,7 +2,6 @@ CMD
 Codecov
 Colour
 Colours
-Licence
 Lifecycle
 Mislevy's
 Mockup
@@ -58,6 +57,7 @@ pos
 pre
 qmd
 qmds
+qs
 rdocx
 reactable
 recoded

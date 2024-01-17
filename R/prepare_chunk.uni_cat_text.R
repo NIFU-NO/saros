@@ -22,7 +22,7 @@ prepare_chunk.uni_cat_text <-
         mesos_group = mesos_group,
         !!!dots)
     out <- unlist(out)
-    serialize_write(out, path = filepaths$abs[[serialized_format]], format = dots$serialized_format)
+    serialize_write(out, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
     writeLines(text = out, con = filepaths$abs$txt)
     insert_obj_in_qmd(element_name = "uni_cat_text",
                       index = obj_name,

@@ -54,7 +54,7 @@ prepare_chunk.uni_cat_prop_plot <-
                     height = dots$png_height,
                     units = "cm", dpi = "retina")
     writexl::write_xlsx(x = out_html$data, filepaths$abs$xlsx)
-    serialize_write(out_html, path = filepaths$abs[[serialized_format]], format = dots$serialized_format)
+    serialize_write(out_html, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
 
     out <-

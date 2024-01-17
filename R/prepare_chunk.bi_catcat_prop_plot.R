@@ -65,7 +65,7 @@ prepare_chunk.bi_catcat_prop_plot <-
                     units = "cm", dpi = "retina")
     writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
 
-    serialize_write(out_html, path = filepaths$abs[[serialized_format]], format = dots$serialized_format)
+    serialize_write(out_html, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
     out <-
       c(insert_obj_in_qmd(element_name = element_name,

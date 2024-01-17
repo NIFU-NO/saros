@@ -74,3 +74,4 @@ Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/Needs/website: rmarkdown
 Config/testthat/parallel: true
+Config/testthat/start-first: draft_report

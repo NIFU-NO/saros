@@ -21,13 +21,14 @@ argument_validation_and_insertion <- function(params) {
 
   arg_params <-
     list(
+      # Data frames
       data = list(fun = function(x) inherits(x, "data.frame") || inherits(x, "survey")),
       chapter_overview = list(fun = function(x) is.null(x) || inherits(x, "data.frame")),
 
+      # Character vectors (not enums)
       label_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_character(x)),
       name_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_character(x)),
       mesos_var = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
-      element_names = list(fun = function(x) rlang::is_character(x) && all(x %in% env$element_names)),
       auxiliary_variables = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
       always_show_bi_for_indep = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
       variables_always_at_top = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
@@ -40,10 +41,14 @@ argument_validation_and_insertion <- function(params) {
       qmd_start_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       qmd_end_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       index_filename = list(fun = function(x) rlang::is_string(x) || rlang::is_null(x)),
-      log_file = list(fun = rlang::is_string),
-      serialized_format = list(fun = function(x) rlang::is_string(x) && any(env$serialized_format == x[1])),
+      log_file = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
+      font_family = list(fun = rlang::is_string),
+      data_label_decimal_symbol = list(fun = rlang::is_string),
+
+      # List
       translations = list(fun = function(x) rlang::is_bare_list(x) && all(unlist(lapply(x, function(.x) is.character(.x))))), ### SHOULD BE MORE SPECIFIC FOR EACH ITEM?
 
+      # Boolean
       mesos_report = list(fun = rlang::is_bool),
       open_after_drafting = list(fun = rlang::is_bool),
       return_raw = list(fun = rlang::is_bool),
@@ -63,6 +68,7 @@ argument_validation_and_insertion <- function(params) {
       micro = list(fun = rlang::is_bool),
       table_main_question_as_header = list(fun = rlang::is_bool),
 
+      # Numeric and integer
       plot_height_multiplier_per_horizontal_line = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
       plot_height_multiplier_per_vertical_letter = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
       plot_height_multiplier_per_facet = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0)),
@@ -89,15 +95,20 @@ argument_validation_and_insertion <- function(params) {
       max_width_file = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
       max_width_obj = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
       max_clean_folder_name = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
-      font_family = list(fun = rlang::is_string),
-      data_label_decimal_symbol = list(fun = rlang::is_string),
+
+      # Enums
       data_label = list(fun = function(x) rlang::is_character(x) && any(env$data_label == x[1])),
+      organize_by = list(fun = function(x) rlang::is_character(x)), # BETTER CHECKS NEEDED
+      arrange_output_by = list(fun = function(x) rlang::is_character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)),
+      showNA = list(fun = function(x) rlang::is_character(x) && any(env$showNA == x[1])),
+      element_names = list(fun = function(x) rlang::is_character(x) && all(x %in% env$element_names)),
+      serialized_format = list(fun = function(x) rlang::is_character(x) && any(env$serialized_format == x[1])),
+
+      # Colour enums
       colour_palette_nominal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
       colour_palette_ordinal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
-      colour_na = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
-      organize_by = list(fun = function(x) rlang::is_character(x)),
-      arrange_output_by = list(fun = function(x) rlang::is_character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)),
-      showNA = list(fun = function(x) rlang::is_character(x) && any(env$showNA == x[1]))
+      colour_na = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x))
+
     )
 
   for(par in names(arg_params)) {
@@ -110,6 +121,8 @@ argument_validation_and_insertion <- function(params) {
 
   params$data_label <- params$data_label[1]
   params$showNA <- params$showNA[1]
+  params$serialized_format <- params$serialized_format[1]
+
   check_sort_by(params$sort_by)
   if(rlang::is_string(params$mesos_var)) {
     if(!any(colnames(params$data) == params$mesos_var)) {
@@ -139,9 +152,9 @@ argument_validation_and_insertion <- function(params) {
       data.frame(chapter = "", dep = "everything()")
   }
 
-  if(serialized_format != "rds" &&
-     !requireNamespace(serialized_format, quietly = TRUE)) {
-    cli::cli_abort("You need to install {.pkg {serialized_format}} to use {.arg serialized_format}={serialized_format}.")
+  if(params$serialized_format != "rds" &&
+     !requireNamespace(params$serialized_format, quietly = TRUE)) {
+    cli::cli_abort("You need to install {.pkg {params$serialized_format}} to use {.arg serialized_format}={params$serialized_format}.")
    }
 
   params

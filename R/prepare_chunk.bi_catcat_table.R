@@ -21,7 +21,7 @@ prepare_chunk.bi_catcat_table <-
         mesos_group = mesos_group,
         !!!dots)
     writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
-    serialize_write(out, path = filepaths$abs[[serialized_format]], format = dots$serialized_format)
+    serialize_write(out, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
 
 

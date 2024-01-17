@@ -18,7 +18,7 @@ prepare_chunk.uni_cat_table <-
         dep = unique(as.character(chapter_overview_section$.variable_name_dep)),
         mesos_group = mesos_group,
         !!!dots)
-    serialize_write(out, path = filepaths$abs[[serialized_format]], format = dots$serialized_format)
+    serialize_write(out, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
     writexl::write_xlsx(x = out, path = filepaths$abs$xlsx)
     insert_obj_in_qmd(element_name = "uni_cat_table",
                       index = obj_name,
