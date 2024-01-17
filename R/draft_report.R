@@ -93,7 +93,8 @@
 #'
 #'   `scalar<character>` // *default:* `"index.qmd"` (`optional`)
 #'
-#'   The name of the main index Quarto file (and its subfolder) used as landing page for each report. Will link to a PDF (report.qmd) which collects all chapters.
+#'   The name of the main index Quarto file (and its subfolder) used as landing
+#'   page for each report. Will link to a PDF (report.qmd) which collects all chapters.
 #'
 #' @param qmd_start_section_filepath,qmd_end_section_filepath *Path to qmd-bit for start/end of each qmd*
 #'
@@ -181,7 +182,7 @@
 #'
 #'  Sort output (and collapse if requested).
 #'
-#' \itemize{
+#' \describe{
 #' \item{".top"}{The proportion for the highest category available in the variable.}
 #' \item{".upper"}{The sum of the proportions for the categories above the middle category.}
 #' \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
@@ -344,13 +345,15 @@
 #'
 #'   `scalar<logical>` // *default:* `FALSE`
 #'
-#'   Whether to save in each chapter folder an 'Rds'-file with the chapter-specific dataset, and load it at the top of each QMD-file.
+#'   Whether to save in each chapter folder an 'Rds'-file with the
+#'   chapter-specific dataset, and load it at the top of each QMD-file.
 #'
 #' @param auxiliary_variables *Auxiliary variables to be included in datasets*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
-#'   Column names in `data` that should always be included in datasets for chapter qmd-files, if `attach_chapter_dataset=TRUE`. Not publicly available.
+#'   Column names in `data` that should always be included in datasets for
+#'   chapter qmd-files, if `attach_chapter_dataset=TRUE`. Not publicly available.
 #'
 #' @param panel_tabset_mesos *mesos panel tabset*
 #'
@@ -375,7 +378,8 @@
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
 #'
-#'   Whether to create a folder with a Shiny flexi app containing all the variables in the chapter_overview and auxiliary_variables.
+#'   Whether to create a folder with a Shiny flexi app containing all the
+#'   variables in the chapter_overview and auxiliary_variables.
 #'
 #' @param micro *Create page with raw data (micro data) and codebook*
 #'
@@ -689,7 +693,7 @@ draft_report <-
            include_numbers = TRUE, # not implemented
            n_top_bottom = 1,
 
-           log_file = "_log.txt",
+           log_file = NULL,
 
            translations =
              list(last_sep = " and ",

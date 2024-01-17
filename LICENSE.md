@@ -1,8 +1,10 @@
-# Modified MIT License
+# MIT License
 
-Copyright (c) 2023 saros authors
+Copyright (c) 2024 Stephan Daus
 
-In contrast to many R packages, this package is NOT free to use for any Norwegian institution or person unless explicit written permission has been given by the author, or NIFU. For anyone else in the world, it is free to use for commercial and non-commercial purposes. However, reproduction is not allowed.
+saros is free, except in Norway.
+Outside of Norway, this package can be used in accordance with the MIT license. However, persons affiliated with Norwegian non-profit or profit/commercial organizations must have the explicit written permission from the author for use. Simply put, if your department/organization competes with NIFU on commissioned or open research calls within Norway, you are probably not going to get permission unfortunately.
+
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
