@@ -65,7 +65,7 @@ prepare_chunk.bi_catcat_prop_plot <-
                     units = "cm", dpi = "retina")
     writexl::write_xlsx(x = out_html$data, path = filepaths$abs$xlsx)
 
-    qs::qsave(out_html, file = filepaths$abs$rds)
+    serialize_write(out_html, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
     out <-
       c(insert_obj_in_qmd(element_name = element_name,
@@ -76,6 +76,7 @@ prepare_chunk.bi_catcat_prop_plot <-
                           add_text = TRUE,
                           max_width_obj = dots$max_width_obj,
                           max_width_file = dots$max_width_file,
+                          serialized_format = dots$serialized_format,
                           translations = dots$translations,
                           caption = attr(out_html, "saros_caption")))
 

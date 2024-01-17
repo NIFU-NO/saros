@@ -192,7 +192,7 @@
 #' \item{".variable_label"}{Sort by the variable labels.}
 #' \item{".id"}{Sort by the variable names.}
 #' \item{".by_group"}{The groups of the by argument.}
-#' \item{Character vector of category labels to sum together.}
+#' \item{character()}{Character vector of category labels to sum together.}
 #' }
 #' @param plot_height_multiplier_per_vertical_letter,plot_height_multiplier_per_horizontal_line *Height multiplier*
 #'
@@ -419,16 +419,16 @@
 #'
 #' @param plot_height_multiplier_per_facet *Plot height multiplier per facet*
 #'
-#'  `scalar<double>` // *default:* `0.95` (`optional`)
+#'   `scalar<double>` // *default:* `0.95` (`optional`)
 #'
-#'  Multiplier for plot height per facet. Defaults to optimal at .95, i.e. slightly less than no change (1).
+#'   Multiplier for plot height per facet. Defaults to optimal at .95, i.e. slightly less than no change (1).
 #'
 #' @param plot_height_multiplier_per_legend_line *Plot height multiplier per legend line*
 #'
-#'  `scalar<double>` // *default:* `1.1` (`optional`)
+#'   `scalar<double>` // *default:* `1.1` (`optional`)
 #'
-#'  Multiplier for plot height per horizontal line of legend.
-#'  Defaults to optimal at 1.1, i.e. slightly more than no change (1).
+#'   Multiplier for plot height per horizontal line of legend.
+#'   Defaults to optimal at 1.1, i.e. slightly more than no change (1).
 #'
 #' @param plot_height_max *Maximum plot height*
 #'
@@ -478,9 +478,9 @@
 #'
 #' @param table_main_question_as_header *Table main question as header*
 #'
-#' `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
 #'
-#' Whether to include the main question as a header in the table.
+#'   Whether to include the main question as a header in the table.
 #'
 #' @param max_width_obj *Maximum object width*
 #'
@@ -500,11 +500,11 @@
 #'
 #' @param max_clean_folder_name *Maximum clean folder name length*
 #'
-#'  `scalar<integer>` // *default:* `NULL` (`optional`)
+#'   `scalar<integer>` // *default:* `NULL` (`optional`)
 #'
-#'  Whereas `max_width_file` truncates the file name, this argument truncates
-#'  the folder name. It will not impact the report or chapter names in website,
-#'  only the folders.
+#'   Whereas `max_width_file` truncates the file name, this argument truncates
+#'   the folder name. It will not impact the report or chapter names in website,
+#'   only the folders.
 #'
 #' @param mesos_first *mesos first*
 #'
@@ -517,6 +517,15 @@
 #'   `scalar<string>` // *default:* `"_log.txt"` (`optional`)
 #'
 #'   Path to log file. Set to NULL to disable logging.
+#'
+#' @param serialized_format *Serialized format*
+#'
+#'   `scalar<string>` // *default:* `"rds"`
+#'
+#'   Format for serialized data. One of `"rds"` (default), `"qs"` or `"fst"`.
+#'   The latter two requires the respective packages to be installed.
+#'   qs is usually the fastest and most space efficient, but sets package
+#'   dependencies on the report.
 #'
 #' @param translations *Translations*
 #'
@@ -694,6 +703,7 @@ draft_report <-
            n_top_bottom = 1,
 
            log_file = NULL,
+           serialized_format = c("rds", "qs"),
 
            translations =
              list(last_sep = " and ",
@@ -888,7 +898,8 @@ draft_report <-
                 cols = unique(c(as.character(chapter_overview$.variable_name_dep),
                                 as.character(chapter_overview$.variable_name_indep),
                                 args$mesos_var,
-                                args$auxiliary_variables)))
+                                args$auxiliary_variables)),
+                serialized_format = args$serialized_format)
     }
 
     index_filepath <- as.character(unlist(index_filepath))

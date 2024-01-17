@@ -21,7 +21,7 @@ prepare_chunk.bi_catcat_table <-
         mesos_group = mesos_group,
         !!!dots)
     writexl::write_xlsx(x=out, path = filepaths$abs$xlsx)
-    qs::qsave(out, file = filepaths$abs$rds)
+    serialize_write(out, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
 
 
@@ -33,6 +33,7 @@ prepare_chunk.bi_catcat_table <-
                         filepath = filepaths$rel$rds,
                         max_width_obj = dots$max_width_obj,
                         max_width_file = dots$max_width_file,
+                        serialized_format = dots$serialized_format,
                         translations = dots$translations,
                         caption = attr(out, "saros_caption"))
     # stringi::stri_c(out, ignore_null=TRUE, collapse = "\n")
