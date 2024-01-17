@@ -160,11 +160,12 @@ argument_validation_and_insertion <- function(params) {
    }
 
   pkg <- switch(params$tabular_format,
-                  "xlsx" = "openxlsx",
-                  "csv" = "readr",
-                  "tsv" = "readr",
-                  "sav" = "haven",
-                  "dta" = "haven")
+                "delim" = "utils",
+                "xlsx" = "openxlsx",
+                "csv" = "readr",
+                "tsv" = "readr",
+                "sav" = "haven",
+                "dta" = "haven")
   if(!requireNamespace(pkg, quietly = TRUE)) {
     cli::cli_abort("Needs {.pkg {pkg}} to use {.arg tabular_format}={params$tabular_format}: {.run [install.packages(pkg)](install.packages())}")
   }
