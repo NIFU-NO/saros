@@ -40,7 +40,6 @@ Imports:
     stringi,
     yaml,
     forcats,
-     srvyr,
      ggplot2,
      ggiraph,
      mschart,
@@ -51,6 +50,7 @@ Imports:
      rvest
 Suggests:
     covr,
+    srvyr,
     writexl,
     haven,
     readr,

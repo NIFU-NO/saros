@@ -1,10 +1,14 @@
 #' Internal function for fast cross-table
-#' @param x data.frame, survey object (svy)
+#' @param x data.frame, survey object (requires `srvyr`-package)
 #'
 #' @param ... Dynamic dots
 #' @return Data.frame
 #' @export
 crosstable3 <- function(x, ...) {
+  if(inherits(x, "tbl_svy") &&
+     !requireNamespace("srvyr", quietly = TRUE)) {
+    cli::cli_abort("Needs {.pkg srvyr} to use tbl_svy objects: {.code install.packages('srvyr')}.")
+  }
   UseMethod("crosstable3", x)
 }
 
