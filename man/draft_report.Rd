@@ -82,7 +82,7 @@ draft_report(
   pdf = TRUE,
   attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
-  flexi = TRUE,
+  flexi = FALSE,
   micro = FALSE,
   reps = 1000,
   information = c(".variable_label_dep", ".category", ".count", ".count_se",
