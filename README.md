@@ -82,7 +82,7 @@ output_index_qmd <-
              )
 #> Refining chapter_overview...Not using the following variables in `data`: `x2_human`, `a_7`, `a_8`, and
 #> `resp_status`.                             Generating for chapter Introduction: 1_Introduction                                                    Generating for chapter Ambivalence: 2_Ambivalence                                                  Generating for chapter Big mysteries: 3_Big_mysterie                                                     Generating for chapter Confidence: 4_Confidence                                                Generating for chapter Doubt: 5_Doubt                                      
-#> 80.45 5.22 101.08 NA NA
+#> 77.14 4.67 105.45 NA NA
 quarto::quarto_render(output_index_qmd, as_job = FALSE)
 #> pandoc 
 #>   to: html
@@ -153,7 +153,7 @@ output_index_qmd <-
 #> Fewer colours in user-provided colour palette than needed.
 #> Fewer colours in user-provided colour palette than needed.
 #> Generating for chapter Doubt: 5_Doubt
-#> 81.58 5.94 3994.65 NA NA
+#> 85.45 6.3 108.1 NA NA
 ```
 
 ``` r
@@ -185,7 +185,7 @@ system.time( # 519 sec
 #>   
 #> Output created: main_index.html
 #>    user  system elapsed 
-#>    0.02    0.00    4.64
+#>    0.05    0.00    2.99
 if(interactive()) {
   browseURL(fs::path(tempdir(), "Uni of C", "Uni of C_main_index.html"))
 }
