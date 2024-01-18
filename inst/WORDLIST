@@ -32,9 +32,9 @@ colour
 colours
 customizable
 datetime
+delim
 dep
 docx
-fct
 filepath
 flexi
 folderpaths
@@ -69,11 +69,9 @@ stackoverflow
 subfolder
 subfolders
 subquestion
-svy
 tabset
 tibble
 tibbles
 tidyselect
 vec
-xlsx
 yaml
