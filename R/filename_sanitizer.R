@@ -12,7 +12,7 @@ filename_sanitizer <- function(x, max_chars = NA_integer_) {
     stringi::stri_replace_all_regex(x,
                                     pattern = "[^[:alnum:]-+]",
                                     replacement = "_")
-  out <- iconv(out, from ="UTF-8", to="windows-1250")
+  out <- iconv(out, from ="UTF-8", to="ASCII//TRANSLIT", sub='')
 
   if(!is.na(max_chars)) out <- stringi::stri_sub(out, from = 1, to = max_chars)
 
