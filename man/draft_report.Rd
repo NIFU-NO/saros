@@ -95,7 +95,7 @@ draft_report(
   n_top_bottom = 1,
   log_file = NULL,
   serialized_format = c("rds", "qs"),
-  tabular_format = c("xlsx", "csv", "csv2", "tsv", "sav", "dta"),
+  tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
   translations = list(last_sep = " and ", download_report = "Download report (PDF)",
     intro_prefix = "We will now look at the questions asked regarding ", intro_suffix =
     "", mode_max_onfix = " on ", mode_max_prefix = "The most common responses were ",
@@ -650,11 +650,11 @@ dependencies on the report.}
 
 \item{tabular_format}{\emph{Serialized format}
 
-\verb{scalar<string>} // \emph{default:} \code{"xlsx"}
+\verb{scalar<string>} // \emph{default:} \code{"delim"}
 
 Format for pretty tabular data, meant for end-user to peruse and will be
-linked to in reports (the graph data, etc). One of \code{"xlsx"} (default,
-requires \code{writexl}-package), \code{"csv"} or \code{"csv2"} (requires \code{readr}-package.
+linked to in reports (the graph data, etc). One of \code{"delim"} (tab-separated delim-files)
+\code{"xlsx"} requires \code{writexl}-package), \code{"csv"} or \code{"csv2"} (requires \code{readr}-package.
 \code{"dta"} or \code{"sav"} requires \code{haven}-package. Currently must be specified,
 in the future this will become an optional argument.}
 

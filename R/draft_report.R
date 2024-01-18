@@ -529,11 +529,11 @@
 #'
 #' @param tabular_format *Serialized format*
 #'
-#'   `scalar<string>` // *default:* `"xlsx"`
+#'   `scalar<string>` // *default:* `"delim"`
 #'
 #'   Format for pretty tabular data, meant for end-user to peruse and will be
-#'   linked to in reports (the graph data, etc). One of `"xlsx"` (default,
-#'   requires `writexl`-package), `"csv"` or `"csv2"` (requires `readr`-package.
+#'   linked to in reports (the graph data, etc). One of `"delim"` (tab-separated delim-files)
+#'   `"xlsx"` requires `writexl`-package), `"csv"` or `"csv2"` (requires `readr`-package.
 #'   `"dta"` or `"sav"` requires `haven`-package. Currently must be specified,
 #'   in the future this will become an optional argument.
 #'
@@ -714,7 +714,7 @@ draft_report <-
 
            log_file = NULL,
            serialized_format = c("rds", "qs"),
-           tabular_format = c("xlsx", "csv", "csv2", "tsv", "sav", "dta"),
+           tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
 
            translations =
              list(last_sep = " and ",
