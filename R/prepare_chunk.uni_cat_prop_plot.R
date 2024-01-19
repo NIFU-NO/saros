@@ -1,6 +1,7 @@
-
+#' @export
 prepare_chunk.uni_cat_prop_plot <-
-  function(chapter_overview_section,
+  function(element_name,
+           chapter_overview_section,
            data,
            mesos_group=NULL,
            filepaths,
@@ -75,5 +76,6 @@ prepare_chunk.uni_cat_prop_plot <-
 
   }
 
+#' @export
 prepare_chunk.uni_cat_freq_plot <- prepare_chunk.uni_cat_prop_plot
 

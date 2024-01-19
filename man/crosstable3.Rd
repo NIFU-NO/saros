@@ -4,10 +4,10 @@
 \alias{crosstable3}
 \title{Internal function for fast cross-table}
 \usage{
-crosstable3(x, ...)
+crosstable3(data, ...)
 }
 \arguments{
-\item{x}{data.frame, survey object (requires \code{srvyr}-package)}
+\item{data}{data.frame, survey object (requires \code{srvyr}-package)}
 
 \item{...}{Dynamic dots}
 }

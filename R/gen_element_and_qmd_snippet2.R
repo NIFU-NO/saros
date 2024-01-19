@@ -169,9 +169,11 @@ gen_element_and_qmd_snippet2 <-
                                         strip_angle = dots$strip_angle)
 
 
+    element_name <- unique(as.character(chapter_overview_section$.element_name))
+    class(element_name) <- element_name
 
     rlang::exec(prepare_chunk,
-                element_name = unique(as.character(chapter_overview_section$.element_name)),
+                element_name = element_name,
                 chapter_overview_section = chapter_overview_section,
                 data = data,
                 mesos_group = mesos_group,

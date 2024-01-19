@@ -1,11 +1,13 @@
+#' @export
 prepare_chunk.bi_catcat_prop_plot <-
-  function(chapter_overview_section,
+  function(element_name,
+           chapter_overview_section,
            data,
            mesos_group=NULL,
            filepaths,
            obj_name,
-           colour_palette,
            plot_height=15,
+           colour_palette,
            ...) {
 
     dots <- rlang::list2(...)
@@ -86,7 +88,11 @@ prepare_chunk.bi_catcat_prop_plot <-
     stringi::stri_c(out, collapse="\n", ignore_null=TRUE)
   }
 
-
+#' @export
 prepare_chunk.bi_catcat_freq_plot <- prepare_chunk.bi_catcat_prop_plot
+
+#' @export
 prepare_chunk.bi_catcat_prop_plot2 <- prepare_chunk.bi_catcat_prop_plot
+
+#' @export
 prepare_chunk.bi_catcat_freq_plot2 <- prepare_chunk.bi_catcat_prop_plot
