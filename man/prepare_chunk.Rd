@@ -7,7 +7,7 @@
 prepare_chunk(element_name, ...)
 }
 \arguments{
-\item{element_name}{String, see draft_report}
+\item{element_name}{The name of the element to be prepared.}
 
 \item{...}{Dynamic dots passed onto the methods.}
 }

@@ -1,5 +1,7 @@
+#' @export
 prepare_chunk.uni_cat_text <-
-  function(chapter_overview_section,
+  function(element_name,
+           chapter_overview_section,
            data,
            mesos_group,
            filepaths,

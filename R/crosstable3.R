@@ -1,17 +1,16 @@
 #' Internal function for fast cross-table
-#' @param x data.frame, survey object (requires `srvyr`-package)
+#' @param data data.frame, survey object (requires `srvyr`-package)
 #'
 #' @param ... Dynamic dots
 #' @return Data.frame
 #' @export
-crosstable3 <- function(x, ...) {
-  if(inherits(x, "tbl_svy") &&
-     !requireNamespace("srvyr", quietly = TRUE)) {
-    cli::cli_abort("Needs {.pkg srvyr} to use tbl_svy objects: {.run install.packages('srvyr')}.")
-  }
-  UseMethod("crosstable3", x)
+crosstable3 <- function(data,
+                        ...) {
+  UseMethod("crosstable3")
 }
 
+
+#' @export
 crosstable3.data.frame <-
   function(data,
            dep = colnames(data),
@@ -19,6 +18,7 @@ crosstable3.data.frame <-
            showNA = eval(formals(draft_report)$showNA),
            totals = eval(formals(draft_report)$totals),
            translations = eval(formals(draft_report)$translations),
+           ...,
            call = rlang::caller_env()) {
 
     showNA <- rlang::arg_match(showNA, values = eval(formals(draft_report)$showNA), error_call = call)
@@ -176,8 +176,10 @@ crosstable3.data.frame <-
 
   }
 
+#' @export
 crosstable3.tbl_df <- crosstable3.data.frame
 
+#' @export
 crosstable3.tbl_svy <-
   function(data,
            dep = colnames(data),
@@ -185,7 +187,13 @@ crosstable3.tbl_svy <-
            showNA = eval(formals(draft_report)$showNA),
            totals = eval(formals(draft_report)$totals),
            translations = eval(formals(draft_report)$translations),
+           ...,
            call = rlang::caller_env()) {
+
+    if(inherits(data, "tbl_svy") &&
+       !requireNamespace("srvyr", quietly = TRUE)) {
+      cli::cli_abort("Needs {.pkg srvyr} to use tbl_svy objects: {.run install.packages('srvyr')}.")
+    }
 
     showNA <- rlang::arg_match(showNA, values = eval(formals(draft_report)$showNA), error_call = call)
 

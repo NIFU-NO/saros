@@ -67,6 +67,7 @@ Suggests:
     withr,
     quarto,
     spelling
+SystemRequirements: Quarto command line tools (https://github.com/quarto-dev/quarto-cli) for the rendering wrapper functionality.
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
@@ -75,4 +76,4 @@ Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/Needs/website: rmarkdown
 Config/testthat/parallel: true
-Config/testthat/start-first: draft_report
+Config/testthat/start-first: refine_chapter_overview
