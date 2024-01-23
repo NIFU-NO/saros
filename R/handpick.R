@@ -9,7 +9,9 @@
 #' @return Character vector. Prints to console.
 #' @export
 #'
-#' @examples \dontrun{if(interactive()) handpick(mtcars)}
+#' @examples
+#' if(interactive()) handpick(mtcars)
+
 handpick <- function(data, to_clipboard = FALSE, bare=FALSE) {
   if(interactive()) {
   x <-

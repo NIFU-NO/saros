@@ -15,7 +15,7 @@ prep_cat_prop_plot_docx <-
            call = rlang::caller_env()) {
 
     dots <- rlang::list2(...)
-    dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
+    dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% .saros.env$ignore_args],
                               val = dots[!names(dots) %in% c("...")], keep.null = TRUE)
 
 
@@ -132,10 +132,7 @@ prep_cat_prop_plot_docx <-
 #'              plot_height_fixed_constant = 1,
 #'               vertical = FALSE,
 #'               font_family = "sans")
-#' \dontrun{
-#' print(test_docx_b13, target = "test_docx_b13.docx")
-#' file.remove("test_docx_b13.docx")
-#' }
+#' print(test_docx_b13, target = tempfile(fileext = ".docx"))
 embed_cat_prop_plot_docx <-
   function(data,
            ...,

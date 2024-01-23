@@ -6,7 +6,7 @@
 \usage{
 render_full_reports(
   files = NULL,
-  path = getwd(),
+  path,
   processable_path = file.path(path, "Reports"),
   site_path = file.path(path, "_site"),
   resource_paths = file.path(path, c("_extensions", "_images")),
@@ -28,6 +28,9 @@ render_full_reports(
 \item{warn_on_file_error}{If TRUE, will collect warnings if a file fails to render or be copied. If FALSE (default), will stop the rendering process.}
 
 \item{...}{Additional arguments passed to \code{quarto::render()}}
+}
+\value{
+Returns invisibly a character vector of processed files.
 }
 \description{
 If one wishes to render complete reports that are linked to

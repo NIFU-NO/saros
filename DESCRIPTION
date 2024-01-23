@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -14,16 +14,18 @@ Authors@R: c(
            role = c("fnd"))
   )
 Maintainer: Stephan Daus <stephus.daus@gmail.com>
-Description: Produces highly customizable reports, primarily intended for survey research. 
-    Building on 'Quarto' (<https://quarto.org>), it generates draft chapters of all specified dependent/independent variables, 
-    which can be further edited by hand, containing figures, tables and analyses 
-    (currently only uni-/bivariate tests of equivalent means/proportions). 
-    The feature 'mesos'-reports offer tailor-made batch report production where e.g. an institution can compare 
-    itself to all other participants. Publication tools are also included, 
-    such as password generation for 'mesos'-report sections on a 'Quarto' Website.
+Description: Produces highly customized reports, primarily intended for survey
+    research. Building on 'Quarto' (<https://quarto.org>), it generates draft
+    chapters of all specified dependent/independent variables, which can be
+    further edited by hand, containing figures, tables and analyses (currently
+    only uni-/bivariate tests of equivalent means/proportions). The feature
+    'mesos'-reports offer tailor-made batch report production where e.g. an
+    institution can compare itself to all other participants. Publication tools
+    are also included, such as password generation for 'mesos'-report sections
+    on a 'Quarto' Website.
 Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
 License: MIT + file LICENSE
-URL: https://github.com/NIFU-NO/saros, https://nifu-no.github.io/saros/
+URL: https://nifu-no.github.io/saros, https://github.com/NIFU-NO/saros 
 BugReports: https://github.com/NIFU-NO/saros/issues
 Depends:
     R (>= 4.2.0)

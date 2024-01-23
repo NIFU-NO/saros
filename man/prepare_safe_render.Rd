@@ -8,8 +8,8 @@ prepare_safe_render(
   remote_basepath = "/home/",
   from_folders = NULL,
   from_files = NULL,
-  local_basepath = getwd(),
-  site = tempdir(),
+  local_basepath,
+  site,
   rel_path_base_to_parent_of_user_restricted_folder = "Reports",
   overwrite = FALSE,
   prompt = TRUE

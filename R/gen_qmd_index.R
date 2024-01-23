@@ -13,18 +13,6 @@
 #'
 #' @return A string containing the filepath to the generated Quarto index file.
 #' @keywords internal
-#' @examples
-#' filepath <- tempfile(pattern = "index", fileext = ".qmd")
-#' index_file <-
-#'   saros:::gen_qmd_index(
-#'                  authors = c("Marky Twain",
-#'                              "J.K. Rawlings",
-#'                              "Stephen Prince"),
-#'                chapter_filepaths =
-#'                  c("Ch1.qmd",
-#'                  "Ch2.qmd",
-#'                  "Ch3.qmd"),
-#'                  index_filepath = filepath)
 gen_qmd_index <-
   function(
     index_filepath = "index.qmd",

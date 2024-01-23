@@ -12,7 +12,7 @@ update_dots <- function(dots = list(),
   # print(caller_function)
 
   dots <- utils::modifyList(
-    x = formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")],
+    x = formals(draft_report)[!names(formals(draft_report)) %in% .saros.env$ignore_args],
     val = dots[!names(dots) %in% c("...")], keep.null = TRUE
   )
 
@@ -27,7 +27,7 @@ update_dots <- function(dots = list(),
 
   dots_nms <- names(dots)
   dots <- lapply(seq_along(dots), function(i) {
-    if(!any(c("call", "...", "chapter_overview") == names(dots)[i])) {
+    if(!any(c("call", "...", "chapter_overview", "path") == names(dots)[i])) {
       out <- eval(dots[[i]])
     } else {
       out <- dots[[i]]

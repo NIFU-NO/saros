@@ -4,7 +4,7 @@
 \alias{write_default_draft_report_args}
 \title{Write Default Arguments for \code{draft_report()} to YAML-file}
 \usage{
-write_default_draft_report_args(path = "settings.yaml")
+write_default_draft_report_args(path)
 }
 \arguments{
 \item{path}{\verb{scalar<character>} // Required. \emph{default:} \code{settings.yaml}}

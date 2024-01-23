@@ -4,7 +4,7 @@ argument_validation_and_insertion <- function(params) {
                                                        .saros.env$element_names_simplified)]
   if(length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
 
-  env <- lapply(formals(draft_report)[!names(formals(draft_report)) %in% c("data", "chapter_overview", "...")], eval)
+  env <- lapply(formals(draft_report)[!names(formals(draft_report)) %in% .saros.env$ignore_args], eval)
   check_and_set_default <- function(target,
                                     param_name,
                                     validation_fun) {
@@ -34,7 +34,7 @@ argument_validation_and_insertion <- function(params) {
       variables_always_at_top = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
       variables_always_at_bottom = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
       variables_show_bi_for_by = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
-      path = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
+      path = list(fun = function(x) rlang::is_string(x)),
       index_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       report_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
       chapter_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),

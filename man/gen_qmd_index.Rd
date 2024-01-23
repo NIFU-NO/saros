@@ -36,17 +36,4 @@ A string containing the filepath to the generated Quarto index file.
 \description{
 This function creates an index Quarto file (QMD) that merges all chapters in the specified order. It can also include optional title and author(s) information.
 }
-\examples{
-filepath <- tempfile(pattern = "index", fileext = ".qmd")
-index_file <-
-  saros:::gen_qmd_index(
-                 authors = c("Marky Twain",
-                             "J.K. Rawlings",
-                             "Stephen Prince"),
-               chapter_filepaths =
-                 c("Ch1.qmd",
-                 "Ch2.qmd",
-                 "Ch3.qmd"),
-                 index_filepath = filepath)
-}
 \keyword{internal}

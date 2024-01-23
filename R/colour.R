@@ -12,10 +12,10 @@
 #' is_colour(c("#ff00ff", "#010101"))
 is_colour <- function(x) {
   if(!rlang::is_character(x)) return(FALSE)
-  sapply(x, function(X) { # Avoid sapply
+  vapply(x, function(X) {
     tryCatch(is.matrix(grDevices::col2rgb(X)),
              error = function(e) FALSE)
-  })
+  }, FUN.VALUE = logical(1))
 }
 
 #' Identify Suitable Font Given Background Hex Colour
