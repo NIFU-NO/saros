@@ -11,6 +11,9 @@ list_available_element_types(valid_only = TRUE)
 Note that *_docx-elements have limited storage support and
 are hence not included in examples in this package as minor (unimportant) warnings will occur.}
 }
+\value{
+Character vector of valid names.
+}
 \description{
 List All Valid Names of The Elements Argument
 }

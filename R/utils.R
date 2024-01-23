@@ -6,7 +6,7 @@
 #' are hence not included in examples in this package as minor (unimportant) warnings will occur.
 #'
 #' @export
-#'
+#' @return Character vector of valid names.
 list_available_element_types <-
   function(valid_only = TRUE) {
     names(eval(formals(draft_report)$element_names)[if(valid_only) unname(eval(formals(draft_report)$element_names)) else TRUE])
@@ -295,7 +295,7 @@ combn_upto <-
 #' "But this one is even longer due to superfluous and verbose way of writing"),
 #'  maxwidth=20)
 center_string <- function(string, maxwidth=50) {
-		sapply(string, USE.NAMES = F, function(x) {
+		vapply(string, USE.NAMES = F, function(x) {
 			maxw <- stats::median(stringi::stri_length(string))
 			maxw <- maxwidth
 			if(stringi::stri_length(x)<maxw) {
@@ -309,7 +309,7 @@ center_string <- function(string, maxwidth=50) {
 					}
 				}
 			}
-		})
+		}, FUN.VALUE = character(1))
 	}
 
 

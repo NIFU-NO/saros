@@ -1,5 +1,5 @@
 log_unused_variables <- function(data, chapter_overview, auxiliary_variables, mesos_var,
-                                 log_file = "_log.txt") {
+                                 log_file = NULL) {
   used_vars <-
     unique(c(as.character(chapter_overview$.variable_name_dep),
              as.character(chapter_overview$.variable_name_indep),

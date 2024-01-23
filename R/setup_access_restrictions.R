@@ -251,7 +251,7 @@ create__headers_file <- function(remote_basepath = "/home/", # Not used in this 
 #' @return String, the path to the newly created _headers-file or .htaccess files.
 #' @export
 setup_access_restrictions <- function(remote_basepath = "/home/",
-                                      local_basepath = "_site",
+                                      local_basepath,
                                       rel_path_base_to_parent_of_user_restricted_folder = file.path("Reports", "2022", "Mesos"),
                                       local_main_password_path = ".main_htpasswd_public",
                                       username_folder_matching_df = NULL,

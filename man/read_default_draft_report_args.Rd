@@ -4,7 +4,7 @@
 \alias{read_default_draft_report_args}
 \title{Read Default Arguments for \code{draft_report()} from YAML-file}
 \usage{
-read_default_draft_report_args(path = "settings.yaml")
+read_default_draft_report_args(path)
 }
 \arguments{
 \item{path}{\verb{scalar<character>} // Required. \emph{default:} \code{settings.yaml}}

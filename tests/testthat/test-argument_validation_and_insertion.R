@@ -3,12 +3,13 @@ testthat::test_that("argument_validation_and_insertion function", {
   args <-
     formals(saros::draft_report)
   args <-
-     args[!names(args) %in% c("data", "chapter_overview", "...")] |>
+     args[!names(args) %in% saros:::.saros.env$ignore_args] |>
     lapply(FUN = eval) |>
     utils::modifyList(keep.null = TRUE,
                       val =
                         list(data = data.frame(a = 1),
-                             chapter_overview = data.frame(chapter = "Chapter 1")))
+                             chapter_overview = data.frame(chapter = "Chapter 1"),
+                             path = "test"))
 
    args |>
     saros:::argument_validation_and_insertion() |>

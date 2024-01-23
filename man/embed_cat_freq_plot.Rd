@@ -65,7 +65,7 @@ ggplot
 Embed Interactive Categorical Plot
 }
 \examples{
-\dontrun{
+\donttest{
 embed_cat_freq_plot(data = ex_survey, dep = b_1:b_3)
 }
 }

@@ -8,7 +8,7 @@ draft_report(
   data,
   chapter_overview = NULL,
   ...,
-  path = "testreport",
+  path,
   title = "Report",
   authors = NULL,
   mesos_report = FALSE,

@@ -129,10 +129,7 @@ prep_cat_freq_plot_docx <-
 #'              plot_height_fixed_constant = 1,
 #'               vertical = FALSE,
 #'               font_family = "sans")
-#' \dontrun{
-#' print(test_docx_b13, target = "test_docx_b13.docx")
-#' file.remove("test_docx_b13.docx")
-#' }
+#' print(test_docx_b13, target = tempfile(fileext = ".docx"))
 embed_cat_freq_plot_docx <-
   function(data,
            ...,

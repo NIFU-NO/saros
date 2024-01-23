@@ -52,7 +52,7 @@ This column is used to group variables that are part of the same bivariate analy
 Both the absolute and relative folderpaths are required, as strings.}
 }
 \value{
-Data frame
+Grouped tibble.
 }
 \description{
 Processes A 'chapter_overview' Data Frame

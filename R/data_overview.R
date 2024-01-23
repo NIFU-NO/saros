@@ -299,7 +299,7 @@ split_if_single_y_bivariates <-
 #'
 #'   This column is used to group variables that are part of the same bivariate analysis.
 #'
-#' @return Data frame
+#' @return Grouped tibble.
 #' @export
 #'
 #' @examples

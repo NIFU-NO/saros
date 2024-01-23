@@ -6,7 +6,7 @@
 \usage{
 setup_access_restrictions(
   remote_basepath = "/home/",
-  local_basepath = "_site",
+  local_basepath,
   rel_path_base_to_parent_of_user_restricted_folder = file.path("Reports", "2022",
     "Mesos"),
   local_main_password_path = ".main_htpasswd_public",

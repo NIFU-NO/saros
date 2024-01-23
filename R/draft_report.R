@@ -567,7 +567,7 @@ draft_report <-
   function(data,
            chapter_overview = NULL,
            ...,
-           path = "testreport",
+           path,
            title = "Report",
            authors = NULL,
            mesos_report = FALSE,
@@ -814,7 +814,7 @@ draft_report <-
     chapter_overview <-
       refine_chapter_overview(chapter_overview = chapter_overview,
                               data=data,
-                              !!!args[!names(args) %in% c("chapter_overview", "data")])
+                              !!!args[!names(args) %in% .saros.env$ignore_args])
 
     if(nrow(chapter_overview)==0) cli::cli_abort("{.var chapter_overview} is empty! Something is not right. Are there no factors in your data? Consider `chapter_overview=NULL` for everything in a single phantom chapter")
 
@@ -870,7 +870,7 @@ draft_report <-
                    data = data,
                    mesos_group = mesos_group,
                    path = path,
-                   !!!args[!names(args) %in% c("chapter_overview", "path", "data")])
+                   !!!args[!names(args) %in% .saros.env$ignore_args])
 
 
 

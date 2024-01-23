@@ -20,5 +20,5 @@ Character vector. Prints to console.
 Only works in an interactive session. Copies to the clipboard if to_clipboard = TRUE, and if clipboard is available on system.
 }
 \examples{
-\dontrun{if(interactive()) handpick(mtcars)}
+if(interactive()) handpick(mtcars)
 }
