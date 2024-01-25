@@ -1,4 +1,4 @@
-## Resubmission
+## Resubmission to new release
 
 ## R CMD check results
 
@@ -13,5 +13,3 @@
   
   * No function now writes by default to working directory/package folder.
 
-  
-* This is a new release.

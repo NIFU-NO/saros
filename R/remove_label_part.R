@@ -8,7 +8,8 @@
 #' @return Data
 #' @export
 #'
-#' @examples remove_label_parts(ex_survey, pattern = " living in")
+#' @examples
+#' remove_label_parts(ex_survey, pattern = " living in")
 remove_label_parts <- function(data,
                                pattern = NULL,
                                replacement = "",

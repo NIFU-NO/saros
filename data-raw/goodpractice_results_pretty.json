@@ -20242,29 +20242,6 @@
           "line": ["\t\t\t\t\t\t\t regexp = \"Unable to recode single-column data.frame without knowing context.\") "]
         }
       ]
-    },
-    "lintr_sapply_linter": {
-      "status": [false],
-      "positions": [
-        {
-          "filename": ["R\\colour.R"],
-          "line_number": [15],
-          "column_number": [3],
-          "ranges": [
-            [3, 8]
-          ],
-          "line": ["  sapply(x, function(X) { # Avoid sapply"]
-        },
-        {
-          "filename": ["R\\utils.R"],
-          "line_number": [298],
-          "column_number": [3],
-          "ranges": [
-            [3, 8]
-          ],
-          "line": ["\t\tsapply(string, USE.NAMES = F, function(x) {"]
-        }
-      ]
     }
   },
   "gp_version": ["1.0.4"],

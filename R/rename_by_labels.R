@@ -68,7 +68,8 @@ rename_by_labels <-
 #' @return Data.frame
 #' @export
 #'
-#' @examples swap_label_colnames(mtcars)
+#' @examples
+#' swap_label_colnames(mtcars)
 swap_label_colnames <-
   function(data) {
     cls <- class(data)

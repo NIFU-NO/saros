@@ -1,4 +1,4 @@
 library(testthat)
 library(saros)
 
-test_check("saros")
+testthat::test_check("saros")

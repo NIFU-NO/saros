@@ -6,7 +6,8 @@
 #' @return Character vector of same length as x
 #' @export
 #'
-#' @examples filename_sanitizer(c("Too long a name", "with invalid *^/&#"))
+#' @examples
+#' filename_sanitizer(c("Too long a name", "with invalid *^/&#"))
 filename_sanitizer <- function(x, max_chars = NA_integer_) {
   out <-
     stringi::stri_replace_all_regex(x,

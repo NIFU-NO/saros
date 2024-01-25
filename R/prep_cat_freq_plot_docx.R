@@ -1,3 +1,5 @@
+
+
 #' Create Categorical Data Chart from Summarized Data
 #'
 #' @inheritParams draft_report
@@ -6,18 +8,17 @@
 #' @param inverse Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.
 #'
 #' @return mschart-object. Can be added to an rdocx, rpptx or rxlsx object.
+#'
 #' @keywords internal
-prep_cat_prop_plot_docx <-
+prep_cat_freq_plot_docx <-
   function(data,
            ...,
            colour_palette = NULL,
            inverse = FALSE,
            call = rlang::caller_env()) {
 
-    dots <- rlang::list2(...)
-    dots <- utils::modifyList(x = formals(draft_report)[!names(formals(draft_report)) %in% .saros.env$ignore_args],
-                              val = dots[!names(dots) %in% c("...")], keep.null = TRUE)
-
+    dots <- update_dots(dots = rlang::list2(...),
+                        caller_function = "cat_freq_plot")
 
     if(is.null(colour_palette)) {
       n <- length(levels(data[[".category"]]))
@@ -35,13 +36,6 @@ prep_cat_prop_plot_docx <-
       length(indep_vars) == 0 &&
       dplyr::n_distinct(data[[".variable_label"]]) == 1
 
-    hide_legend <-
-      dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
-      !rlang::is_null(dots$colour_na)
-
-    percentage <- dots$data_label %in% c("percentage", "percentage_bare")
-    prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
-
     fp_text_settings <-
       lapply(colour_palette,
              function(color) {
@@ -52,11 +46,9 @@ prep_cat_prop_plot_docx <-
 
     fp_text_settings <- fp_text_settings[seq_len(dplyr::n_distinct(data[[".category"]], na.rm = TRUE))]
 
-
     blank_border <- officer::fp_border(style = "none")
 
-    main_text <- officer::fp_text(font.size = dots$main_font_size,
-                                  font.family = dots$font_family)
+    main_text <- officer::fp_text(font.size = dots$main_font_size, font.family = dots$font_family)
 
     m <- mschart::ms_barchart(data = data,
                               y = ".count",
@@ -64,21 +56,34 @@ prep_cat_prop_plot_docx <-
                               group = ".category",
                               labels = ".data_label")
 
-    if(percentage) {
-      m <- mschart::as_bar_stack(x = m, percent = TRUE)
-    }
-    overlap <- if(!percentage) -40 else 100
-    gap_width <- if(!percentage) 150 else 50
+    # if(data_label %in% c("percentage", "percentage_bare")) {
+    #   m <- mschart::as_bar_stack(x = m, percent = TRUE)
+    # }
+    # overlap <- if(!percentage) { # Silly way due to poor programming in mschart
+    #
+    #   m <- mschart::chart_settings(x = m, dir = if(vertical) "vertical" else "horizontal",
+    #                                overlap = overlap)
+    # } else {
+    #   m <- mschart::chart_settings(x = m, dir = if(vertical) "vertical" else "horizontal")
+    # }
 
-    m <- mschart::chart_settings(x = m,
-                                 dir = if(dots$vertical) "vertical" else "horizontal",
-                                 overlap = overlap, gap_width = gap_width)
+    # if(!percentage) { # Silly way due to poor programming in mschart
+      # overlap <- if(!data_label %in% c("percentage", "percentage_bare")) -40 else 100
+      # gap_width <- if(!data_label %in% c("percentage", "percentage_bare")) 150 else 50
+
+      m <- mschart::chart_settings(x = m,
+                                   dir = if(dots$vertical) "vertical" else "horizontal")
+    # } else {
+    #   m <- mschart::chart_settings(x = m,
+    #                                dir = if(vertical) "vertical" else "horizontal",
+    #                                overlap = 100, gap_width = 50)
+    # }
     m <- mschart::chart_data_fill(x = m, values = colour_palette)
     m <- mschart::chart_data_stroke(x = m, values = colour_palette)
     if(length(fp_text_settings)>0) m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
     m <- mschart::chart_labels(x = m, ylab = NULL, xlab = NULL, title = NULL)
     m <- mschart::chart_ax_x(x = m, major_tick_mark = "none")
-    if(percentage) {
+    if(dots$data_label %in% c("percentage", "percentage_bare")) {
       m <- mschart::chart_ax_y(x = m, num_fmt = "0%")
     }
     m <- mschart::chart_theme(x = m,
@@ -88,8 +93,7 @@ prep_cat_prop_plot_docx <-
                               grid_major_line_x = blank_border,
                               grid_major_line_y = blank_border,
                               grid_minor_line_x = blank_border,
-                              grid_minor_line_y = blank_border,
-                              legend_position = if(hide_legend) "n" else "b")
+                              grid_minor_line_y = blank_border)
     m
   }
 
@@ -102,28 +106,21 @@ prep_cat_prop_plot_docx <-
 #' @inheritParams summarize_data
 #' @inheritParams gen_qmd_chapters
 #' @inheritParams embed_cat_prop_plot
-#' @param plot_height Fixed height of the plot in cm. Defaults to 15.
 #'
-#' @importFrom tidyselect everything eval_select
-#' @importFrom officer read_docx docx_dim block_caption body_add_caption
-#' @importFrom mschart body_add_chart
-#' @importFrom rlang enquo is_bare_character
-#' @importFrom cli cli_abort
-#' @importFrom stats ave
 #' @return rdocx object, which can be saved with print() after loading the officer-package
 #' @export
 #'
 #' @examples
 #' library(officer) # To save the rdocx object to disk
 #'
-#'  test_docx_b13 <-
+#' test_docx_b13 <-
 #'    ex_survey |>
-#'    embed_cat_prop_plot_docx(dep = b_1:b_3,
+#'    embed_cat_freq_plot_docx(dep = b_1:b_3,
 #'               showNA = "never",
 #'               descend = TRUE,
 #'               return_raw = FALSE,
 #'               hide_label_if_prop_below=0,
-#'               data_label = "percentage_bare",
+#'               data_label = "count",
 #'               data_label_decimal_symbol = ",",
 #'               digits = 1,
 #'               label_font_size = 12,
@@ -133,20 +130,18 @@ prep_cat_prop_plot_docx <-
 #'               vertical = FALSE,
 #'               font_family = "sans")
 #' print(test_docx_b13, target = tempfile(fileext = ".docx"))
-embed_cat_prop_plot_docx <-
+embed_cat_freq_plot_docx <-
   function(data,
            ...,
+           inverse = FALSE,
            dep = tidyselect::everything(),
            indep = NULL,
            colour_palette = NULL,
            mesos_group = NULL,
-           plot_height = 15,
-           inverse = FALSE) {
+           call = rlang::caller_env()) {
 
     dots <- update_dots(dots = rlang::list2(...),
-                        caller_function = "cat_prop_plot")
-
-    check_multiple_indep(data, indep = {{indep}})
+                        caller_function = "cat_freq_plot")
 
     dep_enq <- rlang::enquo(arg = dep)
     dep_pos <- tidyselect::eval_select(dep_enq, data = data)
@@ -154,6 +149,8 @@ embed_cat_prop_plot_docx <-
     indep_pos <- tidyselect::eval_select(indep_enq, data = data)
 
     check_category_pairs(data = data, cols_pos = c(dep_pos))
+
+    dots$data_label <- "count"
 
     data_out <-
       rlang::exec(
@@ -167,6 +164,7 @@ embed_cat_prop_plot_docx <-
     # if(length(indep_pos)>0) {
     #   data_out[[names(indep_pos)]] <- forcats::fct_rev(data_out[[names(indep_pos)]])
     # }
+
     if(length(indep_pos)==0) {
       data_out[[".variable_label"]] <- forcats::fct_rev(data_out[[".variable_label"]])
     }
@@ -176,9 +174,10 @@ embed_cat_prop_plot_docx <-
       data_out$.category <- forcats::fct_rev(data_out$.category)
     }
 
+
     chart <-
       rlang::exec(
-        prep_cat_prop_plot_docx,
+        prep_cat_freq_plot_docx,
         data = data_out,
         inverse = inverse,
         colour_palette = colour_palette,
@@ -187,40 +186,54 @@ embed_cat_prop_plot_docx <-
 
     if(!rlang::is_null(dots$label_separator)) {
       indep_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))
-      caption <- get_raw_labels(data = data, col_pos = dep_pos)
-      caption <- get_main_question2(caption, label_separator = dots$label_separator)
-      caption <- create_caption(caption,
-                                data_out = data_out,
-                              indep_pos = indep_label,
-                              mesos_group = mesos_group,
-                              filepath = NULL,
-                              translations = dots$translations)
-      attr(chart, "saros_caption") <- caption
-    } else caption <- NULL
+      attr(chart, "saros_caption") <-
+          get_raw_labels(data = data, col_pos = dep_pos) %>%
+          get_main_question2(label_separator = dots$label_separator) %>%
+        create_caption(data_out = data_out,
+                       indep_pos = indep_label,
+                       mesos_group = mesos_group,
+                       filepath = NULL,
+                       translations = dots$translations)
+    }
 
     if(FALSE) {
       chart
     } else {
 
 
-    ## Consider moving all the below into prep_cat_prop_plot_docx
+    ## Consider moving all the below into prep_cat_freq_plot_docx
     ## so that embed_chart becomes one function
     docx_file <- use_docx(docx_template = dots$docx_template)
 
+
+    # if(!is.null(label_separator)) {
+    #   docx_file <-
+    #     get_block_caption(
+    #       data = data,
+    #       cols_pos = dep_pos,
+    #       docx_file = docx_file,
+    #       label_separator = label_separator,
+    #       caption_style = caption_style,
+    #       caption_autonum = caption_autonum)
+    #
+    # }
+
+
     docx_dims <-
       get_docx_dims(docx_file)
-
-
-    docx_file <-
-      mschart::body_add_chart(
+    determine_height <-
+      get_docx_height(plot_height_fixed_constant = dots$plot_height_fixed_constant,
+                      plot_height_multiplier = dots$plot_height_multiplier,
+                      n_col = length(dep_pos),
+                      minimum_height = docx_dims[["h"]])
+    mschart::body_add_chart(
         x = docx_file,
         chart = chart,
         pos = "after",
         width = docx_dims[["w"]],
-        height = plot_height)
+        height = determine_height)
     docx_file
-
-      }
+    }
   }
 
 
