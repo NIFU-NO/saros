@@ -209,7 +209,7 @@ subset_vector <-
 #'          c(0,0,0,0,0,0,0,NA,NA))
 #' identical(omitted_recoder_df(input[,4, drop=FALSE]),
 #'           input[,4, drop=FALSE]) # Output should equal input
-#'
+
 omitted_recoder_df <- function(df, accept_vector=FALSE, skipped=0L,
 							   not_administered=NA_integer_,
 							   all_missing=NA_integer_) {
@@ -271,7 +271,8 @@ omitted_recoder_df <- function(df, accept_vector=FALSE, skipped=0L,
 #' @importFrom rlang is_integer
 #' @return A data frame
 #' @export
-#' @examples combn_upto()
+#' @examples
+#' combn_upto()
 combn_upto <-
   function(vec=c("a", "b", "c", "d", "e", "f", "g"),
            n_min=6L,
@@ -291,7 +292,8 @@ combn_upto <-
 #' @param maxwidth Maximum width
 #' @return String vector
 #' @export
-#' @examples center_string(string=c("This is a very long label for a graph.",
+#' @examples
+#' center_string(string=c("This is a very long label for a graph.",
 #' "But this one is even longer due to superfluous and verbose way of writing"),
 #'  maxwidth=20)
 center_string <- function(string, maxwidth=50) {
@@ -390,7 +392,8 @@ trim_columns <- function(data, cols = c(".variable_label_prefix_dep", ".variable
 #' @return Original data frame with the binary columns attached, containing new labels.
 #' @export
 #'
-#' @examples col_to_binaries(ex_survey, col = b_3, label_separator = "  -  ")
+#' @examples
+#' col_to_binaries(ex_survey, col = b_3, label_separator = "  -  ")
 col_to_binaries <- function(data, col,
                             var_separator = "___",
                             label_separator = " - ") {

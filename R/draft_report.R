@@ -551,7 +551,7 @@
 #' @examples
 #' \donttest{
 #' index_filepath <-
-#'   draft_report(
+#'  draft_report(
 #'     chapter_overview = ex_survey_ch_overview,
 #'     data = ex_survey,
 #'     path = tempdir())

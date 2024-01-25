@@ -104,5 +104,4 @@ identical(omitted_recoder_df(input[,4], accept_vector=TRUE),
          c(0,0,0,0,0,0,0,NA,NA))
 identical(omitted_recoder_df(input[,4, drop=FALSE]),
           input[,4, drop=FALSE]) # Output should equal input
-
 }
