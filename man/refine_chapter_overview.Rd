@@ -59,6 +59,8 @@ Processes A 'chapter_overview' Data Frame
 }
 \examples{
 ref_df <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview)
+\donttest{
 ref_df2 <- refine_chapter_overview(chapter_overview = ex_survey_ch_overview,
                      data = ex_survey, hide_bi_entry_if_sig_above=.05)
+}
 }
