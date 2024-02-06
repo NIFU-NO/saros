@@ -443,7 +443,7 @@ create_text_collapse <-
            last_sep = NULL) {
     if(!rlang::is_string(last_sep)) last_sep <-
         eval(formals(draft_report)$translations)$last_sep
-    cli::ansi_collapse(text, last = last_sep)
+    cli::ansi_collapse(text, sep2 = last_sep, last = last_sep)
   }
 
 # are all elements of list x identical to each other?
