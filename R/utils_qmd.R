@@ -25,14 +25,14 @@ conv_to_valid_obj_name <- function(x, max_width = 48) {
 
 }
 
-list_valid_obj_name <- function(data, max_width = 48) {
-
-  data %>%
-    dplyr::distinct(dplyr::pick(tidyselect::everything())) %>%
-    glue::glue_data(stringi::stri_c(ignore_null=TRUE, "{", colnames(.), "}", collapse="_")) %>%
-    get_common_name() %>%
-    conv_to_valid_obj_name(max_width = max_width)
-}
+# list_valid_obj_name <- function(data, max_width = 48) {
+#
+#   data %>%
+#     dplyr::distinct(dplyr::pick(tidyselect::everything())) %>%
+#     glue::glue_data(stringi::stri_c(ignore_null=TRUE, "{", colnames(.), "}", collapse="_")) %>%
+#     get_common_name() %>%
+#     conv_to_valid_obj_name(max_width = max_width)
+# }
 
 # create_obj_name <- function(grouping_structure,
 #                             section_key,

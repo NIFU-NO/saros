@@ -24,7 +24,7 @@ gen_heading_line <- function(group,
     level <- match(group, dplyr::group_vars(chapter_overview_section))
 
     stringi::stri_c(strrep("#", times = level), " ", cur_section,
-                    "{#sec-", conv_to_valid_obj_name(cur_section), "_",
+                    "{#sec-", conv_to_valid_obj_name(cur_section), "-",
                     stringi::stri_c(sample(0:9, size=1, replace = TRUE), ignore_null=TRUE, collapse=""),
                     "}\n",
                     ignore_null=TRUE)
