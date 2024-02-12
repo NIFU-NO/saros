@@ -103,7 +103,7 @@ prep_cat_freq_plot_html <-
                                                                             (max_nchar_cat > 10)+1), na.rm = TRUE)),
                       colour = "none") +
       ggplot2::theme_classic() +
-      ggplot2::theme(text = ggiraph::element_text_interactive(family = dots$font_family),
+      ggplot2::theme(text = ggplot2::element_text(family = dots$font_family),
                      axis.text.y = if(hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y"),
                      plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
                      legend.position = "bottom",
