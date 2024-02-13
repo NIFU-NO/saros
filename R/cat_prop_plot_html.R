@@ -139,7 +139,7 @@ prep_cat_prop_plot_html <-
       ) +
       ggplot2::theme_classic() +
       ggplot2::theme(
-        text = ggiraph::element_text_interactive(family = dots$font_family),
+        text = ggplot2::element_text(family = dots$font_family),
         axis.text.y = if (hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y"),
         plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
         legend.position = "bottom",
