@@ -9,7 +9,7 @@
 #' @return Character vector of valid names.
 list_available_element_types <-
   function(valid_only = TRUE) {
-    eval(formals(draft_report)$element_names)[if(valid_only) eval(formals(draft_report)$element_names) else TRUE]
+    eval(formals(draft_report)$element_names)
 }
 
 
