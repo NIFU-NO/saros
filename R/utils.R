@@ -9,8 +9,8 @@
 #' @return Character vector of valid names.
 list_available_element_types <-
   function(valid_only = TRUE) {
-    names(eval(formals(draft_report)$element_names)[if(valid_only) unname(eval(formals(draft_report)$element_names)) else TRUE])
-  }
+    eval(formals(draft_report)$element_names)
+}
 
 
 get_authors <- function(data, col) {
