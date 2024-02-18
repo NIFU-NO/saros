@@ -96,11 +96,13 @@ validate_access_folder_paths <- function(remote_basepath,
                                          rel_path_base_to_parent_of_user_restricted_folder =
                                            file.path( "Reports",
                                                       "2023",
-                                                      "Mesos")) {
+                                                      "Mesos"),
+                                         warn = FALSE) {
   rel_path_base_to_parent_of_user_restricted_folder <- file.path(local_basepath, rel_path_base_to_parent_of_user_restricted_folder)
+  warnabort_fn <- if(isTRUE(warn)) cli::cli_warn else cli::cli_abort
   for(path in c(remote_basepath, local_basepath, rel_path_base_to_parent_of_user_restricted_folder)) {
     if(!rlang::is_string(path)) {
-      cli::cli_abort("{.arg {path}} must be a string.")
+      warnabort_fn("{.arg {path}} must be a string.")
     }
   }
 }
@@ -240,6 +242,7 @@ create__headers_file <- function(remote_basepath = "/home/", # Not used in this 
 #' @param remote_basepath String. Folder where site will be located if using FTP-server. Needed for .htaccess-files.
 #' @param local_basepath String. Local folder for website, typically "_site".
 #' @param rel_path_base_to_parent_of_user_restricted_folder String, relative path from basepath to the folder where the restricted folders are located. (E.g. the "mesos"-folder)
+#' @param warn Flag. Whether to provide warning or error if paths do not exist.
 #' @param local_main_password_path String. Path to main file containing all usernames and passwords formatted with a colon between username and password.
 #' @param username_folder_matching_df Data frame. If NULL (default), will use folder names as usernames. Otherwise, a data frame with two columns: "folder" and "username" where "folder" is the name of the folder and "username" is the username for that folder.
 #' @param universal_usernames Character vector. Usernames in local_main_htpasswd_path which always have access to folder
@@ -253,6 +256,7 @@ create__headers_file <- function(remote_basepath = "/home/", # Not used in this 
 setup_access_restrictions <- function(remote_basepath = "/home/",
                                       local_basepath,
                                       rel_path_base_to_parent_of_user_restricted_folder = file.path("Reports", "2022", "Mesos"),
+                                      warn = TRUE,
                                       local_main_password_path = ".main_htpasswd_public",
                                       username_folder_matching_df = NULL,
                                       universal_usernames = c("admin"),

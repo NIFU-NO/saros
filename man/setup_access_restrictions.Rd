@@ -9,6 +9,7 @@ setup_access_restrictions(
   local_basepath,
   rel_path_base_to_parent_of_user_restricted_folder = file.path("Reports", "2022",
     "Mesos"),
+  warn = TRUE,
   local_main_password_path = ".main_htpasswd_public",
   username_folder_matching_df = NULL,
   universal_usernames = c("admin"),
