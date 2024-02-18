@@ -21,7 +21,7 @@ prep_cat_freq_plot_html <-
                         caller_function = "cat_freq_plot")
 
     if(is.null(colour_palette)) {
-      n <- length(levels(data[[".category"]]))
+      n <- length(levels(data$.category))
       hues <- seq(15, 375, length = n + 1)
       colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
     }
@@ -34,52 +34,52 @@ prep_cat_freq_plot_html <-
     hide_axis_text <-
       isTRUE(dots$hide_axis_text_if_single_variable) &&
       length(indep_vars) == 0 &&
-      dplyr::n_distinct(data[[".variable_label"]]) == 1
+      dplyr::n_distinct(data$.variable_label) == 1
 
 
-    max_nchar_cat <- max(nchar(levels(data[[".category"]])), na.rm = TRUE)
+    max_nchar_cat <- max(nchar(levels(data$.category)), na.rm = TRUE)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
 
     p <-
-      data %>%
-      dplyr::mutate(.id = seq_len(nrow(.)),
+      dplyr::mutate(data,
+                    .id = seq_len(nrow(data)),
                     .tooltip = # Tooltip contains all data except variable name
                       sprintf(fmt = stringi::stri_c("%s",
                                                     "N = %.0f",
                                                     stringi::stri_c("P = %.", dots$digits, "f%%", ignore_null=TRUE),
                                                     "%s",
                                                     sep="\n", ignore_null = TRUE),
-                              .data[[".category"]],
-                              .data[[".count"]],
-                              .data[[".proportion"]]*100,
-                              .data[[".variable_label"]]),
-                    .tooltip = ifelse(!is.na(.data[[".tooltip"]]) & rlang::is_string(indep_vars),
+                              .data$.category,
+                              .data$.count,
+                              .data$.proportion*100,
+                              .data$.variable_label),
+                    .tooltip = ifelse(!is.na(.data$.tooltip) & rlang::is_string(indep_vars),
                                       yes = sprintf(fmt = stringi::stri_c("%s", "%s", sep="\n", ignore_null = TRUE),
-                                                    .data[[".tooltip"]],
+                                                    .data$.tooltip,
                                                     .data[[indep_vars]]),
-                                      no = .data[[".tooltip"]]),
+                                      no = .data$.tooltip),
                     .onclick = sprintf(fmt = stringi::stri_c("%s", "Variable: %s", sep="\n", ignore_null = TRUE),
-                                       .data[['.tooltip']], .data[['.variable_name']]),
-                    .onclick = paste0('alert(\"', .data[['.onclick']], '\");'),
-                    .onclick = stringi::stri_replace_all_regex(.data[[".onclick"]],
+                                       .data$.tooltip, .data$.variable_name),
+                    .onclick = paste0('alert(\"', .data$.onclick, '\");'),
+                    .onclick = stringi::stri_replace_all_regex(.data$.onclick,
                                                                pattern = "\n",
                                                                replacement = "\\\\n")
       ) %>%
       ggplot2::ggplot(
         mapping = ggplot2::aes(
-          y = .data[[".count"]],
-          x = if(length(indep_vars) == 1 && isFALSE(inverse)) .data[[indep_vars]] else .data[[".variable_label"]],
-          fill = .data[[".category"]],
-          group = .data[[".category"]],
-          label = .data[[".data_label"]],
-          data_id = .data[[".id"]],
-          onclick = .data[[".onclick"]]
+          y = .data$.count,
+          x = if(length(indep_vars) == 1 && isFALSE(inverse)) .data[[indep_vars]] else .data$.variable_label,
+          fill = .data$.category,
+          group = .data$.category,
+          label = .data$.data_label,
+          data_id = .data$.id,
+          onclick = .data$.onclick
           ),
         cumulative = TRUE) +
       ggiraph::geom_col_interactive(
-        mapping = ggplot2::aes(tooltip = .data[[".tooltip"]]), # BUG: Messes up order of categories if enabled.
+        mapping = ggplot2::aes(tooltip = .data$.tooltip), # BUG: Messes up order of categories if enabled.
         position = ggplot2::position_dodge(width = .9),
         na.rm = TRUE
         ) +
@@ -104,7 +104,8 @@ prep_cat_freq_plot_html <-
                       colour = "none") +
       ggplot2::theme_classic() +
       ggplot2::theme(text = ggplot2::element_text(family = dots$font_family),
-                     axis.text.y = if(hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y"),
+                     axis.text.x = ggiraph::element_text_interactive(size = dots$main_font_size),
+                     axis.text.y = if(hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y", size = dots$main_font_size),
                      plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
                      legend.position = "bottom",
                      legend.justification = if(!rlang::is_string(indep_vars)) c(-.15, 0) else c(-.35, 0),
@@ -120,18 +121,18 @@ prep_cat_freq_plot_html <-
 
     if (length(indep_vars) > 1L ||
         (length(indep_vars) >= 1L &&
-         (dplyr::n_distinct(data[[".variable_label"]]) > 1 ||
-          (dplyr::n_distinct(data[[".variable_label"]]) == 1 &&
+         (dplyr::n_distinct(data$.variable_label) > 1 ||
+          (dplyr::n_distinct(data$.variable_label) == 1 &&
            isFALSE(dots$hide_axis_text_if_single_variable))))) {
       if(!inverse) {
 
         p <- p +
           ggiraph::facet_grid_interactive(
-            rows = ggplot2::vars(.data[[".variable_label"]]),
+            rows = ggplot2::vars(.data$.variable_label),
             labeller = ggiraph::labeller_interactive(
               .mapping = ggplot2::aes(
-                data_id = .data[[".variable_label"]],
-                tooltip = .data[[".variable_label"]],
+                data_id = .data$.variable_label,
+                tooltip = .data$.variable_label,
                 label = string_wrap(.data$.label,
                                     width = dots$x_axis_label_width))),
             interactive_on = "text",
@@ -212,7 +213,7 @@ embed_cat_freq_plot <-
     if(length(indep_pos)>0) {
       data_out[[names(indep_pos)]] <- forcats::fct_rev(data_out[[names(indep_pos)]])
     }
-    if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
+    if(dplyr::n_distinct(data_out$.category, na.rm = dots$showNA == "never") == 2 &&
        !rlang::is_null(dots$colour_2nd_binary_cat)) {
       data_out$.category <- forcats::fct_rev(data_out$.category)
     }
