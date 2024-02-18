@@ -6,7 +6,7 @@ err_msg <- function(infix) {
 
 check_bool <- function(x, call = rlang::caller_env(),
                        arg = rlang::caller_arg(x)) {
-  if(!rlang::is_bool(x) || is.na(x)) {
+  if(!(is.logical(x) && length(x) == 1) || is.na(x)) {
     cli::cli_abort(err_msg(" logical of length 1"),
                    call = call)
   }
@@ -203,7 +203,7 @@ check_elements <-
     }
     lapply(x, function(x) {
       if(!rlang::is_null(x) &&
-         !rlang::is_bool(x) &&
+         !is.logical(x) &&
          !(rlang::is_named(x) && (rlang::is_character(x) || rlang::is_bare_list(x)))) {
         cli::cli_abort(c("The value of {.arg {x[.x]}} must be either",
                          x="a) NULL,",

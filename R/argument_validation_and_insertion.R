@@ -26,22 +26,22 @@ argument_validation_and_insertion <- function(params) {
       chapter_overview = list(fun = function(x) is.null(x) || inherits(x, "data.frame")),
 
       # Character vectors (not enums)
-      label_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_character(x)),
-      name_separator = list(fun = function(x) rlang::is_null(x) || rlang::is_character(x)),
-      mesos_var = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
-      auxiliary_variables = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
-      always_show_bi_for_indep = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
-      variables_always_at_top = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
-      variables_always_at_bottom = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
-      variables_show_bi_for_by = list(fun = function(x) rlang::is_null(x) || (rlang::is_character(x) && all(x %in% colnames(params$data)))),
+      label_separator = list(fun = function(x) is.null(x) || is.character(x)),
+      name_separator = list(fun = function(x) is.null(x) || is.character(x)),
+      mesos_var = list(fun = function(x) is.null(x) || rlang::is_string(x)),
+      auxiliary_variables = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
+      always_show_bi_for_indep = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
+      variables_always_at_top = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
+      variables_always_at_bottom = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
+      variables_show_bi_for_by = list(fun = function(x) is.null(x) || (is.character(x) && all(x %in% colnames(params$data)))),
       path = list(fun = function(x) rlang::is_string(x)),
-      index_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
-      report_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
-      chapter_yaml_file = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
-      qmd_start_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
-      qmd_end_section_filepath = list(fun = function(x) rlang::is_null(x) || (rlang::is_string(x) && file.exists(x))),
-      index_filename = list(fun = function(x) rlang::is_string(x) || rlang::is_null(x)),
-      log_file = list(fun = function(x) rlang::is_null(x) || rlang::is_string(x)),
+      index_yaml_file = list(fun = function(x) is.null(x) || (rlang::is_string(x) && file.exists(x))),
+      report_yaml_file = list(fun = function(x) is.null(x) || (rlang::is_string(x) && file.exists(x))),
+      chapter_yaml_file = list(fun = function(x) is.null(x) || (rlang::is_string(x) && file.exists(x))),
+      qmd_start_section_filepath = list(fun = function(x) is.null(x) || (rlang::is_string(x) && file.exists(x))),
+      qmd_end_section_filepath = list(fun = function(x) is.null(x) || (rlang::is_string(x) && file.exists(x))),
+      index_filename = list(fun = function(x) rlang::is_string(x) || is.null(x)),
+      log_file = list(fun = function(x) is.null(x) || rlang::is_string(x)),
       font_family = list(fun = rlang::is_string),
       data_label_decimal_symbol = list(fun = rlang::is_string),
 
@@ -49,24 +49,24 @@ argument_validation_and_insertion <- function(params) {
       translations = list(fun = function(x) rlang::is_bare_list(x) && all(unlist(lapply(x, function(.x) is.character(.x))))), ### SHOULD BE MORE SPECIFIC FOR EACH ITEM?
 
       # Boolean
-      mesos_report = list(fun = rlang::is_bool),
-      open_after_drafting = list(fun = rlang::is_bool),
-      return_raw = list(fun = rlang::is_bool),
-      attach_chapter_dataset = list(fun = rlang::is_bool),
-      descend = list(fun = rlang::is_bool),
-      vertical = list(fun = rlang::is_bool),
-      include_numbers = list(fun = rlang::is_bool),
-      require_common_categories = list(fun = rlang::is_bool),
-      hide_chr_for_others = list(fun = rlang::is_bool),
-      hide_variable_if_all_na = list(fun = rlang::is_bool),
-      hide_axis_text_if_single_variable = list(fun = rlang::is_bool),
-      mesos_first = list(fun = rlang::is_bool),
-      panel_tabset_mesos = list(fun = rlang::is_bool),
-      totals = list(fun = rlang::is_bool),
-      pdf = list(fun = rlang::is_bool),
-      flexi = list(fun = rlang::is_bool),
-      micro = list(fun = rlang::is_bool),
-      table_main_question_as_header = list(fun = rlang::is_bool),
+      mesos_report = list(fun = function(x) is.logical(x) && length(x) == 1),
+      open_after_drafting = list(fun = function(x) is.logical(x) && length(x) == 1),
+      return_raw = list(fun = function(x) is.logical(x) && length(x) == 1),
+      attach_chapter_dataset = list(fun = function(x) is.logical(x) && length(x) == 1),
+      descend = list(fun = function(x) is.logical(x) && length(x) == 1),
+      vertical = list(fun = function(x) is.logical(x) && length(x) == 1),
+      include_numbers = list(fun = function(x) is.logical(x) && length(x) == 1),
+      require_common_categories = list(fun = function(x) is.logical(x) && length(x) == 1),
+      hide_chr_for_others = list(fun = function(x) is.logical(x) && length(x) == 1),
+      hide_variable_if_all_na = list(fun = function(x) is.logical(x) && length(x) == 1),
+      hide_axis_text_if_single_variable = list(fun = function(x) is.logical(x) && length(x) == 1),
+      mesos_first = list(fun = function(x) is.logical(x) && length(x) == 1),
+      panel_tabset_mesos = list(fun = function(x) is.logical(x) && length(x) == 1),
+      totals = list(fun = function(x) is.logical(x) && length(x) == 1),
+      pdf = list(fun = function(x) is.logical(x) && length(x) == 1),
+      flexi = list(fun = function(x) is.logical(x) && length(x) == 1),
+      micro = list(fun = function(x) is.logical(x) && length(x) == 1),
+      table_main_question_as_header = list(fun = function(x) is.logical(x) && length(x) == 1),
 
       # Numeric and integer
       plot_height_multiplier_per_horizontal_line = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
@@ -97,18 +97,18 @@ argument_validation_and_insertion <- function(params) {
       max_clean_folder_name = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 8),
 
       # Enums
-      data_label = list(fun = function(x) rlang::is_character(x) && any(env$data_label == x[1])),
-      organize_by = list(fun = function(x) rlang::is_character(x)), # BETTER CHECKS NEEDED
-      arrange_output_by = list(fun = function(x) rlang::is_character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)),
-      showNA = list(fun = function(x) rlang::is_character(x) && any(env$showNA == x[1])),
-      element_names = list(fun = function(x) rlang::is_character(x) && all(x %in% env$element_names)),
-      serialized_format = list(fun = function(x) rlang::is_character(x) && any(env$serialized_format == x[1])),
-      tabular_format = list(fun = function(x) rlang::is_character(x) && any(env$tabular_format == x[1])),
+      data_label = list(fun = function(x) is.character(x) && any(env$data_label == x[1])),
+      organize_by = list(fun = function(x) is.character(x)), # BETTER CHECKS NEEDED
+      arrange_output_by = list(fun = function(x) is.character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)),
+      showNA = list(fun = function(x) is.character(x) && any(env$showNA == x[1])),
+      element_names = list(fun = function(x) is.character(x) && all(x %in% env$element_names)),
+      serialized_format = list(fun = function(x) is.character(x) && any(env$serialized_format == x[1])),
+      tabular_format = list(fun = function(x) is.character(x) && any(env$tabular_format == x[1])),
 
       # Colour enums
-      colour_palette_nominal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
-      colour_palette_ordinal = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x)),
-      colour_na = list(fun = function(x) (rlang::is_character(x) && all(is_colour(x))) || rlang::is_null(x) || rlang::is_function(x))
+      colour_palette_nominal = list(fun = function(x) (is.character(x) && all(is_colour(x))) || is.null(x) || rlang::is_function(x)),
+      colour_palette_ordinal = list(fun = function(x) (is.character(x) && all(is_colour(x))) || is.null(x) || rlang::is_function(x)),
+      colour_na = list(fun = function(x) (is.character(x) && all(is_colour(x))) || is.null(x) || rlang::is_function(x))
 
     )
 
