@@ -128,46 +128,56 @@ flip_exception_categories <- function(data_summary,
 
 # Helper function that sorts output (if !is.null(sort_by)), optionally in descending order
 sort_data <- function(data_summary,
-                      ...,
+                      sort_by = NULL,
+                      descend = FALSE,
+                      variables_always_at_bottom = NULL,
+                      variables_always_at_top = NULL,
+                      translations = eval(formals(draft_report)$translations),
                       indep_names = character(0),
                       call = rlang::caller_env()) {
 
 
-  dots <- rlang::list2(...)
-  if(is.null(dots$sort_by)) {
-    return(data_summary %>%
-             dplyr::arrange(as.integer(.data$.variable_label), as.integer(.data$.category)))
+  if(is.null(sort_by)) {
 
-    #### descend IS CURRENTLY GLOBAL ACROSS ALL VARIABLES:
-  } else if(all(dots$sort_by %in% names(data_summary))) {
-    sort_col <- dots$sort_by
-  } else if((length(dots$sort_by) == 1 &&
-             dots$sort_by %in% .saros.env$summary_data_sort1) ||
-            all(dots$sort_by %in% unique(data_summary$.category))) {
-    sort_col <- c(".comb_categories", ".sum_value", indep_names, ".category")
+    return(dplyr::arrange(data_summary, as.integer(.data$.variable_label), as.integer(.data$.category)))
+
+  } else if(all(sort_by %in% names(data_summary))) { # E.g. .variabel_name, .variable_label, x1_sex
+
+    sort_col <- sort_by
+
+  } else if((length(sort_by) == 1 &&
+             sort_by %in% .saros.env$summary_data_sort1) ||
+            all(sort_by %in% unique(data_summary$.category))) { # E.g. .top, .upper, .mid_upper, c("A bit", "A lot")
+
+    sort_col <- c(".sum_value", indep_names, ".category")
+
   }
+  #### descend IS CURRENTLY GLOBAL ACROSS ALL VARIABLES:
 
-  if(dots$descend) {
+  if(isTRUE(descend)) {
+
     data_summary <-
-      data_summary %>%
-      dplyr::arrange(dplyr::across(tidyselect::all_of(sort_col), dplyr::desc))
+      dplyr::arrange(data_summary, dplyr::across(tidyselect::all_of(sort_col), dplyr::desc))
+
   } else {
+
     data_summary <-
-      data_summary %>%
-      dplyr::arrange(dplyr::pick(tidyselect::all_of(sort_col)))
+      dplyr::arrange(data_summary, dplyr::pick(tidyselect::all_of(sort_col))) # Incorrect
+
   }
+
   uniques <- as.character(unique(data_summary$.variable_label))
 
   if(!all(is.na(data_summary$.variable_label))) {
-  data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label, uniques)
+    data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label, uniques)
 
-  variables_always_at_bottom <- dots$variables_always_at_bottom[dots$variables_always_at_bottom %in% uniques]
-  data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
-                                                       variables_always_at_bottom, after = length(uniques))
+    variables_always_at_bottom <- variables_always_at_bottom[variables_always_at_bottom %in% uniques]
+    data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
+                                                         variables_always_at_bottom, after = length(uniques))
 
-  variables_always_at_top <- dots$variables_always_at_top[dots$variables_always_at_top %in% uniques]
-  data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
-                                                       variables_always_at_top, after = 0)
+    variables_always_at_top <- variables_always_at_top[variables_always_at_top %in% uniques]
+    data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
+                                                         variables_always_at_top, after = 0)
   }
 
   if(length(indep_names) > 0) {
@@ -179,9 +189,9 @@ sort_data <- function(data_summary,
         uniques <- rev(as.character(unique(data_summary[[indep_name]])))
       }
       data_summary[[indep_name]] <- forcats::fct_relevel(data_summary[[indep_name]], uniques)
-      if(any(levels(data_summary[[indep_name]]) == dots$translations$mesos_label_all_others)) {
+      if(any(levels(data_summary[[indep_name]]) == translations$mesos_label_all_others)) {
         data_summary[[indep_name]] <- forcats::fct_relevel(data_summary[[indep_name]],
-                                                        dots$translations$mesos_label_all_others, after = length(uniques))
+                                                        translations$mesos_label_all_others, after = length(uniques))
       }
     }
   }
@@ -218,15 +228,7 @@ summarize_data <-
 
     dots <- update_dots(dots = rlang::list2(...),
                         allow_unique_overrides = FALSE)
-    # dots_nms <- names(dots)
-    # dots <- lapply(seq_along(dots), function(i) {
-    #   if(!any(c("data", "call", "...", "chapter_overview") == names(dots)[i])) {
-    #     eval(dots[[i]])
-    #   } else {
-    #     dots[[i]]
-    #     }
-    # })
-    # names(dots) <- dots_nms
+
     if(!(inherits(data, what = "data.frame") || !inherits(data, what = "survey"))) {
       cli::cli_abort("{.arg data} should be a data.frame/tibble or survey object, not {.obj_type_friendly {data}}.")
     }
@@ -265,6 +267,11 @@ summarize_data <-
       # add_n_to_bygroups(add_n_to_bygroup = add_n_to_bygroup, indep_names = indep) %>%
       flip_exception_categories(categories_treated_as_na = dots$categories_treated_as_na,
                                 sort_by = dots$sort_by) %>%
-      sort_data(indep_names = indep, !!!dots)
+      sort_data(indep_names = indep,
+                sort_by = dots$sort_by,
+                descend = dots$descend,
+                variables_always_at_bottom = dots$variables_always_at_bottom,
+                variables_always_at_top = dots$variables_always_at_top,
+                translations = dots$translations)
   }
 
