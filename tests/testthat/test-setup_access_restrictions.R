@@ -1,9 +1,9 @@
 testthat::test_that("refer_main_password_file", {
 
-  if(interactive()) {
   file <- tempfile(fileext = ".htpasswd_private")
   saros:::write_htpasswd_file(x=data.frame(username="test", password="test"), file = file)
-  saros:::refer_main_password_file(x=file, usernames="test2", append_users = TRUE, password_input = "prompt") |>
+  if(interactive()) {
+    saros:::refer_main_password_file(x=file, usernames="test2", append_users = TRUE, password_input = "prompt") |>
     testthat::expect_equal(expected = NULL)
 
 
