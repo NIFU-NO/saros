@@ -67,10 +67,10 @@ embed_cat_prop_plot_docx <-
         !!!dots)
 
     if(length(indep_pos)==0) {
-      data_out[[".variable_label"]] <- forcats::fct_rev(data_out[[".variable_label"]])
+      data_out$.variable_label <- forcats::fct_rev(data_out$.variable_label)
     }
 
-    if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
+    if(dplyr::n_distinct(data_out$.category, na.rm = dots$showNA == "never") == 2 &&
        !rlang::is_null(dots$colour_2nd_binary_cat)) {
       data_out$.category <- forcats::fct_rev(data_out$.category)
     }
