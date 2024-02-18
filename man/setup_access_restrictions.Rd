@@ -26,6 +26,8 @@ setup_access_restrictions(
 
 \item{rel_path_base_to_parent_of_user_restricted_folder}{String, relative path from basepath to the folder where the restricted folders are located. (E.g. the "mesos"-folder)}
 
+\item{warn}{Flag. Whether to provide warning or error if paths do not exist.}
+
 \item{local_main_password_path}{String. Path to main file containing all usernames and passwords formatted with a colon between username and password.}
 
 \item{username_folder_matching_df}{Data frame. If NULL (default), will use folder names as usernames. Otherwise, a data frame with two columns: "folder" and "username" where "folder" is the name of the folder and "username" is the username for that folder.}
