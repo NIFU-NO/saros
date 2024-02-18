@@ -20,7 +20,7 @@ prep_cat_prop_plot_docx <-
 
 
     if(is.null(colour_palette)) {
-      n <- length(levels(data[[".category"]]))
+      n <- length(levels(data$.category))
       hues <- seq(15, 375, length = n + 1)
       colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
     }
@@ -33,10 +33,10 @@ prep_cat_prop_plot_docx <-
     hide_axis_text <-
       isTRUE(dots$hide_axis_text_if_single_variable) &&
       length(indep_vars) == 0 &&
-      dplyr::n_distinct(data[[".variable_label"]]) == 1
+      dplyr::n_distinct(data$.variable_label) == 1
 
     hide_legend <-
-      dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
+      dplyr::n_distinct(data$.category, na.rm = TRUE) == 2 &&
       !rlang::is_null(dots$colour_na)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
@@ -50,7 +50,7 @@ prep_cat_prop_plot_docx <-
                                 font.family = dots$font_family)
              })
 
-    fp_text_settings <- fp_text_settings[seq_len(dplyr::n_distinct(data[[".category"]], na.rm = TRUE))]
+    fp_text_settings <- fp_text_settings[seq_len(dplyr::n_distinct(data$.category, na.rm = TRUE))]
 
 
     blank_border <- officer::fp_border(style = "none")
