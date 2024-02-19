@@ -19,7 +19,7 @@ replace_stata_labels <- function(data, df_new_labels,
   for(var in colnames(data)) {
     original_label <- attr(data[[var]], "label")
     replacement_label <- df_new_labels[df_new_labels[[var_name_col]] == var, var_label_col]
-    if(rlang::is_string(replacement_label) && (isTRUE(overwrite) || !rlang::is_string(original_label))) {
+    if(is_string(replacement_label) && (isTRUE(overwrite) || !is_string(original_label))) {
       attr(data[[var]], "label") <- replacement_label
     }
     if(any(trim %in% c("left", "right", "both"))) attr(data[[var]], "label") <- stringi::stri_trim(attr(data[[var]], "label"), side = trim[trim != "all"])

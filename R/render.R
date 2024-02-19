@@ -123,7 +123,7 @@ prepare_safe_render <- function(remote_basepath = "/home/",
     cli::cli_abort("Nothing to render: Reports directory is missing/empty: {.path {local_basepath}}.")
   }
 
-  if(rlang::is_character(rel_path_base_to_parent_of_user_restricted_folder)) {
+  if(is.character(rel_path_base_to_parent_of_user_restricted_folder)) {
     local_mesos_paths <- file.path(local_basepath, rel_path_base_to_parent_of_user_restricted_folder)
       if(any(!dir.exists(local_mesos_paths)) || any(lengths(dir(local_mesos_paths))==0)) {
         local_mesos_paths <- local_mesos_paths[!dir.exists(local_mesos_paths) | lengths(dir(local_mesos_paths))==0]
@@ -192,7 +192,7 @@ create_email_credentials <-
     cli::cli_warn("Usernames in emails data set not found in password file ({.path {local_main_password_path}}): {in_email_not_in_cred}")
   }
   # in_cred_not_in_email <- setdiff(credentials[[username_col]], emails[[username_col]])
-  # if(length(in_cred_not_in_email)>0 && rlang::is_false(ignore_missing_emails)) {
+  # if(length(in_cred_not_in_email)>0 && isFALSE(ignore_missing_emails)) {
   #   cli::cli_warn("Usernames in password file ({.path {local_main_password_path}}) not found in emails data set: {in_cred_not_in_email}")
   # }
 

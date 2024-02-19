@@ -104,7 +104,7 @@ flip_exception_categories <- function(data_summary,
                                       sort_by = NULL,
                                       categories_treated_as_na = c(),
                                       call = rlang::caller_env()) {
-  if(rlang::is_null(sort_by) ||
+  if(is.null(sort_by) ||
      length(categories_treated_as_na) == 0 ||
      !all(sort_by %in% .saros.env$summary_data_sort1) ||
      !any(unique(data_summary$.category) %in% categories_treated_as_na)) {

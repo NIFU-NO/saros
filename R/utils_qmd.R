@@ -9,7 +9,7 @@
 # }
 
 # fix_path_spaces <- function(path) {
-#   if(!rlang::is_null(quarto::quarto_path()) &&
+#   if(!is.null(quarto::quarto_path()) &&
 #      quarto::quarto_version() < 1.3) {
 #     stringi::stri_replace_all(str = path, regex = "[[:space:]]", replacement = "_")
 #   } else path
@@ -62,7 +62,7 @@ conv_to_valid_obj_name <- function(x, max_width = 48) {
 #
 #   ####
 #   obj_name_mesos <-
-#     if(rlang::is_string(mesos_group)) stringi::stri_c(mesos_sep_string, mesos_group)
+#     if(is_string(mesos_group)) stringi::stri_c(mesos_sep_string, mesos_group)
 #
 #   ####
 #   out <-
@@ -81,7 +81,7 @@ create_heading <- function(x, level = NULL,
                            call = rlang::caller_env()) {
 
   check_string(x, n = NULL, null.ok = TRUE, arg = arg, call = call)
-  if(rlang::is_null(level)) level <- names(x)[1]
+  if(is.null(level)) level <- names(x)[1]
   stringi::stri_c(ignore_null=TRUE,
     strrep("#", times=level), " ",
     x[level])

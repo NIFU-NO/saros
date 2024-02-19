@@ -2,7 +2,7 @@ update_dots <- function(dots = list(),
                         caller_function = NULL,
                         allow_unique_overrides = TRUE) {
 
-  # if(rlang::is_null(caller_function)) {
+  # if(is.null(caller_function)) {
   #   caller_function <- rlang::caller_call(n=1)
   #   caller_function <- as.character(caller_function)
   #   caller_function <- paste0(stringi::stri_replace_all_regex(caller_function,

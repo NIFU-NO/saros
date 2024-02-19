@@ -32,29 +32,29 @@ gen_qmd_index <-
 
     yaml_section <-
       process_yaml(yaml_file = yaml_file,
-                   format = if(rlang::is_character(chapter_filepaths)) "typst" else "html",
+                   format = if(is.character(chapter_filepaths)) "typst" else "html",
                    title = dots$title,
                    authors = dots$authors)
 
-    if(rlang::is_character(chapter_filepaths)) {
+    if(is.character(chapter_filepaths)) {
       main_section <-
         unlist(lapply(chapter_filepaths,
                       FUN = function(.x) stringi::stri_c('{{< include "', .x, '" >}}', ignore_null=TRUE)))
       main_section <-  stringi::stri_c(main_section, ignore_null=TRUE, collapse = "\n\n")
     }
-    report_link <- if(rlang::is_character(report_filepath)) {
+    report_link <- if(is.character(report_filepath)) {
       stringi::stri_c(dots$translations$download_report, "\n-\t[(PDF)](_", dots$title, ".pdf)",
                       "\n-\t[(DOCX)](_", dots$title, ".docx)")
     }
 
-    qmd_start_section <- if(!rlang::is_null(dots$qmd_start_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_start_section_filepath), collapse="\n")
-    qmd_end_section <- if(!rlang::is_null(dots$qmd_end_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_end_section_filepath), collapse="\n")
+    qmd_start_section <- if(!is.null(dots$qmd_start_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_start_section_filepath), collapse="\n")
+    qmd_end_section <- if(!is.null(dots$qmd_end_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_end_section_filepath), collapse="\n")
 
     out <-
       stringi::stri_c(yaml_section, "\n",
                    # qmd_start_section,
-                   if(rlang::is_character(chapter_filepaths)) main_section,
-                   if(rlang::is_character(report_filepath)) report_link,
+                   if(is.character(chapter_filepaths)) main_section,
+                   if(is.character(report_filepath)) report_link,
                    qmd_end_section,
                    ignore_null=TRUE, sep="\n")
     cat(out, file = index_filepath, append = FALSE)

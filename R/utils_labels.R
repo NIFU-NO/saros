@@ -91,7 +91,7 @@ get_raw_labels <-
     out <- lapply(X = stats::setNames(col_pos, nm=col_pos),
                   FUN = function(.x) {
                     y <- attr(data[[.x]], "label")
-                    if(rlang::is_string(y)) y else NA_character_
+                    if(is_string(y)) y else NA_character_
                   })
     if(isFALSE(return_as_list)) out <- unlist(out)
     out

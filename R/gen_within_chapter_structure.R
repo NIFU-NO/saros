@@ -49,9 +49,9 @@
 #
 #
 #
-#       if(rlang::is_true(dots$mesos_report) &&
-#          rlang::is_string(dots$mesos_var) &&
-#          rlang::is_string(mesos_group)) {
+#       if(isTRUE(dots$mesos_report) &&
+#          is_string(dots$mesos_var) &&
+#          is_string(mesos_group)) {
 #
 #         data_for_all <-
 #           vctrs::vec_slice(data,
@@ -75,7 +75,7 @@
 #           gen_element_and_qmd_snippet2,
 #           chapter_overview_section = chapter_overview_section,
 #           data = data_for_all,
-#           mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
+#           mesos_group = if(is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
 #           grouping_structure = grouping_structure,
 #           chapter_folderpath_absolute = chapter_folderpath_absolute,
 #           chapter_foldername = chapter_foldername,

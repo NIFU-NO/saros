@@ -37,7 +37,7 @@ prep_cat_prop_plot_docx <-
 
     hide_legend <-
       dplyr::n_distinct(data$.category, na.rm = TRUE) == 2 &&
-      !rlang::is_null(dots$colour_na)
+      !is.null(dots$colour_na)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")

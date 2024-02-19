@@ -16,7 +16,7 @@ create_caption <- function(main_question,
                            filepath = NULL,
                            translations = NULL) {
 
-  if(rlang::is_null(translations)) translations <- eval(formals(draft_report)$translations)
+  if(is.null(translations)) translations <- eval(formals(draft_report)$translations)
 
   N <-
     data_out %>%
@@ -30,7 +30,7 @@ create_caption <- function(main_question,
   n_equal_suffix <- translations$n_equal_suffix
   by_breakdown <- if(length(indep_pos)>0) translations$by_breakdown
   by_text <- if(length(indep_pos)>0) create_text_collapse(indep_pos, last_sep = translations$last_sep)
-  if(rlang::is_character(mesos_group)) {
+  if(is.character(mesos_group)) {
     mesos_group <- create_text_collapse(mesos_group, last_sep = translations$last_sep)
     mesos <- stringi::stri_c(translations$mesos_group_prefix,
                                mesos_group,

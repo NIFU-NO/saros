@@ -126,7 +126,7 @@ gen_qmd_chapters <-
           } else chapter_contents <- NULL
 
           qmd_start_section <-
-            if(!rlang::is_null(dots$qmd_start_section_filepath)) {
+            if(!is.null(dots$qmd_start_section_filepath)) {
               stringi::stri_c(collapse = "\n",
                               ignore_null = TRUE,
                               readLines(con = dots$qmd_start_section_filepath)
@@ -134,7 +134,7 @@ gen_qmd_chapters <-
             }
 
           qmd_end_section <-
-            if(!rlang::is_null(dots$qmd_end_section_filepath)) {
+            if(!is.null(dots$qmd_end_section_filepath)) {
               stringi::stri_c(collapse = "\n",
                               ignore_null = TRUE,
                               readLines(con = dots$qmd_end_section_filepath)
@@ -142,7 +142,7 @@ gen_qmd_chapters <-
             }
 
           load_dataset <-
-            if(rlang::is_true(dots$attach_chapter_dataset)) {
+            if(isTRUE(dots$attach_chapter_dataset)) {
               attach_chapter_dataset2(data = data,
                                      chapter_overview_chapter = chapter_overview_chapter,
                                      chapter_foldername_clean = chapter_foldername_clean,
@@ -175,14 +175,14 @@ gen_qmd_chapters <-
     chapter_filepaths <- unlist(chapter_filepaths)
 
 
-    if(rlang::is_true(dots$flexi) && !rlang::is_string(dots$mesos_var) &&
+    if(isTRUE(dots$flexi) && !is_string(dots$mesos_var) &&
        !all(is.na(chapter_overview_chapter_groups$.variable_name_dep))) {
 
       embed_flexi(data = data,
                   chapter_overview = chapter_overview_chapter_groups,
                   !!!dots)
     }
-    cli::cli_process_done(msg_done = "Completed report{if(rlang::is_string(mesos_group)) paste0(' for ', mesos_group)}.")
+    cli::cli_process_done(msg_done = "Completed report{if(is_string(mesos_group)) paste0(' for ', mesos_group)}.")
 
 
     chapter_filepaths

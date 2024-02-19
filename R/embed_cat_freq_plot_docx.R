@@ -170,7 +170,7 @@ embed_cat_freq_plot_docx <-
     }
 
     if(dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
-       !rlang::is_null(dots$colour_2nd_binary_cat)) {
+       !is.null(dots$colour_2nd_binary_cat)) {
       data_out$.category <- forcats::fct_rev(data_out$.category)
     }
 
@@ -184,7 +184,7 @@ embed_cat_freq_plot_docx <-
         call = rlang::caller_env(),
         !!!dots)
 
-    if(!rlang::is_null(dots$label_separator)) {
+    if(!is.null(dots$label_separator)) {
       indep_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))
       attr(chart, "saros_caption") <-
           get_raw_labels(data = data, col_pos = dep_pos) %>%

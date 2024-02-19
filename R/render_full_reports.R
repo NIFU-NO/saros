@@ -28,9 +28,9 @@ render_full_reports <- function(
     ...) {
   dots <- rlang::list2(...)
 
-  if(rlang::is_character(files) && all(nchar(files)>0)) {
+  if(is.character(files) && all(nchar(files)>0)) {
     processable_files <- files
-  } else if(rlang::is_string(processable_path) && dir.exists(processable_path)) {
+  } else if(is_string(processable_path) && dir.exists(processable_path)) {
     processable_files <- list.files(path = processable_path,
                                     pattern = "^_[^z].+\\.qmd",
                                     recursive = TRUE, full.names = TRUE)

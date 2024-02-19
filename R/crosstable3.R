@@ -30,7 +30,7 @@ crosstable3.data.frame <-
 
     if(length(col_names)==0) return()
 
-    if(length(indep) > 0 && rlang::is_true(totals)) {
+    if(length(indep) > 0 && isTRUE(totals)) {
       for(indep_var in indep) {
         data_duplicate <- data
 
@@ -60,7 +60,7 @@ crosstable3.data.frame <-
       names(out)[names(out) == .x] <- ".category"
       col <- out$.category
 
-      if(!rlang::is_character(col) &&
+      if(!is.character(col) &&
          !is.factor(col) &&
          dplyr::n_distinct(col, na.rm = FALSE) <= 10) {
         out$.category <- factor(col)
@@ -209,7 +209,7 @@ crosstable3.tbl_svy <-
       out <- srvyr::rename(data, .category = tidyselect::all_of(.x))
       col <- srvyr::pull(out, .data$.category)
 
-      if (!rlang::is_character(col) && !is.factor(col) && dplyr::n_distinct(col, na.rm = FALSE) <= 10) {
+      if (!is.character(col) && !is.factor(col) && dplyr::n_distinct(col, na.rm = FALSE) <= 10) {
         out <- srvyr::mutate(out, .category = factor(.data$col))
         col <- srvyr::pull(out, .data$.category)
       }

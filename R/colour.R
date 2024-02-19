@@ -11,7 +11,7 @@
 #' @examples
 #' is_colour(c("#ff00ff", "#010101"))
 is_colour <- function(x) {
-  if(!rlang::is_character(x)) return(FALSE)
+  if(!is.character(x)) return(FALSE)
   vapply(x, function(X) {
     tryCatch(is.matrix(grDevices::col2rgb(X)),
              error = function(e) FALSE)
@@ -53,7 +53,7 @@ hex_bw <- function(hex_code) {
 
 check_colour_palette <- function(colour_palette, call = rlang::caller_env()) {
   if(!is.null(colour_palette) && (!all(is_colour(colour_palette)) ||
-                                  rlang::is_function(colour_palette))) {
+                                  is.function(colour_palette))) {
     cli::cli_abort(
       c("Invalid user-specified colours.",
         i="{.arg colour_palette} must be a character vector of valid colours in hex-format (e.g. #000000), or a function.",
@@ -72,7 +72,7 @@ get_remaining_colours <- function(user_colour_set,
 
   if(!is.null(user_colour_set)) {
 
-    if(rlang::is_function(user_colour_set)) {
+    if(is.function(user_colour_set)) {
       user_colour_set <- user_colour_set()
     }
 
@@ -142,7 +142,7 @@ get_colour_set <-
 
 
     x <- stats::setNames(x, x)
-    if(rlang::is_character(colour_na)) {
+    if(is.character(colour_na)) {
       if(length(colour_na)>= length(categories_treated_as_na)) {
         for(i in seq_along(categories_treated_as_na)) {
           x[names(x) == categories_treated_as_na[i]] <- colour_na[i]
@@ -152,7 +152,7 @@ get_colour_set <-
       }
     }
     n_colours_needed <- length(x[!x %in% colour_na])
-    if(!rlang::is_null(colour_2nd_binary_cat) &&
+    if(!is.null(colour_2nd_binary_cat) &&
        n_colours_needed == 2) {
       x[!x %in% colour_na][2] <- colour_2nd_binary_cat
       n_colours_needed <- 1
@@ -164,7 +164,7 @@ get_colour_set <-
         n_colours_needed = n_colours_needed,
         ordinal = ordinal)
 
-    if(!rlang::is_null(colour_2nd_binary_cat) &&
+    if(!is.null(colour_2nd_binary_cat) &&
        n_colours_needed == 1) {
       x[!x %in% colour_na][1] <- colours_available
     } else {
@@ -219,7 +219,7 @@ get_colour_palette <-
     }
     if(length(out) >= 1) {
       out <- out[[1]]
-      if(rlang::is_null(names(out))) {
+      if(is.null(names(out))) {
         out <- rlang::set_names(out, col_pos)
       }
       return(out)
@@ -240,12 +240,12 @@ get_colour_palette <-
       switch(common_data_type,
              ordered = colour_palette_ordinal,
              factor = colour_palette_nominal)
-    # if(rlang::is_function(user_colour_set)) {
+    # if(is.function(user_colour_set)) {
     #   return(user_colour_set)
     # }
 
     categories_treated_as_na <- categories_treated_as_na[categories_treated_as_na %in% common_levels]
-    if(rlang::is_character(colour_na)) {
+    if(is.character(colour_na)) {
       if(length(colour_na)>= length(categories_treated_as_na)) {
         for(i in seq_along(categories_treated_as_na)) {
           out[names(out) == categories_treated_as_na[i]] <- colour_na[i]

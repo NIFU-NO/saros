@@ -6,7 +6,7 @@ err_msg <- function(infix) {
 
 check_bool <- function(x, call = rlang::caller_env(),
                        arg = rlang::caller_arg(x)) {
-  if(!(is.logical(x) && length(x) == 1) || is.na(x)) {
+  if(!(is.logical(x) && length(x) == 1 && !is.na(x)) || is.na(x)) {
     cli::cli_abort(err_msg(" logical of length 1"),
                    call = call)
   }
@@ -44,6 +44,7 @@ check_double <- function(x, min=-Inf, max=Inf, call = rlang::caller_env(),
   }
 }
 
+is_string <- function(x) is.character(x) && length(x) == 1
 
 check_string <- function(x, null.ok = FALSE, n = 1,
                          call = rlang::caller_env(),
@@ -55,7 +56,7 @@ check_string <- function(x, null.ok = FALSE, n = 1,
     if(!null.ok) {
       cli::cli_abort(message = msg_suffix, call = call)
     }
-  } else if (!rlang::is_character(x, n = n)) {
+  } else if (!rlang::is_character(x, n=n)) {
     msg_prefix <- if(null.ok) "If not NULL, " else ""
     msg <- stringi::stri_c(ignore_null=TRUE, msg_prefix, msg_suffix)
     cli::cli_abort(message = msg, call = call)
@@ -171,13 +172,16 @@ check_sort_by <- function(x, sort_by = NULL,
                    .saros.env$summary_data_sort2)
   categories_in_data <- as.character(x)
 
-  if(!rlang::is_null(sort_by)) {
+  if(!is.null(sort_by)) {
     if(
-      (rlang::is_character(x = sort_by, n = 1) &&
+      (is.character(sort_by) &&
+       length(sort_by) == 1 &&
        sort_by %in% set_options) ||
-      (rlang::is_character(sort_by) &&
+      (is.character(sort_by) &&
        all(sort_by %in% categories_in_data)) ) {
+
       return()
+
     }
     cli::cli_abort(c(x="{.arg sort_by} must be either NULL (no sorting), a single string from the set options {.var {set_options}} or all valid categories in the data frame.",
                      i="You supplied {.var {sort_by}}."),
@@ -202,9 +206,9 @@ check_elements <-
                      "Invalid elements: {names(x)[!names(x) %in% list_available_element_types()]}"))
     }
     lapply(x, function(x) {
-      if(!rlang::is_null(x) &&
+      if(!is.null(x) &&
          !is.logical(x) &&
-         !(rlang::is_named(x) && (rlang::is_character(x) || rlang::is_bare_list(x)))) {
+         !(rlang::is_named(x) && (is.character(x) || rlang::is_bare_list(x)))) {
         cli::cli_abort(c("The value of {.arg {x[.x]}} must be either",
                          x="a) NULL,",
                          x="b) boolean (TRUE or FALSE, not NA),",
