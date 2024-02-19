@@ -803,7 +803,7 @@ draft_report <-
     data <- ungroup_data(data)
 
 
-    # if(!rlang::is_null(dots$colour_na)) {
+    # if(!is.null(dots$colour_na)) {
     #   data <-
     #   dplyr::mutate(data, dplyr::across(tidyselect::where(~{
     #     dplyr::n_distinct(.x, na.rm = dots$showNA == "never") == 2 &
@@ -820,8 +820,8 @@ draft_report <-
 
     all_authors <- get_authors(data = chapter_overview, col="author")
 
-    if(rlang::is_false(args$mesos_report) ||
-       !rlang::is_string(args$mesos_var)) {
+    if(isFALSE(args$mesos_report) ||
+       !is_string(args$mesos_var)) {
 
       uniques <- NA_character_
 
@@ -874,7 +874,7 @@ draft_report <-
 
 
 
-               if(rlang::is_true(args$pdf)) {
+               if(isTRUE(args$pdf)) {
                  report_filepath <-
                    rlang::exec(
                      gen_qmd_index,
@@ -894,7 +894,7 @@ draft_report <-
                    authors = all_authors,
                    index_filepath = file.path(path, args$index_filename),
                    chapter_filepaths = NULL,
-                   report_filepath = if(rlang::is_true(args$pdf)) report_filepath,
+                   report_filepath = if(isTRUE(args$pdf)) report_filepath,
                    yaml_file = args$index_yaml_file,
                    !!!args[!names(args) %in% c("title", "authors", "index_yaml_file")],
                    call = rlang::caller_env())
@@ -921,7 +921,7 @@ draft_report <-
 
     cat(proc.time()-timestamp)
     cat("\n")
-    if(rlang::is_string(args$log_file)) {
+    if(is_string(args$log_file)) {
       cat("Run time: ", proc.time()-timestamp, file=args$log_file)
     }
     stringi::stri_replace_all_regex(index_filepath, pattern="\\\\+", replacement="/")

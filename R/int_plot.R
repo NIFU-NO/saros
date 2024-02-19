@@ -42,7 +42,7 @@
 #
 #     hide_legend <-
 #       dplyr::n_distinct(data[[".category"]], na.rm = TRUE) == 2 &&
-#         !rlang::is_null(dots$colour_2nd_binary_cat)
+#         !is.null(dots$colour_2nd_binary_cat)
 #
 #     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
 #     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
@@ -215,7 +215,7 @@
 #     }
 #
 #     if (dplyr::n_distinct(data_out[[".category"]], na.rm = dots$showNA == "never") == 2 &&
-#       !rlang::is_null(dots$colour_2nd_binary_cat)) {
+#       !is.null(dots$colour_2nd_binary_cat)) {
 #       data_out$.category <- forcats::fct_rev(data_out$.category)
 #     }
 #
@@ -228,7 +228,7 @@
 #         !!!dots
 #       )
 #
-#     if(!rlang::is_null(dots$label_separator)) {
+#     if(!is.null(dots$label_separator)) {
 #       indep_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))
 #       attr(chart, "saros_caption") <-
 #         get_raw_labels(data = data, col_pos = dep_pos) %>%

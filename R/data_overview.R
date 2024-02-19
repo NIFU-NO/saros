@@ -54,8 +54,8 @@ look_for_extended <- function(data,
     cli::cli_ul(duplicates)
   }
 
-  if(rlang::is_character(name_separator)) {
-      if(rlang::is_character(names(name_separator)) &&
+  if(is.character(name_separator)) {
+      if(is.character(names(name_separator)) &&
          all(c(".variable_name_prefix", ".variable_name_suffix") %in% names(name_separator))) {
         x <-
           tidyr::separate_wider_regex(x,
@@ -69,8 +69,8 @@ look_for_extended <- function(data,
         # }
 
 
-      } else if(rlang::is_string(name_separator) &&
-                rlang::is_null(names(name_separator))) {
+      } else if(is_string(name_separator) &&
+                is.null(names(name_separator))) {
         x <-
           tidyr::separate_wider_delim(x,
                                       cols = ".variable_name",
@@ -92,9 +92,9 @@ look_for_extended <- function(data,
     x$.variable_name_suffix <- x$.variable_name
   }
 
-  if(rlang::is_character(label_separator)) {
+  if(is.character(label_separator)) {
     separator_fun <-
-      if(rlang::is_character(names(label_separator)) &&
+      if(is.character(names(label_separator)) &&
          all(c(".variable_label_prefix", ".variable_label_suffix") %in% names(label_separator))) {
         x <-
           tidyr::separate_wider_regex(x,
@@ -103,8 +103,8 @@ look_for_extended <- function(data,
                                       cols_remove = FALSE,
                                       too_few = "align_start")
 
-      } else if(rlang::is_string(label_separator) &&
-                rlang::is_null(names(label_separator))) {
+      } else if(is_string(label_separator) &&
+                is.null(names(label_separator))) {
         x <-
           tidyr::separate_wider_delim(x,
                         cols = ".variable_label",
@@ -327,11 +327,11 @@ refine_chapter_overview <-
 
 
   col_headers <- c("dep", "indep")
-  if(!rlang::is_null(chapter_overview) &&
+  if(!is.null(chapter_overview) &&
      !any(colnames(chapter_overview) == "dep")) {
     cli::cli_abort("{.arg chapter_overview} must contain columns `dep` (and optionally `indep`).")
   } else {
-    if(rlang::is_null(chapter_overview)) {
+    if(is.null(chapter_overview)) {
       chapter_overview <- data.frame(chapter = "All", dep = "everything()")
     }
   }
@@ -410,7 +410,7 @@ refine_chapter_overview <-
     out$.variable_name <- ifelse(out$.variable_name %in% c("1", ""), NA, out$.variable_name)
 
 
-    if(rlang::is_true(dots$hide_variable_if_all_na)) {
+    if(isTRUE(dots$hide_variable_if_all_na)) {
       na_vars <- c()
 
       for(var in unique(out$.variable_name)) {
@@ -506,7 +506,7 @@ refine_chapter_overview <-
 
 
 
-  if(!rlang::is_null(out$chapter)) {
+  if(!is.null(out$chapter)) {
     out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
   }
 

@@ -78,7 +78,7 @@ sanitize_labels <- function(data,
   data <- lapply(rlang::set_names(colnames(data)), FUN = function(var) {
     label <- attr(data[[var]], "label")
 
-    if(rlang::is_string(label)) {
+    if(is_string(label)) {
       for(i in seq_len(nrow(char_table))) {
         label <- stringi::stri_replace_all_fixed(str = label,
                                                  pattern = char_table[i, cols[2], drop=TRUE],
@@ -86,13 +86,13 @@ sanitize_labels <- function(data,
       }
 
       # Replace references with those provided in questions, if any
-      if(!rlang::is_null(questions) &&
+      if(!is.null(questions) &&
          is.data.frame(questions) &&
          colnames(questions) == c("qid", "qname", "question", "force_resp")) {
         reference_id <- stringi::stri_match_all_regex(label,
                                                       pattern = "\\$\\{q://([[:alnum:]]+)/ChoiceGroup/SelectedChoices\\}")[[1]][1,2]
         reference_var <- questions[questions$qid == reference_id, "qname"]
-        if(rlang::is_string(reference_var) && !is.na(reference_var) &&
+        if(is_string(reference_var) && !is.na(reference_var) &&
            any(reference_var %in% colnames(data))) {
           reference_values <- unique(data[[reference_var]])
           reference_values <- reference_values[!is.na(reference_values)]

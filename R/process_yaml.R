@@ -5,7 +5,7 @@ process_yaml <- function(yaml_file = NULL,
                          add_fences = TRUE,
                          chapter_number = NA) {
 
-  if(!rlang::is_string(yaml_file)) {
+  if(!is_string(yaml_file)) {
     yaml_section <-
       list(format = format,
            echo = FALSE,
@@ -17,19 +17,19 @@ process_yaml <- function(yaml_file = NULL,
     }
     yaml_section$title <- title
     # new_title <- stringi::stri_c(yaml_section$title,
-    #                              if(rlang::is_string(title) &&
-    #                                 rlang::is_string(yaml_section$title)) " - ",
+    #                              if(is_string(title) &&
+    #                                 is_string(yaml_section$title)) " - ",
     #                              title,
     #                              ignore_null=TRUE)
 
     # if(length(new_title)>0)  yaml_section$title <- new_title
-    if(rlang::is_character(authors)) yaml_section$authors <- authors
+    if(is.character(authors)) yaml_section$authors <- authors
 
   }
-  # if(rlang::is_null(yaml_section$title)) {
+  # if(is.null(yaml_section$title)) {
   #   yaml_section$title <-  as.character(chapter_number)
   # }
-  if(rlang::is_null(yaml_section$authors) || all(nchar(yaml_section$authors)==0)) {
+  if(is.null(yaml_section$authors) || all(nchar(yaml_section$authors)==0)) {
     yaml_section$authors <- NULL
   }
   if(!is.na(chapter_number)) {

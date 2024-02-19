@@ -68,7 +68,7 @@ embed_cat_table <-
 
 
     caption <-
-    if(!rlang::is_null(dots$label_separator)) {
+    if(!is.null(dots$label_separator)) {
         create_caption(main_question = main_question,
                               data_out = data_out,
                               indep_pos = indep_label,
@@ -104,14 +104,16 @@ embed_cat_table <-
       dplyr::rename_with(.cols = "N",
                          .fn = function(x) dots$translations$table_heading_N)
     if(length(indep_pos)>0 &&
-       rlang::is_character(indep_label, n=length(indep_pos)) &&
+       is.character(indep_label) &&
+       length(indep_label) == length(indep_pos) &&
        all(nchar(indep_label)>0)) {
+
       data_out <- dplyr::rename_with(data_out,
                                      .cols = tidyselect::all_of(names(indep_pos)),
                                      .fn = function(x) indep_label)
     }
 
-    if(rlang::is_string(main_question) && stringi::stri_length(main_question)>0) {
+    if(is_string(main_question) && stringi::stri_length(main_question)>0) {
       names(data_out)[names(data_out)==".variable_label"] <- main_question
     }
     data_out[[1]] <- if(dplyr::n_distinct(data_out[[1]], na.rm = FALSE) > 1) data_out[[1]]
@@ -148,8 +150,8 @@ embed_cat_table <-
                            .fn = function(x) dots$translations$table_heading_N) %>%
         dplyr::rename_with(.cols = tidyselect::all_of(names(indep_pos)), .fn = function(x) indep_label)
 
-      if(rlang::is_string(main_question) && stringi::stri_length(main_question)>0 &&
-         rlang::is_true(dots$table_main_question_as_header)) {
+      if(is_string(main_question) && stringi::stri_length(main_question)>0 &&
+         isTRUE(dots$table_main_question_as_header)) {
         names(data_out2)[names(data_out)==".variable_label"] <- main_question
       }
       # table_html_detailer <-

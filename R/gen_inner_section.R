@@ -19,8 +19,8 @@ gen_inner_section <- function(.x, .y,
     .y$.element_name <- as.character(.y$.element_name)
     # if(all(!is.na(.y$.element_name)) &&
     #    all(stringi::stri_detect_fixed(str = .y$.element_name, pattern = "chr", negate = TRUE)) &&
-    #            rlang::is_true(dots$hide_chr_for_others) &&
-    #            rlang::is_string(mesos_group)) browser()
+    #            isTRUE(dots$hide_chr_for_others) &&
+    #            is_string(mesos_group)) browser()
     # if(all(.x$chapter == "Ambivalence") &&
     #    all(.x$.element_name == "bi_catcat_prop_plot") &&
     #    any(.x$.variable_name_dep == "a_1")) browser()
@@ -35,14 +35,14 @@ gen_inner_section <- function(.x, .y,
     # If not a text-based element with hiding of other mesos_groups,
     # produce the default "everyone (else)" data
     if(!(all(stringi::stri_detect_fixed(str = .y$.element_name, pattern = "chr")) &&
-         rlang::is_true(dots$hide_chr_for_others) &&
-         rlang::is_string(mesos_group))) {
+         isTRUE(dots$hide_chr_for_others) &&
+         is_string(mesos_group))) {
 
 
 
-      if(rlang::is_true(dots$mesos_report) &&
-         rlang::is_string(dots$mesos_var) &&
-         rlang::is_string(mesos_group)) {
+      if(isTRUE(dots$mesos_report) &&
+         is_string(dots$mesos_var) &&
+         is_string(mesos_group)) {
 
         data_for_all <-
           vctrs::vec_slice(data, data[[dots$mesos_var]] != mesos_group)
@@ -59,7 +59,7 @@ gen_inner_section <- function(.x, .y,
             gen_element_and_qmd_snippet2,
             chapter_overview_section = .x,
             data = data_for_all,
-            mesos_group = if(rlang::is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
+            mesos_group = if(is_string(dots$mesos_var)) dots$translations$mesos_label_all_others,
             grouping_structure = grouping_structure,
             chapter_folderpath_absolute = chapter_folderpath_absolute,
             chapter_foldername = chapter_foldername,
@@ -68,9 +68,9 @@ gen_inner_section <- function(.x, .y,
       }
     }
 
-    if(rlang::is_true(dots$mesos_report) &&
-       rlang::is_string(dots$mesos_var) &&
-       rlang::is_string(mesos_group)) {
+    if(isTRUE(dots$mesos_report) &&
+       is_string(dots$mesos_var) &&
+       is_string(mesos_group)) {
 
       data_for_mesos <- vctrs::vec_slice(data,
                                          !is.na(data[[dots$mesos_var]]) &

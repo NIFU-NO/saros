@@ -16,14 +16,14 @@ remove_label_parts <- function(data,
                                data_type_criterion = NULL) {
   if(is.null(data_type_criterion) || !is.function(data_type_criterion)) data_type_criterion <- function(x) !is.null(x)
 
-  if(rlang::is_string(pattern)) {
+  if(is_string(pattern)) {
     for(var in colnames(data)) {
 
       if(data_type_criterion(data[[var]])) {
         label <- attr(data[[var]], "label")
         label <- stringr::str_replace(label, pattern = pattern, replacement = replacement)
 
-        if(length(label)>0 && rlang::is_string(label)) {
+        if(length(label)>0 && is_string(label)) {
 
           attr(data[[var]], "label") <- label
         }

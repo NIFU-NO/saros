@@ -9,7 +9,7 @@
 #
 #
 #     ## cat_*_plot
-#     if (!rlang::is_null(dots$label_separator)) {
+#     if (!is.null(dots$label_separator)) {
 #       by_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))
 #       attr(chart, "saros_caption") <-
 #         get_raw_labels(data = data, col_pos = dep_pos) %>%
@@ -37,7 +37,7 @@
 #         unique()
 #     } else by_label <- character(0)
 #     attr(table, "saros_caption") <-
-#       if(!rlang::is_null(dots$label_separator)) {
+#       if(!is.null(dots$label_separator)) {
 #         add_caption_attribute(
 #           main_question = main_question,
 #           data_out = data_out,

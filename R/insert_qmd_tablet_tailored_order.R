@@ -10,14 +10,14 @@ insert_qmd_tablet_mesos_order <-
            translations = eval(formals(draft_report)$translations)) {
 
   qmd_out <- ""
-  # if(!rlang::is_string(qmd_snippet) || stringi::stri_isempty(qmd_snippet)) return("")
+  # if(!is_string(qmd_snippet) || stringi::stri_isempty(qmd_snippet)) return("")
 
   qmd_snippet <- stringi::stri_remove_empty_na(qmd_snippet)
   qmd_snippet_mesos <- stringi::stri_remove_empty_na(qmd_snippet_mesos)
 
-  if(rlang::is_true(mesos_report) &&
-     rlang::is_string(mesos_var) &&
-     rlang::is_string(qmd_snippet_mesos) &&
+  if(isTRUE(mesos_report) &&
+     is_string(mesos_var) &&
+     is_string(qmd_snippet_mesos) &&
      !stringi::stri_isempty(qmd_snippet_mesos)) {
     stringi::stri_c(ignore_null=TRUE, qmd_out,
                    if(panel_tabset_mesos) stringi::stri_c(ignore_null=TRUE, "::: {.panel-tabset}",

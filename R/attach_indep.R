@@ -1,5 +1,5 @@
 attach_indep2 <- function(refined_chapter_overview) {
-  if(!rlang::is_null(refined_chapter_overview$.variable_role)) {
+  if(!is.null(refined_chapter_overview$.variable_role)) {
 
     indep_df <- refined_chapter_overview
     indep_df <- dplyr::bind_rows(indep_df, data.frame(.variable_name = NA_character_))

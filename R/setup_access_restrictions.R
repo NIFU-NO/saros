@@ -47,7 +47,7 @@ refer_main_password_file <- function(x=".main_htpasswd_private",
   lapply(usernames, FUN = function(user) {
     passwd <- master_table[master_table$username == user, "password"]
     if(length(passwd)>1) cli::cli_abort("Multiple entries found for username {user}.")
-    if(!rlang::is_string(passwd) || nchar(passwd)==0) {
+    if(!is_string(passwd) || nchar(passwd)==0) {
       if(isFALSE(append_users)) cli::cli_abort("Unable to find password for username {user}.")
       if(password_input == "prompt") {
 
@@ -83,14 +83,14 @@ refer_main_password_file <- function(x=".main_htpasswd_private",
 write_htpasswd_file <- function(x, file, header=FALSE) {
   utils::write.table(x = x, file = file,
                      quote = FALSE, sep = ":",
-                     col.names = if(rlang::is_true(header)) c("username", "password") else FALSE,
+                     col.names = if(isTRUE(header)) c("username", "password") else FALSE,
                      row.names = FALSE,
                      fileEncoding = "UTF-8")
 
 }
 
 obtain_mesos_folders_from_parent_folder <- function(x) {
-  if(!rlang::is_string(x) || !file.exists(x)) {
+  if(!is_string(x) || !file.exists(x)) {
     cli::cli_abort("{.arg x} does not exist: {.file {x}}")
   }
   list.dirs(path = x, full.names = FALSE, recursive = FALSE)
@@ -107,7 +107,7 @@ validate_access_folder_paths <- function(remote_basepath,
   rel_path_base_to_parent_of_user_restricted_folder <- file.path(local_basepath, rel_path_base_to_parent_of_user_restricted_folder)
   warnabort_fn <- if(isTRUE(warn)) cli::cli_warn else cli::cli_abort
   for(path in c(remote_basepath, local_basepath, rel_path_base_to_parent_of_user_restricted_folder)) {
-    if(!rlang::is_string(path)) {
+    if(!is_string(path)) {
       warnabort_fn("{.arg {path}} must be a string.")
     }
   }
@@ -279,7 +279,7 @@ setup_access_restrictions <- function(remote_basepath = "/home/",
                                  rel_path_base_to_parent_of_user_restricted_folder = rel_path_base_to_parent_of_user_restricted_folder)
   }
 
-  if(!rlang::is_null(username_folder_matching_df) &&
+  if(!is.null(username_folder_matching_df) &&
      (!inherits(username_folder_matching_df, "data.frame") ||
      !all(c("folder", "username") %in% colnames(username_folder_matching_df)))) {
     cli::cli_abort("{.arg username_folder_matching_df} must be a data.frame with columns 'folder' and 'username', not {.obj_type_friendly {username_folder_matching_df}}.")

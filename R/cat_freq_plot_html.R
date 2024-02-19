@@ -55,7 +55,7 @@ prep_cat_freq_plot_html <-
                               .data$.count,
                               .data$.proportion*100,
                               .data$.variable_label),
-                    .tooltip = ifelse(!is.na(.data$.tooltip) & rlang::is_string(indep_vars),
+                    .tooltip = ifelse(!is.na(.data$.tooltip) & is_string(indep_vars),
                                       yes = sprintf(fmt = stringi::stri_c("%s", "%s", sep="\n", ignore_null = TRUE),
                                                     .data$.tooltip,
                                                     .data[[indep_vars]]),
@@ -108,7 +108,7 @@ prep_cat_freq_plot_html <-
                      axis.text.y = if(hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y", size = dots$main_font_size),
                      plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
                      legend.position = "bottom",
-                     legend.justification = if(!rlang::is_string(indep_vars)) c(-.15, 0) else c(-.35, 0),
+                     legend.justification = if(!is_string(indep_vars)) c(-.15, 0) else c(-.35, 0),
                      legend.direction = "horizontal",
                      legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$main_font_size),
                      strip.placement = "outside",
@@ -214,7 +214,7 @@ embed_cat_freq_plot <-
       data_out[[names(indep_pos)]] <- forcats::fct_rev(data_out[[names(indep_pos)]])
     }
     if(dplyr::n_distinct(data_out$.category, na.rm = dots$showNA == "never") == 2 &&
-       !rlang::is_null(dots$colour_2nd_binary_cat)) {
+       !is.null(dots$colour_2nd_binary_cat)) {
       data_out$.category <- forcats::fct_rev(data_out$.category)
     }
 
@@ -227,7 +227,7 @@ embed_cat_freq_plot <-
         !!!dots
         )
 
-    if(!rlang::is_null(dots$label_separator)) {
+    if(!is.null(dots$label_separator)) {
       indep_label <- unname(get_raw_labels(data = data, col_pos = indep_pos))
       attr(chart, "saros_caption") <-
         get_raw_labels(data = data, col_pos = dep_pos) %>%

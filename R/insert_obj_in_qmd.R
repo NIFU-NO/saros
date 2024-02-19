@@ -17,7 +17,7 @@ insert_obj_in_qmd <-
            call = rlang::caller_env()) {
 
     # Early returns
-    if(!rlang::is_string(filepath)) return("")
+    if(!is_string(filepath)) return("")
 
     if(stringi::stri_detect(element_name, fixed = "text")) {
       text <- tryCatch(serialize_read(filepath_txt, format = serialized_format)[[1]],

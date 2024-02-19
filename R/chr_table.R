@@ -29,7 +29,7 @@ embed_chr_table_html <-
   out <- dplyr::distinct(data, dplyr::pick({{dep}}))
   names(out) <- " "
 
-  mesos <- if(rlang::is_string(mesos_group)) stringi::stri_c(ignore_null=TRUE, dots$translations$mesos_group_prefix,
+  mesos <- if(is_string(mesos_group)) stringi::stri_c(ignore_null=TRUE, dots$translations$mesos_group_prefix,
                                                                   mesos_group,
                                                             dots$translations$mesos_group_suffix)
   attr(out, "saros_caption") <-

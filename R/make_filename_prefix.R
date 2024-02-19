@@ -30,7 +30,7 @@ make_filename_prefix <- function(
 
 
   obj_name_mesos <-
-  if(rlang::is_string(mesos_group) && !is.na(mesos_group)) {
+  if(is_string(mesos_group) && !is.na(mesos_group)) {
     stringi::stri_c(mesos_sep_string, mesos_group, ignore_null = TRUE)
   }
 
