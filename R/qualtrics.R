@@ -7,7 +7,8 @@
 #'
 #' @return Data returned with only variable labels modified.
 #' @export
-attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=FALSE) {
+attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=FALSE,
+                                    qname="qname", question_var="question") {
   if(!inherits(data, "data.frame")) cli::cli_abort("{.arg data} must be of type data.frame, not {.obj_type_friendly {data}}.")
   for(col in colnames(data)) {
 
@@ -26,7 +27,7 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
 
 
     if(!is.na(col2)) {
-      main_question <- unname(questions[questions$qname == col2, "question", drop=TRUE])
+      main_question <- unname(questions[questions[[qname]] == col2, question_var, drop=TRUE])
       main_question <- stringi::stri_trim_both(main_question)
       if(length(main_question)>0 && !is.na(main_question)) {
         attr(data[[col]], "label") <- stringi::stri_c(main_question, " - ", attr(data[[col]], "label"), ignore_null = TRUE)
