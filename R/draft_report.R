@@ -603,7 +603,7 @@ draft_report <-
                # "bi_catint_text",
                # "bi_intint_text",
 
-               # "hline",
+               "hline",
 
                "bi_catcat_prop_plot",
                "bi_catcat_freq_plot",
@@ -639,8 +639,12 @@ draft_report <-
            # Specifically for figures
            hide_label_if_prop_below = .01,
            hide_axis_text_if_single_variable = FALSE,
-           label_font_size = 8,
-           main_font_size = 8,
+           main_font_size = 10,
+           label_font_size = 3,
+           strip_font_size = 7,
+           legend_font_size = 7,
+           strip_width = 15,
+           strip_angle = 0,
            x_axis_label_width = 20,
            plot_height_multiplier_per_horizontal_line = NA,
            plot_height_multiplier_per_vertical_letter = .2,
@@ -651,7 +655,6 @@ draft_report <-
            plot_height_min = 1.5,
            vertical_height = 12,
            vertical = FALSE,
-           strip_angle = 0,
            png_scale = 1.2,
            png_width = 14,
            png_height = 16,
