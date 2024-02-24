@@ -8,8 +8,8 @@ attach_qualtrics_labels(
   data,
   questions,
   reverse_stata_replacement = FALSE,
-  qname = "qname",
-  question_var = "question"
+  questions_var = "qname",
+  questions_question = "question"
 )
 }
 \arguments{
@@ -17,7 +17,11 @@ attach_qualtrics_labels(
 
 \item{questions}{Data frame with questions obtained from \code{qualtRics::survey_questions()}}
 
-\item{reverse_stata_replacement}{If variable names have already been modified
+\item{reverse_stata_replacement}{If variable names have already been modified}
+
+\item{questions_var}{String, indicating column name in \code{questions} that indicates column names.}
+
+\item{questions_question}{String, indicating column name in \code{questions} for the full question.
 with full stops changed to underscores, this will reverse them for connection. Rarely needed. Defaults to FALSE.}
 }
 \value{

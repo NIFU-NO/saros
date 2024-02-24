@@ -3,12 +3,14 @@
 #' @param data Data.frame with original variable names.
 #' @param questions Data frame with questions obtained from `qualtRics::survey_questions()`
 #' @param reverse_stata_replacement If variable names have already been modified
+#' @param questions_var String, indicating column name in `questions` that indicates column names.
+#' @param questions_question String, indicating column name in `questions` for the full question.
 #' with full stops changed to underscores, this will reverse them for connection. Rarely needed. Defaults to FALSE.
 #'
 #' @return Data returned with only variable labels modified.
 #' @export
 attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=FALSE,
-                                    qname="qname", question_var="question") {
+                                    questions_var="qname", questions_question="question") {
   if(!inherits(data, "data.frame")) cli::cli_abort("{.arg data} must be of type data.frame, not {.obj_type_friendly {data}}.")
   for(col in colnames(data)) {
 
@@ -27,7 +29,7 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
 
 
     if(!is.na(col2)) {
-      main_question <- unname(questions[questions[[qname]] == col2, question_var, drop=TRUE])
+      main_question <- unname(questions[questions[[questions_var]] == col2, questions_question, drop=TRUE])
       main_question <- stringi::stri_trim_both(main_question)
       main_question <- stringi::stri_remove_empty_na(main_question)
       if(length(main_question)>0 && !all(is.na(main_question))) {
@@ -90,10 +92,10 @@ sanitize_labels <- function(data,
       # Replace references with those provided in questions, if any
       if(!is.null(questions) &&
          is.data.frame(questions) &&
-         colnames(questions) == c("qid", "qname", "question", "force_resp")) {
+         colnames(questions) == c("qid", "questions_var", "question", "force_resp")) {
         reference_id <- stringi::stri_match_all_regex(label,
                                                       pattern = "\\$\\{q://([[:alnum:]]+)/ChoiceGroup/SelectedChoices\\}")[[1]][1,2]
-        reference_var <- questions[questions$qid == reference_id, "qname"]
+        reference_var <- questions[questions$qid == reference_id, "questions_var"]
         if(is_string(reference_var) && !is.na(reference_var) &&
            any(reference_var %in% colnames(data))) {
           reference_values <- unique(data[[reference_var]])
