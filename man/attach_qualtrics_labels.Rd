@@ -4,7 +4,13 @@
 \alias{attach_qualtrics_labels}
 \title{Re-attach label information from Qualtrics not obtained from regular data downloads}
 \usage{
-attach_qualtrics_labels(data, questions, reverse_stata_replacement = FALSE)
+attach_qualtrics_labels(
+  data,
+  questions,
+  reverse_stata_replacement = FALSE,
+  qname = "qname",
+  question_var = "question"
+)
 }
 \arguments{
 \item{data}{Data.frame with original variable names.}
