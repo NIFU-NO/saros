@@ -1,5 +1,10 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# saros 1.0.1.9003
+
+- Added more arguments for plot text sizes, with more useful defaults for Word and HTML layouts.
+
+
 # saros 1.0.1.9002
 
 # saros 1.0.1.9001
