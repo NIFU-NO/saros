@@ -22,7 +22,7 @@ draft_report(
   qmd_end_section_filepath = NULL,
   index_filename = "index.qmd",
   element_names = c("uni_cat_prop_plot", "uni_cat_freq_plot", "uni_cat_table",
-    "uni_chr_table", "bi_catcat_prop_plot", "bi_catcat_freq_plot",
+    "uni_chr_table", "hline", "bi_catcat_prop_plot", "bi_catcat_freq_plot",
     "bi_catcat_prop_plot2", "bi_catcat_freq_plot2", "bi_catcat_table", "bi_sigtest"),
   sort_by = ".upper",
   data_label = saros::get_data_label_opts(),
@@ -44,8 +44,12 @@ draft_report(
   data_label_decimal_symbol = ".",
   hide_label_if_prop_below = 0.01,
   hide_axis_text_if_single_variable = FALSE,
-  label_font_size = 8,
-  main_font_size = 8,
+  main_font_size = 10,
+  label_font_size = 3,
+  strip_font_size = 7,
+  legend_font_size = 7,
+  strip_width = 15,
+  strip_angle = 0,
   x_axis_label_width = 20,
   plot_height_multiplier_per_horizontal_line = NA,
   plot_height_multiplier_per_vertical_letter = 0.2,
@@ -56,7 +60,6 @@ draft_report(
   plot_height_min = 1.5,
   vertical_height = 12,
   vertical = FALSE,
-  strip_angle = 0,
   png_scale = 1.2,
   png_width = 14,
   png_height = 16,
@@ -374,23 +377,21 @@ NOTE: Future versions will likely distinguish between element_types.}
 
 Whether to hide text on the y-axis label if just a single variable}
 
-\item{label_font_size}{\emph{Data labels font size}
-
-\verb{scalar<integer>} // \emph{default:} \code{10} (\code{optional})
-
-Font size for data labels.}
-
-\item{main_font_size}{\emph{Main font size}
+\item{main_font_size, label_font_size, strip_font_size, legend_font_size}{\emph{Font sizes}
 
 \verb{scalar<integer>} // \emph{default:} \code{12} (\code{optional})
 
-Font size for all other text.}
+Font sizes for general text (10), data label text (3), strip text (7) and legend text (7).}
 
-\item{x_axis_label_width}{\emph{X-axis label width of plots}
+\item{strip_angle}{\emph{Angle on the facet strip in plots}
+
+\verb{scalar<double>} // \emph{default:} \code{0}}
+
+\item{x_axis_label_width, strip_width}{\emph{Label width of x-axis and strip texts in plots}
 
 \verb{scalar<integer>} // \emph{default:} \code{20} (\code{optional})
 
-Width of the labels used for the categorical column names.}
+Width of the labels used for the categorical column names in x-axis texts and strip texts.}
 
 \item{plot_height_multiplier_per_vertical_letter, plot_height_multiplier_per_horizontal_line}{\emph{Height multiplier}
 
@@ -440,10 +441,6 @@ Height for vertical layout of plot? NEEDS CHECKING}
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
 If FALSE (default), then horizontal plots.}
-
-\item{strip_angle}{\emph{Angle on the facet strip in plots}
-
-\verb{scalar<double>} // \emph{default:} \code{0}}
 
 \item{png_scale}{\emph{PNG scale}
 

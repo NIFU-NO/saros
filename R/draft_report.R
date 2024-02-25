@@ -212,17 +212,11 @@
 #'
 #'   Whether to return the raw static element.
 #'
-#' @param label_font_size *Data labels font size*
-#'
-#'   `scalar<integer>` // *default:* `10` (`optional`)
-#'
-#'   Font size for data labels.
-#'
-#' @param main_font_size *Main font size*
+#' @param main_font_size,label_font_size,strip_font_size,legend_font_size *Font sizes*
 #'
 #'   `scalar<integer>` // *default:* `12` (`optional`)
 #'
-#'   Font size for all other text.
+#'   Font sizes for general text (10), data label text (3), strip text (7) and legend text (7).
 #'
 #' @param colour_palette_nominal,colour_palette_ordinal *Colour palettes (nominal and ordinal)*
 #'
@@ -254,11 +248,11 @@
 #'
 #'   If FALSE (default), then horizontal plots.
 #'
-#' @param x_axis_label_width *X-axis label width of plots*
+#' @param x_axis_label_width,strip_width *Label width of x-axis and strip texts in plots*
 #'
 #'   `scalar<integer>` // *default:* `20` (`optional`)
 #'
-#'   Width of the labels used for the categorical column names.
+#'   Width of the labels used for the categorical column names in x-axis texts and strip texts.
 #'
 #' @param reps *Number of permutations*
 #'
@@ -603,7 +597,7 @@ draft_report <-
                # "bi_catint_text",
                # "bi_intint_text",
 
-               # "hline",
+               "hline",
 
                "bi_catcat_prop_plot",
                "bi_catcat_freq_plot",
@@ -639,8 +633,12 @@ draft_report <-
            # Specifically for figures
            hide_label_if_prop_below = .01,
            hide_axis_text_if_single_variable = FALSE,
-           label_font_size = 8,
-           main_font_size = 8,
+           main_font_size = 10,
+           label_font_size = 3,
+           strip_font_size = 7,
+           legend_font_size = 7,
+           strip_width = 15,
+           strip_angle = 0,
            x_axis_label_width = 20,
            plot_height_multiplier_per_horizontal_line = NA,
            plot_height_multiplier_per_vertical_letter = .2,
@@ -651,7 +649,6 @@ draft_report <-
            plot_height_min = 1.5,
            vertical_height = 12,
            vertical = FALSE,
-           strip_angle = 0,
            png_scale = 1.2,
            png_width = 14,
            png_height = 16,
