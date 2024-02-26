@@ -228,7 +228,9 @@ prep_cat_prop_plot_html <-
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' embed_cat_prop_plot(data = ex_survey, dep = b_1:b_3)
+#' }
 embed_cat_prop_plot <-
   function(data,
            ...,

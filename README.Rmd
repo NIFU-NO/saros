@@ -52,13 +52,6 @@ pak::pak("sda030/saros")
 ```
 
 
-## Initialize a social science project
-
-```{r example}
-### CURRENTLY NOT WORKING. MOVE TO ANOTHER PACKAGE?
-#> saros::initialize(folder = getwd())
-```
-
 ## Draft a report
 ```{r example2}
 # Define temporary folder for storing the elements
@@ -99,8 +92,6 @@ output_index_qmd <-
                hide_label_if_prop_below = .05, 
                hide_test_if_n_below = 10,
                mesos_first = TRUE,
-               colour_palette_nominal = nifutheme::nifu_cols(),
-               colour_palette_ordinal = nifutheme::nifu_cols("reds"),
                digits = 0,
                data_label_decimal_symbol = ",",
              path = tempdir())
