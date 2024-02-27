@@ -10,7 +10,8 @@
 - `setup_access_restrictions` now accepts NULL password input.
 - `setup_access_restrictions` now can warn instead of error if `rel_parent_path` does not exist.
 - `sort_by` now correctly sorts with `descend=TRUE` for ".upper", etc.
-- fixed `list_available_element_types`
+- Fixed `list_available_element_types`
+- Set one long-running test for `draft_report` to only run on maintainer's local computer.
 
 
 # saros 1.0.1
