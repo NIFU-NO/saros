@@ -1,6 +1,6 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
-# saros 1.0.2
+# saros 1.0.3
 
 - Added more arguments for plot text sizes, with more useful defaults for Word and HTML layouts.
 - `attach_qualtrics_labels` is now more flexible.
