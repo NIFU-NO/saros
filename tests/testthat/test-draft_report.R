@@ -20,7 +20,7 @@ testthat::test_that("draft_report", {
 
   ##############################
 
-  if(!Sys.getenv("USERNAME") == "py128") { # Run expensive >10 min test only for maintainer
+  if(Sys.getenv("USERNAME") == "py128") { # Run expensive >10 min test only for maintainer
   tmpdir <- file.path(tempdir(), "test-draft_report2")
   data <- saros::ex_survey |>
     dplyr::filter(f_uni %in% c("Uni of A", "Uni of B"))
