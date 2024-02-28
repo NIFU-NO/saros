@@ -51,6 +51,7 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
 #' @param data data.frame or tibble
 #' @param sep String, separates main question from subquestion
 #' @param multi_sep_replacement String. If multiple sep are found, replace the first ones with this.
+#' @param replace_ascii_with_utf Flag. If TRUE, downloads a list from W3 used to convert html characters as ASCII to UTF8.
 #' @param questions Data frame with questions obtained from `qualtRics::survey_questions()`
 #'
 #' @return Identical data.frame as input, with only variable labels changed.
@@ -61,9 +62,11 @@ attach_qualtrics_labels <- function(data, questions, reverse_stata_replacement=F
 sanitize_labels <- function(data,
                             sep = " - ",
                             multi_sep_replacement = ": ",
+                            replace_ascii_with_utf = FALSE,
                             questions = NULL) {
 
   # scrape lookup table of accented char html codes, from the 2nd table on this page
+  if(isTRUE(replace_ascii_with_utf)) {
   ref_url <- 'http://www.w3schools.com/charsets/ref_html_8859.asp'
   cols <- c("Character", "Entity Name")
   char_table <- rvest::read_html(ref_url)
@@ -72,6 +75,7 @@ sanitize_labels <- function(data,
   char_table <- lapply(char_table, function(x) x[, cols])
   char_table <- do.call(rbind, char_table)
   char_table <- char_table[!duplicated(char_table[[cols[2]]]) & char_table[[cols[2]]] != "", ]
+  }
 
   # here's a test string loaded with different html accents
   # test_str <- '&Agrave; &Aacute; &Acirc; &Atilde; &Auml; &Aring; &AElig; &Ccedil; &Egrave; &Eacute; &Ecirc; &Euml; &Igrave; &Iacute; &Icirc; &Iuml; &ETH; &Ntilde; &Ograve; &Oacute; &Ocirc; &Otilde; &Ouml; &times; &Oslash; &Ugrave; &Uacute; &Ucirc; &Uuml; &Yacute; &THORN; &szlig; &agrave; &aacute; &acirc; &atilde; &auml; &aring; &aelig; &ccedil; &egrave; &eacute; &ecirc; &euml; &igrave; &iacute; &icirc; &iuml; &eth; &ntilde; &ograve; &oacute; &ocirc; &otilde; &ouml; &divide; &oslash; &ugrave; &uacute; &ucirc; &uuml; &yacute; &thorn; &yuml;'
@@ -83,11 +87,7 @@ sanitize_labels <- function(data,
     label <- attr(data[[var]], "label")
 
     if(is_string(label)) {
-      for(i in seq_len(nrow(char_table))) {
-        label <- stringi::stri_replace_all_fixed(str = label,
-                                                 pattern = char_table[i, cols[2], drop=TRUE],
-                                                 replacement = char_table[i, cols[1], drop=TRUE])
-      }
+
 
       # Replace references with those provided in questions, if any
       if(!is.null(questions) &&
@@ -105,6 +105,14 @@ sanitize_labels <- function(data,
           label <- stringi::stri_replace_all_regex(label,
                                                  pattern = "\\$\\{q://[[:alnum:]]+/ChoiceGroup/SelectedChoices\\}",
                                                  replacement = reference_values)
+        }
+      }
+
+      if(isTRUE(replace_ascii_with_utf)) {
+        for(i in seq_len(nrow(char_table))) {
+          label <- stringi::stri_replace_all_fixed(str = label,
+                                                   pattern = char_table[i, cols[2], drop=TRUE],
+                                                   replacement = char_table[i, cols[1], drop=TRUE])
         }
       }
 

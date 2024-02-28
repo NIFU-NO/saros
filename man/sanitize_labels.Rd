@@ -8,6 +8,7 @@ sanitize_labels(
   data,
   sep = " - ",
   multi_sep_replacement = ": ",
+  replace_ascii_with_utf = FALSE,
   questions = NULL
 )
 }
@@ -17,6 +18,8 @@ sanitize_labels(
 \item{sep}{String, separates main question from subquestion}
 
 \item{multi_sep_replacement}{String. If multiple sep are found, replace the first ones with this.}
+
+\item{replace_ascii_with_utf}{Flag. If TRUE, downloads a list from W3 used to convert html characters as ASCII to UTF8.}
 
 \item{questions}{Data frame with questions obtained from \code{qualtRics::survey_questions()}}
 }

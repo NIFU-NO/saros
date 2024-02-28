@@ -12,7 +12,7 @@
 - `sort_by` now correctly sorts with `descend=TRUE` for ".upper", etc.
 - Fixed `list_available_element_types`
 - Set one long-running test for `draft_report` to only run on maintainer's local computer.
-
+- `sanitize_labels` now has option to translate ASCII HTML-escaped characters to unicode.
 
 # saros 1.0.1
 
