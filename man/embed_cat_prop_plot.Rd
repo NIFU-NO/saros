@@ -65,5 +65,7 @@ ggplot
 Embed Interactive Categorical Plot
 }
 \examples{
+\donttest{
 embed_cat_prop_plot(data = ex_survey, dep = b_1:b_3)
+}
 }

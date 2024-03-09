@@ -1,4 +1,4 @@
-test_that("rename_by_labels", {
+testthat::test_that("rename_by_labels", {
   suppressMessages(library(dplyr))
   library(labelled)
   testthat::expect_warning(object = {

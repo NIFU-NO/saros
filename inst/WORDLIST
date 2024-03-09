@@ -47,6 +47,7 @@ htpasswd
 https
 ifany
 indep
+maintainer's
 mesos
 missingess
 mschart
@@ -73,5 +74,6 @@ tabset
 tibble
 tibbles
 tidyselect
+unicode
 vec
 yaml

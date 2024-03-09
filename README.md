@@ -62,13 +62,6 @@ install.packages("pak")
 pak::pak("sda030/saros")
 ```
 
-## Initialize a social science project
-
-``` r
-### CURRENTLY NOT WORKING. MOVE TO ANOTHER PACKAGE?
-#> saros::initialize(folder = getwd())
-```
-
 ## Draft a report
 
 ``` r
@@ -82,7 +75,7 @@ output_index_qmd <-
              )
 #> Refining chapter_overview...Not using the following variables in `data`: `x2_human`, `a_7`, `a_8`, and
 #> `resp_status`.                             Generating for chapter Introduction: 1_Introduction                                                    Generating for chapter Ambivalence: 2_Ambivalence                                                  Generating for chapter Big mysteries: 3_Big_mysterie                                                     Generating for chapter Confidence: 4_Confidence                                                Generating for chapter Doubt: 5_Doubt                                      
-#> 77.14 4.67 105.45 NA NA
+#> 200.06 28.83 275.59 NA NA
 quarto::quarto_render(output_index_qmd, as_job = FALSE)
 #> pandoc 
 #>   to: html
@@ -133,8 +126,6 @@ output_index_qmd <-
                hide_label_if_prop_below = .05, 
                hide_test_if_n_below = 10,
                mesos_first = TRUE,
-               colour_palette_nominal = nifutheme::nifu_cols(),
-               colour_palette_ordinal = nifutheme::nifu_cols("reds"),
                digits = 0,
                data_label_decimal_symbol = ",",
              path = tempdir())
@@ -142,18 +133,8 @@ output_index_qmd <-
 #> `a_8`, and `resp_status`. Generating for chapter Introduction: 1_Introduction
 #> Generating for chapter Ambivalence: 2_Ambivalence Generating for chapter Big
 #> mysteries: 3_Big_mysterie Generating for chapter Confidence: 4_Confidence
-#> Warning: Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
-#> Fewer colours in user-provided colour palette than needed.
 #> Generating for chapter Doubt: 5_Doubt
-#> 85.45 6.3 108.1 NA NA
+#> 216.97 32.25 296.64 NA NA
 ```
 
 ``` r
@@ -185,7 +166,7 @@ system.time( # 519 sec
 #>   
 #> Output created: main_index.html
 #>    user  system elapsed 
-#>    0.05    0.00    2.99
+#>    0.00    0.00    6.02
 if(interactive()) {
   browseURL(fs::path(tempdir(), "Uni of C", "Uni of C_main_index.html"))
 }
