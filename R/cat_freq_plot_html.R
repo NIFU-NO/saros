@@ -108,6 +108,7 @@ prep_cat_freq_plot_html <-
                      axis.text.x = ggiraph::element_text_interactive(size = dots$main_font_size),
                      axis.text.y = if(hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y", size = dots$main_font_size),
                      plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
+                     legend.location = "plot",
                      legend.position = "bottom",
                      legend.justification = "left", #if(!is_string(indep_vars)) c(-.15, 0) else c(-.35, 0),
                      legend.direction = "horizontal",
