@@ -60,7 +60,7 @@ crosstable3.data.frame <-
       names(out)[names(out) == .x] <- ".category"
       col <- out$.category
 
-      if(!is.character(col) &&
+      if(#!is.character(col) &&
          !is.factor(col) &&
          dplyr::n_distinct(col, na.rm = FALSE) <= 10) {
         out$.category <- factor(col)
@@ -104,14 +104,28 @@ crosstable3.data.frame <-
       out <- out[rlang::inject(order(!!!out[, c(indep, ".category"), drop = FALSE])), ]
       summary_mean <- out
       summary_mean$.mean <- suppressWarnings(as.numeric(summary_mean$.category))
-        summary_mean <- stats::aggregate(x = .mean ~ ., data = summary_mean[, c(indep, ".mean"), drop = FALSE], FUN = mean, na.rm = TRUE)
+      summary_mean <- tryCatch(
+        stats::aggregate(x = .mean ~ ., data = summary_mean[, c(indep, ".mean"), drop = FALSE], FUN = mean, na.rm = TRUE),
+        error = function(e) {
+          cols <- c(indep, ".mean")
+          data.frame(matrix(NA, ncol = length(cols), dimnames = list(NULL, cols)))
+        })
 
       summary_prop <- out
       summary_prop$.count <- 1L
-      summary_prop <- stats::aggregate(x = summary_prop$.count, by = summary_prop[, c(indep, ".category"), drop = FALSE], FUN = length, simplify = TRUE)
-      names(summary_prop)[names(summary_prop) == "x"] <- ".count" ## FAKE SOLUTION, A VARIABLE CALLED x will break it all
-      grouped_count <- stats::aggregate(x = summary_prop$.count, by = summary_prop[, indep, drop = FALSE], FUN = sum, na.rm=TRUE, simplify = TRUE)
+      summary_prop <- tryCatch(
+        stats::aggregate(x = summary_prop$.count, by = summary_prop[, c(indep, ".category"), drop = FALSE], FUN = length, simplify = TRUE),
+        error = function(e) {
+          cols <- c(indep, ".category")
+          data.frame(matrix(NA, ncol = length(cols), dimnames = list(NULL, cols)))
+        })
 
+      names(summary_prop)[names(summary_prop) == "x"] <- ".count" ## FAKE SOLUTION, A VARIABLE CALLED x will break it all
+      grouped_count <- tryCatch(
+        stats::aggregate(x = summary_prop$.count, by = summary_prop[, indep, drop = FALSE], FUN = sum, na.rm=TRUE, simplify = TRUE),
+        error = function(e) {
+          data.frame(matrix(NA, ncol = length(indep), dimnames = list(NULL, indep)))
+        })
       summary_prop <- merge(summary_prop, grouped_count, by = indep)
       summary_prop$.proportion <- summary_prop$.count / summary_prop$x
       summary_prop$.category <- factor(x = summary_prop$.category,
