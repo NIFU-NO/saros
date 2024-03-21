@@ -38,9 +38,11 @@ gen_qmd_index <-
 
     if(is.character(chapter_filepaths)) {
       main_section <-
-        unlist(lapply(chapter_filepaths,
-                      FUN = function(.x) stringi::stri_c('{{< include "', .x, '" >}}', ignore_null=TRUE)))
-      main_section <-  stringi::stri_c(main_section, ignore_null=TRUE, collapse = "\n\n")
+'```{r}
+for(file in list.files(pattern = "^[^_].+.qmd", include.dirs = FALSE, recursive = FALSE, no.. = TRUE)) {
+  knitr::knit_child(file, quiet=TRUE)
+}
+'
     }
     report_link <- if(is.character(report_filepath)) {
       stringi::stri_c(dots$translations$download_report, "\n-\t[(PDF)](_", dots$title, ".pdf)",
