@@ -9,6 +9,7 @@ process_yaml <- function(yaml_file = NULL,
     yaml_section <-
       list(format = format,
            echo = FALSE,
+           `fig-dpi` = 800,
            authors = authors)
   } else {
     yaml_section <- yaml::read_yaml(file = yaml_file)
