@@ -34,13 +34,20 @@ gen_qmd_index <-
       process_yaml(yaml_file = yaml_file,
                    format = if(is.character(chapter_filepaths)) "typst" else "html",
                    title = dots$title,
-                   authors = dots$authors)
+                   authors = dots$authors[!is.na(dots$authors)])
 
     if(is.character(chapter_filepaths)) {
       main_section <-
-        unlist(lapply(chapter_filepaths,
-                      FUN = function(.x) stringi::stri_c('{{< include "', .x, '" >}}', ignore_null=TRUE)))
-      main_section <-  stringi::stri_c(main_section, ignore_null=TRUE, collapse = "\n\n")
+'
+```{r}
+#| results: asis
+list.files(pattern="^[^_].+\\\\.qmd", recursive = FALSE, include.dirs = FALSE, no.. = TRUE) |>
+  grep(x=_, pattern = "index\\\\.qmd", value=TRUE, invert=TRUE) |>
+  lapply(X=_, FUN = function(x) knitr::knit_child(x, quiet=TRUE)) |>
+  unlist() |>
+  cat(sep = "\\n")
+```
+'
     }
     report_link <- if(is.character(report_filepath)) {
       stringi::stri_c(dots$translations$download_report, "\n-\t[(PDF)](_", dots$title, ".pdf)",
