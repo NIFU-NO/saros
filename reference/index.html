@@ -44,7 +44,152 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="main-use">Main use<a class="anchor" aria-label="anchor" href="#main-use"></a></h2>
+      
+      <p class="section-desc"></p><p>The only functions you will probably use, in the order listed</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="draft_report.html">draft_report()</a></code> 
+        </dt>
+        <dd>Automatically Draft a Quarto Report</dd>
+      </dl><dl><dt>
+          
+          <code><a href="prepare_safe_render.html">prepare_safe_render()</a></code> 
+        </dt>
+        <dd>Convenience function to prepare, copy and render website</dd>
+      </dl><dl><dt>
+          
+          <code><a href="quarto_render_saros.html">quarto_render_saros()</a></code> 
+        </dt>
+        <dd>Simple wrapper for quarto::quarto_render() that temporarily sets LC_ALL="C" and takes the processing time</dd>
+      </dl><dl><dt>
+          
+          <code><a href="render_full_reports.html">render_full_reports()</a></code> 
+        </dt>
+        <dd>Post-render rendering of complete reports</dd>
+      </dl><dl><dt>
+          
+          <code><a href="post_render_docx_img_replacer.html">post_render_docx_img_replacer()</a></code> 
+        </dt>
+        <dd>Post-Render All docx-files Found in The Output Folder To Replace Images with Mscharts</dd>
+      </dl></div><div class="section level2">
+      <h2 id="example-data-and-metadata">Example data and metadata<a class="anchor" aria-label="anchor" href="#example-data-and-metadata"></a></h2>
+      
+      <p class="section-desc"></p><p>You would need to create these two types of data frames.</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="ex_survey.html">ex_survey</a></code> 
+        </dt>
+        <dd>ex_survey: Mockup dataset of a survey.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="ex_survey_ch_overview.html">ex_survey_ch_overview</a></code> 
+        </dt>
+        <dd>ex_survey_ch_overview: Mock overview of chapter structure</dd>
+      </dl></div><div class="section level2">
+      <h2 id="handling-the-overwhelming-amount-of-settings-for-non-r-users">Handling the overwhelming amount of settings for non-R users<a class="anchor" aria-label="anchor" href="#handling-the-overwhelming-amount-of-settings-for-non-r-users"></a></h2>
+      
+      <p class="section-desc"></p><p>By using YAML, settings can be stored in a file that is human-readable and machine-readable. These functions allow easy reading and writing such files and using these in draft_report()</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="write_default_draft_report_args.html">write_default_draft_report_args()</a></code> 
+        </dt>
+        <dd>Write Default Arguments for <code><a href="../reference/draft_report.html">draft_report()</a></code> to YAML-file</dd>
+      </dl><dl><dt>
+          
+          <code><a href="read_default_draft_report_args.html">read_default_draft_report_args()</a></code> 
+        </dt>
+        <dd>Read Default Arguments for <code><a href="../reference/draft_report.html">draft_report()</a></code> from YAML-file</dd>
+      </dl></div><div class="section level2">
+      <h2 id="access-to-draft-report-options">Access to draft_report() options<a class="anchor" aria-label="anchor" href="#access-to-draft-report-options"></a></h2>
+      
+      <p class="section-desc"></p><p>Allows quick reference of possible options for certain arguments in <code><a href="../reference/draft_report.html">draft_report()</a></code></p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="get_data_label_opts.html">get_data_label_opts()</a></code> 
+        </dt>
+        <dd>Get Valid Data Labels for Figures and Tables</dd>
+      </dl><dl><dt>
+          
+          <code><a href="list_available_element_types.html">list_available_element_types()</a></code> 
+        </dt>
+        <dd>List All Valid Names of The Elements Argument</dd>
+      </dl></div><div class="section level2">
+      <h2 id="useful-data-preparation-tools-for-variable-labels">Useful data preparation tools for variable labels<a class="anchor" aria-label="anchor" href="#useful-data-preparation-tools-for-variable-labels"></a></h2>
+      
+      <p class="section-desc"></p><p>These functions will hopefully be moved to another package for variable labels</p>
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="swap_label_colnames.html">swap_label_colnames()</a></code> <code><a href="swap_label_colnames.html">swap_label_colnames()</a></code> 
+        </dt>
+        <dd>Swap Dataset Columns and Labels</dd>
+      </dl><dl><dt>
+          
+          <code><a href="replace_stata_labels.html">replace_stata_labels()</a></code> 
+        </dt>
+        <dd>Replace Stata Labels</dd>
+      </dl><dl><dt>
+          
+          <code><a href="rename_by_labels.html">rename_by_labels()</a></code> <code><a href="rename_by_labels.html">rename_by_labels()</a></code> 
+        </dt>
+        <dd>Rename Dataset Columns by Labels.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="remove_label_parts.html">remove_label_parts()</a></code> 
+        </dt>
+        <dd>Remove regex pattern from variable labels</dd>
+      </dl><dl><dt>
+          
+          <code><a href="sanitize_labels.html">sanitize_labels()</a></code> 
+        </dt>
+        <dd>Sanitize labels originating from e.g. Qualtrics for use in Saros</dd>
+      </dl><dl><dt>
+          
+          <code><a href="remove_special_chars_in_labels.html">remove_special_chars_in_labels()</a></code> 
+        </dt>
+        <dd>Remove Special Characters (&lt;,&gt;) in Variable Labels</dd>
+      </dl><dl><dt>
+          
+          <code><a href="attach_qualtrics_labels.html">attach_qualtrics_labels()</a></code> 
+        </dt>
+        <dd>Re-attach label information from Qualtrics not obtained from regular data downloads</dd>
+      </dl></div><div class="section level2">
+      <h2 id="useful-website-management-tools">Useful website management tools<a class="anchor" aria-label="anchor" href="#useful-website-management-tools"></a></h2>
       
       
 
@@ -56,46 +201,26 @@
 
       <dl><dt>
           
-          <code><a href="attach_qualtrics_labels.html">attach_qualtrics_labels()</a></code> 
-        </dt>
-        <dd>Re-attach label information from Qualtrics not obtained from regular data downloads</dd>
-      </dl><dl><dt>
-          
-          <code><a href="center_string.html">center_string()</a></code> 
-        </dt>
-        <dd>Center String Vector</dd>
-      </dl><dl><dt>
-          
-          <code><a href="col_to_binaries.html">col_to_binaries()</a></code> 
-        </dt>
-        <dd>Mutate a (factor, character, integer, etc) column into multiple columns,</dd>
-      </dl><dl><dt>
-          
-          <code><a href="combn_upto.html">combn_upto()</a></code> 
-        </dt>
-        <dd>Create All Possible Combinations of Vector Elements with Minimum A and
-Maximum B.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create_caption.html">create_caption()</a></code> 
-        </dt>
-        <dd>Adds caption attribute</dd>
-      </dl><dl><dt>
-          
           <code><a href="create_email_credentials.html">create_email_credentials()</a></code> 
         </dt>
         <dd>Create Data Frame Containing Email Drafts with User Credentials</dd>
       </dl><dl><dt>
           
-          <code><a href="crosstable3.html">crosstable3()</a></code> 
+          <code><a href="setup_access_restrictions.html">setup_access_restrictions()</a></code> 
         </dt>
-        <dd>Internal function for fast cross-table</dd>
-      </dl><dl><dt>
-          
-          <code><a href="draft_report.html">draft_report()</a></code> 
-        </dt>
-        <dd>Automatically Draft a Quarto Report</dd>
-      </dl><dl><dt>
+        <dd>Setup files needed for basic password-based access restriction for website</dd>
+      </dl></div><div class="section level2">
+      <h2 id="create-individual-elements-usually-called-automatically-">Create individual elements (usually called automatically)<a class="anchor" aria-label="anchor" href="#create-individual-elements-usually-called-automatically-"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="embed_cat_freq_plot.html">embed_cat_freq_plot()</a></code> 
         </dt>
@@ -135,21 +260,53 @@ Maximum B.</dd>
           <code><a href="embed_sigtest.html">embed_sigtest()</a></code> 
         </dt>
         <dd>Test Significance Based on Randomization Theory</dd>
+      </dl></div><div class="section level2">
+      <h2 id="useful-helper-functions-that-will-be-later-moved-to-respective-packages">Useful helper functions that will be later moved to respective packages<a class="anchor" aria-label="anchor" href="#useful-helper-functions-that-will-be-later-moved-to-respective-packages"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="refine_chapter_overview.html">refine_chapter_overview()</a></code> 
+        </dt>
+        <dd>Processes A 'chapter_overview' Data Frame</dd>
       </dl><dl><dt>
           
-          <code><a href="ex_survey.html">ex_survey</a></code> 
+          <code><a href="col_to_binaries.html">col_to_binaries()</a></code> 
         </dt>
-        <dd>ex_survey: Mockup dataset of a survey.</dd>
+        <dd>Mutate a (factor, character, integer, etc) column into multiple columns,</dd>
       </dl><dl><dt>
           
-          <code><a href="ex_survey_ch_overview.html">ex_survey_ch_overview</a></code> 
+          <code><a href="handpick.html">handpick()</a></code> 
         </dt>
-        <dd>ex_survey_ch_overview: Mock overview of chapter structure</dd>
+        <dd>Return character vector of manually picked data columns.</dd>
       </dl><dl><dt>
           
-          <code><a href="filename_sanitizer.html">filename_sanitizer()</a></code> 
+          <code><a href="omitted_recoder_df.html">omitted_recoder_df()</a></code> 
         </dt>
-        <dd>File/folder name sanitizer replacing space and punctuation with underscore</dd>
+        <dd>Recode Missing By Type of Missingness</dd>
+      </dl><dl><dt>
+          
+          <code><a href="subset_vector.html">subset_vector()</a></code> 
+        </dt>
+        <dd>Given Ordered Integer Vector, Return Requested Set.</dd>
+      </dl><dl><dt>
+          
+          <code><a href="center_string.html">center_string()</a></code> 
+        </dt>
+        <dd>Center String Vector</dd>
+      </dl><dl><dt>
+          
+          <code><a href="combn_upto.html">combn_upto()</a></code> 
+        </dt>
+        <dd>Create All Possible Combinations of Vector Elements with Minimum A and
+Maximum B.</dd>
       </dl><dl><dt>
           
           <code><a href="get_colour_palette.html">get_colour_palette()</a></code> 
@@ -162,16 +319,6 @@ Maximum B.</dd>
         <dd>Provide A Colour Set for A Number of Requested Colours</dd>
       </dl><dl><dt>
           
-          <code><a href="get_data_label_opts.html">get_data_label_opts()</a></code> 
-        </dt>
-        <dd>Get Valid Data Labels for Figures and Tables</dd>
-      </dl><dl><dt>
-          
-          <code><a href="handpick.html">handpick()</a></code> 
-        </dt>
-        <dd>Return character vector of manually picked data columns.</dd>
-      </dl><dl><dt>
-          
           <code><a href="hex_bw.html">hex_bw()</a></code> 
         </dt>
         <dd>Identify Suitable Font Given Background Hex Colour</dd>
@@ -180,21 +327,42 @@ Maximum B.</dd>
           <code><a href="is_colour.html">is_colour()</a></code> 
         </dt>
         <dd>Are All Colours in Vector Valid Colours</dd>
+      </dl></div><div class="section level2">
+      <h2 id="internal-functions">Internal functions<a class="anchor" aria-label="anchor" href="#internal-functions"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="create_caption.html">create_caption()</a></code> 
+        </dt>
+        <dd>Adds caption attribute</dd>
       </dl><dl><dt>
           
-          <code><a href="list_available_element_types.html">list_available_element_types()</a></code> 
+          <code><a href="crosstable3.html">crosstable3()</a></code> 
         </dt>
-        <dd>List All Valid Names of The Elements Argument</dd>
+        <dd>Internal function for fast cross-table</dd>
       </dl><dl><dt>
           
-          <code><a href="omitted_recoder_df.html">omitted_recoder_df()</a></code> 
+          <code><a href="embed_sigtest.html">embed_sigtest()</a></code> 
         </dt>
-        <dd>Recode Missing By Type of Missingness</dd>
+        <dd>Test Significance Based on Randomization Theory</dd>
       </dl><dl><dt>
           
-          <code><a href="post_render_docx_img_replacer.html">post_render_docx_img_replacer()</a></code> 
+          <code><a href="filename_sanitizer.html">filename_sanitizer()</a></code> 
         </dt>
-        <dd>Post-Render All docx-files Found in The Output Folder To Replace Images with Mscharts</dd>
+        <dd>File/folder name sanitizer replacing space and punctuation with underscore</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_colour_palette.html">get_colour_palette()</a></code> 
+        </dt>
+        <dd>Provide A Colour Set for A Number of Requested Colours</dd>
       </dl><dl><dt>
           
           <code><a href="prepare_chunk.html">prepare_chunk()</a></code> 
@@ -202,64 +370,9 @@ Maximum B.</dd>
         <dd>Internal function to prepare a chunk for a Quarto report.</dd>
       </dl><dl><dt>
           
-          <code><a href="prepare_safe_render.html">prepare_safe_render()</a></code> 
-        </dt>
-        <dd>Convenience function to prepare, copy and render website</dd>
-      </dl><dl><dt>
-          
-          <code><a href="quarto_render_saros.html">quarto_render_saros()</a></code> 
-        </dt>
-        <dd>Simple wrapper for quarto::quarto_render() that temporarily sets LC_ALL="C" and takes the processing time</dd>
-      </dl><dl><dt>
-          
-          <code><a href="read_default_draft_report_args.html">read_default_draft_report_args()</a></code> 
-        </dt>
-        <dd>Read Default Arguments for <code><a href="../reference/draft_report.html">draft_report()</a></code> from YAML-file</dd>
-      </dl><dl><dt>
-          
-          <code><a href="refine_chapter_overview.html">refine_chapter_overview()</a></code> 
-        </dt>
-        <dd>Processes A 'chapter_overview' Data Frame</dd>
-      </dl><dl><dt>
-          
-          <code><a href="remove_label_parts.html">remove_label_parts()</a></code> 
-        </dt>
-        <dd>Remove regex pattern from variable labels</dd>
-      </dl><dl><dt>
-          
-          <code><a href="remove_special_chars_in_labels.html">remove_special_chars_in_labels()</a></code> 
-        </dt>
-        <dd>Remove Special Characters (&lt;,&gt;) in Variable Labels</dd>
-      </dl><dl><dt>
-          
-          <code><a href="rename_by_labels.html">rename_by_labels()</a></code> <code><a href="rename_by_labels.html">rename_by_labels()</a></code> 
-        </dt>
-        <dd>Rename Dataset Columns by Labels.</dd>
-      </dl><dl><dt>
-          
-          <code><a href="render_full_reports.html">render_full_reports()</a></code> 
-        </dt>
-        <dd>Post-render rendering of complete reports</dd>
-      </dl><dl><dt>
-          
           <code><a href="replace_docx_imgs_with_mscharts.html">replace_docx_imgs_with_mscharts()</a></code> 
         </dt>
         <dd>Replace Images in A Quarto-Generated docx-file with Mschart docx-files</dd>
-      </dl><dl><dt>
-          
-          <code><a href="replace_stata_labels.html">replace_stata_labels()</a></code> 
-        </dt>
-        <dd>Replace Stata Labels</dd>
-      </dl><dl><dt>
-          
-          <code><a href="sanitize_labels.html">sanitize_labels()</a></code> 
-        </dt>
-        <dd>Sanitize labels originating from e.g. Qualtrics for use in Saros</dd>
-      </dl><dl><dt>
-          
-          <code><a href="setup_access_restrictions.html">setup_access_restrictions()</a></code> 
-        </dt>
-        <dd>Setup files needed for basic password-based access restriction for website</dd>
       </dl><dl><dt>
           
           <code><a href="sigtest_table.html">sigtest_table()</a></code> 
@@ -268,26 +381,12 @@ Maximum B.</dd>
 Based on Variable Types</dd>
       </dl><dl><dt>
           
-          <code><a href="subset_vector.html">subset_vector()</a></code> 
-        </dt>
-        <dd>Given Ordered Integer Vector, Return Requested Set.</dd>
-      </dl><dl><dt>
-          
           <code><a href="summarize_data.html">summarize_data()</a></code> 
         </dt>
         <dd>Summarize a survey dataset for use in tables and graphs</dd>
-      </dl><dl><dt>
-          
-          <code><a href="swap_label_colnames.html">swap_label_colnames()</a></code> <code><a href="swap_label_colnames.html">swap_label_colnames()</a></code> 
-        </dt>
-        <dd>Swap Dataset Columns and Labels</dd>
-      </dl><dl><dt>
-          
-          <code><a href="write_default_draft_report_args.html">write_default_draft_report_args()</a></code> 
-        </dt>
-        <dd>Write Default Arguments for <code><a href="../reference/draft_report.html">draft_report()</a></code> to YAML-file</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
