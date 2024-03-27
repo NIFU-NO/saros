@@ -4,6 +4,12 @@
     <loc>https://nifu-no.github.io/saros/404.html</loc>
   </url>
   <url>
+    <loc>https://nifu-no.github.io/saros/CODE_OF_CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>https://nifu-no.github.io/saros/CONTRIBUTING.html</loc>
+  </url>
+  <url>
     <loc>https://nifu-no.github.io/saros/LICENSE-text.html</loc>
   </url>
   <url>
@@ -19,6 +25,9 @@
     <loc>https://nifu-no.github.io/saros/news/index.html</loc>
   </url>
   <url>
+    <loc>https://nifu-no.github.io/saros/reference/attach_qualtrics_labels.html</loc>
+  </url>
+  <url>
     <loc>https://nifu-no.github.io/saros/reference/center_string.html</loc>
   </url>
   <url>
@@ -31,13 +40,13 @@
     <loc>https://nifu-no.github.io/saros/reference/create_caption.html</loc>
   </url>
   <url>
-    <loc>https://nifu-no.github.io/saros/reference/create_htaccess.html</loc>
+    <loc>https://nifu-no.github.io/saros/reference/create_email_credentials.html</loc>
+  </url>
+  <url>
+    <loc>https://nifu-no.github.io/saros/reference/crosstable3.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/draft_report.html</loc>
-  </url>
-  <url>
-    <loc>https://nifu-no.github.io/saros/reference/embed_bi_sigtest.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/embed_cat_freq_plot.html</loc>
@@ -61,16 +70,16 @@
     <loc>https://nifu-no.github.io/saros/reference/embed_chr_table_html.html</loc>
   </url>
   <url>
-    <loc>https://nifu-no.github.io/saros/reference/embed_uni_sigtest.html</loc>
+    <loc>https://nifu-no.github.io/saros/reference/embed_sigtest.html</loc>
   </url>
   <url>
-    <loc>https://nifu-no.github.io/saros/reference/ex_survey1.html</loc>
+    <loc>https://nifu-no.github.io/saros/reference/ex_survey.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/ex_survey_ch_overview.html</loc>
   </url>
   <url>
-    <loc>https://nifu-no.github.io/saros/reference/gen_element_and_qmd_snippet.html</loc>
+    <loc>https://nifu-no.github.io/saros/reference/filename_sanitizer.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/gen_element_and_qmd_snippet2.html</loc>
@@ -80,6 +89,9 @@
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/gen_qmd_index.html</loc>
+  </url>
+  <url>
+    <loc>https://nifu-no.github.io/saros/reference/get_colour_palette.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/get_colour_set.html</loc>
@@ -106,13 +118,13 @@
     <loc>https://nifu-no.github.io/saros/reference/omitted_recoder_df.html</loc>
   </url>
   <url>
+    <loc>https://nifu-no.github.io/saros/reference/post_render_docx_img_replacer.html</loc>
+  </url>
+  <url>
     <loc>https://nifu-no.github.io/saros/reference/prep_cat_freq_plot_docx.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/prep_cat_freq_plot_html.html</loc>
-  </url>
-  <url>
-    <loc>https://nifu-no.github.io/saros/reference/prep_cat_freq_plot_pdf.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/prep_cat_prop_plot_docx.html</loc>
@@ -121,7 +133,13 @@
     <loc>https://nifu-no.github.io/saros/reference/prep_cat_prop_plot_html.html</loc>
   </url>
   <url>
-    <loc>https://nifu-no.github.io/saros/reference/prep_cat_prop_plot_pdf.html</loc>
+    <loc>https://nifu-no.github.io/saros/reference/prepare_chunk.html</loc>
+  </url>
+  <url>
+    <loc>https://nifu-no.github.io/saros/reference/prepare_safe_render.html</loc>
+  </url>
+  <url>
+    <loc>https://nifu-no.github.io/saros/reference/quarto_render_saros.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/read_default_draft_report_args.html</loc>
@@ -130,19 +148,31 @@
     <loc>https://nifu-no.github.io/saros/reference/refine_chapter_overview.html</loc>
   </url>
   <url>
+    <loc>https://nifu-no.github.io/saros/reference/remove_label_parts.html</loc>
+  </url>
+  <url>
     <loc>https://nifu-no.github.io/saros/reference/remove_special_chars_in_labels.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/rename_by_labels.html</loc>
   </url>
   <url>
+    <loc>https://nifu-no.github.io/saros/reference/render_full_reports.html</loc>
+  </url>
+  <url>
+    <loc>https://nifu-no.github.io/saros/reference/replace_docx_imgs_with_mscharts.html</loc>
+  </url>
+  <url>
     <loc>https://nifu-no.github.io/saros/reference/replace_stata_labels.html</loc>
   </url>
   <url>
-    <loc>https://nifu-no.github.io/saros/reference/sigtest.html</loc>
+    <loc>https://nifu-no.github.io/saros/reference/sanitize_labels.html</loc>
   </url>
   <url>
-    <loc>https://nifu-no.github.io/saros/reference/stopwords.html</loc>
+    <loc>https://nifu-no.github.io/saros/reference/setup_access_restrictions.html</loc>
+  </url>
+  <url>
+    <loc>https://nifu-no.github.io/saros/reference/sigtest_table.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/subset_vector.html</loc>
@@ -152,9 +182,6 @@
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/swap_label_colnames.html</loc>
-  </url>
-  <url>
-    <loc>https://nifu-no.github.io/saros/reference/upload_to_ftp.html</loc>
   </url>
   <url>
     <loc>https://nifu-no.github.io/saros/reference/write_default_draft_report_args.html</loc>

@@ -6,7 +6,7 @@ for the function with the read_yaml_params()-function first. After the
 report files has been drafted with draft_report(), you can edit, render, and
 ultimately publish these as usual with Quarto features in RStudio.
 The index.qmd will be the main output file containing "includes" to other
-chapters.'><title>Automatically Draft a Quarto Report — draft_report • saros</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Automatically Draft a Quarto Report — draft_report"><meta property="og:description" content='The draft_report() function is the main function, and the only necessary
+chapters.'><title>Automatically Draft a Quarto Report — draft_report • saros</title><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous"><!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Automatically Draft a Quarto Report — draft_report"><meta property="og:description" content='The draft_report() function is the main function, and the only necessary
 user interface, to create semi-automated (draft) reports. It does not need to
 be the first step, however, as one might want to store and read in arguments
 for the function with the read_yaml_params()-function first. After the
@@ -24,7 +24,7 @@ chapters.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/m
     
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2.4200</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.4.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,113 +74,140 @@ chapters.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">draft_report</span><span class="op">(</span></span>
 <span>  <span class="va">data</span>,</span>
-<span>  <span class="va">chapter_overview</span>,</span>
+<span>  chapter_overview <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  path <span class="op">=</span> <span class="st">"testreport"</span>,</span>
+<span>  <span class="va">path</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"Report"</span>,</span>
 <span>  authors <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  mesos_report <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  mesos_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label_separator <span class="op">=</span> <span class="st">" - "</span>,</span>
 <span>  name_separator <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  index_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  report_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chapter_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  qmd_start_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  qmd_end_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  index_filename <span class="op">=</span> <span class="st">"index.qmd"</span>,</span>
-<span>  groupby <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chapter"</span>, <span class="st">".variable_label_prefix"</span>, <span class="st">".element_name"</span><span class="op">)</span>,</span>
-<span>  element_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"uni_cat_text"</span>, <span class="st">"uni_cat_prop_plot"</span>, <span class="st">"uni_cat_freq_plot"</span>,</span>
-<span>    <span class="st">"uni_cat_table"</span>, <span class="st">"uni_chr_table"</span>, <span class="st">"uni_sigtest"</span>, <span class="st">"hline"</span>, <span class="st">"bi_catcat_prop_plot"</span>,</span>
-<span>    <span class="st">"bi_catcat_freq_plot"</span>, <span class="st">"bi_catcat_prop_plot2"</span>, <span class="st">"bi_catcat_freq_plot2"</span>,</span>
-<span>    <span class="st">"bi_catcat_table"</span>, <span class="st">"bi_sigtest"</span><span class="op">)</span>,</span>
+<span>  element_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"uni_cat_prop_plot"</span>, <span class="st">"uni_cat_freq_plot"</span>, <span class="st">"uni_cat_table"</span>,</span>
+<span>    <span class="st">"uni_chr_table"</span>, <span class="st">"hline"</span>, <span class="st">"bi_catcat_prop_plot"</span>, <span class="st">"bi_catcat_freq_plot"</span>,</span>
+<span>    <span class="st">"bi_catcat_prop_plot2"</span>, <span class="st">"bi_catcat_freq_plot2"</span>, <span class="st">"bi_catcat_table"</span>, <span class="st">"bi_sigtest"</span><span class="op">)</span>,</span>
 <span>  sort_by <span class="op">=</span> <span class="st">".upper"</span>,</span>
 <span>  data_label <span class="op">=</span> <span class="fu">saros</span><span class="fu">::</span><span class="fu"><a href="get_data_label_opts.html">get_data_label_opts</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  always_show_bi_for_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  categories_treated_as_na <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  variables_always_at_top <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  variables_always_at_bottom <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  always_show_bi_for_indep <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  categories_treated_as_na <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  variables_always_at_top <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  variables_always_at_bottom <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  return_raw <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  panel_tabset_mesos <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  showNA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"never"</span>, <span class="st">"always"</span>, <span class="st">"ifany"</span><span class="op">)</span>,</span>
 <span>  totals <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  hide_label_if_prop_below <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  hide_bi_entry_if_sig_above <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  hide_test_if_n_below <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  hide_result_if_n_below <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  hide_chr_for_others <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  label_font_size <span class="op">=</span> <span class="fl">8</span>,</span>
-<span>  main_font_size <span class="op">=</span> <span class="fl">8</span>,</span>
+<span>  hide_variable_if_all_na <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  single_y_bivariates_if_indep_cats_above <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  single_y_bivariates_if_deps_above <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  digits <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  data_label_decimal_symbol <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  hide_label_if_prop_below <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>  hide_axis_text_if_single_variable <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  main_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  label_font_size <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  strip_font_size <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  legend_font_size <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  strip_width <span class="op">=</span> <span class="fl">15</span>,</span>
+<span>  strip_angle <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  x_axis_label_width <span class="op">=</span> <span class="fl">20</span>,</span>
-<span>  plot_height_multiplier <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
-<span>  plot_height_fixed_constant <span class="op">=</span> <span class="cn">NA_real_</span>,</span>
-<span>  plot_height_max <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  plot_height_multiplier_per_horizontal_line <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>  plot_height_multiplier_per_vertical_letter <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  plot_height_multiplier_per_facet <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  plot_height_multiplier_per_legend_line <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  plot_height_fixed_constant <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  plot_height_max <span class="op">=</span> <span class="fl">8</span>,</span>
 <span>  plot_height_min <span class="op">=</span> <span class="fl">1.5</span>,</span>
+<span>  vertical_height <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  vertical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  png_scale <span class="op">=</span> <span class="fl">1.2</span>,</span>
 <span>  png_width <span class="op">=</span> <span class="fl">14</span>,</span>
 <span>  png_height <span class="op">=</span> <span class="fl">16</span>,</span>
-<span>  vertical_height <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  max_width_obj <span class="op">=</span> <span class="fl">90</span>,</span>
-<span>  max_width_file <span class="op">=</span> <span class="fl">64</span>,</span>
 <span>  font_family <span class="op">=</span> <span class="st">"sans"</span>,</span>
-<span>  open_after_drafting <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  vertical <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  mesos_first <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  single_y_bivariate_elements <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  descend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  require_common_categories <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  flexi <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  colour_palette <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour_palette_nominal <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour_palette_ordinal <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  colour_na <span class="op">=</span> <span class="st">"gray90"</span>,</span>
 <span>  colour_2nd_binary_cat <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  digits <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  data_label_decimal_symbol <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  table_main_question_as_header <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  max_width_obj <span class="op">=</span> <span class="fl">128</span>,</span>
+<span>  max_width_file <span class="op">=</span> <span class="fl">64</span>,</span>
+<span>  max_clean_folder_name <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  open_after_drafting <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  organize_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chapter"</span>, <span class="st">".variable_label_prefix_dep"</span>, <span class="st">".variable_name_indep"</span>,</span>
+<span>    <span class="st">".element_name"</span><span class="op">)</span>,</span>
+<span>  arrange_output_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chapter"</span>, <span class="st">".variable_name_dep"</span>, <span class="st">".variable_name_indep"</span><span class="op">)</span>,</span>
+<span>  ignore_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".element_name"</span>, <span class="st">".variable_type_dep"</span>, <span class="st">"chapter"</span><span class="op">)</span>,</span>
+<span>  replace_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.variable_label_suffix_dep <span class="op">=</span> <span class="st">".variable_name_dep"</span><span class="op">)</span>,</span>
+<span>  mesos_first <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  descend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  require_common_categories <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  panel_tabset_mesos <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  pdf <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  attach_chapter_dataset <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  auxiliary_variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  flexi <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  micro <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  reps <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  information <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".variable_label"</span>, <span class="st">".category"</span>, <span class="st">".count"</span>, <span class="st">".count_se"</span>, <span class="st">".proportion"</span>,</span>
-<span>    <span class="st">".proportion_se"</span>, <span class="st">".mean"</span>, <span class="st">".mean_se"</span>, <span class="st">".data_label"</span>, <span class="st">".comb_categories"</span>,</span>
-<span>    <span class="st">".sum_value"</span><span class="op">)</span>,</span>
+<span>  information <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".variable_label_dep"</span>, <span class="st">".category"</span>, <span class="st">".count"</span>, <span class="st">".count_se"</span>,</span>
+<span>    <span class="st">".proportion"</span>, <span class="st">".proportion_se"</span>, <span class="st">".mean"</span>, <span class="st">".mean_se"</span>, <span class="st">".data_label"</span>,</span>
+<span>    <span class="st">".comb_categories"</span>, <span class="st">".sum_value"</span><span class="op">)</span>,</span>
 <span>  contents <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"intro"</span>, <span class="st">"not_used_category"</span>, <span class="st">"mode_max"</span>, <span class="st">"value_max"</span>, <span class="st">"value_min"</span>,</span>
 <span>    <span class="st">"value_diff"</span>, <span class="st">"mean_max"</span>, <span class="st">"mean_min"</span>, <span class="st">"mean_diff"</span>, <span class="st">"median_max"</span>, <span class="st">"median_min"</span>,</span>
 <span>    <span class="st">"median_diff"</span>, <span class="st">"variance_max"</span>, <span class="st">"variance_min"</span><span class="op">)</span>,</span>
 <span>  include_numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_top_bottom <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  translations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>last_sep <span class="op">=</span> <span class="st">" and "</span>, intro_prefix <span class="op">=</span></span>
-<span>    <span class="st">"We will now look at the questions asked regarding "</span>, intro_suffix <span class="op">=</span> <span class="st">""</span>,</span>
-<span>    mode_max_onfix <span class="op">=</span> <span class="st">" on "</span>, mode_max_prefix <span class="op">=</span> <span class="st">"The most common responses were "</span>,</span>
+<span>  log_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  serialized_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rds"</span>, <span class="st">"qs"</span><span class="op">)</span>,</span>
+<span>  tabular_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"delim"</span>, <span class="st">"xlsx"</span>, <span class="st">"csv"</span>, <span class="st">"csv2"</span>, <span class="st">"tsv"</span>, <span class="st">"sav"</span>, <span class="st">"dta"</span><span class="op">)</span>,</span>
+<span>  translations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>last_sep <span class="op">=</span> <span class="st">" and "</span>, download_report <span class="op">=</span> <span class="st">"Download report (PDF)"</span>,</span>
+<span>    intro_prefix <span class="op">=</span> <span class="st">"We will now look at the questions asked regarding "</span>, intro_suffix <span class="op">=</span></span>
+<span>    <span class="st">""</span>, mode_max_onfix <span class="op">=</span> <span class="st">" on "</span>, mode_max_prefix <span class="op">=</span> <span class="st">"The most common responses were "</span>,</span>
 <span>    mode_max_suffix <span class="op">=</span> <span class="st">""</span>, not_used_prefix <span class="op">=</span></span>
 <span>    <span class="st">"The following response categories were not used: "</span>, not_used_suffix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>    value_max_prefix <span class="op">=</span> <span class="st">""</span>, value_max_infix <span class="op">=</span></span>
 <span>    <span class="st">" {?is/are} the {dots$n_top_bottom} item{?s} where the most responded "</span>,</span>
-<span>    value_max_suffix <span class="op">=</span> <span class="st">""</span>, value_min_prefix <span class="op">=</span> <span class="st">""</span>, value_min_infix <span class="op">=</span></span>
-<span>    <span class="st">" {?is/are} the {dots$n_top_bottom} item{?s} where the fewest responded "</span>, </span>
-<span>    </span>
+<span>    value_max_suffix <span class="op">=</span> <span class="st">""</span>, value_min_prefix <span class="op">=</span> <span class="st">""</span>, </span>
+<span>     value_min_infix <span class="op">=</span></span>
+<span>    <span class="st">" {?is/are} the {dots$n_top_bottom} item{?s} where the fewest responded "</span>,</span>
 <span>    value_min_suffix <span class="op">=</span> <span class="st">""</span>, mean_onfix <span class="op">=</span> <span class="st">"M = "</span>, mean_max_prefix <span class="op">=</span></span>
 <span>    <span class="st">"They have highest mean on "</span>, mean_max_suffix <span class="op">=</span> <span class="st">""</span>, mean_min_prefix <span class="op">=</span></span>
 <span>    <span class="st">"They have lowest mean on "</span>, mean_min_suffix <span class="op">=</span> <span class="st">""</span>, median_onfix <span class="op">=</span> <span class="st">"Median = "</span>,</span>
 <span>    median_max_prefix <span class="op">=</span> <span class="st">"They have highest median on "</span>, median_max_suffix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>    median_min_prefix <span class="op">=</span> <span class="st">"They have lowest median on "</span>, median_min_suffix <span class="op">=</span> <span class="st">""</span>,</span>
-<span>    intro_by_prefix <span class="op">=</span> <span class="st">"We will now look at the questions asked regarding "</span>,</span>
-<span>    intro_by_infix <span class="op">=</span> <span class="st">" broken down by "</span>, intro_by_suffix <span class="op">=</span> <span class="st">""</span>, by_breakdown <span class="op">=</span> <span class="st">" by "</span>, </span>
-<span>  </span>
-<span>      n_equal_prefix <span class="op">=</span> <span class="st">" (N = "</span>, n_equal_suffix <span class="op">=</span> <span class="st">")"</span>, table_heading_N <span class="op">=</span> <span class="st">"Total (N)"</span>,</span>
-<span>    by_total <span class="op">=</span> <span class="st">"Everyone"</span>, sigtest_prefix <span class="op">=</span> <span class="st">"Significance testing of "</span>, sigtest_suffix <span class="op">=</span></span>
-<span>    <span class="st">""</span>, mesos_group_prefix <span class="op">=</span> <span class="st">" Group: "</span>, mesos_group_suffix <span class="op">=</span> <span class="st">""</span>, mesos_label_all_others</span>
-<span>    <span class="op">=</span> <span class="st">"Others"</span>, empty_chunk_text <span class="op">=</span> <span class="st">"\nText\n"</span>, flexi_input_chapter <span class="op">=</span> <span class="st">"Chapter(s):"</span>,</span>
-<span>    flexi_input_dep <span class="op">=</span> <span class="st">"Dependent variable(s):"</span>, flexi_input_indep <span class="op">=</span></span>
-<span>    <span class="st">"Independent variable:"</span>, flexi_input_mesos_group <span class="op">=</span> <span class="st">"Filter:"</span>, flexi_figure_type <span class="op">=</span></span>
-<span>    <span class="st">"Figure type:"</span>, flexi_data_label <span class="op">=</span> <span class="st">"Summary to display"</span>, </span>
-<span>     flexi_showNA <span class="op">=</span></span>
-<span>    <span class="st">"Show NA (Missing)"</span>, flexi_sort_by <span class="op">=</span> <span class="st">"Sort by"</span>, flexi_totals <span class="op">=</span> <span class="st">"Totals"</span>, flexi_digits</span>
-<span>    <span class="op">=</span> <span class="st">"Digits after decimal"</span>, flexi_table <span class="op">=</span> <span class="st">"Table"</span>, flexi_figure <span class="op">=</span> <span class="st">"Figure"</span>,</span>
-<span>    flexi_cols_variable_name <span class="op">=</span> <span class="st">"Variable name"</span>, flexi_cols_variable_label <span class="op">=</span></span>
-<span>    <span class="st">"Variable label"</span>, flexi_cols_category <span class="op">=</span> <span class="st">"Response category"</span>, flexi_cols_count <span class="op">=</span> <span class="st">"N"</span>,</span>
-<span>    flexi_cols_count_se <span class="op">=</span> <span class="st">"SE(N)"</span>, flexi_cols_proportion <span class="op">=</span> <span class="st">"Proportion"</span>,</span>
-<span>    flexi_cols_proportion_se <span class="op">=</span> <span class="st">"SE(Proportion)"</span>, flexi_cols_mean <span class="op">=</span> <span class="st">"Mean"</span>,</span>
-<span>    flexi_cols_mean_se <span class="op">=</span> <span class="st">"SE(Mean)"</span>, </span>
-<span>     flexi_cols_data_label <span class="op">=</span> <span class="st">"Data label"</span>,</span>
-<span>    flexi_cols_comb_categories <span class="op">=</span> <span class="st">"Combined categories"</span>, flexi_cols_sum_value <span class="op">=</span></span>
+<span>    intro_by_prefix <span class="op">=</span> <span class="st">"We will now look at the questions asked regarding "</span>, </span>
+<span>    </span>
+<span>    intro_by_infix <span class="op">=</span> <span class="st">" broken down by "</span>, intro_by_suffix <span class="op">=</span> <span class="st">""</span>, by_breakdown <span class="op">=</span> <span class="st">" by "</span>,</span>
+<span>    n_equal_prefix <span class="op">=</span> <span class="st">" (N &amp;equals; "</span>, n_equal_suffix <span class="op">=</span> <span class="st">")"</span>, table_heading_N <span class="op">=</span></span>
+<span>    <span class="st">"Total (N)"</span>, by_total <span class="op">=</span> <span class="st">"Everyone"</span>, sigtest_prefix <span class="op">=</span> <span class="st">"Significance testing of "</span>,</span>
+<span>    sigtest_suffix <span class="op">=</span> <span class="st">""</span>, mesos_group_prefix <span class="op">=</span> <span class="st">" Group: "</span>, mesos_group_suffix <span class="op">=</span> <span class="st">""</span>,</span>
+<span>    mesos_label_all_others <span class="op">=</span> <span class="st">"Others"</span>, empty_chunk_text <span class="op">=</span> <span class="st">"\nText\n"</span>,</span>
+<span>    flexi_input_chapter <span class="op">=</span> <span class="st">"Chapter(s):"</span>, flexi_input_dep <span class="op">=</span> <span class="st">"Dependent variable(s):"</span>,</span>
+<span>    flexi_input_indep <span class="op">=</span> <span class="st">"Independent variable:"</span>, </span>
+<span>     flexi_input_mesos_group <span class="op">=</span></span>
+<span>    <span class="st">"Filter:"</span>, flexi_figure_type <span class="op">=</span> <span class="st">"Figure type:"</span>, flexi_data_label <span class="op">=</span></span>
+<span>    <span class="st">"Summary to display"</span>, flexi_showNA <span class="op">=</span> <span class="st">"Show NA (Missing)"</span>, flexi_sort_by <span class="op">=</span> <span class="st">"Sort by"</span>,</span>
+<span>    flexi_totals <span class="op">=</span> <span class="st">"Totals"</span>, flexi_digits <span class="op">=</span> <span class="st">"Digits after decimal"</span>, flexi_table <span class="op">=</span></span>
+<span>    <span class="st">"Table"</span>, flexi_figure <span class="op">=</span> <span class="st">"Figure"</span>, flexi_cols_variable_name <span class="op">=</span> <span class="st">"Variable name"</span>,</span>
+<span>    flexi_cols_variable_label <span class="op">=</span> <span class="st">"Variable label"</span>, flexi_cols_category <span class="op">=</span></span>
+<span>    <span class="st">"Response category"</span>, flexi_cols_count <span class="op">=</span> <span class="st">"N"</span>, flexi_cols_count_se <span class="op">=</span> <span class="st">"SE(N)"</span>,</span>
+<span>    flexi_cols_proportion <span class="op">=</span> <span class="st">"Proportion"</span>, </span>
+<span>     flexi_cols_proportion_se <span class="op">=</span></span>
+<span>    <span class="st">"SE(Proportion)"</span>, flexi_cols_mean <span class="op">=</span> <span class="st">"Mean"</span>, flexi_cols_mean_se <span class="op">=</span> <span class="st">"SE(Mean)"</span>,</span>
+<span>    flexi_cols_data_label <span class="op">=</span> <span class="st">"Data label"</span>, flexi_cols_comb_categories <span class="op">=</span></span>
+<span>    <span class="st">"Combined categories"</span>, flexi_cols_sum_value <span class="op">=</span></span>
 <span>    <span class="st">"Sum of data label across combined categories"</span>, flexi_validate <span class="op">=</span></span>
 <span>    <span class="st">"Error: Columns must have some categories in common."</span>, flexi_settings <span class="op">=</span> <span class="st">"Settings"</span>,</span>
 <span>    flexi_basic_settings <span class="op">=</span> <span class="st">"Basic"</span>, flexi_advanced_settings <span class="op">=</span> <span class="st">"Advanced"</span>,</span>
-<span>    flexi_input_indep_none <span class="op">=</span> <span class="st">"&lt;none&gt;"</span>, flexi_figure_type_proportion <span class="op">=</span> <span class="st">"Proportion"</span>,</span>
+<span>    flexi_input_indep_none <span class="op">=</span> <span class="st">"&lt;none&gt;"</span>, flexi_figure_type_proportion <span class="op">=</span> <span class="st">"Proportion"</span>, </span>
+<span>    </span>
 <span>    flexi_figure_type_frequency <span class="op">=</span> <span class="st">"Frequency"</span>, flexi_hide_label_if_prop_below <span class="op">=</span></span>
 <span>    <span class="st">"Hide label if proportion below:"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -251,10 +278,10 @@ If false, returns a regular single report.</p></dd>
 <p>String to split column names in data between main question and sub-items</p></dd>
 
 
-<dt>report_yaml_file</dt>
-<dd><p><em>Path to YAML-file to insert into index.qmd</em></p>
+<dt>index_yaml_file, report_yaml_file</dt>
+<dd><p><em>Path to YAML-file to insert into index.qmd and report.qmd respectively</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Path to file used to insert header YAML, in report.</p></dd>
+<p>Path to file used to insert header YAML, in index and report files.</p></dd>
 
 
 <dt>chapter_yaml_file</dt>
@@ -272,13 +299,8 @@ If false, returns a regular single report.</p></dd>
 <dt>index_filename</dt>
 <dd><p><em>Index filename</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"index.qmd"</code> (<code>optional</code>)</p>
-<p>The name of the main index Quarto file (and its subfolder) used to collect all the chapters.</p></dd>
-
-
-<dt>groupby</dt>
-<dd><p><em>Grouping columns</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Column names used for identifying chapters and sections.</p></dd>
+<p>The name of the main index Quarto file (and its subfolder) used as landing
+page for each report. Will link to a PDF (report.qmd) which collects all chapters.</p></dd>
 
 
 <dt>element_names</dt>
@@ -291,17 +313,38 @@ If false, returns a regular single report.</p></dd>
 <dd><p><em>What to sort output by</em></p>
 <p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
 <p>Sort output (and collapse if requested).</p>
-<ul><li><p>".top"The proportion for the highest category available in the variable.</p></li>
-<li><p>".upper"The sum of the proportions for the categories above the middle category.</p></li>
-<li><p>".mid_upper"The sum of the proportions for the categories including and above the middle category.</p></li>
-<li><p>".mid_lower"The sum of the proportions for the categories including and below the middle category.</p></li>
-<li><p>".lower"The sum of the proportions for the categories below the middle category.</p></li>
-<li><p>".bottom"The proportions for the lowest category available in the variable.</p></li>
-<li><p>".variable_label"Sort by the variable labels.</p></li>
-<li><p>".id"Sort by the variable names.</p></li>
-<li><p>".by_group"The groups of the by argument.</p></li>
-<li><p>Character vector of category labels to sum together.</p></li>
-</ul></dd>
+<dl><dt>".top"</dt>
+<dd><p>The proportion for the highest category available in the variable.</p></dd>
+
+<dt>".upper"</dt>
+<dd><p>The sum of the proportions for the categories above the middle category.</p></dd>
+
+<dt>".mid_upper"</dt>
+<dd><p>The sum of the proportions for the categories including and above the middle category.</p></dd>
+
+<dt>".mid_lower"</dt>
+<dd><p>The sum of the proportions for the categories including and below the middle category.</p></dd>
+
+<dt>".lower"</dt>
+<dd><p>The sum of the proportions for the categories below the middle category.</p></dd>
+
+<dt>".bottom"</dt>
+<dd><p>The proportions for the lowest category available in the variable.</p></dd>
+
+<dt>".variable_label"</dt>
+<dd><p>Sort by the variable labels.</p></dd>
+
+<dt>".id"</dt>
+<dd><p>Sort by the variable names.</p></dd>
+
+<dt>".by_group"</dt>
+<dd><p>The groups of the by argument.</p></dd>
+
+<dt>character()</dt>
+<dd><p>Character vector of category labels to sum together.</p></dd>
+
+
+</dl></dd>
 
 
 <dt>data_label</dt>
@@ -310,8 +353,8 @@ If false, returns a regular single report.</p></dd>
 <p>One of "proportion", "percentage", "percentage_bare", "count", "mean", or "median".</p></dd>
 
 
-<dt>always_show_bi_for_by</dt>
-<dd><p><em>Always show bivariate for by-variable</em></p>
+<dt>always_show_bi_for_indep</dt>
+<dd><p><em>Always show bivariate for indep-variable</em></p>
 <p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
 <p>Specific combinations with a by-variable where bivariates should always be shown.</p></dd>
 
@@ -334,13 +377,6 @@ If false, returns a regular single report.</p></dd>
 <p>Whether to return the raw static element.</p></dd>
 
 
-<dt>panel_tabset_mesos</dt>
-<dd><p><em>mesos panel tabset</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
-<p>Whether in mesos reports the comparison group should be displayed as
-a Quarto panel tabset (<code>TRUE</code>), or above each other (<code>FALSE</code>).</p></dd>
-
-
 <dt>showNA</dt>
 <dd><p><em>Show/hide NA in categorical variables</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
@@ -351,13 +387,6 @@ a Quarto panel tabset (<code>TRUE</code>), or above each other (<code>FALSE</cod
 <dd><p><em>Include totals</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
 <p>Whether to include totals in the output.</p></dd>
-
-
-<dt>hide_label_if_prop_below</dt>
-<dd><p><em>Hide label threshold</em></p>
-<p><code>scalar&lt;numeric&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Whether to hide label if below this value.
-NOTE: Future versions will likely distinguish between element_types.</p></dd>
 
 
 <dt>hide_bi_entry_if_sig_above</dt>
@@ -373,6 +402,15 @@ Defaults to showing all.</p></dd>
 <p>If N is below this value, p-value will not be shown.</p></dd>
 
 
+<dt>hide_result_if_n_below</dt>
+<dd><p><em>Hide result if N below</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>10</code> (<code>optional</code>)</p>
+<p>Whether to hide result if N for a given datasets (or mesos group) is below
+this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
+typically exempted in the first place. This might change in the future with
+a separate argument.</p></dd>
+
+
 <dt>hide_chr_for_others</dt>
 <dd><p><em>Hide open response displays for others</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
@@ -381,28 +419,88 @@ displayed for also the entire sample (<code>FALSE</code>) or only for the mesos
 group to ensure data privacy (<code>TRUE</code>).</p></dd>
 
 
-<dt>label_font_size</dt>
-<dd><p><em>Data labels font size</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>10</code> (<code>optional</code>)</p>
-<p>Font size for data labels.</p></dd>
+<dt>hide_variable_if_all_na</dt>
+<dd><p><em>Hide variable from outputs if containing all NA</em></p>
+<p><code>scalar&lt;boolean&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>Whether to remove all variables (in particular useful for mesos) if all values are NA</p></dd>
 
 
-<dt>main_font_size</dt>
-<dd><p><em>Main font size</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>12</code> (<code>optional</code>)</p>
-<p>Font size for all other text.</p></dd>
+<dt>single_y_bivariates_if_indep_cats_above</dt>
+<dd><p><em>Single y bivariates if indep-cats above ...</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>3</code> (<code>optional</code>)</p>
+<p>Figures and tables for bivariates can become very long if the independent
+variable has many categories. This argument specifies the number of indep categories
+above which only single y bivariates should be shown.</p></dd>
 
 
-<dt>x_axis_label_width</dt>
-<dd><p><em>X-axis label width of plots</em></p>
+<dt>single_y_bivariates_if_deps_above</dt>
+<dd><p><em>Single y bivariates if dep-vars above ...</em></p>
 <p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>20</code> (<code>optional</code>)</p>
-<p>Width of the labels used for the categorical column names.</p></dd>
+<p>Figures and tables for bivariates can become very long if there are many dependent
+variables in a battery/question matrix. This argument specifies the number of dep variables
+above which only single y bivariates should be shown. Set to 0 to always show single y bivariates.</p></dd>
 
 
-<dt>plot_height_multiplier</dt>
+<dt>digits</dt>
+<dd><p><em>Decimal places</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>0L</code> (<code>optional</code>)</p>
+<p>Number of decimal places.</p></dd>
+
+
+<dt>data_label_decimal_symbol</dt>
+<dd><p><em>Decimal symbol</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"."</code> (<code>optional</code>)</p>
+<p>Decimal marker, some might prefer a comma ',' or something else entirely.
+NOTE: Future version will likely postpone formatting this until <code>gt()</code>, <code>kable()</code>, etc.</p></dd>
+
+
+<dt>hide_label_if_prop_below</dt>
+<dd><p><em>Hide label threshold</em></p>
+<p><code>scalar&lt;numeric&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Whether to hide label if below this value.
+NOTE: Future versions will likely distinguish between element_types.</p></dd>
+
+
+<dt>hide_axis_text_if_single_variable</dt>
+<dd><p><em>Hide y-axis text if just a single variable</em></p>
+<p><code>scalar&lt;boolean&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to hide text on the y-axis label if just a single variable</p></dd>
+
+
+<dt>main_font_size, label_font_size, strip_font_size, legend_font_size</dt>
+<dd><p><em>Font sizes</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>12</code> (<code>optional</code>)</p>
+<p>Font sizes for general text (10), data label text (3), strip text (7) and legend text (7).</p></dd>
+
+
+<dt>strip_angle</dt>
+<dd><p><em>Angle on the facet strip in plots</em></p>
+<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>0</code></p></dd>
+
+
+<dt>x_axis_label_width, strip_width</dt>
+<dd><p><em>Label width of x-axis and strip texts in plots</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>20</code> (<code>optional</code>)</p>
+<p>Width of the labels used for the categorical column names in x-axis texts and strip texts.</p></dd>
+
+
+<dt>plot_height_multiplier_per_vertical_letter, plot_height_multiplier_per_horizontal_line</dt>
 <dd><p><em>Height multiplier</em></p>
-<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>1</code></p>
+<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>.1</code></p>
 <p>Height in cm per chart entry, for all static plots.</p></dd>
+
+
+<dt>plot_height_multiplier_per_facet</dt>
+<dd><p><em>Plot height multiplier per facet</em></p>
+<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>0.95</code> (<code>optional</code>)</p>
+<p>Multiplier for plot height per facet. Defaults to optimal at .95, i.e. slightly less than no change (1).</p></dd>
+
+
+<dt>plot_height_multiplier_per_legend_line</dt>
+<dd><p><em>Plot height multiplier per legend line</em></p>
+<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>1.1</code> (<code>optional</code>)</p>
+<p>Multiplier for plot height per horizontal line of legend.
+Defaults to optimal at 1.1, i.e. slightly more than no change (1).</p></dd>
 
 
 <dt>plot_height_fixed_constant</dt>
@@ -423,6 +521,18 @@ group to ensure data privacy (<code>TRUE</code>).</p></dd>
 <p>Minimum height for the plot.</p></dd>
 
 
+<dt>vertical_height</dt>
+<dd><p><em>Vertical height</em></p>
+<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Height for vertical layout of plot? NEEDS CHECKING</p></dd>
+
+
+<dt>vertical</dt>
+<dd><p><em>Orientation of plots</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>If FALSE (default), then horizontal plots.</p></dd>
+
+
 <dt>png_scale</dt>
 <dd><p><em>PNG scale</em></p>
 <p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>1</code> (<code>optional</code>)</p>
@@ -435,10 +545,34 @@ group to ensure data privacy (<code>TRUE</code>).</p></dd>
 <p>Width for PNG output.</p></dd>
 
 
-<dt>vertical_height</dt>
-<dd><p><em>Vertical height</em></p>
-<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Height for vertical layout of plot? NEEDS CHECKING</p></dd>
+<dt>font_family</dt>
+<dd><p><em>Font family</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"sans"</code> (<code>optional</code>)</p>
+<p>Word font family. See officer::fp_text.</p></dd>
+
+
+<dt>colour_palette_nominal, colour_palette_ordinal</dt>
+<dd><p><em>Colour palettes (nominal and ordinal)</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Must contain at least the number of unique values (including missing) in the data set.</p></dd>
+
+
+<dt>colour_na</dt>
+<dd><p><em>Colour for NA category</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Colour as a single string for NA values.</p></dd>
+
+
+<dt>colour_2nd_binary_cat</dt>
+<dd><p><em>Colour for second binary category</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"#ffffff"</code> (<code>optional</code>)</p>
+<p>Colour for second category in binary variables. Often useful to hide this.</p></dd>
+
+
+<dt>table_main_question_as_header</dt>
+<dd><p><em>Table main question as header</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to include the main question as a header in the table.</p></dd>
 
 
 <dt>max_width_obj</dt>
@@ -457,10 +591,12 @@ long file names if using labels as part of structure, and hashing with
 Quarto's <code>cache: true</code> feature. This argument truncates the filenames.</p></dd>
 
 
-<dt>font_family</dt>
-<dd><p><em>Font family</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"sans"</code> (<code>optional</code>)</p>
-<p>Word font family. See officer::fp_text.</p></dd>
+<dt>max_clean_folder_name</dt>
+<dd><p><em>Maximum clean folder name length</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Whereas <code>max_width_file</code> truncates the file name, this argument truncates
+the folder name. It will not impact the report or chapter names in website,
+only the folders.</p></dd>
 
 
 <dt>open_after_drafting</dt>
@@ -469,22 +605,38 @@ Quarto's <code>cache: true</code> feature. This argument truncates the filenames
 <p>Whether to open the main output file (index.qmd) after completion.</p></dd>
 
 
-<dt>vertical</dt>
-<dd><p><em>Orientation of plots</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>If FALSE (default), then horizontal plots.</p></dd>
+<dt>organize_by</dt>
+<dd><p><em>Grouping columns</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Column names used for identifying chapters and sections.</p></dd>
+
+
+<dt>arrange_output_by</dt>
+<dd><p><em>Grouping columns</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Column names used for sorting output within each organize_by group</p></dd>
+
+
+<dt>ignore_heading_for_group</dt>
+<dd><p><em>Ignore heading for group</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Type of refined chapter_overview data for which to suppress the heading
+in the report output. Typically variable_name_dep, variable_name_indep, etc.</p></dd>
+
+
+<dt>replace_heading_for_group</dt>
+<dd><p><em>Replacing heading for group</em></p>
+<p><code>named vector&lt;character&gt;</code> // <em>default:</em> <code>c(".variable_label_suffix_dep" = ".variable_name_dep")</code></p>
+<p>Occasionally, one needs to replace the heading with another piece of information
+in the refined chapter_overview. For instance, one may want to organize output
+by variable_name_indep, but to display the variable_label_indep instead. Use
+the name for the replacement and the value for the original.</p></dd>
 
 
 <dt>mesos_first</dt>
 <dd><p><em>mesos first</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
 <p>Whether to place the mesos group element before or after the entire sample.</p></dd>
-
-
-<dt>single_y_bivariate_elements</dt>
-<dd><p><em>Single Y bivariate elements</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
-<p>Whether to display bivariates with a single dependent variable. NEEDS CHECKING.</p></dd>
 
 
 <dt>descend</dt>
@@ -499,41 +651,44 @@ Quarto's <code>cache: true</code> feature. This argument truncates the filenames
 <p>Whether to check if all items share common categories.</p></dd>
 
 
+<dt>panel_tabset_mesos</dt>
+<dd><p><em>mesos panel tabset</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>Whether in mesos reports the comparison group should be displayed as
+a Quarto panel tabset (<code>TRUE</code>), or above each other (<code>FALSE</code>).</p></dd>
+
+
+<dt>pdf</dt>
+<dd><p><em>Create PDF of full report?</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to create a PDF of the entire report (all chapters included in a single file).</p></dd>
+
+
+<dt>attach_chapter_dataset</dt>
+<dd><p><em>Toggle inclusion of chapter-specific datasets in qmd-files</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code></p>
+<p>Whether to save in each chapter folder an 'Rds'-file with the
+chapter-specific dataset, and load it at the top of each QMD-file.</p></dd>
+
+
+<dt>auxiliary_variables</dt>
+<dd><p><em>Auxiliary variables to be included in datasets</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Column names in <code>data</code> that should always be included in datasets for
+chapter qmd-files, if <code>attach_chapter_dataset=TRUE</code>. Not publicly available.</p></dd>
+
+
 <dt>flexi</dt>
 <dd><p><em>Create page with user-editable categorical plots and tables</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Whether to include totals in the output.</p></dd>
+<p>Whether to create a folder with a Shiny flexi app containing all the
+variables in the chapter_overview and auxiliary_variables.</p></dd>
 
 
-<dt>colour_palette</dt>
-<dd><p><em>Colour palette</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Must contain at least the number of unique values (including missing) in the data set.</p></dd>
-
-
-<dt>colour_na</dt>
-<dd><p><em>Colour for NA category</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Colour as a single string for NA values.</p></dd>
-
-
-<dt>colour_2nd_binary_cat</dt>
-<dd><p><em>Colour for second binary category</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"#ffffff"</code> (<code>optional</code>)</p>
-<p>Colour for second category in binary variables. Often useful to hide this.</p></dd>
-
-
-<dt>digits</dt>
-<dd><p><em>Decimal places</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>0L</code> (<code>optional</code>)</p>
-<p>Number of decimal places.</p></dd>
-
-
-<dt>data_label_decimal_symbol</dt>
-<dd><p><em>Decimal symbol</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"."</code> (<code>optional</code>)</p>
-<p>Decimal marker, some might prefer a comma ',' or something else entirely.
-NOTE: Future version will likely postpone formatting this until <code>gt()</code>, <code>kable()</code>, etc.</p></dd>
+<dt>micro</dt>
+<dd><p><em>Create page with raw data (micro data) and codebook</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).</p></dd>
 
 
 <dt>reps</dt>
@@ -566,6 +721,31 @@ NOTE: Future version will likely postpone formatting this until <code>gt()</code
 <p>The number of top and bottom entries to report.</p></dd>
 
 
+<dt>log_file</dt>
+<dd><p><em>Path to log file</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"_log.txt"</code> (<code>optional</code>)</p>
+<p>Path to log file. Set to NULL to disable logging.</p></dd>
+
+
+<dt>serialized_format</dt>
+<dd><p><em>Serialized format</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"rds"</code></p>
+<p>Format for serialized data. One of <code>"rds"</code> (default), <code>"qs"</code> or <code>"fst"</code>.
+The latter two requires the respective packages to be installed.
+qs is usually the fastest and most space efficient, but sets package
+dependencies on the report.</p></dd>
+
+
+<dt>tabular_format</dt>
+<dd><p><em>Serialized format</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"delim"</code></p>
+<p>Format for pretty tabular data, meant for end-user to peruse and will be
+linked to in reports (the graph data, etc). One of <code>"delim"</code> (tab-separated delim-files)
+<code>"xlsx"</code> requires <code>writexl</code>-package), <code>"csv"</code> or <code>"csv2"</code> (requires <code>readr</code>-package.
+<code>"dta"</code> or <code>"sav"</code> requires <code>haven</code>-package. Currently must be specified,
+in the future this will become an optional argument.</p></dd>
+
+
 <dt>translations</dt>
 <dd><p><em>Translations</em></p>
 <p><code>list</code> // <em>default:</em> <code>saros:::.saros.env$defaults$translations</code> (<code>optional</code>)</p>
@@ -594,22 +774,56 @@ See <code>chapter_overview</code> for more options.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="fu">draft_report</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">index_filepath</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span> <span class="fu">draft_report</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    chapter_overview <span class="op">=</span> <span class="va">ex_survey_ch_overview</span>,</span></span>
-<span class="r-in"><span>    data <span class="op">=</span> <span class="va">ex_survey1</span>,</span></span>
+<span class="r-in"><span>    data <span class="op">=</span> <span class="va">ex_survey</span>,</span></span>
 <span class="r-in"><span>    path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Refining chapter_overview...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating report ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating chapter 2 Ambivalence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating report ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating chapter 3 Big mysteries</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating report ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating chapter 4 Confidence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating report ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating report ...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34.472 0.243 34.874 0 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> /tmp/RtmpC6LeHP/index.qmd</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Not using the following variables in `data`: `x2_human`, `a_7`, `a_8`, and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `resp_status`.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 93.487 1.808 95.317 0 0</span>
+<span class="r-in"><span><span class="va">index_filepaths</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu">draft_report</span><span class="op">(</span></span></span>
+<span class="r-in"><span>   chapter_overview <span class="op">=</span> <span class="va">ex_survey_ch_overview</span>,</span></span>
+<span class="r-in"><span>   data <span class="op">=</span> <span class="va">ex_survey</span>,</span></span>
+<span class="r-in"><span>   mesos_report <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>   mesos_var <span class="op">=</span> <span class="st">"f_uni"</span>,</span></span>
+<span class="r-in"><span>   path <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Refining chapter_overview...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Not using the following variables in `data`: `x2_human`, `a_7`, `a_8`, and</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `resp_status`.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 858.634 16.896 875.61 0 0</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
@@ -618,7 +832,7 @@ See <code>chapter_overview</code> for more options.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p><p>Developed by Stephan Daus.</p>
+  <p></p><p>Developed by Stephan Daus, Nordic Institute for The Studies of Innovation, Research and Education (NIFU), Kristiania University College.</p>
 </div>
 
 <div class="pkgdown-footer-right">
