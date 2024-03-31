@@ -25,10 +25,9 @@ insert_obj_in_qmd <-
       return(text)
     }
 
-    obj_name <- index
-      # stringi::stri_c(conv_to_valid_obj_name(index,
-      #                                        max_width = max_width_obj),
-      #                 ignore_null=TRUE)
+    obj_name <- #index
+      conv_to_valid_obj_name(index,
+                             max_width = max_width_obj)
 
     tbl_fig_prefix <- if(stringi::stri_detect(element_name, fixed = "plot")) "fig-" else "tbl-"
 
