@@ -48,12 +48,12 @@ prepare_chunk.uni_cat_prop_plot <-
         mesos_group = mesos_group,
         html_interactive = TRUE,
         !!!dots)
-    ggplot2::ggsave(plot = out_html,
-                    filename = filepaths$abs$png,
-                    scale = dots$png_scale,
-                    width = dots$png_width,
-                    height = dots$png_height,
-                    units = "cm", dpi = "retina")
+    # ggplot2::ggsave(plot = out_html,
+    #                 filename = filepaths$abs$png,
+    #                 scale = dots$png_scale,
+    #                 width = dots$png_width,
+    #                 height = dots$png_height,
+    #                 units = "cm", dpi = "retina")
     tabular_write(object = out_html$data, path = filepaths$abs[[dots$tabular_format]], format = dots$tabular_format)
     serialize_write(out_html, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
