@@ -83,12 +83,17 @@ chapters.</p>
 <span>  mesos_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label_separator <span class="op">=</span> <span class="st">" - "</span>,</span>
 <span>  name_separator <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  index_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  report_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chapter_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  qmd_start_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  qmd_end_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  index_filename <span class="op">=</span> <span class="st">"index.qmd"</span>,</span>
+<span>  chapter_qmd_start_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  chapter_qmd_end_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  index_filename <span class="op">=</span> <span class="st">"index"</span>,</span>
+<span>  index_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  index_qmd_start_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  index_qmd_end_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  report_filename <span class="op">=</span> <span class="st">"0_report"</span>,</span>
+<span>  report_yaml_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  report_qmd_start_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  report_qmd_end_section_filepath <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  element_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"uni_cat_prop_plot"</span>, <span class="st">"uni_cat_freq_plot"</span>, <span class="st">"uni_cat_table"</span>,</span>
 <span>    <span class="st">"uni_chr_table"</span>, <span class="st">"hline"</span>, <span class="st">"bi_catcat_prop_plot"</span>, <span class="st">"bi_catcat_freq_plot"</span>,</span>
 <span>    <span class="st">"bi_catcat_prop_plot2"</span>, <span class="st">"bi_catcat_freq_plot2"</span>, <span class="st">"bi_catcat_table"</span>, <span class="st">"bi_sigtest"</span><span class="op">)</span>,</span>
@@ -153,7 +158,6 @@ chapters.</p>
 <span>  pdf <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  attach_chapter_dataset <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  auxiliary_variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  flexi <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  micro <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  reps <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  information <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".variable_label_dep"</span>, <span class="st">".category"</span>, <span class="st">".count"</span>, <span class="st">".count_se"</span>,</span>
@@ -167,49 +171,28 @@ chapters.</p>
 <span>  log_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  serialized_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rds"</span>, <span class="st">"qs"</span><span class="op">)</span>,</span>
 <span>  tabular_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"delim"</span>, <span class="st">"xlsx"</span>, <span class="st">"csv"</span>, <span class="st">"csv2"</span>, <span class="st">"tsv"</span>, <span class="st">"sav"</span>, <span class="st">"dta"</span><span class="op">)</span>,</span>
-<span>  translations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>last_sep <span class="op">=</span> <span class="st">" and "</span>, download_report <span class="op">=</span> <span class="st">"Download report (PDF)"</span>,</span>
-<span>    intro_prefix <span class="op">=</span> <span class="st">"We will now look at the questions asked regarding "</span>, intro_suffix <span class="op">=</span></span>
-<span>    <span class="st">""</span>, mode_max_onfix <span class="op">=</span> <span class="st">" on "</span>, mode_max_prefix <span class="op">=</span> <span class="st">"The most common responses were "</span>,</span>
+<span>  translations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>last_sep <span class="op">=</span> <span class="st">" and "</span>, intro_prefix <span class="op">=</span></span>
+<span>    <span class="st">"We will now look at the questions asked regarding "</span>, intro_suffix <span class="op">=</span> <span class="st">""</span>,</span>
+<span>    mode_max_onfix <span class="op">=</span> <span class="st">" on "</span>, mode_max_prefix <span class="op">=</span> <span class="st">"The most common responses were "</span>,</span>
 <span>    mode_max_suffix <span class="op">=</span> <span class="st">""</span>, not_used_prefix <span class="op">=</span></span>
 <span>    <span class="st">"The following response categories were not used: "</span>, not_used_suffix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>    value_max_prefix <span class="op">=</span> <span class="st">""</span>, value_max_infix <span class="op">=</span></span>
 <span>    <span class="st">" {?is/are} the {dots$n_top_bottom} item{?s} where the most responded "</span>,</span>
-<span>    value_max_suffix <span class="op">=</span> <span class="st">""</span>, value_min_prefix <span class="op">=</span> <span class="st">""</span>, </span>
-<span>     value_min_infix <span class="op">=</span></span>
-<span>    <span class="st">" {?is/are} the {dots$n_top_bottom} item{?s} where the fewest responded "</span>,</span>
+<span>    value_max_suffix <span class="op">=</span> <span class="st">""</span>, value_min_prefix <span class="op">=</span> <span class="st">""</span>, value_min_infix <span class="op">=</span></span>
+<span>    <span class="st">" {?is/are} the {dots$n_top_bottom} item{?s} where the fewest responded "</span>, </span>
+<span>    </span>
 <span>    value_min_suffix <span class="op">=</span> <span class="st">""</span>, mean_onfix <span class="op">=</span> <span class="st">"M = "</span>, mean_max_prefix <span class="op">=</span></span>
 <span>    <span class="st">"They have highest mean on "</span>, mean_max_suffix <span class="op">=</span> <span class="st">""</span>, mean_min_prefix <span class="op">=</span></span>
 <span>    <span class="st">"They have lowest mean on "</span>, mean_min_suffix <span class="op">=</span> <span class="st">""</span>, median_onfix <span class="op">=</span> <span class="st">"Median = "</span>,</span>
 <span>    median_max_prefix <span class="op">=</span> <span class="st">"They have highest median on "</span>, median_max_suffix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>    median_min_prefix <span class="op">=</span> <span class="st">"They have lowest median on "</span>, median_min_suffix <span class="op">=</span> <span class="st">""</span>,</span>
-<span>    intro_by_prefix <span class="op">=</span> <span class="st">"We will now look at the questions asked regarding "</span>, </span>
-<span>    </span>
-<span>    intro_by_infix <span class="op">=</span> <span class="st">" broken down by "</span>, intro_by_suffix <span class="op">=</span> <span class="st">""</span>, by_breakdown <span class="op">=</span> <span class="st">" by "</span>,</span>
-<span>    n_equal_prefix <span class="op">=</span> <span class="st">" (N &amp;equals; "</span>, n_equal_suffix <span class="op">=</span> <span class="st">")"</span>, table_heading_N <span class="op">=</span></span>
+<span>    intro_by_prefix <span class="op">=</span> <span class="st">"We will now look at the questions asked regarding "</span>,</span>
+<span>    intro_by_infix <span class="op">=</span> <span class="st">" broken down by "</span>, intro_by_suffix <span class="op">=</span> <span class="st">""</span>, by_breakdown <span class="op">=</span> <span class="st">" by "</span>, </span>
+<span>  </span>
+<span>      n_equal_prefix <span class="op">=</span> <span class="st">" (N &amp;equals; "</span>, n_equal_suffix <span class="op">=</span> <span class="st">")"</span>, table_heading_N <span class="op">=</span></span>
 <span>    <span class="st">"Total (N)"</span>, by_total <span class="op">=</span> <span class="st">"Everyone"</span>, sigtest_prefix <span class="op">=</span> <span class="st">"Significance testing of "</span>,</span>
 <span>    sigtest_suffix <span class="op">=</span> <span class="st">""</span>, mesos_group_prefix <span class="op">=</span> <span class="st">" Group: "</span>, mesos_group_suffix <span class="op">=</span> <span class="st">""</span>,</span>
-<span>    mesos_label_all_others <span class="op">=</span> <span class="st">"Others"</span>, empty_chunk_text <span class="op">=</span> <span class="st">"\nText\n"</span>,</span>
-<span>    flexi_input_chapter <span class="op">=</span> <span class="st">"Chapter(s):"</span>, flexi_input_dep <span class="op">=</span> <span class="st">"Dependent variable(s):"</span>,</span>
-<span>    flexi_input_indep <span class="op">=</span> <span class="st">"Independent variable:"</span>, </span>
-<span>     flexi_input_mesos_group <span class="op">=</span></span>
-<span>    <span class="st">"Filter:"</span>, flexi_figure_type <span class="op">=</span> <span class="st">"Figure type:"</span>, flexi_data_label <span class="op">=</span></span>
-<span>    <span class="st">"Summary to display"</span>, flexi_showNA <span class="op">=</span> <span class="st">"Show NA (Missing)"</span>, flexi_sort_by <span class="op">=</span> <span class="st">"Sort by"</span>,</span>
-<span>    flexi_totals <span class="op">=</span> <span class="st">"Totals"</span>, flexi_digits <span class="op">=</span> <span class="st">"Digits after decimal"</span>, flexi_table <span class="op">=</span></span>
-<span>    <span class="st">"Table"</span>, flexi_figure <span class="op">=</span> <span class="st">"Figure"</span>, flexi_cols_variable_name <span class="op">=</span> <span class="st">"Variable name"</span>,</span>
-<span>    flexi_cols_variable_label <span class="op">=</span> <span class="st">"Variable label"</span>, flexi_cols_category <span class="op">=</span></span>
-<span>    <span class="st">"Response category"</span>, flexi_cols_count <span class="op">=</span> <span class="st">"N"</span>, flexi_cols_count_se <span class="op">=</span> <span class="st">"SE(N)"</span>,</span>
-<span>    flexi_cols_proportion <span class="op">=</span> <span class="st">"Proportion"</span>, </span>
-<span>     flexi_cols_proportion_se <span class="op">=</span></span>
-<span>    <span class="st">"SE(Proportion)"</span>, flexi_cols_mean <span class="op">=</span> <span class="st">"Mean"</span>, flexi_cols_mean_se <span class="op">=</span> <span class="st">"SE(Mean)"</span>,</span>
-<span>    flexi_cols_data_label <span class="op">=</span> <span class="st">"Data label"</span>, flexi_cols_comb_categories <span class="op">=</span></span>
-<span>    <span class="st">"Combined categories"</span>, flexi_cols_sum_value <span class="op">=</span></span>
-<span>    <span class="st">"Sum of data label across combined categories"</span>, flexi_validate <span class="op">=</span></span>
-<span>    <span class="st">"Error: Columns must have some categories in common."</span>, flexi_settings <span class="op">=</span> <span class="st">"Settings"</span>,</span>
-<span>    flexi_basic_settings <span class="op">=</span> <span class="st">"Basic"</span>, flexi_advanced_settings <span class="op">=</span> <span class="st">"Advanced"</span>,</span>
-<span>    flexi_input_indep_none <span class="op">=</span> <span class="st">"&lt;none&gt;"</span>, flexi_figure_type_proportion <span class="op">=</span> <span class="st">"Proportion"</span>, </span>
-<span>    </span>
-<span>    flexi_figure_type_frequency <span class="op">=</span> <span class="st">"Frequency"</span>, flexi_hide_label_if_prop_below <span class="op">=</span></span>
-<span>    <span class="st">"Hide label if proportion below:"</span><span class="op">)</span></span>
+<span>    mesos_label_all_others <span class="op">=</span> <span class="st">"Others"</span>, empty_chunk_text <span class="op">=</span> <span class="st">"\n"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -278,29 +261,39 @@ If false, returns a regular single report.</p></dd>
 <p>String to split column names in data between main question and sub-items</p></dd>
 
 
-<dt>index_yaml_file, report_yaml_file</dt>
-<dd><p><em>Path to YAML-file to insert into index.qmd and report.qmd respectively</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Path to file used to insert header YAML, in index and report files.</p></dd>
-
-
 <dt>chapter_yaml_file</dt>
 <dd><p><em>Path to YAML-file to insert into each chapter qmd-file</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
 <p>Path to file used to insert header YAML, in each chapter.</p></dd>
 
 
-<dt>qmd_start_section_filepath, qmd_end_section_filepath</dt>
+<dt>chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath, </dt>
 <dd><p><em>Path to qmd-bit for start/end of each qmd</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Path to qmd-snippet placed before/after body of all chapter qmds.</p></dd>
+<p>Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.</p></dd>
 
 
 <dt>index_filename</dt>
 <dd><p><em>Index filename</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"index.qmd"</code> (<code>optional</code>)</p>
-<p>The name of the main index Quarto file (and its subfolder) used as landing
+<p>The name of the main index Quarto file used as landing
 page for each report. Will link to a PDF (report.qmd) which collects all chapters.</p></dd>
+
+
+<dt>index_yaml_file, report_yaml_file</dt>
+<dd><p><em>Path to YAML-file to insert into index.qmd and 0_report.qmd respectively</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Path to file used to insert header YAML, in index and report files.</p></dd>
+
+
+<dt>report_filename</dt>
+<dd><p><em>Report filename</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"0_report.qmd"</code> (<code>optional</code>)</p>
+<p>The name of the main report QMD-file used when compiling a complete report
+collecting all chapters in its folder (except itself).
+If provided, will be linked to in the index.
+If NULL, will generate a filename based on the report title, prefixed with "0_".
+To turn off, set <code>pdf=FALSE</code>.</p></dd>
 
 
 <dt>element_names</dt>
@@ -678,13 +671,6 @@ chapter-specific dataset, and load it at the top of each QMD-file.</p></dd>
 chapter qmd-files, if <code>attach_chapter_dataset=TRUE</code>. Not publicly available.</p></dd>
 
 
-<dt>flexi</dt>
-<dd><p><em>Create page with user-editable categorical plots and tables</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Whether to create a folder with a Shiny flexi app containing all the
-variables in the chapter_overview and auxiliary_variables.</p></dd>
-
-
 <dt>micro</dt>
 <dd><p><em>Create page with raw data (micro data) and codebook</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
@@ -787,7 +773,7 @@ See <code>chapter_overview</code> for more options.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30.2 0.321 30.542 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 31.553 0.276 31.925 0 0</span>
 <span class="r-in"><span><span class="va">index_filepaths</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu">draft_report</span><span class="op">(</span></span></span>
 <span class="r-in"><span>   chapter_overview <span class="op">=</span> <span class="va">ex_survey_ch_overview</span>,</span></span>
@@ -823,7 +809,7 @@ See <code>chapter_overview</code> for more options.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 212.291 2.268 214.592 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 220.496 2.205 222.741 0 0</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

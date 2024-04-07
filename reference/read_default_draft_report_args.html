@@ -89,23 +89,38 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $name_separator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $chapter_yaml_file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $chapter_qmd_start_section_filepath</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $chapter_qmd_end_section_filepath</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $index_filename</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "index"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $index_yaml_file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $index_qmd_start_section_filepath</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $index_qmd_end_section_filepath</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $report_filename</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "0_report"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $report_yaml_file</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $chapter_yaml_file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $report_qmd_start_section_filepath</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $qmd_start_section_filepath</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $report_qmd_end_section_filepath</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $qmd_end_section_filepath</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $index_filename</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "index.qmd"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $element_names</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "uni_cat_prop_plot"    "uni_cat_freq_plot"    "uni_cat_table"       </span>
@@ -295,9 +310,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $auxiliary_variables</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $flexi</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $micro</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -335,8 +347,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> $translations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                  last_sep </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   " and " </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                           download_report </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                   "Download report (PDF)" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              intro_prefix </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                      "We will now look at the questions asked regarding " </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                              intro_suffix </span>
@@ -409,72 +419,6 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                        "" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                    mesos_label_all_others </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                  "Others" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                          empty_chunk_text </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                "\nText\n" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       flexi_input_chapter </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                             "Chapter(s):" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                           flexi_input_dep </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                  "Dependent variable(s):" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                         flexi_input_indep </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                   "Independent variable:" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                   flexi_input_mesos_group </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                 "Filter:" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                         flexi_figure_type </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                            "Figure type:" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                          flexi_data_label </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                      "Summary to display" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                              flexi_showNA </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       "Show NA (Missing)" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                             flexi_sort_by </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                 "Sort by" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                              flexi_totals </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                  "Totals" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                              flexi_digits </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    "Digits after decimal" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                               flexi_table </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   "Table" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                              flexi_figure </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                  "Figure" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                  flexi_cols_variable_name </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                           "Variable name" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                 flexi_cols_variable_label </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                          "Variable label" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       flexi_cols_category </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       "Response category" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                          flexi_cols_count </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                       "N" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       flexi_cols_count_se </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   "SE(N)" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                     flexi_cols_proportion </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                              "Proportion" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                  flexi_cols_proportion_se </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                          "SE(Proportion)" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                           flexi_cols_mean </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                    "Mean" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                        flexi_cols_mean_se </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                "SE(Mean)" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                     flexi_cols_data_label </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                              "Data label" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                flexi_cols_comb_categories </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                     "Combined categories" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                      flexi_cols_sum_value </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                            "Sum of data label across combined categories" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                            flexi_validate </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     "Error: Columns must have some categories in common." </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                            flexi_settings </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                "Settings" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                      flexi_basic_settings </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                   "Basic" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                   flexi_advanced_settings </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                "Advanced" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                    flexi_input_indep_none </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                  "&lt;none&gt;" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                              flexi_figure_type_proportion </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                              "Proportion" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                               flexi_figure_type_frequency </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                               "Frequency" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                            flexi_hide_label_if_prop_below </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                         "Hide label if proportion below:" </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
