@@ -726,7 +726,6 @@ draft_report <-
 
            translations =
              list(last_sep = " and ",
-                  # download_report = "Download report (PDF)",
                   intro_prefix = "We will now look at the questions asked regarding ",
                   intro_suffix = "",
                   mode_max_onfix = " on ",
