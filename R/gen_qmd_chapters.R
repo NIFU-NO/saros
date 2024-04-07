@@ -51,8 +51,7 @@ gen_qmd_chapters <-
                       dplyr::pick(tidyselect::all_of(grouping_structure[1])))
 
     total_iterations <-
-      dplyr::n_distinct(chapter_overview_chapter_groups[[grouping_structure[1]]]) +
-      dots$flexi
+      dplyr::n_distinct(chapter_overview_chapter_groups[[grouping_structure[1]]])
 
     cli::cli_progress_bar(name = "Creating chapter files...",
                           type = "iterator",
@@ -174,14 +173,6 @@ gen_qmd_chapters <-
 
     chapter_filepaths <- unlist(chapter_filepaths)
 
-
-    if(isTRUE(dots$flexi) && !is_string(dots$mesos_var) &&
-       !all(is.na(chapter_overview_chapter_groups$.variable_name_dep))) {
-
-      embed_flexi(data = data,
-                  chapter_overview = chapter_overview_chapter_groups,
-                  !!!dots)
-    }
     cli::cli_process_done(msg_done = "Completed report{if(is_string(mesos_group)) paste0(' for ', mesos_group)}.")
 
 
