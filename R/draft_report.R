@@ -512,7 +512,7 @@
 #'   file paths. This will mean that files with cache (hash suffixes are added) will
 #'   quickly breach this limit. When set, a warning will be returned if files are found
 #'   to be longer than this threshold. Also note that spaces count as three characters
-#'   due to its URL-conversion: %20
+#'   due to its URL-conversion: %20. To avoid test, set to Inf
 #'
 #' @param mesos_first *mesos first*
 #'
