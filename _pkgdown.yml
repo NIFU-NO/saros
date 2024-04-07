@@ -37,6 +37,7 @@ reference:
   contents:
   - create_email_credentials
   - setup_access_restrictions
+  - render_full_reports
   - post_render_docx_img_replacer
 - title: "Create individual elements (usually called automatically)"
   contents:
