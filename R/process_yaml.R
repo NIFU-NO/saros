@@ -55,3 +55,10 @@ process_yaml <- function(yaml_file = NULL,
   }
   yaml_section
 }
+
+
+find_yaml_formats <- function(yaml_file) {
+  x <- yaml::read_yaml(file = yaml_file)
+  x <- names(x$format)
+  stringi::stri_extract_last_words(x)
+}

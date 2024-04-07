@@ -15,12 +15,17 @@ draft_report(
   mesos_var = NULL,
   label_separator = " - ",
   name_separator = NULL,
-  index_yaml_file = NULL,
-  report_yaml_file = NULL,
   chapter_yaml_file = NULL,
-  qmd_start_section_filepath = NULL,
-  qmd_end_section_filepath = NULL,
-  index_filename = "index.qmd",
+  chapter_qmd_start_section_filepath = NULL,
+  chapter_qmd_end_section_filepath = NULL,
+  index_filename = "index",
+  index_yaml_file = NULL,
+  index_qmd_start_section_filepath = NULL,
+  index_qmd_end_section_filepath = NULL,
+  report_filename = "0_report",
+  report_yaml_file = NULL,
+  report_qmd_start_section_filepath = NULL,
+  report_qmd_end_section_filepath = NULL,
   element_names = c("uni_cat_prop_plot", "uni_cat_freq_plot", "uni_cat_table",
     "uni_chr_table", "hline", "bi_catcat_prop_plot", "bi_catcat_freq_plot",
     "bi_catcat_prop_plot2", "bi_catcat_freq_plot2", "bi_catcat_table", "bi_sigtest"),
@@ -85,7 +90,6 @@ draft_report(
   pdf = TRUE,
   attach_chapter_dataset = TRUE,
   auxiliary_variables = NULL,
-  flexi = FALSE,
   micro = FALSE,
   reps = 1000,
   information = c(".variable_label_dep", ".category", ".count", ".count_se",
@@ -99,49 +103,28 @@ draft_report(
   log_file = NULL,
   serialized_format = c("rds", "qs"),
   tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
-  translations = list(last_sep = " and ", download_report = "Download report (PDF)",
-    intro_prefix = "We will now look at the questions asked regarding ", intro_suffix =
-    "", mode_max_onfix = " on ", mode_max_prefix = "The most common responses were ",
+  translations = list(last_sep = " and ", intro_prefix =
+    "We will now look at the questions asked regarding ", intro_suffix = "",
+    mode_max_onfix = " on ", mode_max_prefix = "The most common responses were ",
     mode_max_suffix = "", not_used_prefix =
     "The following response categories were not used: ", not_used_suffix = "",
     value_max_prefix = "", value_max_infix =
     " {?is/are} the {dots$n_top_bottom} item{?s} where the most responded ",
-    value_max_suffix = "", value_min_prefix = "", 
-     value_min_infix =
-    " {?is/are} the {dots$n_top_bottom} item{?s} where the fewest responded ",
+    value_max_suffix = "", value_min_prefix = "", value_min_infix =
+    " {?is/are} the {dots$n_top_bottom} item{?s} where the fewest responded ", 
+    
     value_min_suffix = "", mean_onfix = "M = ", mean_max_prefix =
     "They have highest mean on ", mean_max_suffix = "", mean_min_prefix =
     "They have lowest mean on ", mean_min_suffix = "", median_onfix = "Median = ",
     median_max_prefix = "They have highest median on ", median_max_suffix = "",
     median_min_prefix = "They have lowest median on ", median_min_suffix = "",
-    intro_by_prefix = "We will now look at the questions asked regarding ", 
-    
-    intro_by_infix = " broken down by ", intro_by_suffix = "", by_breakdown = " by ",
-    n_equal_prefix = " (N &equals; ", n_equal_suffix = ")", table_heading_N =
+    intro_by_prefix = "We will now look at the questions asked regarding ",
+    intro_by_infix = " broken down by ", intro_by_suffix = "", by_breakdown = " by ", 
+  
+      n_equal_prefix = " (N &equals; ", n_equal_suffix = ")", table_heading_N =
     "Total (N)", by_total = "Everyone", sigtest_prefix = "Significance testing of ",
     sigtest_suffix = "", mesos_group_prefix = " Group: ", mesos_group_suffix = "",
-    mesos_label_all_others = "Others", empty_chunk_text = "\\nText\\n",
-    flexi_input_chapter = "Chapter(s):", flexi_input_dep = "Dependent variable(s):",
-    flexi_input_indep = "Independent variable:", 
-     flexi_input_mesos_group =
-    "Filter:", flexi_figure_type = "Figure type:", flexi_data_label =
-    "Summary to display", flexi_showNA = "Show NA (Missing)", flexi_sort_by = "Sort by",
-    flexi_totals = "Totals", flexi_digits = "Digits after decimal", flexi_table =
-    "Table", flexi_figure = "Figure", flexi_cols_variable_name = "Variable name",
-    flexi_cols_variable_label = "Variable label", flexi_cols_category =
-    "Response category", flexi_cols_count = "N", flexi_cols_count_se = "SE(N)",
-    flexi_cols_proportion = "Proportion", 
-     flexi_cols_proportion_se =
-    "SE(Proportion)", flexi_cols_mean = "Mean", flexi_cols_mean_se = "SE(Mean)",
-    flexi_cols_data_label = "Data label", flexi_cols_comb_categories =
-    "Combined categories", flexi_cols_sum_value =
-    "Sum of data label across combined categories", flexi_validate =
-    "Error: Columns must have some categories in common.", flexi_settings = "Settings",
-    flexi_basic_settings = "Basic", flexi_advanced_settings = "Advanced",
-    flexi_input_indep_none = "<none>", flexi_figure_type_proportion = "Proportion", 
-    
-    flexi_figure_type_frequency = "Frequency", flexi_hide_label_if_prop_below =
-    "Hide label if proportion below:")
+    mesos_label_all_others = "Others", empty_chunk_text = "\\n")
 )
 }
 \arguments{
@@ -207,30 +190,40 @@ String to split labels on main question and sub-items.}
 
 String to split column names in data between main question and sub-items}
 
-\item{index_yaml_file, report_yaml_file}{\emph{Path to YAML-file to insert into index.qmd and report.qmd respectively}
-
-\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Path to file used to insert header YAML, in index and report files.}
-
 \item{chapter_yaml_file}{\emph{Path to YAML-file to insert into each chapter qmd-file}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
 Path to file used to insert header YAML, in each chapter.}
 
-\item{qmd_start_section_filepath, qmd_end_section_filepath}{\emph{Path to qmd-bit for start/end of each qmd}
+\item{chapter_qmd_start_section_filepath, chapter_qmd_end_section_filepath, index_qmd_start_section_filepath, index_qmd_end_section_filepath, report_qmd_start_section_filepath, report_qmd_end_section_filepath, }{\emph{Path to qmd-bit for start/end of each qmd}
 
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Path to qmd-snippet placed before/after body of all chapter qmds.}
+Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.}
 
 \item{index_filename}{\emph{Index filename}
 
 \verb{scalar<character>} // \emph{default:} \code{"index.qmd"} (\code{optional})
 
-The name of the main index Quarto file (and its subfolder) used as landing
+The name of the main index Quarto file used as landing
 page for each report. Will link to a PDF (report.qmd) which collects all chapters.}
+
+\item{index_yaml_file, report_yaml_file}{\emph{Path to YAML-file to insert into index.qmd and 0_report.qmd respectively}
+
+\verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Path to file used to insert header YAML, in index and report files.}
+
+\item{report_filename}{\emph{Report filename}
+
+\verb{scalar<character>} // \emph{default:} \code{"0_report.qmd"} (\code{optional})
+
+The name of the main report QMD-file used when compiling a complete report
+collecting all chapters in its folder (except itself).
+If provided, will be linked to in the index.
+If NULL, will generate a filename based on the report title, prefixed with "0_".
+To turn off, set \code{pdf=FALSE}.}
 
 \item{element_names}{\emph{Elements to be reported}
 
@@ -586,13 +579,6 @@ chapter-specific dataset, and load it at the top of each QMD-file.}
 
 Column names in \code{data} that should always be included in datasets for
 chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
-
-\item{flexi}{\emph{Create page with user-editable categorical plots and tables}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
-
-Whether to create a folder with a Shiny flexi app containing all the
-variables in the chapter_overview and auxiliary_variables.}
 
 \item{micro}{\emph{Create page with raw data (micro data) and codebook}
 

@@ -7,18 +7,19 @@ testthat::test_that("draft_report", {
       path = tmpdir)
 
   output_files <-
-    list.files(pattern = "^[^_i].*\\.qmd", path = tmpdir,
+    list.files(pattern = "\\.qmd$", path = tmpdir,
                full.names = TRUE, recursive = FALSE, ignore.case = TRUE)
   output_files <-
     gsub(x=output_files, pattern = "\\", replacement = "/", fixed=TRUE)
   testthat::expect_equal(
       object = length(output_files),
-      expected = nrow(saros::ex_survey_ch_overview[1:3, ]))
+      expected = 5)
   if(!is.null(quarto::quarto_path()) && nchar(quarto::quarto_path())>1) {
-    testthat::expect_gt(file.size(output_files[2]), 3600)
+    testthat::expect_lt(file.size(output_files[1]), 3600)
+    testthat::expect_gt(file.size(output_files[4]), 3600)
     testthat::expect_no_error(
       withr::with_dir(new = tmpdir,
-                      code = quarto::quarto_render(input = output_files[2])))
+                      code = quarto::quarto_render(input = output_files[3])))
   }
 
 
@@ -35,11 +36,11 @@ testthat::test_that("draft_report", {
      mesos_var = "f_uni",
      path = tmpdir)
   output_files <-
-    list.files(pattern = "^[^_i].*\\.qmd", path = tmpdir,
+    list.files(pattern = "\\.qmd", path = tmpdir,
                full.names = TRUE, recursive = TRUE, ignore.case = TRUE)
   testthat::expect_equal(
     object = length(output_files),
-    expected = nrow(saros::ex_survey_ch_overview[1:3, ]) * dplyr::n_distinct(data$f_uni))
+    expected = (nrow(saros::ex_survey_ch_overview[1:3, ])+2) * dplyr::n_distinct(data$f_uni))
 
   }
 })
