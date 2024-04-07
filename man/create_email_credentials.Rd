@@ -18,9 +18,10 @@ create_email_credentials(
 )
 }
 \arguments{
-\item{local_basepath}{String. Path to where your QMD-files are located (the site to be rendered).}
+\item{local_basepath}{Local path for project, typically project directory.}
 
-\item{rel_path_base_to_parent_of_user_restricted_folder}{String. Path going from basepath to the folder containing folders to password-protect.}
+\item{rel_path_base_to_parent_of_user_restricted_folder}{Character vector
+of path(s) to the parent folder where the mesos reports can be found.}
 
 \item{email_data_frame}{Data.frame/tibble with (at least) emails and usernames}
 
