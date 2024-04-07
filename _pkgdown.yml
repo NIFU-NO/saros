@@ -9,10 +9,6 @@ reference:
     The only functions you will probably use, in the order listed
   contents:
   - draft_report
-  - prepare_safe_render
-  - quarto_render_saros
-  - render_full_reports
-  - post_render_docx_img_replacer
 - title: "Example data and metadata"
   desc: "You would need to create these two types of data frames."
   contents:
@@ -41,6 +37,8 @@ reference:
   contents:
   - create_email_credentials
   - setup_access_restrictions
+  - render_full_reports
+  - post_render_docx_img_replacer
 - title: "Create individual elements (usually called automatically)"
   contents:
   - starts_with("embed")
@@ -59,4 +57,4 @@ reference:
   - is_colour
 - title: "Internal functions"
   contents:
-  - matches("create_caption|^prep_|process_yaml|^gen_|summarize_data|create_htaccess|create__headers_file|get_colour_palette|replace_docx_imgs_with_mscharts|sigtest|prepare_chunk|filename_sanitizer|crosstable3")
+  - matches("create_caption|^prep_|process_yaml|^gen_|summarize_data|create_htaccess|create__headers_file|get_colour_palette|replace_docx_imgs_with_mscharts|sigtest|prepare_chunk|filename_sanitizer|crosstable")
