@@ -13,58 +13,62 @@
 #'
 #' @return A string containing the filepath to the generated Quarto index file.
 #' @keywords internal
-gen_qmd_index <-
-  function(
-    index_filepath = "index.qmd",
-    ...,
-    chapter_filepaths = NULL,
-    report_filepath = NULL,
-    yaml_file = NULL,
-    call = rlang::caller_env()) {
-
-    dots <- update_dots(dots = rlang::list2(...), allow_unique_overrides = FALSE)
-    check_string(dots$title, n = 1, null.ok = TRUE, call = call)
-    check_string(dots$authors, n = NULL, null.ok = TRUE, call = call)
-    check_string(index_filepath, n = 1, null.ok = FALSE,  call = call)
-    check_string(chapter_filepaths, n = NULL, null.ok = TRUE, call = call)
-    check_string(report_filepath, n = 1, null.ok = TRUE, call = call)
-    check_string(yaml_file, n = 1, null.ok = TRUE, call = call)
-
-    yaml_section <-
-      process_yaml(yaml_file = yaml_file,
-                   format = if(is.character(chapter_filepaths)) "typst" else "html",
-                   title = dots$title,
-                   authors = dots$authors[!is.na(dots$authors)])
-
-    if(is.character(chapter_filepaths)) {
-      main_section <-
-'
-```{r}
-#| results: asis
-list.files(pattern="^[^_].+\\\\.qmd", recursive = FALSE, include.dirs = FALSE, no.. = TRUE) |>
-  grep(x=_, pattern = "index\\\\.qmd", value=TRUE, invert=TRUE) |>
-  lapply(X=_, FUN = function(x) knitr::knit_child(x, quiet=TRUE)) |>
-  unlist() |>
-  cat(sep = "\\n")
-```
-'
-    }
-    report_link <- if(is.character(report_filepath)) {
-      stringi::stri_c(dots$translations$download_report, "\n-\t[(PDF)](_", dots$title, ".pdf)",
-                      "\n-\t[(DOCX)](_", dots$title, ".docx)")
-    }
-
-    qmd_start_section <- if(!is.null(dots$qmd_start_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_start_section_filepath), collapse="\n")
-    qmd_end_section <- if(!is.null(dots$qmd_end_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = dots$qmd_end_section_filepath), collapse="\n")
-
-    out <-
-      stringi::stri_c(yaml_section, "\n",
-                   # qmd_start_section,
-                   if(is.character(chapter_filepaths)) main_section,
-                   if(is.character(report_filepath)) report_link,
-                   qmd_end_section,
-                   ignore_null=TRUE, sep="\n")
-    cat(out, file = index_filepath, append = FALSE)
-    index_filepath
-  }
+# gen_qmd_index <-
+#   function(
+#     path = NULL,
+#     filename = "0_report",
+#     yaml_file = NULL,
+#     qmd_start_section_filepath = NULL,
+#     qmd_end_section_filepath = NULL,
+#     title = NULL,
+#     authors = NULL,
+#     output_formats = NULL,
+#     output_filename = NULL,
+#     call = rlang::caller_env()) {
+#
+#     check_string(path, n = 1, null.ok = TRUE,  call = call)
+#     check_string(filename, n = 1, null.ok = TRUE,  call = call)
+#     check_string(yaml_file, n = 1, null.ok = TRUE, call = call)
+#     check_string(qmd_start_section_filepath, n = 1, null.ok = TRUE, call = call)
+#     check_string(qmd_end_section_filepath, n = 1, null.ok = TRUE, call = call)
+#     check_string(title, n = 1, null.ok = TRUE, call = call)
+#     check_string(authors, n = NULL, null.ok = TRUE, call = call)
+#     check_string(output_formats, n = NULL, null.ok = TRUE, call = call)
+#     check_string(output_filename, n = 1, null.ok = TRUE, call = call)
+#     if(is.null(title) && is.null(filename)) {
+#       cli::cli_abort("{.arg filename} and {.arg title} cannot be both NULL.")
+#     }
+#
+#     yaml_section <-
+#       process_yaml(yaml_file = yaml_file,
+#                    title = title,
+#                    authors = authors[!is.na(authors)])
+#
+#     report_link <-
+#       if(is.character(output_filename) && is.character(output_formats)) {
+#         lapply(output_formats, function(frmt) {
+#           frmt <- switch(frmt, typst = "pdf", frmt)
+#           stringi::stri_c("-\t[(", toupper(frmt), ")](", output_filename, ".", x, ")")
+#         })
+#         report_link <- stringi::stri_c(report_link, collapse="\n")
+#       }
+#
+#     qmd_start_section <- if(!is.null(qmd_start_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_start_section_filepath), collapse="\n")
+#     qmd_end_section <- if(!is.null(qmd_end_section_filepath)) stringi::stri_c(ignore_null=TRUE, readLines(con = qmd_end_section_filepath), collapse="\n")
+#
+#     out <-
+#       stringi::stri_c(yaml_section, "\n",
+#                    qmd_start_section,
+#                    report_link,
+#                    qmd_end_section,
+#                    ignore_null=TRUE, sep="\n")
+#     filepath <-
+#       if(is.character(filename)) {
+#         file.path(path, filename)
+#       } else if(is.null(filename)) { # Produce unique report file name based on title
+#         file.path(path, stringi::stri_c("0_", filename_sanitizer(title), ".qmd", ignore_null = TRUE))
+#       }
+#     cat(out, file = filepath, append = FALSE)
+#     filepath
+#   }
 

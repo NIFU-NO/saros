@@ -77,7 +77,7 @@
 #'
 #'   String to split column names in data between main question and sub-items
 #'
-#' @param index_yaml_file,report_yaml_file *Path to YAML-file to insert into index.qmd and report.qmd respectively*
+#' @param index_yaml_file,report_yaml_file *Path to YAML-file to insert into index.qmd and 0_report.qmd respectively*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'
@@ -93,14 +93,25 @@
 #'
 #'   `scalar<character>` // *default:* `"index.qmd"` (`optional`)
 #'
-#'   The name of the main index Quarto file (and its subfolder) used as landing
+#'   The name of the main index Quarto file used as landing
 #'   page for each report. Will link to a PDF (report.qmd) which collects all chapters.
 #'
-#' @param qmd_start_section_filepath,qmd_end_section_filepath *Path to qmd-bit for start/end of each qmd*
+#' @param report_filename *Report filename*
+#'
+#'   `scalar<character>` // *default:* `"0_report.qmd"` (`optional`)
+#'
+#'   The name of the main report QMD-file used when compiling a complete report
+#'   collecting all chapters in its folder (except itself).
+#'   If provided, will be linked to in the index.
+#'   If NULL, will generate a filename based on the report title, prefixed with "0_".
+#'   To turn off, set `pdf=FALSE`.
+#'
+#'
+#' @param chapter_qmd_start_section_filepath,chapter_qmd_end_section_filepath,index_qmd_start_section_filepath,index_qmd_end_section_filepath,report_qmd_start_section_filepath,report_qmd_end_section_filepath, *Path to qmd-bit for start/end of each qmd*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'
-#'   Path to qmd-snippet placed before/after body of all chapter qmds.
+#'   Path to qmd-snippet placed before/after body of all chapter/index/report qmd-files.
 #'
 #' @param path *Output path*
 #'
@@ -368,13 +379,6 @@
 #'
 #'   Whether to include totals in the output.
 #'
-#' @param flexi *Create page with user-editable categorical plots and tables*
-#'
-#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
-#'
-#'   Whether to create a folder with a Shiny flexi app containing all the
-#'   variables in the chapter_overview and auxiliary_variables.
-#'
 #' @param micro *Create page with raw data (micro data) and codebook*
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
@@ -568,12 +572,20 @@ draft_report <-
            mesos_var = NULL,
            label_separator = " - ",
            name_separator = NULL,
-           index_yaml_file = NULL,
-           report_yaml_file = NULL,
+
            chapter_yaml_file = NULL,
-           qmd_start_section_filepath = NULL,
-           qmd_end_section_filepath = NULL,
-           index_filename = "index.qmd",
+           chapter_qmd_start_section_filepath = NULL,
+           chapter_qmd_end_section_filepath = NULL,
+
+           index_filename = "index",
+           index_yaml_file = NULL,
+           index_qmd_start_section_filepath = NULL,
+           index_qmd_end_section_filepath = NULL,
+
+           report_filename = "0_report",
+           report_yaml_file = NULL,
+           report_qmd_start_section_filepath = NULL,
+           report_qmd_end_section_filepath = NULL,
 
            element_names =
              c(#"opening_text",
@@ -688,7 +700,6 @@ draft_report <-
            pdf = TRUE,
            attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
-           flexi = FALSE,
            micro = FALSE,
 
 
@@ -715,7 +726,7 @@ draft_report <-
 
            translations =
              list(last_sep = " and ",
-                  download_report = "Download report (PDF)",
+                  # download_report = "Download report (PDF)",
                   intro_prefix = "We will now look at the questions asked regarding ",
                   intro_suffix = "",
                   mode_max_onfix = " on ",
@@ -752,39 +763,7 @@ draft_report <-
                   mesos_group_prefix = " Group: ",
                   mesos_group_suffix = "",
                   mesos_label_all_others = "Others",
-                  empty_chunk_text = "\nText\n",
-                  flexi_input_chapter = "Chapter(s):",
-                  flexi_input_dep = "Dependent variable(s):",
-                  flexi_input_indep = "Independent variable:",
-                  flexi_input_mesos_group = "Filter:",
-                  flexi_figure_type = "Figure type:",
-                  flexi_data_label = "Summary to display",
-                  flexi_showNA = "Show NA (Missing)",
-                  flexi_sort_by = "Sort by",
-                  flexi_totals = "Totals",
-                  flexi_digits = "Digits after decimal",
-                  flexi_table = "Table",
-                  flexi_figure = "Figure",
-                  flexi_cols_variable_name = "Variable name",
-                  flexi_cols_variable_label = "Variable label",
-                  flexi_cols_category = "Response category",
-                  flexi_cols_count = "N",
-                  flexi_cols_count_se = "SE(N)",
-                  flexi_cols_proportion = "Proportion",
-                  flexi_cols_proportion_se = "SE(Proportion)",
-                  flexi_cols_mean = "Mean",
-                  flexi_cols_mean_se = "SE(Mean)",
-                  flexi_cols_data_label = "Data label",
-                  flexi_cols_comb_categories = "Combined categories",
-                  flexi_cols_sum_value = "Sum of data label across combined categories",
-                  flexi_validate = "Error: Columns must have some categories in common.",
-                  flexi_settings = "Settings",
-                  flexi_basic_settings = "Basic",
-                  flexi_advanced_settings = "Advanced",
-                  flexi_input_indep_none = "<none>",
-                  flexi_figure_type_proportion = "Proportion",
-                  flexi_figure_type_frequency = "Frequency",
-                  flexi_hide_label_if_prop_below = "Hide label if proportion below:"
+                  empty_chunk_text = "\n"
                   )
   ) {
 
@@ -871,31 +850,35 @@ draft_report <-
 
 
 
+
                if(isTRUE(args$pdf)) {
+
                  report_filepath <-
-                   rlang::exec(
-                     gen_qmd_index,
-                     title = args$title,
-                     authors = all_authors,
-                     index_filepath = file.path(path, stringi::stri_c("_", args$title, ".qmd", ignore_null = TRUE)),
-                     chapter_filepaths = chapter_filepaths,
-                     yaml_file = args$report_yaml_file,
-                     !!!args[!names(args) %in% c("title", "authors", "report_yaml_file")],
-                     call = rlang::caller_env())
+                     gen_qmd_file(
+                       path = path,
+                       filename = args$report_filename,
+                       yaml_file = args$report_yaml_file,
+                       qmd_start_section_filepath = args$report_qmd_start_section_filepath,
+                       qmd_end_section_filepath = args$report_qmd_end_section_filepath,
+                       title = args$title,
+                       authors = all_authors,
+                       output_formats = NULL,
+                       output_filename = NULL,
+                       call = rlang::caller_env())
                }
 
                index_filepath <-
-                 rlang::exec(
-                   gen_qmd_index,
+                   gen_qmd_file(
+                   path = path,
+                   filename = args$index_filename,
+                   yaml_file = args$index_yaml_file,
+                   qmd_start_section_filepath = args$index_qmd_start_section_filepath,
+                   qmd_end_section_filepath = args$index_qmd_end_section_filepath,
                    title = args$title,
                    authors = all_authors,
-                   index_filepath = file.path(path, args$index_filename),
-                   chapter_filepaths = NULL,
-                   report_filepath = if(isTRUE(args$pdf)) report_filepath,
-                   yaml_file = args$index_yaml_file,
-                   !!!args[!names(args) %in% c("title", "authors", "index_yaml_file")],
+                   output_formats = if(!is.null(args$report_yaml_file)) find_yaml_formats(args$report_yaml_file),
+                   output_filename = args$report_filename,
                    call = rlang::caller_env())
-
 
                index_filepath
 
