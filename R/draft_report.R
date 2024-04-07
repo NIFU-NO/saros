@@ -504,6 +504,16 @@
 #'   the folder name. It will not impact the report or chapter names in website,
 #'   only the folders.
 #'
+#' @param max_path_warning_threshold *Maximum number of characters in paths warning*
+#'
+#'   `scalar<integer>` // *default:* `260` (`optional`)
+#'
+#'   Microsoft has set an absolute limit of 260 characters for its Sharepoint/OneDrive
+#'   file paths. This will mean that files with cache (hash suffixes are added) will
+#'   quickly breach this limit. When set, a warning will be returned if files are found
+#'   to be longer than this threshold. Also note that spaces count as three characters
+#'   due to its URL-conversion: %20
+#'
 #' @param mesos_first *mesos first*
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
@@ -677,6 +687,7 @@ draft_report <-
            max_width_obj = 128,
            max_width_file = 64,
            max_clean_folder_name = 12,
+           max_path_warning_threshold = 260,
            open_after_drafting = FALSE,
 
            # Structure of report
@@ -803,11 +814,6 @@ draft_report <-
     } else {
       # Mesos reports
       uniques <- pull_uniques(data[[args$mesos_var]])
-
-      if(any(nchar(uniques) > 12)) {
-        cli::cli_warn(c(i="{.arg mesos_var} has levels > 12 characters: {uniques[nchar(uniques)>12]}.",
-                        i="This creates filepaths that are likely too long for Sharepoint to handle..."))
-      }
     }
 
     report_foldername_clean <- filename_sanitizer(uniques, max_chars = args$max_clean_folder_name)
@@ -897,6 +903,16 @@ draft_report <-
     if(interactive() && isTRUE(args$open_after_drafting)) {
       lapply(index_filepath, utils::browseURL)
     }
+
+    max_paths <-
+      nchar(list.files(path=path,
+               all.files = TRUE, full.names = TRUE, recursive = TRUE))
+    if(.Platform$OS.type == "windows" && max(max_paths, na.rm=TRUE) >= max_path_warning_threshold) {
+      cli::cli_warn(c(x="{.val {length(max_path[max_path >= max_path_warning_threshold])}} files exceed {.arg max_path_warning_threshold} ({max_path_warning_threshold}) characters.",
+                      i="This may create problems in Windows if path is on a Sharepoint/OneDrive.",
+                      i="Omit warning by adjusting {.arg max_path_warning_threshold}"))
+    }
+
 
     cat(proc.time()-timestamp)
     cat("\n")

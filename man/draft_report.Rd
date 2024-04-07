@@ -77,6 +77,7 @@ draft_report(
   max_width_obj = 128,
   max_width_file = 64,
   max_clean_folder_name = 12,
+  max_path_warning_threshold = 260,
   open_after_drafting = FALSE,
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".element_name"),
