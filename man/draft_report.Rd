@@ -77,6 +77,7 @@ draft_report(
   max_width_obj = 128,
   max_width_file = 64,
   max_clean_folder_name = 12,
+  max_path_warning_threshold = 260,
   open_after_drafting = FALSE,
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".element_name"),
@@ -500,6 +501,16 @@ Quarto's \code{cache: true} feature. This argument truncates the filenames.}
 Whereas \code{max_width_file} truncates the file name, this argument truncates
 the folder name. It will not impact the report or chapter names in website,
 only the folders.}
+
+\item{max_path_warning_threshold}{\emph{Maximum number of characters in paths warning}
+
+\verb{scalar<integer>} // \emph{default:} \code{260} (\code{optional})
+
+Microsoft has set an absolute limit of 260 characters for its Sharepoint/OneDrive
+file paths. This will mean that files with cache (hash suffixes are added) will
+quickly breach this limit. When set, a warning will be returned if files are found
+to be longer than this threshold. Also note that spaces count as three characters
+due to its URL-conversion: \%20. To avoid test, set to Inf}
 
 \item{open_after_drafting}{\emph{Whether to open index.qmd}
 
