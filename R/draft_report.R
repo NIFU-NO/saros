@@ -703,11 +703,13 @@ draft_report <-
                            ".element_name"),
            arrange_section_by = c(chapter = FALSE,
                                  .variable_name_dep = FALSE,
-                                 .element_name = TRUE,
+                                 # .element_name = TRUE,
                                  .variable_name_indep = FALSE),
 
-           ignore_heading_for_group = c(".element_name", ".variable_type_dep",
-                                        ".variable_type_indep", "chapter"),
+           ignore_heading_for_group = c(".element_name",
+                                        ".variable_type_dep",
+                                        ".variable_type_indep",
+                                        "chapter"),
            replace_heading_for_group = c(".variable_label_suffix_dep" = ".variable_name_dep",
                                          ".variable_label_suffix_indep" = ".variable_name_indep"),
 

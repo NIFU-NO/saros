@@ -513,7 +513,13 @@ refine_chapter_overview <-
 
   out <-
     dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
-
-  out <- arrange2(data = out, arrange_vars = dots$arrange_sections_by)
+  sorter_assistant <- function(x) {
+    if(is.character(x) || is.numeric(x)) return(x)
+    if(is.factor(x)) return(as.integer(x))
+  }
+  out2 <- arrange2(data = out, arrange_vars = dots$arrange_section_by)
+  out <-
+    dplyr::arrange(out, dplyr::across(tidyselect::all_of(dots$arrange_section_by[dots$arrange_section_by %in% colnames(out)]),
+                                      ~sorter_assistant(.x)))
   out
 }

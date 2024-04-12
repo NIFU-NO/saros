@@ -111,7 +111,8 @@ argument_validation_and_insertion <- function(params) {
       # Enums
       data_label = list(fun = function(x) is.character(x) && any(env$data_label == x[1])),
       organize_by = list(fun = function(x) is.character(x)), # BETTER CHECKS NEEDED
-      arrange_section_by = list(fun = function(x) (is.character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)) ||
+      arrange_section_by = list(fun = function(x) is.null(x) ||
+                                  (is.character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)) ||
                                   (is.logical(x) && rlang::is_named(x) && all(names(x) %in% .saros.env$refined_chapter_overview_columns))),
       showNA = list(fun = function(x) is.character(x) && any(env$showNA == x[1])),
       element_names = list(fun = function(x) is.character(x) && all(x %in% env$element_names)),
