@@ -545,7 +545,7 @@ typically wants \emph{u}nivariates before \emph{b}ivariates.}
 
 Default ascending and descending sorting with \code{dplyr::arrange()} is to place
 NAs at the end. This would have placed univariates at the end, etc. Thus,
-saros places NAs first in the section. Set this to FALSE to overide.}
+saros places NAs first in the section. Set this to FALSE to override.}
 
 \item{ignore_heading_for_group}{\emph{Ignore heading for group}
 
