@@ -510,16 +510,10 @@ refine_chapter_overview <-
     out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
   }
 
-  sorter_assistant <- function(x) {
-    if(is.character(x) || is.numeric(x)) return(x)
-    if(is.factor(x)) return(as.integer(x))
-  }
 
   out <-
     dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
-  out <-
-    dplyr::arrange(out, dplyr::across(tidyselect::all_of(dots$arrange_output_by[dots$arrange_output_by %in% colnames(out)]),
-                                      ~sorter_assistant(.x)))
 
+  out <- arrange2(data = out, arrange_vars = dots$arrange_sections_by)
   out
 }

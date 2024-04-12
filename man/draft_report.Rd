@@ -81,8 +81,10 @@ draft_report(
   open_after_drafting = FALSE,
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".element_name"),
-  arrange_output_by = c("chapter", ".variable_name_dep", ".variable_name_indep"),
-  ignore_heading_for_group = c(".element_name", ".variable_type_dep", "chapter"),
+  arrange_section_by = c(chapter = FALSE, .variable_name_dep = FALSE, .element_name =
+    TRUE, .variable_name_indep = FALSE),
+  ignore_heading_for_group = c(".element_name", ".variable_type_dep",
+    ".variable_type_indep", "chapter"),
   replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep",
     .variable_label_suffix_indep = ".variable_name_indep"),
   mesos_first = TRUE,
@@ -525,11 +527,16 @@ Whether to open the main output file (index.qmd) after completion.}
 
 Column names used for identifying chapters and sections.}
 
-\item{arrange_output_by}{\emph{Grouping columns}
+\item{arrange_section_by}{\emph{Grouping columns}
 
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{vector<character>} or \verb{named vector<logical>} // \emph{default:} \code{NULL} (\code{optional})
 
-Column names used for sorting output within each organize_by group}
+Column names used for sorting section within each organize_by group. If
+character vector, will assume all are to be arranged in ascending order.
+If a named logical vector, FALSE will indicate ascending, TRUE descending.
+Defaults to sorting in ascending order (alphabetical) for commonly needed
+variable name/label info, and in descending order for element_names as one
+typically wants \code{u}nivariates before \code{b}ivariates.}
 
 \item{ignore_heading_for_group}{\emph{Ignore heading for group}
 
@@ -557,7 +564,8 @@ Whether to place the mesos group element before or after the entire sample.}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
-Reverse sorting of \code{sort_by}.}
+Reverse sorting of \code{sort_by} in figures and tables. See \code{arrange_section_by}
+for sorting of report sections.}
 
 \item{require_common_categories}{\emph{Check common categories}
 

@@ -452,3 +452,30 @@ compare_many <- function(x) {
                     FUN = function(.x) identical(.x, x[[1]])))) ||
     nrow(x[[1]])==1
 }
+
+
+arrange2 <- function(data, arrange_vars = NULL) {
+  if(is.null(arrange_vars)) return(data)
+
+  if(is.character(arrange_vars)) {
+    arrange_vars <-
+      setNames(rep(FALSE, times = length(arrange_vars)),
+               nm = arrange_vars)
+  }
+  check_vars <- arrange_vars[!names(arrange_vars) %in% colnames(data)]
+  if(length(check_vars)>0) {
+    cli::cli_abort("{.arg arrange_vars} not found in {.arg data}: {check_vars}.")
+  }
+
+  names(arrange_vars) <-
+    ifelse(unlist(lapply(names(arrange_vars), function(v) is.factor(data[[v]]))),
+           paste0("as.integer(", names(arrange_vars), ")"),
+           names(arrange_vars))
+  arrange_vars <-
+    ifelse(unname(arrange_vars),
+           paste0("dplyr::desc(", names(arrange_vars), ")"),
+           names(arrange_vars))
+
+  dplyr::arrange(data, !!!rlang::parse_exprs(arrange_vars))
+
+}
