@@ -293,7 +293,15 @@
 #'   If a named logical vector, FALSE will indicate ascending, TRUE descending.
 #'   Defaults to sorting in ascending order (alphabetical) for commonly needed
 #'   variable name/label info, and in descending order for element_names as one
-#'   typically wants `u`nivariates before `b`ivariates.
+#'   typically wants *u*nivariates before *b*ivariates.
+#'
+#' @param na_first_in_section *Whether to place NAs first when sorting*
+#'
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
+#'
+#'   Default ascending and descending sorting with `dplyr::arrange()` is to place
+#'   NAs at the end. This would have placed univariates at the end, etc. Thus,
+#'   saros places NAs first in the section. Set this to FALSE to override.
 #'
 #' @param ignore_heading_for_group *Ignore heading for group*
 #'
@@ -702,9 +710,10 @@ draft_report <-
                            ".variable_name_indep",
                            ".element_name"),
            arrange_section_by = c(chapter = FALSE,
-                                 .variable_name_dep = FALSE,
-                                 # .element_name = TRUE,
-                                 .variable_name_indep = FALSE),
+                                  .variable_name_dep = FALSE,
+                                  .variable_name_indep = FALSE,
+                                  .element_name = FALSE),
+           na_first_in_section = TRUE,
 
            ignore_heading_for_group = c(".element_name",
                                         ".variable_type_dep",

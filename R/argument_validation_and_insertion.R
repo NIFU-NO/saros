@@ -75,6 +75,7 @@ argument_validation_and_insertion <- function(params) {
       pdf = list(fun = is_bool),
       micro = list(fun = is_bool),
       table_main_question_as_header = list(fun = is_bool),
+      na_first_in_section = list(fun = is_bool),
 
       # Numeric and integer
       plot_height_multiplier_per_horizontal_line = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),

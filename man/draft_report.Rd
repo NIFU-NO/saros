@@ -82,7 +82,8 @@ draft_report(
   organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
     ".element_name"),
   arrange_section_by = c(chapter = FALSE, .variable_name_dep = FALSE,
-    .variable_name_indep = FALSE),
+    .variable_name_indep = FALSE, .element_name = FALSE),
+  na_first_in_section = TRUE,
   ignore_heading_for_group = c(".element_name", ".variable_type_dep",
     ".variable_type_indep", "chapter"),
   replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep",
@@ -536,7 +537,15 @@ character vector, will assume all are to be arranged in ascending order.
 If a named logical vector, FALSE will indicate ascending, TRUE descending.
 Defaults to sorting in ascending order (alphabetical) for commonly needed
 variable name/label info, and in descending order for element_names as one
-typically wants \code{u}nivariates before \code{b}ivariates.}
+typically wants \emph{u}nivariates before \emph{b}ivariates.}
+
+\item{na_first_in_section}{\emph{Whether to place NAs first when sorting}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Default ascending and descending sorting with \code{dplyr::arrange()} is to place
+NAs at the end. This would have placed univariates at the end, etc. Thus,
+saros places NAs first in the section. Set this to FALSE to overide.}
 
 \item{ignore_heading_for_group}{\emph{Ignore heading for group}
 
