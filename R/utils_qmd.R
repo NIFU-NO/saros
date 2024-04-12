@@ -87,4 +87,3 @@ create_heading <- function(x, level = NULL,
     x[level])
 }
 
-

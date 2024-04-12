@@ -154,7 +154,8 @@
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
 #'
-#'   Reverse sorting of `sort_by`.
+#'   Reverse sorting of `sort_by` in figures and tables. See `arrange_section_by`
+#'   for sorting of report sections.
 #'
 #' @param hide_label_if_prop_below *Hide label threshold*
 #'
@@ -283,11 +284,24 @@
 #'
 #'   Column names used for identifying chapters and sections.
 #'
-#' @param arrange_output_by *Grouping columns*
+#' @param arrange_section_by *Grouping columns*
 #'
-#'   `vector<character>` // *default:* `NULL` (`optional`)
+#'   `vector<character>` or `named vector<logical>` // *default:* `NULL` (`optional`)
 #'
-#'   Column names used for sorting output within each organize_by group
+#'   Column names used for sorting section within each organize_by group. If
+#'   character vector, will assume all are to be arranged in ascending order.
+#'   If a named logical vector, FALSE will indicate ascending, TRUE descending.
+#'   Defaults to sorting in ascending order (alphabetical) for commonly needed
+#'   variable name/label info, and in descending order for element_names as one
+#'   typically wants *u*nivariates before *b*ivariates.
+#'
+#' @param na_first_in_section *Whether to place NAs first when sorting*
+#'
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
+#'
+#'   Default ascending and descending sorting with `dplyr::arrange()` is to place
+#'   NAs at the end. This would have placed univariates at the end, etc. Thus,
+#'   saros places NAs first in the section. Set this to FALSE to override.
 #'
 #' @param ignore_heading_for_group *Ignore heading for group*
 #'
@@ -695,11 +709,16 @@ draft_report <-
                            ".variable_label_prefix_dep",
                            ".variable_name_indep",
                            ".element_name"),
-           arrange_output_by = c("chapter",
-                                 ".variable_name_dep",
-                                 ".variable_name_indep"),
+           arrange_section_by = c(chapter = FALSE,
+                                  .variable_name_dep = FALSE,
+                                  .variable_name_indep = FALSE,
+                                  .element_name = FALSE),
+           na_first_in_section = TRUE,
 
-           ignore_heading_for_group = c(".element_name", ".variable_type_dep", "chapter"),
+           ignore_heading_for_group = c(".element_name",
+                                        ".variable_type_dep",
+                                        ".variable_type_indep",
+                                        "chapter"),
            replace_heading_for_group = c(".variable_label_suffix_dep" = ".variable_name_dep",
                                          ".variable_label_suffix_indep" = ".variable_name_indep"),
 

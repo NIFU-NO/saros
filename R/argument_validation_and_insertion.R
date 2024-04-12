@@ -75,6 +75,7 @@ argument_validation_and_insertion <- function(params) {
       pdf = list(fun = is_bool),
       micro = list(fun = is_bool),
       table_main_question_as_header = list(fun = is_bool),
+      na_first_in_section = list(fun = is_bool),
 
       # Numeric and integer
       plot_height_multiplier_per_horizontal_line = list(fun = function(x) (is_scalar_finite_doubleish(x) && x > 0) || is.na(x)),
@@ -111,7 +112,9 @@ argument_validation_and_insertion <- function(params) {
       # Enums
       data_label = list(fun = function(x) is.character(x) && any(env$data_label == x[1])),
       organize_by = list(fun = function(x) is.character(x)), # BETTER CHECKS NEEDED
-      arrange_output_by = list(fun = function(x) is.character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)),
+      arrange_section_by = list(fun = function(x) is.null(x) ||
+                                  (is.character(x) && all(x %in% .saros.env$refined_chapter_overview_columns)) ||
+                                  (is.logical(x) && rlang::is_named(x) && all(names(x) %in% .saros.env$refined_chapter_overview_columns))),
       showNA = list(fun = function(x) is.character(x) && any(env$showNA == x[1])),
       element_names = list(fun = function(x) is.character(x) && all(x %in% env$element_names)),
       serialized_format = list(fun = function(x) is.character(x) && any(env$serialized_format == x[1])),
@@ -156,9 +159,10 @@ argument_validation_and_insertion <- function(params) {
     cli::cli_abort(c("{.arg organize_by} is not valid. Must be one or more of {(.saros.env$refined_chapter_overview_columns)}.",
                      i = "You provided {.arg {params$organize_by}}."))
   }
-  if(!all(params$arrange_output_by %in% .saros.env$refined_chapter_overview_columns)) {
-    cli::cli_abort(c("{.arg arrange_output_by} is not valid. Must be one or more of {(.saros.env$refined_chapter_overview_columns)}.",
-                     i = "You provided {.arg {params$arrange_output_by}}."))
+  if(!all(params$arrange_section_by %in% .saros.env$refined_chapter_overview_columns) &&
+     !all(names(params$arrange_section_by %in% .saros.env$refined_chapter_overview_columns))) {
+    cli::cli_abort(c("{.arg arrange_section_by} is not valid. Must be one or more of {(.saros.env$refined_chapter_overview_columns)}.",
+                     i = "You provided {.arg {params$arrange_section_by}}."))
   }
 
   if(is.null(params$chapter_overview)) {

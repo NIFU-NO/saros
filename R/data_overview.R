@@ -196,7 +196,9 @@ add_element_names <- function(refined_chapter_overview, element_names) {
   out_na <- vctrs::vec_slice(refined_chapter_overview,
                                is.na(refined_chapter_overview$.variable_name_dep))
 
-  dplyr::bind_rows(out_na, out)
+  out <- dplyr::bind_rows(out_na, out)
+  # out$.element_name <- factor(out$.element_name, levels=element_names)
+  out
 }
 
 
@@ -322,6 +324,7 @@ refine_chapter_overview <-
     if(all(.saros.env$refined_chapter_overview_columns %in% names(chapter_overview))) {
       return(chapter_overview)
     }
+    if(is.null(data)) dots$arrange_section_by <- NULL
 
     if(progress) cli::cli_progress_message(msg = "Refining chapter_overview...\n")
 
@@ -510,16 +513,10 @@ refine_chapter_overview <-
     out$chapter <- factor(out$chapter, levels=unique(chapter_overview$chapter))
   }
 
-  sorter_assistant <- function(x) {
-    if(is.character(x) || is.numeric(x)) return(x)
-    if(is.factor(x)) return(as.integer(x))
-  }
 
   out <-
     dplyr::group_by(out, dplyr::pick(tidyselect::all_of(dots$organize_by[dots$organize_by %in% colnames(out)])))
-  out <-
-    dplyr::arrange(out, dplyr::across(tidyselect::all_of(dots$arrange_output_by[dots$arrange_output_by %in% colnames(out)]),
-                                      ~sorter_assistant(.x)))
 
+  out <- arrange2(data = out, arrange_vars = dots$arrange_section_by, na_first = dots$na_first_in_section)
   out
 }
