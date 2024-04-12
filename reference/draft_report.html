@@ -20,7 +20,7 @@ chapters.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/m
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
+    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
@@ -149,8 +149,11 @@ chapters.</p>
 <span>  open_after_drafting <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  organize_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chapter"</span>, <span class="st">".variable_label_prefix_dep"</span>, <span class="st">".variable_name_indep"</span>,</span>
 <span>    <span class="st">".element_name"</span><span class="op">)</span>,</span>
-<span>  arrange_output_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chapter"</span>, <span class="st">".variable_name_dep"</span>, <span class="st">".variable_name_indep"</span><span class="op">)</span>,</span>
-<span>  ignore_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".element_name"</span>, <span class="st">".variable_type_dep"</span>, <span class="st">"chapter"</span><span class="op">)</span>,</span>
+<span>  arrange_section_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>chapter <span class="op">=</span> <span class="cn">FALSE</span>, .variable_name_dep <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    .variable_name_indep <span class="op">=</span> <span class="cn">FALSE</span>, .element_name <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>  na_first_in_section <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ignore_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".element_name"</span>, <span class="st">".variable_type_dep"</span>,</span>
+<span>    <span class="st">".variable_type_indep"</span>, <span class="st">"chapter"</span><span class="op">)</span>,</span>
 <span>  replace_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.variable_label_suffix_dep <span class="op">=</span> <span class="st">".variable_name_dep"</span>,</span>
 <span>    .variable_label_suffix_indep <span class="op">=</span> <span class="st">".variable_name_indep"</span><span class="op">)</span>,</span>
 <span>  mesos_first <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -616,10 +619,23 @@ due to its URL-conversion: %20. To avoid test, set to Inf</p></dd>
 <p>Column names used for identifying chapters and sections.</p></dd>
 
 
-<dt>arrange_output_by</dt>
+<dt>arrange_section_by</dt>
 <dd><p><em>Grouping columns</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Column names used for sorting output within each organize_by group</p></dd>
+<p><code>vector&lt;character&gt;</code> or <code>named vector&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Column names used for sorting section within each organize_by group. If
+character vector, will assume all are to be arranged in ascending order.
+If a named logical vector, FALSE will indicate ascending, TRUE descending.
+Defaults to sorting in ascending order (alphabetical) for commonly needed
+variable name/label info, and in descending order for element_names as one
+typically wants <em>u</em>nivariates before <em>b</em>ivariates.</p></dd>
+
+
+<dt>na_first_in_section</dt>
+<dd><p><em>Whether to place NAs first when sorting</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>Default ascending and descending sorting with <code><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">dplyr::arrange()</a></code> is to place
+NAs at the end. This would have placed univariates at the end, etc. Thus,
+saros places NAs first in the section. Set this to FALSE to override.</p></dd>
 
 
 <dt>ignore_heading_for_group</dt>
@@ -647,7 +663,8 @@ the name for the replacement and the value for the original.</p></dd>
 <dt>descend</dt>
 <dd><p><em>Sorting order</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Reverse sorting of <code>sort_by</code>.</p></dd>
+<p>Reverse sorting of <code>sort_by</code> in figures and tables. See <code>arrange_section_by</code>
+for sorting of report sections.</p></dd>
 
 
 <dt>require_common_categories</dt>
@@ -785,7 +802,7 @@ See <code>chapter_overview</code> for more options.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30.391 0.355 30.792 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30.952 0.302 31.28 0 0</span>
 <span class="r-in"><span><span class="va">index_filepaths</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu">draft_report</span><span class="op">(</span></span></span>
 <span class="r-in"><span>   chapter_overview <span class="op">=</span> <span class="va">ex_survey_ch_overview</span>,</span></span>
@@ -806,19 +823,6 @@ See <code>chapter_overview</code> for more options.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of A</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of A</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of A</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of A</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of A</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of A</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Completed report for Uni of D.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
@@ -829,7 +833,12 @@ See <code>chapter_overview</code> for more options.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 214.255 2.519 216.803 0 0</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 212.71 2.379 215.126 0 0</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
@@ -842,7 +851,7 @@ See <code>chapter_overview</code> for more options.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
     </footer></div>
