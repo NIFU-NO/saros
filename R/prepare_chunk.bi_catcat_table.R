@@ -28,11 +28,11 @@ prepare_chunk.bi_catcat_table <-
 
 
     out <-
-      insert_obj_in_qmd(element_name = "bi_catcat_table",
+      create_code_cell(element_name = "bi_catcat_table",
                         index = obj_name,
                         mesos_group = mesos_group,
-                        filepath_txt = filepaths$abs$rds,
-                        filepath = filepaths$rel$rds,
+                        filepath_txt = filepaths$abs[[dots$serialized_format]],
+                        filepath = filepaths$rel[[dots$serialized_format]],
                         max_width_obj = dots$max_width_obj,
                         max_width_file = dots$max_width_file,
                         serialized_format = dots$serialized_format,

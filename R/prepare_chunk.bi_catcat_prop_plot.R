@@ -70,10 +70,10 @@ prepare_chunk.bi_catcat_prop_plot <-
     serialize_write(out_html, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
 
     out <-
-      c(insert_obj_in_qmd(element_name = element_name,
+      c(create_code_cell(element_name = element_name,
                           index = obj_name,
                           mesos_group = mesos_group,
-                          filepath = filepaths$rel$rds,
+                          filepath = filepaths$rel[[dots$serialized_format]],
                           figure_height = plot_height,
                           add_text = TRUE,
                           max_width_obj = dots$max_width_obj,

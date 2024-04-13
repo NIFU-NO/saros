@@ -1,4 +1,4 @@
-insert_obj_in_qmd <-
+create_code_cell <-
   function(element_name,
            index,
            filepath,
@@ -64,6 +64,7 @@ insert_obj_in_qmd <-
 
     hashpipe_label <-
         stringi::stri_c("#| label: '", label, "'", ignore_null=TRUE)
+
 
 
     chunk_body <- stringi::stri_c(obj_name, # Replace with glue?

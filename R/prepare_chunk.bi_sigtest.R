@@ -25,11 +25,11 @@ prepare_chunk.bi_sigtest <-
     if(nrow(out)>0) {
       tabular_write(object = out, path = filepaths$abs[[dots$tabular_format]], format = dots$tabular_format)
       serialize_write(out, path = filepaths$abs[[dots$serialized_format]], format = dots$serialized_format)
-      insert_obj_in_qmd(element_name = "bi_sigtest",
+      create_code_cell(element_name = "bi_sigtest",
                         index = obj_name,
                         mesos_group = mesos_group,
-                        filepath_txt = filepaths$abs$rds,
-                        filepath = filepaths$rel$rds,
+                        filepath_txt = filepaths$abs[[dots$serialized_format]],
+                        filepath = filepaths$rel[[dots$serialized_format]],
                         max_width_obj = dots$max_width_obj,
                         max_width_file = dots$max_width_file,
                         serialized_format = dots$serialized_format,

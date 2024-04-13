@@ -59,10 +59,10 @@ prepare_chunk.uni_cat_prop_plot <-
 
 
     out <-
-      c(insert_obj_in_qmd(element_name = element_name_snippet,
+      c(create_code_cell(element_name = element_name_snippet,
                         index = obj_name,
                         mesos_group = mesos_group,
-                        filepath = filepaths$rel$rds,
+                        filepath = filepaths$rel[[dots$serialized_format]],
                         figure_height = plot_height,
                         max_width_obj = dots$max_width_obj,
                         max_width_file = dots$max_width_file,
