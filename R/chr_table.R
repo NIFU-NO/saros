@@ -27,11 +27,12 @@ embed_chr_table_html <-
 
   if(length(dep_pos)>1) cli::cli_abort("Too many chr-dep in one section. Refine your chapter_overview so that only one txt-col is submitted at once. Problem with {.arg {dep}}")
   out <- dplyr::distinct(data, dplyr::pick({{dep}}))
+  out <- dplyr::filter(out, !is.na(.data[[dep]]), .data[[dep]] != "")
   names(out) <- " "
 
   mesos <- if(is_string(mesos_group)) stringi::stri_c(ignore_null=TRUE, dots$translations$mesos_group_prefix,
-                                                                  mesos_group,
-                                                            dots$translations$mesos_group_suffix)
+                                                      mesos_group,
+                                                      dots$translations$mesos_group_suffix)
   attr(out, "saros_caption") <-
     get_raw_labels(data = data, col_pos = dep_pos) %>%
     stringi::stri_c(ignore_null=TRUE, ., mesos,
