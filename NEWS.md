@@ -1,4 +1,4 @@
-# saros (development version)
+# saros 1.0.5
 
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
