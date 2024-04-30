@@ -51,6 +51,7 @@ estimate_plot_height <- function(data,
   unique_y_cats <- unique(as.vector(as.matrix(data[, y_cols])))
   if(showNA == "never") unique_y_cats <- unique_y_cats[!is.na(unique_y_cats)]
   y_n_cats <- length(unique_y_cats)
+  if(y_n_cats==0) unique_y_cats <- 1
   max_nchar_cat_y <- max(nchar(unique_y_cats))
   n_legend_lines <- ceiling(y_n_cats / 5)
   n_legend_lines <- max(c(ceiling(y_n_cats / 5),
