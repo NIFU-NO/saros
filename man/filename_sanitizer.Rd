@@ -4,7 +4,7 @@
 \alias{filename_sanitizer}
 \title{File/folder name sanitizer replacing space and punctuation with underscore}
 \usage{
-filename_sanitizer(x, max_chars = NA_integer_, accept_hyphen = TRUE)
+filename_sanitizer(x, max_chars = NA_integer_, accept_hyphen = FALSE)
 }
 \arguments{
 \item{x}{Character vector of file/folder names}

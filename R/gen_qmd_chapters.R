@@ -88,7 +88,8 @@ gen_qmd_chapters <-
           chapter_number_text <- sprintf(paste0("%0", digits, "d"), as.integer(chapter_number))
 
           chapter_foldername_clean <-
-            filename_sanitizer(chapter_foldername, max_chars = dots$max_clean_folder_name)
+            filename_sanitizer(chapter_foldername, max_chars = dots$max_clean_folder_name,
+                               accept_hyphen = FALSE)
           chapter_foldername_clean <-
             stringi::stri_c(chapter_number_text, "_", chapter_foldername_clean,
                             ignore_null = TRUE)
@@ -144,10 +145,7 @@ gen_qmd_chapters <-
             if(isTRUE(dots$attach_chapter_dataset)) {
               attach_chapter_dataset2(data = data,
                                      chapter_overview_chapter = chapter_overview_chapter,
-                                     chapter_foldername_clean =
-                                       filename_sanitizer(chapter_foldername,
-                                                          max_chars = dots$max_clean_folder_name,
-                                                          accept_hyphen = FALSE),
+                                     chapter_foldername_clean = chapter_foldername_clean,
                                      path = path,
                                      mesos_var = dots$mesos_var,
                                      auxiliary_variables = dots$auxiliary_variables,

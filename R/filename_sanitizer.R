@@ -9,8 +9,8 @@
 #'
 #' @examples
 #' filename_sanitizer(c("Too long a name", "with invalid *^/&#"))
-filename_sanitizer <- function(x, max_chars = NA_integer_, accept_hyphen = TRUE) {
-  pattern <- if(isTRUE(accept_hyphen)) "[^[:alnum:]-+]" else "[^[:alnum:]+]"
+filename_sanitizer <- function(x, max_chars = NA_integer_, accept_hyphen = FALSE) {
+  pattern <- if(isTRUE(accept_hyphen)) "[^[:alnum:]-+]+" else "[^[:alnum:]+]+"
   out <-
     stringi::stri_replace_all_regex(x,
                                     pattern = pattern,
