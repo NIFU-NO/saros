@@ -256,9 +256,9 @@ split_if_single_y_bivariates <-
                     .single_y_bivariate =
                       unlist(lapply(.data$.variable_name_indep,
                                     function(col) {
-                                      !is.na(col) && dplyr::n_distinct(data[[col]], na.rm = TRUE) > single_y_bivariates_if_indep_cats_above
+                                      !is.na(col) && dplyr::n_distinct(data[[col]], na.rm = TRUE) > .env$single_y_bivariates_if_indep_cats_above
                                     })) |
-                      dplyr::n() > single_y_bivariates_if_deps_above,
+                      (!is.na(.data$.variable_name_indep) & dplyr::n() > .env$single_y_bivariates_if_deps_above),
                     .by = tidyselect::all_of(organize_by))
 
     chapter_overview <-
