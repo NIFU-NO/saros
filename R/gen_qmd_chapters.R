@@ -144,7 +144,10 @@ gen_qmd_chapters <-
             if(isTRUE(dots$attach_chapter_dataset)) {
               attach_chapter_dataset2(data = data,
                                      chapter_overview_chapter = chapter_overview_chapter,
-                                     chapter_foldername_clean = chapter_foldername_clean,
+                                     chapter_foldername_clean =
+                                       filename_sanitizer(chapter_foldername,
+                                                          max_chars = dots$max_clean_folder_name,
+                                                          accept_hyphen = FALSE),
                                      path = path,
                                      mesos_var = dots$mesos_var,
                                      auxiliary_variables = dots$auxiliary_variables,

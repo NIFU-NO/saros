@@ -2,16 +2,18 @@
 #'
 #' @param x Character vector of file/folder names
 #' @param max_chars Maximum character length
+#' @param accept_hyphen Flag, whether a hyphen - is acceptable.
 #'
 #' @return Character vector of same length as x
 #' @export
 #'
 #' @examples
 #' filename_sanitizer(c("Too long a name", "with invalid *^/&#"))
-filename_sanitizer <- function(x, max_chars = NA_integer_) {
+filename_sanitizer <- function(x, max_chars = NA_integer_, accept_hyphen = TRUE) {
+  pattern <- if(isTRUE(accept_hyphen)) "[^[:alnum:]-+]" else "[^[:alnum:]+]"
   out <-
     stringi::stri_replace_all_regex(x,
-                                    pattern = "[^[:alnum:]-+]",
+                                    pattern = pattern,
                                     replacement = "_")
   out <- iconv(out, from ="UTF-8", to="ASCII//TRANSLIT", sub='')
 

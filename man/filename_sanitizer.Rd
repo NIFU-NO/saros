@@ -4,12 +4,14 @@
 \alias{filename_sanitizer}
 \title{File/folder name sanitizer replacing space and punctuation with underscore}
 \usage{
-filename_sanitizer(x, max_chars = NA_integer_)
+filename_sanitizer(x, max_chars = NA_integer_, accept_hyphen = TRUE)
 }
 \arguments{
 \item{x}{Character vector of file/folder names}
 
 \item{max_chars}{Maximum character length}
+
+\item{accept_hyphen}{Flag, whether a hyphen - is acceptable.}
 }
 \value{
 Character vector of same length as x
