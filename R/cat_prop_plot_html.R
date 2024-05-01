@@ -107,14 +107,16 @@ prep_cat_prop_plot_html <-
       ggiraph::geom_col_interactive(
         mapping = ggplot2::aes(tooltip = .data$.tooltip), # BUG: Messes up order of categories if enabled.
         position = ggplot2::position_stack(reverse = TRUE),
-        na.rm = TRUE
+        na.rm = TRUE,
+        show.legend = TRUE
       ) +
       ggiraph::geom_text_interactive(
         mapping = ggplot2::aes(
           colour = ggplot2::after_scale(x = hex_bw(.data$fill))),
         position = ggplot2::position_stack(vjust = .5, reverse = TRUE),
         size = dots$label_font_size,
-        show.legend = FALSE, na.rm = TRUE
+        na.rm = TRUE,
+        show.legend = FALSE
       ) +
       ggplot2::scale_y_continuous(
         limits = c(-.003, if (prop_family) 1.015 else NA),
@@ -128,7 +130,7 @@ prep_cat_prop_plot_html <-
         tooltip = function(x) x,
         drop = FALSE
       ) +
-      ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white")) +
+      ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white"), drop = FALSE) +
       ggplot2::scale_x_discrete(limits = rev, labels = function(x) string_wrap(x, width = dots$x_axis_label_width)) +
       ggplot2::guides(
         alpha = "none",
