@@ -9,7 +9,6 @@ Mschart
 Mscharts
 NIFU
 Netlify
-Netlify's
 OneDrive
 Pre
 QMD
@@ -19,11 +18,14 @@ RStudio
 Rds
 Reactable
 Recode
+Recoded
+Recodes
 Sharepoint
 Stata
 SurveyXact
 YAML
 apache
+args
 basepath
 bcrypt
 chisq
@@ -37,7 +39,6 @@ delim
 dep
 docx
 filepath
-flexi
 folderpaths
 fp
 getOption
@@ -58,11 +59,12 @@ plottable
 pos
 pre
 qmd
-qmds
 qs
 rdocx
 reactable
+recode
 recoded
+recodes
 rpptx
 rxlsx
 sep
@@ -75,6 +77,7 @@ tabset
 tibble
 tibbles
 tidyselect
+tidyselect's
 unicode
 vec
 yaml
