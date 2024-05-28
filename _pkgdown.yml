@@ -33,6 +33,7 @@ reference:
   - sanitize_labels
   - remove_special_chars_in_labels
   - attach_qualtrics_labels
+  - recode_checkbox_sets
 - title: "Useful website management tools"
   contents:
   - create_email_credentials
