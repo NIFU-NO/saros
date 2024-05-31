@@ -29,11 +29,6 @@ create_email_credentials(
 \item{email_body, email_subject}{String, subject line and email body respectively. Supports glue syntax referring to columns found in the email data frame or password file.}
 
 \item{...}{Dynamic dots forwarded to quarto::quarto_render}
-
-\item{local_basepath}{Local path for project, typically project directory.}
-
-\item{rel_path_base_to_parent_of_user_restricted_folder}{Character vector
-of path(s) to the parent folder where the mesos reports can be found.}
 }
 \value{
 Data.frame
