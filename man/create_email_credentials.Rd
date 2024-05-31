@@ -5,8 +5,6 @@
 \title{Create Data Frame Containing Email Drafts with User Credentials}
 \usage{
 create_email_credentials(
-  local_basepath = getwd(),
-  rel_path_base_to_parent_of_user_restricted_folder,
   email_data_frame,
   email_col = "email",
   username_col = "username",
@@ -18,11 +16,6 @@ create_email_credentials(
 )
 }
 \arguments{
-\item{local_basepath}{Local path for project, typically project directory.}
-
-\item{rel_path_base_to_parent_of_user_restricted_folder}{Character vector
-of path(s) to the parent folder where the mesos reports can be found.}
-
 \item{email_data_frame}{Data.frame/tibble with (at least) emails and usernames}
 
 \item{email_col}{String, name of email column}

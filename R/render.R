@@ -46,9 +46,6 @@ copy_content <- function(from_files, from_folders, to_folder) {
 
 #' Create Data Frame Containing Email Drafts with User Credentials
 #'
-#' @param local_basepath Local path for project, typically project directory.
-#' @param rel_path_base_to_parent_of_user_restricted_folder Character vector
-#' of path(s) to the parent folder where the mesos reports can be found.
 #' @param email_data_frame Data.frame/tibble with (at least) emails and usernames
 #' @param email_col String, name of email column
 #' @param username_col String, name of username column in email_data_frame
@@ -59,9 +56,7 @@ copy_content <- function(from_files, from_folders, to_folder) {
 #' @return Data.frame
 #' @export
 create_email_credentials <-
-  function(local_basepath = getwd(),
-           rel_path_base_to_parent_of_user_restricted_folder,
-           email_data_frame,
+  function(email_data_frame,
            email_col= "email",
            username_col = "username",
            local_main_password_path = ".htpasswd_private",
@@ -70,17 +65,13 @@ create_email_credentials <-
            email_subject = "User credentials for website example.net.",
            ...) {
 
-  mesos_paths <- file.path(local_basepath, rel_path_base_to_parent_of_user_restricted_folder)
-  usernames <- basename(list.dirs(mesos_paths, full.names = FALSE, recursive = FALSE))
-
   # MUST READ IN THE PLAINTEXT PASSWORDS WITH THIS FUNCTION
   credentials <- read_main_password_file(file=local_main_password_path)
 
   colnames(credentials) <- c(username_col, "password")
   emails <- vctrs::vec_slice(email_data_frame,
                              !is.na(email_data_frame[[username_col]]) &
-                               !is.na(email_data_frame[[email_col]]) &
-                               email_data_frame[[username_col]] %in% unique(as.character(usernames)))
+                               !is.na(email_data_frame[[email_col]]))
 
   in_email_not_in_cred <- setdiff(emails[[username_col]], credentials[[username_col]])
   if(length(in_email_not_in_cred)>0) {
