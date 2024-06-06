@@ -97,24 +97,49 @@ chapters.</p>
 <span>  element_names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"uni_cat_prop_plot"</span>, <span class="st">"uni_cat_freq_plot"</span>, <span class="st">"uni_cat_table"</span>,</span>
 <span>    <span class="st">"uni_chr_table"</span>, <span class="st">"hline"</span>, <span class="st">"bi_catcat_prop_plot"</span>, <span class="st">"bi_catcat_freq_plot"</span>,</span>
 <span>    <span class="st">"bi_catcat_prop_plot2"</span>, <span class="st">"bi_catcat_freq_plot2"</span>, <span class="st">"bi_catcat_table"</span>, <span class="st">"bi_sigtest"</span><span class="op">)</span>,</span>
-<span>  sort_by <span class="op">=</span> <span class="st">".upper"</span>,</span>
-<span>  data_label <span class="op">=</span> <span class="fu">saros</span><span class="fu">::</span><span class="fu"><a href="get_data_label_opts.html">get_data_label_opts</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  single_y_bivariates_if_indep_cats_above <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  single_y_bivariates_if_deps_above <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  always_show_bi_for_indep <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  categories_treated_as_na <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  variables_always_at_top <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  variables_always_at_bottom <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  return_raw <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  showNA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"never"</span>, <span class="st">"always"</span>, <span class="st">"ifany"</span><span class="op">)</span>,</span>
-<span>  totals <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  hide_bi_entry_if_sig_above <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  hide_test_if_n_below <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  hide_result_if_n_below <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  hide_chr_for_others <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  hide_variable_if_all_na <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  single_y_bivariates_if_indep_cats_above <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  single_y_bivariates_if_deps_above <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  hide_chr_for_others <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  organize_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chapter"</span>, <span class="st">".variable_label_prefix_dep"</span>, <span class="st">".variable_name_indep"</span>,</span>
+<span>    <span class="st">".element_name"</span><span class="op">)</span>,</span>
+<span>  arrange_section_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>chapter <span class="op">=</span> <span class="cn">FALSE</span>, .variable_name_dep <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    .variable_name_indep <span class="op">=</span> <span class="cn">FALSE</span>, .element_name <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
+<span>  na_first_in_section <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ignore_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".element_name"</span>, <span class="st">".variable_type_dep"</span>,</span>
+<span>    <span class="st">".variable_type_indep"</span>, <span class="st">"chapter"</span><span class="op">)</span>,</span>
+<span>  replace_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.variable_label_suffix_dep <span class="op">=</span> <span class="st">".variable_name_dep"</span>,</span>
+<span>    .variable_label_suffix_indep <span class="op">=</span> <span class="st">".variable_name_indep"</span><span class="op">)</span>,</span>
+<span>  mesos_first <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  descend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  require_common_categories <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  panel_tabset_mesos <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  pdf <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  attach_chapter_dataset <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  auxiliary_variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  micro <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  serialized_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rds"</span>, <span class="st">"qs"</span><span class="op">)</span>,</span>
+<span>  tabular_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"delim"</span>, <span class="st">"xlsx"</span>, <span class="st">"csv"</span>, <span class="st">"csv2"</span>, <span class="st">"tsv"</span>, <span class="st">"sav"</span>, <span class="st">"dta"</span><span class="op">)</span>,</span>
+<span>  return_raw <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  max_width_obj <span class="op">=</span> <span class="fl">128</span>,</span>
+<span>  max_width_file <span class="op">=</span> <span class="fl">64</span>,</span>
+<span>  max_clean_folder_name <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  max_path_warning_threshold <span class="op">=</span> <span class="fl">260</span>,</span>
+<span>  open_after_drafting <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  log_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  digits <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  data_label_decimal_symbol <span class="op">=</span> <span class="st">"."</span>,</span>
+<span>  showNA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"never"</span>, <span class="st">"always"</span>, <span class="st">"ifany"</span><span class="op">)</span>,</span>
+<span>  totals <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  categories_treated_as_na <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  variables_always_at_top <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  variables_always_at_bottom <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sort_by <span class="op">=</span> <span class="st">".upper"</span>,</span>
+<span>  data_label <span class="op">=</span> <span class="fu">saros</span><span class="fu">::</span><span class="fu"><a href="get_data_label_opts.html">get_data_label_opts</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  hide_label_if_prop_below <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  hide_axis_text_if_single_variable <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  main_font_size <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -142,28 +167,6 @@ chapters.</p>
 <span>  colour_na <span class="op">=</span> <span class="st">"gray90"</span>,</span>
 <span>  colour_2nd_binary_cat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  table_main_question_as_header <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  max_width_obj <span class="op">=</span> <span class="fl">128</span>,</span>
-<span>  max_width_file <span class="op">=</span> <span class="fl">64</span>,</span>
-<span>  max_clean_folder_name <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>  max_path_warning_threshold <span class="op">=</span> <span class="fl">260</span>,</span>
-<span>  open_after_drafting <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  organize_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"chapter"</span>, <span class="st">".variable_label_prefix_dep"</span>, <span class="st">".variable_name_indep"</span>,</span>
-<span>    <span class="st">".element_name"</span><span class="op">)</span>,</span>
-<span>  arrange_section_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>chapter <span class="op">=</span> <span class="cn">FALSE</span>, .variable_name_dep <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>    .variable_name_indep <span class="op">=</span> <span class="cn">FALSE</span>, .element_name <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>,</span>
-<span>  na_first_in_section <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  ignore_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".element_name"</span>, <span class="st">".variable_type_dep"</span>,</span>
-<span>    <span class="st">".variable_type_indep"</span>, <span class="st">"chapter"</span><span class="op">)</span>,</span>
-<span>  replace_heading_for_group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>.variable_label_suffix_dep <span class="op">=</span> <span class="st">".variable_name_dep"</span>,</span>
-<span>    .variable_label_suffix_indep <span class="op">=</span> <span class="st">".variable_name_indep"</span><span class="op">)</span>,</span>
-<span>  mesos_first <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  descend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  require_common_categories <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  panel_tabset_mesos <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  pdf <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  attach_chapter_dataset <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  auxiliary_variables <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  micro <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  reps <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>  information <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">".variable_label_dep"</span>, <span class="st">".category"</span>, <span class="st">".count"</span>, <span class="st">".count_se"</span>,</span>
 <span>    <span class="st">".proportion"</span>, <span class="st">".proportion_se"</span>, <span class="st">".mean"</span>, <span class="st">".mean_se"</span>, <span class="st">".data_label"</span>,</span>
@@ -173,9 +176,6 @@ chapters.</p>
 <span>    <span class="st">"median_diff"</span>, <span class="st">"variance_max"</span>, <span class="st">"variance_min"</span><span class="op">)</span>,</span>
 <span>  include_numbers <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  n_top_bottom <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  log_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  serialized_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rds"</span>, <span class="st">"qs"</span><span class="op">)</span>,</span>
-<span>  tabular_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"delim"</span>, <span class="st">"xlsx"</span>, <span class="st">"csv"</span>, <span class="st">"csv2"</span>, <span class="st">"tsv"</span>, <span class="st">"sav"</span>, <span class="st">"dta"</span><span class="op">)</span>,</span>
 <span>  translations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>last_sep <span class="op">=</span> <span class="st">" and "</span>, intro_prefix <span class="op">=</span></span>
 <span>    <span class="st">"We will now look at the questions asked regarding "</span>, intro_suffix <span class="op">=</span> <span class="st">""</span>,</span>
 <span>    mode_max_onfix <span class="op">=</span> <span class="st">" on "</span>, mode_max_prefix <span class="op">=</span> <span class="st">"The most common responses were "</span>,</span>
@@ -307,6 +307,265 @@ To turn off, set <code>pdf=FALSE</code>.</p></dd>
 <p>Elements to be reported for all sets (batteries) of y-variables.</p></dd>
 
 
+<dt>single_y_bivariates_if_indep_cats_above</dt>
+<dd><p><em>Single y bivariates if indep-cats above ...</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>3</code> (<code>optional</code>)</p>
+<p>Figures and tables for bivariates can become very long if the independent
+variable has many categories. This argument specifies the number of indep categories
+above which only single y bivariates should be shown.</p></dd>
+
+
+<dt>single_y_bivariates_if_deps_above</dt>
+<dd><p><em>Single y bivariates if dep-vars above ...</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>20</code> (<code>optional</code>)</p>
+<p>Figures and tables for bivariates can become very long if there are many dependent
+variables in a battery/question matrix. This argument specifies the number of dep variables
+above which only single y bivariates should be shown. Set to 0 to always show single y bivariates.</p></dd>
+
+
+<dt>always_show_bi_for_indep</dt>
+<dd><p><em>Always show bivariate for indep-variable</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Specific combinations with a by-variable where bivariates should always be shown.</p></dd>
+
+
+<dt>hide_bi_entry_if_sig_above</dt>
+<dd><p><em>p-value threshold for hiding bivariate entry</em></p>
+<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>1</code> (<code>optional</code>)</p>
+<p>Whether to hide bivariate entry if significance is above this value.
+Defaults to showing all.</p></dd>
+
+
+<dt>hide_test_if_n_below</dt>
+<dd><p><em>Threshold n for hiding significance test</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>0</code> (<code>optional</code>)</p>
+<p>If N is below this value, p-value will not be shown.</p></dd>
+
+
+<dt>hide_result_if_n_below</dt>
+<dd><p><em>Hide result if N below</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>10</code> (<code>optional</code>)</p>
+<p>Whether to hide result if N for a given datasets (or mesos group) is below
+this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
+typically exempted in the first place. This might change in the future with
+a separate argument.</p></dd>
+
+
+<dt>hide_variable_if_all_na</dt>
+<dd><p><em>Hide variable from outputs if containing all NA</em></p>
+<p><code>scalar&lt;boolean&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>Whether to remove all variables (in particular useful for mesos) if all values are NA</p></dd>
+
+
+<dt>hide_chr_for_others</dt>
+<dd><p><em>Hide open response displays for others</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>For mesos reports using the element "chr_table", open responses are
+displayed for also the entire sample (<code>FALSE</code>) or only for the mesos
+group to ensure data privacy (<code>TRUE</code>).</p></dd>
+
+
+<dt>organize_by</dt>
+<dd><p><em>Grouping columns</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Column names used for identifying chapters and sections.</p></dd>
+
+
+<dt>arrange_section_by</dt>
+<dd><p><em>Grouping columns</em></p>
+<p><code>vector&lt;character&gt;</code> or <code>named vector&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Column names used for sorting section within each organize_by group. If
+character vector, will assume all are to be arranged in ascending order.
+If a named logical vector, FALSE will indicate ascending, TRUE descending.
+Defaults to sorting in ascending order (alphabetical) for commonly needed
+variable name/label info, and in descending order for element_names as one
+typically wants <em>u</em>nivariates before <em>b</em>ivariates.</p></dd>
+
+
+<dt>na_first_in_section</dt>
+<dd><p><em>Whether to place NAs first when sorting</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>Default ascending and descending sorting with <code><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">dplyr::arrange()</a></code> is to place
+NAs at the end. This would have placed univariates at the end, etc. Thus,
+saros places NAs first in the section. Set this to FALSE to override.</p></dd>
+
+
+<dt>ignore_heading_for_group</dt>
+<dd><p><em>Ignore heading for group</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Type of refined chapter_overview data for which to suppress the heading
+in the report output. Typically variable_name_dep, variable_name_indep, etc.</p></dd>
+
+
+<dt>replace_heading_for_group</dt>
+<dd><p><em>Replacing heading for group</em></p>
+<p><code>named vector&lt;character&gt;</code> // <em>default:</em> <code>c(".variable_label_suffix_dep" = ".variable_name_dep")</code></p>
+<p>Occasionally, one needs to replace the heading with another piece of information
+in the refined chapter_overview. For instance, one may want to organize output
+by variable_name_indep, but to display the variable_label_indep instead. Use
+the name for the replacement and the value for the original.</p></dd>
+
+
+<dt>mesos_first</dt>
+<dd><p><em>mesos first</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to place the mesos group element before or after the entire sample.</p></dd>
+
+
+<dt>descend</dt>
+<dd><p><em>Sorting order</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Reverse sorting of <code>sort_by</code> in figures and tables. See <code>arrange_section_by</code>
+for sorting of report sections.</p></dd>
+
+
+<dt>require_common_categories</dt>
+<dd><p><em>Check common categories</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Whether to check if all items share common categories.</p></dd>
+
+
+<dt>panel_tabset_mesos</dt>
+<dd><p><em>mesos panel tabset</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
+<p>Whether in mesos reports the comparison group should be displayed as
+a Quarto panel tabset (<code>TRUE</code>), or above each other (<code>FALSE</code>).</p></dd>
+
+
+<dt>pdf</dt>
+<dd><p><em>Create PDF of full report?</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to create a PDF of the entire report (all chapters included in a single file).</p></dd>
+
+
+<dt>attach_chapter_dataset</dt>
+<dd><p><em>Toggle inclusion of chapter-specific datasets in qmd-files</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code></p>
+<p>Whether to save in each chapter folder an 'Rds'-file with the
+chapter-specific dataset, and load it at the top of each QMD-file.</p></dd>
+
+
+<dt>auxiliary_variables</dt>
+<dd><p><em>Auxiliary variables to be included in datasets</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Column names in <code>data</code> that should always be included in datasets for
+chapter qmd-files, if <code>attach_chapter_dataset=TRUE</code>. Not publicly available.</p></dd>
+
+
+<dt>micro</dt>
+<dd><p><em>Create page with raw data (micro data) and codebook</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).</p></dd>
+
+
+<dt>serialized_format</dt>
+<dd><p><em>Serialized format</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"rds"</code></p>
+<p>Format for serialized data. One of <code>"rds"</code> (default), <code>"qs"</code> or <code>"fst"</code>.
+The latter two requires the respective packages to be installed.
+qs is usually the fastest and most space efficient, but sets package
+dependencies on the report.</p></dd>
+
+
+<dt>tabular_format</dt>
+<dd><p><em>Serialized format</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"delim"</code></p>
+<p>Format for pretty tabular data, meant for end-user to peruse and will be
+linked to in reports (the graph data, etc). One of <code>"delim"</code> (tab-separated delim-files)
+<code>"xlsx"</code> requires <code>writexl</code>-package), <code>"csv"</code> or <code>"csv2"</code> (requires <code>readr</code>-package.
+<code>"dta"</code> or <code>"sav"</code> requires <code>haven</code>-package. Currently must be specified,
+in the future this will become an optional argument.</p></dd>
+
+
+<dt>return_raw</dt>
+<dd><p><em>NOT IN USE</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>FALSE</code></p>
+<p>Whether to return the raw static element.</p></dd>
+
+
+<dt>max_width_obj</dt>
+<dd><p><em>Maximum object width</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Maximum width for object names in the Quarto script. In particular useful
+when having label as part of the structure.</p></dd>
+
+
+<dt>max_width_file</dt>
+<dd><p><em>Maximum filename width</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Maximum width for any filename. Due to OneDrive having a max path of about
+400 characters, this can quickly be exceeded with a long path base path,
+long file names if using labels as part of structure, and hashing with
+Quarto's <code>cache: true</code> feature. This argument truncates the filenames.</p></dd>
+
+
+<dt>max_clean_folder_name</dt>
+<dd><p><em>Maximum clean folder name length</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Whereas <code>max_width_file</code> truncates the file name, this argument truncates
+the folder name. It will not impact the report or chapter names in website,
+only the folders.</p></dd>
+
+
+<dt>max_path_warning_threshold</dt>
+<dd><p><em>Maximum number of characters in paths warning</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>260</code> (<code>optional</code>)</p>
+<p>Microsoft has set an absolute limit of 260 characters for its Sharepoint/OneDrive
+file paths. This will mean that files with cache (hash suffixes are added) will
+quickly breach this limit. When set, a warning will be returned if files are found
+to be longer than this threshold. Also note that spaces count as three characters
+due to its URL-conversion: %20. To avoid test, set to Inf</p></dd>
+
+
+<dt>open_after_drafting</dt>
+<dd><p><em>Whether to open index.qmd</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to open the main output file (index.qmd) after completion.</p></dd>
+
+
+<dt>log_file</dt>
+<dd><p><em>Path to log file</em></p>
+<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"_log.txt"</code> (<code>optional</code>)</p>
+<p>Path to log file. Set to NULL to disable logging.</p></dd>
+
+
+<dt>digits</dt>
+<dd><p><em>Decimal places</em></p>
+<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>0L</code> (<code>optional</code>)</p>
+<p>Number of decimal places.</p></dd>
+
+
+<dt>data_label_decimal_symbol</dt>
+<dd><p><em>Decimal symbol</em></p>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"."</code> (<code>optional</code>)</p>
+<p>Decimal marker, some might prefer a comma ',' or something else entirely.
+NOTE: Future version will likely postpone formatting this until <code>gt()</code>, <code>kable()</code>, etc.</p></dd>
+
+
+<dt>showNA</dt>
+<dd><p><em>Show/hide NA in categorical variables</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Whether to show NA in categorical variables (one of c("ifany", "always", "never")).</p></dd>
+
+
+<dt>totals</dt>
+<dd><p><em>Include totals</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Whether to include totals in the output.</p></dd>
+
+
+<dt>categories_treated_as_na</dt>
+<dd><p><em>NA categories</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Categories that should be treated as NA.</p></dd>
+
+
+<dt>variables_always_at_top, variables_always_at_bottom</dt>
+<dd><p><em>Top/bottom variables</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Column names in <code>data</code> that should always be placed at the top or bottom of figures/tables.</p></dd>
+
+
 <dt>sort_by</dt>
 <dd><p><em>What to sort output by</em></p>
 <p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
@@ -349,107 +608,6 @@ To turn off, set <code>pdf=FALSE</code>.</p></dd>
 <dd><p><em>Data label</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"proportion"</code> (<code>optional</code>)</p>
 <p>One of "proportion", "percentage", "percentage_bare", "count", "mean", or "median".</p></dd>
-
-
-<dt>always_show_bi_for_indep</dt>
-<dd><p><em>Always show bivariate for indep-variable</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Specific combinations with a by-variable where bivariates should always be shown.</p></dd>
-
-
-<dt>categories_treated_as_na</dt>
-<dd><p><em>NA categories</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Categories that should be treated as NA.</p></dd>
-
-
-<dt>variables_always_at_top, variables_always_at_bottom</dt>
-<dd><p><em>Top/bottom variables</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Column names in <code>data</code> that should always be placed at the top or bottom of figures/tables.</p></dd>
-
-
-<dt>return_raw</dt>
-<dd><p><em>NOT IN USE</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>FALSE</code></p>
-<p>Whether to return the raw static element.</p></dd>
-
-
-<dt>showNA</dt>
-<dd><p><em>Show/hide NA in categorical variables</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Whether to show NA in categorical variables (one of c("ifany", "always", "never")).</p></dd>
-
-
-<dt>totals</dt>
-<dd><p><em>Include totals</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Whether to include totals in the output.</p></dd>
-
-
-<dt>hide_bi_entry_if_sig_above</dt>
-<dd><p><em>p-value threshold for hiding bivariate entry</em></p>
-<p><code>scalar&lt;double&gt;</code> // <em>default:</em> <code>1</code> (<code>optional</code>)</p>
-<p>Whether to hide bivariate entry if significance is above this value.
-Defaults to showing all.</p></dd>
-
-
-<dt>hide_test_if_n_below</dt>
-<dd><p><em>Threshold n for hiding significance test</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>0</code> (<code>optional</code>)</p>
-<p>If N is below this value, p-value will not be shown.</p></dd>
-
-
-<dt>hide_result_if_n_below</dt>
-<dd><p><em>Hide result if N below</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>10</code> (<code>optional</code>)</p>
-<p>Whether to hide result if N for a given datasets (or mesos group) is below
-this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
-typically exempted in the first place. This might change in the future with
-a separate argument.</p></dd>
-
-
-<dt>hide_chr_for_others</dt>
-<dd><p><em>Hide open response displays for others</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
-<p>For mesos reports using the element "chr_table", open responses are
-displayed for also the entire sample (<code>FALSE</code>) or only for the mesos
-group to ensure data privacy (<code>TRUE</code>).</p></dd>
-
-
-<dt>hide_variable_if_all_na</dt>
-<dd><p><em>Hide variable from outputs if containing all NA</em></p>
-<p><code>scalar&lt;boolean&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
-<p>Whether to remove all variables (in particular useful for mesos) if all values are NA</p></dd>
-
-
-<dt>single_y_bivariates_if_indep_cats_above</dt>
-<dd><p><em>Single y bivariates if indep-cats above ...</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>3</code> (<code>optional</code>)</p>
-<p>Figures and tables for bivariates can become very long if the independent
-variable has many categories. This argument specifies the number of indep categories
-above which only single y bivariates should be shown.</p></dd>
-
-
-<dt>single_y_bivariates_if_deps_above</dt>
-<dd><p><em>Single y bivariates if dep-vars above ...</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>20</code> (<code>optional</code>)</p>
-<p>Figures and tables for bivariates can become very long if there are many dependent
-variables in a battery/question matrix. This argument specifies the number of dep variables
-above which only single y bivariates should be shown. Set to 0 to always show single y bivariates.</p></dd>
-
-
-<dt>digits</dt>
-<dd><p><em>Decimal places</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>0L</code> (<code>optional</code>)</p>
-<p>Number of decimal places.</p></dd>
-
-
-<dt>data_label_decimal_symbol</dt>
-<dd><p><em>Decimal symbol</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"."</code> (<code>optional</code>)</p>
-<p>Decimal marker, some might prefer a comma ',' or something else entirely.
-NOTE: Future version will likely postpone formatting this until <code>gt()</code>, <code>kable()</code>, etc.</p></dd>
 
 
 <dt>hide_label_if_prop_below</dt>
@@ -573,139 +731,6 @@ Defaults to optimal at 1.1, i.e. slightly more than no change (1).</p></dd>
 <p>Whether to include the main question as a header in the table.</p></dd>
 
 
-<dt>max_width_obj</dt>
-<dd><p><em>Maximum object width</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Maximum width for object names in the Quarto script. In particular useful
-when having label as part of the structure.</p></dd>
-
-
-<dt>max_width_file</dt>
-<dd><p><em>Maximum filename width</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Maximum width for any filename. Due to OneDrive having a max path of about
-400 characters, this can quickly be exceeded with a long path base path,
-long file names if using labels as part of structure, and hashing with
-Quarto's <code>cache: true</code> feature. This argument truncates the filenames.</p></dd>
-
-
-<dt>max_clean_folder_name</dt>
-<dd><p><em>Maximum clean folder name length</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Whereas <code>max_width_file</code> truncates the file name, this argument truncates
-the folder name. It will not impact the report or chapter names in website,
-only the folders.</p></dd>
-
-
-<dt>max_path_warning_threshold</dt>
-<dd><p><em>Maximum number of characters in paths warning</em></p>
-<p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>260</code> (<code>optional</code>)</p>
-<p>Microsoft has set an absolute limit of 260 characters for its Sharepoint/OneDrive
-file paths. This will mean that files with cache (hash suffixes are added) will
-quickly breach this limit. When set, a warning will be returned if files are found
-to be longer than this threshold. Also note that spaces count as three characters
-due to its URL-conversion: %20. To avoid test, set to Inf</p></dd>
-
-
-<dt>open_after_drafting</dt>
-<dd><p><em>Whether to open index.qmd</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Whether to open the main output file (index.qmd) after completion.</p></dd>
-
-
-<dt>organize_by</dt>
-<dd><p><em>Grouping columns</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Column names used for identifying chapters and sections.</p></dd>
-
-
-<dt>arrange_section_by</dt>
-<dd><p><em>Grouping columns</em></p>
-<p><code>vector&lt;character&gt;</code> or <code>named vector&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Column names used for sorting section within each organize_by group. If
-character vector, will assume all are to be arranged in ascending order.
-If a named logical vector, FALSE will indicate ascending, TRUE descending.
-Defaults to sorting in ascending order (alphabetical) for commonly needed
-variable name/label info, and in descending order for element_names as one
-typically wants <em>u</em>nivariates before <em>b</em>ivariates.</p></dd>
-
-
-<dt>na_first_in_section</dt>
-<dd><p><em>Whether to place NAs first when sorting</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
-<p>Default ascending and descending sorting with <code><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">dplyr::arrange()</a></code> is to place
-NAs at the end. This would have placed univariates at the end, etc. Thus,
-saros places NAs first in the section. Set this to FALSE to override.</p></dd>
-
-
-<dt>ignore_heading_for_group</dt>
-<dd><p><em>Ignore heading for group</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Type of refined chapter_overview data for which to suppress the heading
-in the report output. Typically variable_name_dep, variable_name_indep, etc.</p></dd>
-
-
-<dt>replace_heading_for_group</dt>
-<dd><p><em>Replacing heading for group</em></p>
-<p><code>named vector&lt;character&gt;</code> // <em>default:</em> <code>c(".variable_label_suffix_dep" = ".variable_name_dep")</code></p>
-<p>Occasionally, one needs to replace the heading with another piece of information
-in the refined chapter_overview. For instance, one may want to organize output
-by variable_name_indep, but to display the variable_label_indep instead. Use
-the name for the replacement and the value for the original.</p></dd>
-
-
-<dt>mesos_first</dt>
-<dd><p><em>mesos first</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Whether to place the mesos group element before or after the entire sample.</p></dd>
-
-
-<dt>descend</dt>
-<dd><p><em>Sorting order</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Reverse sorting of <code>sort_by</code> in figures and tables. See <code>arrange_section_by</code>
-for sorting of report sections.</p></dd>
-
-
-<dt>require_common_categories</dt>
-<dd><p><em>Check common categories</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Whether to check if all items share common categories.</p></dd>
-
-
-<dt>panel_tabset_mesos</dt>
-<dd><p><em>mesos panel tabset</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
-<p>Whether in mesos reports the comparison group should be displayed as
-a Quarto panel tabset (<code>TRUE</code>), or above each other (<code>FALSE</code>).</p></dd>
-
-
-<dt>pdf</dt>
-<dd><p><em>Create PDF of full report?</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Whether to create a PDF of the entire report (all chapters included in a single file).</p></dd>
-
-
-<dt>attach_chapter_dataset</dt>
-<dd><p><em>Toggle inclusion of chapter-specific datasets in qmd-files</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code></p>
-<p>Whether to save in each chapter folder an 'Rds'-file with the
-chapter-specific dataset, and load it at the top of each QMD-file.</p></dd>
-
-
-<dt>auxiliary_variables</dt>
-<dd><p><em>Auxiliary variables to be included in datasets</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Column names in <code>data</code> that should always be included in datasets for
-chapter qmd-files, if <code>attach_chapter_dataset=TRUE</code>. Not publicly available.</p></dd>
-
-
-<dt>micro</dt>
-<dd><p><em>Create page with raw data (micro data) and codebook</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).</p></dd>
-
-
 <dt>reps</dt>
 <dd><p><em>Number of permutations</em></p>
 <p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>100</code> (<code>optional</code>)</p>
@@ -734,31 +759,6 @@ chapter qmd-files, if <code>attach_chapter_dataset=TRUE</code>. Not publicly ava
 <dd><p><em>Top and bottom entries to report</em></p>
 <p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
 <p>The number of top and bottom entries to report.</p></dd>
-
-
-<dt>log_file</dt>
-<dd><p><em>Path to log file</em></p>
-<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"_log.txt"</code> (<code>optional</code>)</p>
-<p>Path to log file. Set to NULL to disable logging.</p></dd>
-
-
-<dt>serialized_format</dt>
-<dd><p><em>Serialized format</em></p>
-<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"rds"</code></p>
-<p>Format for serialized data. One of <code>"rds"</code> (default), <code>"qs"</code> or <code>"fst"</code>.
-The latter two requires the respective packages to be installed.
-qs is usually the fastest and most space efficient, but sets package
-dependencies on the report.</p></dd>
-
-
-<dt>tabular_format</dt>
-<dd><p><em>Serialized format</em></p>
-<p><code>scalar&lt;string&gt;</code> // <em>default:</em> <code>"delim"</code></p>
-<p>Format for pretty tabular data, meant for end-user to peruse and will be
-linked to in reports (the graph data, etc). One of <code>"delim"</code> (tab-separated delim-files)
-<code>"xlsx"</code> requires <code>writexl</code>-package), <code>"csv"</code> or <code>"csv2"</code> (requires <code>readr</code>-package.
-<code>"dta"</code> or <code>"sav"</code> requires <code>haven</code>-package. Currently must be specified,
-in the future this will become an optional argument.</p></dd>
 
 
 <dt>translations</dt>
@@ -802,7 +802,7 @@ See <code>chapter_overview</code> for more options.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29.917 0.252 30.224 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 30.332 0.265 30.627 0 0</span>
 <span class="r-in"><span><span class="va">index_filepaths</span> <span class="op">&lt;-</span></span></span>
 <span class="r-in"><span>  <span class="fu">draft_report</span><span class="op">(</span></span></span>
 <span class="r-in"><span>   chapter_overview <span class="op">=</span> <span class="va">ex_survey_ch_overview</span>,</span></span>
@@ -818,36 +818,35 @@ See <code>chapter_overview</code> for more options.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of E</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of E</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of E</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of E</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of E</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of E</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Completed report for Uni of A.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of D</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of D</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of D</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of D</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of D</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating mesos report for... Uni of D</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Completed report for Uni of B.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cli progress bar update failed: subscript out of bounds</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Introduction: 1_Introduction</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Ambivalence: 2_Ambivalence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Big mysteries: 3_Big_mysterie</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Confidence: 4_Confidence</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Generating for chapter Doubt: 5_Doubt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 211.16 2.34 213.529 0 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 214.12 2.344 216.5 0 0</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
