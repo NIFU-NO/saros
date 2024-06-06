@@ -647,64 +647,15 @@ draft_report <-
                "bi_sigtest"
              ),
 
-           sort_by = ".upper",
-           data_label = saros::get_data_label_opts(),
+           # What sections to display (and their structure)
+           single_y_bivariates_if_indep_cats_above = 3,
+           single_y_bivariates_if_deps_above = 20,
            always_show_bi_for_indep = NULL,
-           categories_treated_as_na = NULL,
-           variables_always_at_top = NULL,
-           variables_always_at_bottom = NULL,
-           return_raw = TRUE,
-           showNA = c("never", "always", "ifany"),
-           totals = FALSE,
            hide_bi_entry_if_sig_above = 1,
            hide_test_if_n_below = 10,
            hide_result_if_n_below = 10,
-           hide_chr_for_others = TRUE,
            hide_variable_if_all_na = TRUE,
-           single_y_bivariates_if_indep_cats_above = 3,
-           single_y_bivariates_if_deps_above = 20,
-           digits = 1,
-           data_label_decimal_symbol = ".",
-
-           # Specifically for figures
-           hide_label_if_prop_below = .01,
-           hide_axis_text_if_single_variable = FALSE,
-           main_font_size = 10,
-           label_font_size = 3,
-           strip_font_size = 7,
-           legend_font_size = 7,
-           strip_width = 15,
-           strip_angle = 0,
-           x_axis_label_width = 20,
-           plot_height_multiplier_per_horizontal_line = NA,
-           plot_height_multiplier_per_vertical_letter = .2,
-           plot_height_multiplier_per_facet = .95,
-           plot_height_multiplier_per_legend_line = 1.1,
-           plot_height_fixed_constant = 0,
-           plot_height_max = 8,
-           plot_height_min = 1.5,
-           vertical_height = 12,
-           vertical = FALSE,
-           png_scale = 1.2,
-           png_width = 14,
-           png_height = 16,
-           font_family = "sans",
-
-           colour_palette_nominal = NULL,
-           colour_palette_ordinal = NULL,
-           colour_na = "gray90",
-           colour_2nd_binary_cat = NULL,
-
-           # Tables
-           table_main_question_as_header = FALSE,
-
-           max_width_obj = 128,
-           max_width_file = 64,
-           max_clean_folder_name = 12,
-           max_path_warning_threshold = 260,
-           open_after_drafting = FALSE,
-
-           # Structure of report
+           hide_chr_for_others = TRUE,
            organize_by = c("chapter",
                            ".variable_label_prefix_dep",
                            ".variable_name_indep",
@@ -723,18 +674,80 @@ draft_report <-
                                          ".variable_label_suffix_indep" = ".variable_name_indep"),
 
            mesos_first = TRUE,
-           descend = TRUE,
+           descend = TRUE, # DROP, SHOULD NOW BE IN ARRANGE
            require_common_categories = TRUE,
            panel_tabset_mesos = TRUE,
 
            # Formats and attachments
-           pdf = TRUE,
+           pdf = TRUE, # DROP? Should now be in the index/report_prefix
            attach_chapter_dataset = TRUE,
            auxiliary_variables = NULL,
-           micro = FALSE,
+           micro = FALSE, # DROP
+           serialized_format = c("rds", "qs"),
+           tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
 
 
-           reps = 1000,
+           return_raw = TRUE,
+
+           # Path limits
+           max_width_obj = 128,
+           max_width_file = 64,
+           max_clean_folder_name = 12,  # Tidy up argument name: max_width_clean_folder_name
+           max_path_warning_threshold = 260,  # Tidy up argument name: max_width_path_warning
+
+           open_after_drafting = FALSE, # Drop?
+
+           # Debugging
+           log_file = NULL,
+
+
+           # For contents: figures and tables - might be extracted in saros2.0
+           digits = 1,
+           data_label_decimal_symbol = ".",
+           showNA = c("never", "always", "ifany"),
+           totals = FALSE,
+           categories_treated_as_na = NULL,
+           variables_always_at_top = NULL,
+           variables_always_at_bottom = NULL,
+           sort_by = ".upper",
+           data_label = saros::get_data_label_opts(),
+
+           # Specifically for figures
+           hide_label_if_prop_below = .01,
+           hide_axis_text_if_single_variable = FALSE,
+           main_font_size = 10, # Remove all font size stuff
+           label_font_size = 3,
+           strip_font_size = 7,
+           legend_font_size = 7,
+           strip_width = 15,
+           strip_angle = 0,
+           x_axis_label_width = 20, #Strictly speaking y_axis_text
+           plot_height_multiplier_per_horizontal_line = NA, # Separate into exported function
+           plot_height_multiplier_per_vertical_letter = .2,
+           plot_height_multiplier_per_facet = .95,
+           plot_height_multiplier_per_legend_line = 1.1,
+           plot_height_fixed_constant = 0,
+           plot_height_max = 8,
+           plot_height_min = 1.5,
+           vertical_height = 12,
+           vertical = FALSE,
+           png_scale = 1.2, # Drop?
+           png_width = 14,
+           png_height = 16,
+           font_family = "sans", # Drop
+
+           colour_palette_nominal = NULL, # Drop in saros2.0
+           colour_palette_ordinal = NULL,
+           colour_na = "gray90",
+           colour_2nd_binary_cat = NULL,
+
+           # Tables
+           table_main_question_as_header = FALSE,
+
+           # Sigtest
+           reps = 1000, # DROP
+
+           # Text stuff (drop?)
            information =
              c(".variable_label_dep", #".variable_name",
                ".category",
@@ -751,11 +764,8 @@ draft_report <-
            include_numbers = TRUE, # not implemented
            n_top_bottom = 1,
 
-           log_file = NULL,
-           serialized_format = c("rds", "qs"),
-           tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
 
-           translations =
+           translations = # In saros2.0 this can be turned into glue templates
              list(last_sep = " and ",
                   intro_prefix = "We will now look at the questions asked regarding ",
                   intro_suffix = "",
@@ -840,7 +850,7 @@ draft_report <-
 
     index_filepath <-
       lapply(X =
-               cli::cli_progress_along(uniques,
+               cli::cli_progress_along(uniques, # Not working well
                                        format = "Generating mesos report for... {uniques[cli::pb_current]}",
                                        clear = FALSE,
                                        auto_terminate = FALSE),

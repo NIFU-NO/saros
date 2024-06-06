@@ -29,24 +29,49 @@ draft_report(
   element_names = c("uni_cat_prop_plot", "uni_cat_freq_plot", "uni_cat_table",
     "uni_chr_table", "hline", "bi_catcat_prop_plot", "bi_catcat_freq_plot",
     "bi_catcat_prop_plot2", "bi_catcat_freq_plot2", "bi_catcat_table", "bi_sigtest"),
-  sort_by = ".upper",
-  data_label = saros::get_data_label_opts(),
+  single_y_bivariates_if_indep_cats_above = 3,
+  single_y_bivariates_if_deps_above = 20,
   always_show_bi_for_indep = NULL,
-  categories_treated_as_na = NULL,
-  variables_always_at_top = NULL,
-  variables_always_at_bottom = NULL,
-  return_raw = TRUE,
-  showNA = c("never", "always", "ifany"),
-  totals = FALSE,
   hide_bi_entry_if_sig_above = 1,
   hide_test_if_n_below = 10,
   hide_result_if_n_below = 10,
-  hide_chr_for_others = TRUE,
   hide_variable_if_all_na = TRUE,
-  single_y_bivariates_if_indep_cats_above = 3,
-  single_y_bivariates_if_deps_above = 20,
+  hide_chr_for_others = TRUE,
+  organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
+    ".element_name"),
+  arrange_section_by = c(chapter = FALSE, .variable_name_dep = FALSE,
+    .variable_name_indep = FALSE, .element_name = FALSE),
+  na_first_in_section = TRUE,
+  ignore_heading_for_group = c(".element_name", ".variable_type_dep",
+    ".variable_type_indep", "chapter"),
+  replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep",
+    .variable_label_suffix_indep = ".variable_name_indep"),
+  mesos_first = TRUE,
+  descend = TRUE,
+  require_common_categories = TRUE,
+  panel_tabset_mesos = TRUE,
+  pdf = TRUE,
+  attach_chapter_dataset = TRUE,
+  auxiliary_variables = NULL,
+  micro = FALSE,
+  serialized_format = c("rds", "qs"),
+  tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
+  return_raw = TRUE,
+  max_width_obj = 128,
+  max_width_file = 64,
+  max_clean_folder_name = 12,
+  max_path_warning_threshold = 260,
+  open_after_drafting = FALSE,
+  log_file = NULL,
   digits = 1,
   data_label_decimal_symbol = ".",
+  showNA = c("never", "always", "ifany"),
+  totals = FALSE,
+  categories_treated_as_na = NULL,
+  variables_always_at_top = NULL,
+  variables_always_at_bottom = NULL,
+  sort_by = ".upper",
+  data_label = saros::get_data_label_opts(),
   hide_label_if_prop_below = 0.01,
   hide_axis_text_if_single_variable = FALSE,
   main_font_size = 10,
@@ -74,28 +99,6 @@ draft_report(
   colour_na = "gray90",
   colour_2nd_binary_cat = NULL,
   table_main_question_as_header = FALSE,
-  max_width_obj = 128,
-  max_width_file = 64,
-  max_clean_folder_name = 12,
-  max_path_warning_threshold = 260,
-  open_after_drafting = FALSE,
-  organize_by = c("chapter", ".variable_label_prefix_dep", ".variable_name_indep",
-    ".element_name"),
-  arrange_section_by = c(chapter = FALSE, .variable_name_dep = FALSE,
-    .variable_name_indep = FALSE, .element_name = FALSE),
-  na_first_in_section = TRUE,
-  ignore_heading_for_group = c(".element_name", ".variable_type_dep",
-    ".variable_type_indep", "chapter"),
-  replace_heading_for_group = c(.variable_label_suffix_dep = ".variable_name_dep",
-    .variable_label_suffix_indep = ".variable_name_indep"),
-  mesos_first = TRUE,
-  descend = TRUE,
-  require_common_categories = TRUE,
-  panel_tabset_mesos = TRUE,
-  pdf = TRUE,
-  attach_chapter_dataset = TRUE,
-  auxiliary_variables = NULL,
-  micro = FALSE,
   reps = 1000,
   information = c(".variable_label_dep", ".category", ".count", ".count_se",
     ".proportion", ".proportion_se", ".mean", ".mean_se", ".data_label",
@@ -105,9 +108,6 @@ draft_report(
     "median_diff", "variance_max", "variance_min"),
   include_numbers = TRUE,
   n_top_bottom = 1,
-  log_file = NULL,
-  serialized_format = c("rds", "qs"),
-  tabular_format = c("delim", "xlsx", "csv", "csv2", "tsv", "sav", "dta"),
   translations = list(last_sep = " and ", intro_prefix =
     "We will now look at the questions asked regarding ", intro_suffix = "",
     mode_max_onfix = " on ", mode_max_prefix = "The most common responses were ",
@@ -236,6 +236,265 @@ To turn off, set \code{pdf=FALSE}.}
 
 Elements to be reported for all sets (batteries) of y-variables.}
 
+\item{single_y_bivariates_if_indep_cats_above}{\emph{Single y bivariates if indep-cats above ...}
+
+\verb{scalar<integer>} // \emph{default:} \code{3} (\code{optional})
+
+Figures and tables for bivariates can become very long if the independent
+variable has many categories. This argument specifies the number of indep categories
+above which only single y bivariates should be shown.}
+
+\item{single_y_bivariates_if_deps_above}{\emph{Single y bivariates if dep-vars above ...}
+
+\verb{scalar<integer>} // \emph{default:} \code{20} (\code{optional})
+
+Figures and tables for bivariates can become very long if there are many dependent
+variables in a battery/question matrix. This argument specifies the number of dep variables
+above which only single y bivariates should be shown. Set to 0 to always show single y bivariates.}
+
+\item{always_show_bi_for_indep}{\emph{Always show bivariate for indep-variable}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Specific combinations with a by-variable where bivariates should always be shown.}
+
+\item{hide_bi_entry_if_sig_above}{\emph{p-value threshold for hiding bivariate entry}
+
+\verb{scalar<double>} // \emph{default:} \code{1} (\code{optional})
+
+Whether to hide bivariate entry if significance is above this value.
+Defaults to showing all.}
+
+\item{hide_test_if_n_below}{\emph{Threshold n for hiding significance test}
+
+\verb{scalar<integer>} // \emph{default:} \code{0} (\code{optional})
+
+If N is below this value, p-value will not be shown.}
+
+\item{hide_result_if_n_below}{\emph{Hide result if N below}
+
+\verb{scalar<integer>} // \emph{default:} \code{10} (\code{optional})
+
+Whether to hide result if N for a given datasets (or mesos group) is below
+this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
+typically exempted in the first place. This might change in the future with
+a separate argument.}
+
+\item{hide_variable_if_all_na}{\emph{Hide variable from outputs if containing all NA}
+
+\verb{scalar<boolean>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether to remove all variables (in particular useful for mesos) if all values are NA}
+
+\item{hide_chr_for_others}{\emph{Hide open response displays for others}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+For mesos reports using the element "chr_table", open responses are
+displayed for also the entire sample (\code{FALSE}) or only for the mesos
+group to ensure data privacy (\code{TRUE}).}
+
+\item{organize_by}{\emph{Grouping columns}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names used for identifying chapters and sections.}
+
+\item{arrange_section_by}{\emph{Grouping columns}
+
+\verb{vector<character>} or \verb{named vector<logical>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names used for sorting section within each organize_by group. If
+character vector, will assume all are to be arranged in ascending order.
+If a named logical vector, FALSE will indicate ascending, TRUE descending.
+Defaults to sorting in ascending order (alphabetical) for commonly needed
+variable name/label info, and in descending order for element_names as one
+typically wants \emph{u}nivariates before \emph{b}ivariates.}
+
+\item{na_first_in_section}{\emph{Whether to place NAs first when sorting}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Default ascending and descending sorting with \code{dplyr::arrange()} is to place
+NAs at the end. This would have placed univariates at the end, etc. Thus,
+saros places NAs first in the section. Set this to FALSE to override.}
+
+\item{ignore_heading_for_group}{\emph{Ignore heading for group}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Type of refined chapter_overview data for which to suppress the heading
+in the report output. Typically variable_name_dep, variable_name_indep, etc.}
+
+\item{replace_heading_for_group}{\emph{Replacing heading for group}
+
+\verb{named vector<character>} // \emph{default:} \code{c(".variable_label_suffix_dep" = ".variable_name_dep")}
+
+Occasionally, one needs to replace the heading with another piece of information
+in the refined chapter_overview. For instance, one may want to organize output
+by variable_name_indep, but to display the variable_label_indep instead. Use
+the name for the replacement and the value for the original.}
+
+\item{mesos_first}{\emph{mesos first}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to place the mesos group element before or after the entire sample.}
+
+\item{descend}{\emph{Sorting order}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Reverse sorting of \code{sort_by} in figures and tables. See \code{arrange_section_by}
+for sorting of report sections.}
+
+\item{require_common_categories}{\emph{Check common categories}
+
+\verb{scalar<logical>} // \emph{default:} \code{NULL} (\code{optional})
+
+Whether to check if all items share common categories.}
+
+\item{panel_tabset_mesos}{\emph{mesos panel tabset}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether in mesos reports the comparison group should be displayed as
+a Quarto panel tabset (\code{TRUE}), or above each other (\code{FALSE}).}
+
+\item{pdf}{\emph{Create PDF of full report?}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to create a PDF of the entire report (all chapters included in a single file).}
+
+\item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE}
+
+Whether to save in each chapter folder an 'Rds'-file with the
+chapter-specific dataset, and load it at the top of each QMD-file.}
+
+\item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names in \code{data} that should always be included in datasets for
+chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
+
+\item{micro}{\emph{Create page with raw data (micro data) and codebook}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).}
+
+\item{serialized_format}{\emph{Serialized format}
+
+\verb{scalar<string>} // \emph{default:} \code{"rds"}
+
+Format for serialized data. One of \code{"rds"} (default), \code{"qs"} or \code{"fst"}.
+The latter two requires the respective packages to be installed.
+qs is usually the fastest and most space efficient, but sets package
+dependencies on the report.}
+
+\item{tabular_format}{\emph{Serialized format}
+
+\verb{scalar<string>} // \emph{default:} \code{"delim"}
+
+Format for pretty tabular data, meant for end-user to peruse and will be
+linked to in reports (the graph data, etc). One of \code{"delim"} (tab-separated delim-files)
+\code{"xlsx"} requires \code{writexl}-package), \code{"csv"} or \code{"csv2"} (requires \code{readr}-package.
+\code{"dta"} or \code{"sav"} requires \code{haven}-package. Currently must be specified,
+in the future this will become an optional argument.}
+
+\item{return_raw}{\emph{NOT IN USE}
+
+\verb{scalar<integer>} // \emph{default:} \code{FALSE}
+
+Whether to return the raw static element.}
+
+\item{max_width_obj}{\emph{Maximum object width}
+
+\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
+
+Maximum width for object names in the Quarto script. In particular useful
+when having label as part of the structure.}
+
+\item{max_width_file}{\emph{Maximum filename width}
+
+\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
+
+Maximum width for any filename. Due to OneDrive having a max path of about
+400 characters, this can quickly be exceeded with a long path base path,
+long file names if using labels as part of structure, and hashing with
+Quarto's \code{cache: true} feature. This argument truncates the filenames.}
+
+\item{max_clean_folder_name}{\emph{Maximum clean folder name length}
+
+\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
+
+Whereas \code{max_width_file} truncates the file name, this argument truncates
+the folder name. It will not impact the report or chapter names in website,
+only the folders.}
+
+\item{max_path_warning_threshold}{\emph{Maximum number of characters in paths warning}
+
+\verb{scalar<integer>} // \emph{default:} \code{260} (\code{optional})
+
+Microsoft has set an absolute limit of 260 characters for its Sharepoint/OneDrive
+file paths. This will mean that files with cache (hash suffixes are added) will
+quickly breach this limit. When set, a warning will be returned if files are found
+to be longer than this threshold. Also note that spaces count as three characters
+due to its URL-conversion: \%20. To avoid test, set to Inf}
+
+\item{open_after_drafting}{\emph{Whether to open index.qmd}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to open the main output file (index.qmd) after completion.}
+
+\item{log_file}{\emph{Path to log file}
+
+\verb{scalar<string>} // \emph{default:} \code{"_log.txt"} (\code{optional})
+
+Path to log file. Set to NULL to disable logging.}
+
+\item{digits}{\emph{Decimal places}
+
+\verb{scalar<integer>} // \emph{default:} \code{0L} (\code{optional})
+
+Number of decimal places.}
+
+\item{data_label_decimal_symbol}{\emph{Decimal symbol}
+
+\verb{scalar<character>} // \emph{default:} \code{"."} (\code{optional})
+
+Decimal marker, some might prefer a comma ',' or something else entirely.
+NOTE: Future version will likely postpone formatting this until \code{gt()}, \code{kable()}, etc.}
+
+\item{showNA}{\emph{Show/hide NA in categorical variables}
+
+\verb{scalar<logical>} // \emph{default:} \code{NULL} (\code{optional})
+
+Whether to show NA in categorical variables (one of c("ifany", "always", "never")).}
+
+\item{totals}{\emph{Include totals}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Whether to include totals in the output.}
+
+\item{categories_treated_as_na}{\emph{NA categories}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Categories that should be treated as NA.}
+
+\item{variables_always_at_top, variables_always_at_bottom}{\emph{Top/bottom variables}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+Column names in \code{data} that should always be placed at the top or bottom of figures/tables.}
+
 \item{sort_by}{\emph{What to sort output by}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
@@ -260,107 +519,6 @@ Sort output (and collapse if requested).
 \verb{scalar<character>} // \emph{default:} \code{"proportion"} (\code{optional})
 
 One of "proportion", "percentage", "percentage_bare", "count", "mean", or "median".}
-
-\item{always_show_bi_for_indep}{\emph{Always show bivariate for indep-variable}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Specific combinations with a by-variable where bivariates should always be shown.}
-
-\item{categories_treated_as_na}{\emph{NA categories}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Categories that should be treated as NA.}
-
-\item{variables_always_at_top, variables_always_at_bottom}{\emph{Top/bottom variables}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column names in \code{data} that should always be placed at the top or bottom of figures/tables.}
-
-\item{return_raw}{\emph{NOT IN USE}
-
-\verb{scalar<integer>} // \emph{default:} \code{FALSE}
-
-Whether to return the raw static element.}
-
-\item{showNA}{\emph{Show/hide NA in categorical variables}
-
-\verb{scalar<logical>} // \emph{default:} \code{NULL} (\code{optional})
-
-Whether to show NA in categorical variables (one of c("ifany", "always", "never")).}
-
-\item{totals}{\emph{Include totals}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
-
-Whether to include totals in the output.}
-
-\item{hide_bi_entry_if_sig_above}{\emph{p-value threshold for hiding bivariate entry}
-
-\verb{scalar<double>} // \emph{default:} \code{1} (\code{optional})
-
-Whether to hide bivariate entry if significance is above this value.
-Defaults to showing all.}
-
-\item{hide_test_if_n_below}{\emph{Threshold n for hiding significance test}
-
-\verb{scalar<integer>} // \emph{default:} \code{0} (\code{optional})
-
-If N is below this value, p-value will not be shown.}
-
-\item{hide_result_if_n_below}{\emph{Hide result if N below}
-
-\verb{scalar<integer>} // \emph{default:} \code{10} (\code{optional})
-
-Whether to hide result if N for a given datasets (or mesos group) is below
-this value. NOTE: Exceptions will be made to chr_table and chr_plot as these are
-typically exempted in the first place. This might change in the future with
-a separate argument.}
-
-\item{hide_chr_for_others}{\emph{Hide open response displays for others}
-
-\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
-
-For mesos reports using the element "chr_table", open responses are
-displayed for also the entire sample (\code{FALSE}) or only for the mesos
-group to ensure data privacy (\code{TRUE}).}
-
-\item{hide_variable_if_all_na}{\emph{Hide variable from outputs if containing all NA}
-
-\verb{scalar<boolean>} // \emph{default:} \code{TRUE} (\code{optional})
-
-Whether to remove all variables (in particular useful for mesos) if all values are NA}
-
-\item{single_y_bivariates_if_indep_cats_above}{\emph{Single y bivariates if indep-cats above ...}
-
-\verb{scalar<integer>} // \emph{default:} \code{3} (\code{optional})
-
-Figures and tables for bivariates can become very long if the independent
-variable has many categories. This argument specifies the number of indep categories
-above which only single y bivariates should be shown.}
-
-\item{single_y_bivariates_if_deps_above}{\emph{Single y bivariates if dep-vars above ...}
-
-\verb{scalar<integer>} // \emph{default:} \code{20} (\code{optional})
-
-Figures and tables for bivariates can become very long if there are many dependent
-variables in a battery/question matrix. This argument specifies the number of dep variables
-above which only single y bivariates should be shown. Set to 0 to always show single y bivariates.}
-
-\item{digits}{\emph{Decimal places}
-
-\verb{scalar<integer>} // \emph{default:} \code{0L} (\code{optional})
-
-Number of decimal places.}
-
-\item{data_label_decimal_symbol}{\emph{Decimal symbol}
-
-\verb{scalar<character>} // \emph{default:} \code{"."} (\code{optional})
-
-Decimal marker, some might prefer a comma ',' or something else entirely.
-NOTE: Future version will likely postpone formatting this until \code{gt()}, \code{kable()}, etc.}
 
 \item{hide_label_if_prop_below}{\emph{Hide label threshold}
 
@@ -482,139 +640,6 @@ Colour for second category in binary variables. Often useful to hide this.}
 
 Whether to include the main question as a header in the table.}
 
-\item{max_width_obj}{\emph{Maximum object width}
-
-\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
-
-Maximum width for object names in the Quarto script. In particular useful
-when having label as part of the structure.}
-
-\item{max_width_file}{\emph{Maximum filename width}
-
-\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
-
-Maximum width for any filename. Due to OneDrive having a max path of about
-400 characters, this can quickly be exceeded with a long path base path,
-long file names if using labels as part of structure, and hashing with
-Quarto's \code{cache: true} feature. This argument truncates the filenames.}
-
-\item{max_clean_folder_name}{\emph{Maximum clean folder name length}
-
-\verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
-
-Whereas \code{max_width_file} truncates the file name, this argument truncates
-the folder name. It will not impact the report or chapter names in website,
-only the folders.}
-
-\item{max_path_warning_threshold}{\emph{Maximum number of characters in paths warning}
-
-\verb{scalar<integer>} // \emph{default:} \code{260} (\code{optional})
-
-Microsoft has set an absolute limit of 260 characters for its Sharepoint/OneDrive
-file paths. This will mean that files with cache (hash suffixes are added) will
-quickly breach this limit. When set, a warning will be returned if files are found
-to be longer than this threshold. Also note that spaces count as three characters
-due to its URL-conversion: \%20. To avoid test, set to Inf}
-
-\item{open_after_drafting}{\emph{Whether to open index.qmd}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
-
-Whether to open the main output file (index.qmd) after completion.}
-
-\item{organize_by}{\emph{Grouping columns}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column names used for identifying chapters and sections.}
-
-\item{arrange_section_by}{\emph{Grouping columns}
-
-\verb{vector<character>} or \verb{named vector<logical>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column names used for sorting section within each organize_by group. If
-character vector, will assume all are to be arranged in ascending order.
-If a named logical vector, FALSE will indicate ascending, TRUE descending.
-Defaults to sorting in ascending order (alphabetical) for commonly needed
-variable name/label info, and in descending order for element_names as one
-typically wants \emph{u}nivariates before \emph{b}ivariates.}
-
-\item{na_first_in_section}{\emph{Whether to place NAs first when sorting}
-
-\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
-
-Default ascending and descending sorting with \code{dplyr::arrange()} is to place
-NAs at the end. This would have placed univariates at the end, etc. Thus,
-saros places NAs first in the section. Set this to FALSE to override.}
-
-\item{ignore_heading_for_group}{\emph{Ignore heading for group}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Type of refined chapter_overview data for which to suppress the heading
-in the report output. Typically variable_name_dep, variable_name_indep, etc.}
-
-\item{replace_heading_for_group}{\emph{Replacing heading for group}
-
-\verb{named vector<character>} // \emph{default:} \code{c(".variable_label_suffix_dep" = ".variable_name_dep")}
-
-Occasionally, one needs to replace the heading with another piece of information
-in the refined chapter_overview. For instance, one may want to organize output
-by variable_name_indep, but to display the variable_label_indep instead. Use
-the name for the replacement and the value for the original.}
-
-\item{mesos_first}{\emph{mesos first}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
-
-Whether to place the mesos group element before or after the entire sample.}
-
-\item{descend}{\emph{Sorting order}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
-
-Reverse sorting of \code{sort_by} in figures and tables. See \code{arrange_section_by}
-for sorting of report sections.}
-
-\item{require_common_categories}{\emph{Check common categories}
-
-\verb{scalar<logical>} // \emph{default:} \code{NULL} (\code{optional})
-
-Whether to check if all items share common categories.}
-
-\item{panel_tabset_mesos}{\emph{mesos panel tabset}
-
-\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
-
-Whether in mesos reports the comparison group should be displayed as
-a Quarto panel tabset (\code{TRUE}), or above each other (\code{FALSE}).}
-
-\item{pdf}{\emph{Create PDF of full report?}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
-
-Whether to create a PDF of the entire report (all chapters included in a single file).}
-
-\item{attach_chapter_dataset}{\emph{Toggle inclusion of chapter-specific datasets in qmd-files}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE}
-
-Whether to save in each chapter folder an 'Rds'-file with the
-chapter-specific dataset, and load it at the top of each QMD-file.}
-
-\item{auxiliary_variables}{\emph{Auxiliary variables to be included in datasets}
-
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
-
-Column names in \code{data} that should always be included in datasets for
-chapter qmd-files, if \code{attach_chapter_dataset=TRUE}. Not publicly available.}
-
-\item{micro}{\emph{Create page with raw data (micro data) and codebook}
-
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
-
-Whether to a page with local links to a raw dataset (in various formats) and codebook (in various formats).}
-
 \item{reps}{\emph{Number of permutations}
 
 \verb{scalar<integer>} // \emph{default:} \code{100} (\code{optional})
@@ -644,31 +669,6 @@ Whether or not to include the actual numbers in parentheses.}
 \verb{scalar<integer>} // \emph{default:} \code{NULL} (\code{optional})
 
 The number of top and bottom entries to report.}
-
-\item{log_file}{\emph{Path to log file}
-
-\verb{scalar<string>} // \emph{default:} \code{"_log.txt"} (\code{optional})
-
-Path to log file. Set to NULL to disable logging.}
-
-\item{serialized_format}{\emph{Serialized format}
-
-\verb{scalar<string>} // \emph{default:} \code{"rds"}
-
-Format for serialized data. One of \code{"rds"} (default), \code{"qs"} or \code{"fst"}.
-The latter two requires the respective packages to be installed.
-qs is usually the fastest and most space efficient, but sets package
-dependencies on the report.}
-
-\item{tabular_format}{\emph{Serialized format}
-
-\verb{scalar<string>} // \emph{default:} \code{"delim"}
-
-Format for pretty tabular data, meant for end-user to peruse and will be
-linked to in reports (the graph data, etc). One of \code{"delim"} (tab-separated delim-files)
-\code{"xlsx"} requires \code{writexl}-package), \code{"csv"} or \code{"csv2"} (requires \code{readr}-package.
-\code{"dta"} or \code{"sav"} requires \code{haven}-package. Currently must be specified,
-in the future this will become an optional argument.}
 
 \item{translations}{\emph{Translations}
 
