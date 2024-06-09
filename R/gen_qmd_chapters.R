@@ -126,18 +126,18 @@ gen_qmd_chapters <-
           } else chapter_contents <- NULL
 
           qmd_start_section <-
-            if(!is.null(dots$qmd_start_section_filepath)) {
+            if(!is.null(dots$chapter_qmd_start_section_filepath)) {
               stringi::stri_c(collapse = "\n",
                               ignore_null = TRUE,
-                              readLines(con = dots$qmd_start_section_filepath)
+                              readLines(con = dots$chapter_qmd_start_section_filepath)
                               )
             }
 
           qmd_end_section <-
-            if(!is.null(dots$qmd_end_section_filepath)) {
+            if(!is.null(dots$chapter_qmd_end_section_filepath)) {
               stringi::stri_c(collapse = "\n",
                               ignore_null = TRUE,
-                              readLines(con = dots$qmd_end_section_filepath)
+                              readLines(con = dots$chapter_qmd_end_section_filepath)
                               )
             }
 
