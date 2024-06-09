@@ -22,3 +22,5 @@ PackageInstallArgs: --with-keep.source
 PackageRoxygenize: rd,collate,namespace,vignette
 
 SpellingDictionary: en_GB
+
+ProjectName: saros

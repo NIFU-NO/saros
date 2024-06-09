@@ -120,7 +120,7 @@ prep_cat_prop_plot_html <-
       ) +
       ggplot2::scale_y_continuous(
         limits = c(-.003, if (prop_family) 1.015 else NA),
-        expand = c(0, 0),
+        expand = c(0, 0.03),
         labels = if (percentage) function(x) stringi::stri_c(ignore_null=TRUE, x * 100, "%") else ggplot2::waiver()
       ) +
       ggiraph::scale_fill_manual_interactive(
@@ -139,29 +139,34 @@ prep_cat_prop_plot_html <-
                                                                               nrow = max(c(ceiling(length(colour_palette) / 5),
                                                                                            (max_nchar_cat > 10)+1), na.rm = TRUE)),
         colour = "none"
-      ) +
-      ggplot2::theme_classic() +
-      ggplot2::theme(
-        text = ggplot2::element_text(family = dots$font_family),
-        axis.text.x = ggiraph::element_text_interactive(size = dots$main_font_size),
-        axis.text.y = if (hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y", size = dots$main_font_size),
-        plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption", size = dots$main_font_size),
-        legend.location = "plot",
-        legend.position = "bottom",
-        legend.justification = "left", #if(!is_string(indep_vars)) c(-.15, 0) else c(-.35, 0),
-        legend.direction = "horizontal",
-        legend.key.size = ggplot2::unit(4, "mm"),
-        legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$legend_font_size),
-        strip.placement = "outside",
-        strip.text.x = ggplot2::element_text(margin = ggplot2::margin(l = 0, t = 0, r = 0, b = 2, "cm"), size = dots$strip_font_size),
-        strip.text.y.left = ggiraph::element_text_interactive(data_id = "strip.text",
-                                                              angle = dots$strip_angle,
-                                                              hjust = 0,
-                                                              colour = "grey20",
-                                                              size = dots$strip_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
-        strip.background = ggiraph::element_rect_interactive(colour = NA)
-      ) +
-      ggplot2::labs(x = NULL, y = NULL)
+      ) #+
+      # ggplot2::theme_classic() +
+      # ggplot2::theme(
+      #   text = ggplot2::element_text(family = dots$font_family, size = dots$main_font_size),
+      #   axis.text.x = ggiraph::element_text_interactive(size = dots$main_font_size),
+      #   axis.text.y = if (hide_axis_text) ggplot2::element_blank() else ggiraph::element_text_interactive(data_id = "axis.text.y", size = dots$main_font_size),
+      #   plot.caption = ggiraph::element_text_interactive(data_id = "plot.caption"),
+      #   legend.location = "plot",
+      #   legend.position = "bottom",
+      #   legend.justification = "left", #if(!is_string(indep_vars)) c(-.15, 0) else c(-.35, 0),
+      #   legend.direction = "horizontal",
+      #   legend.key.size = ggplot2::unit(4, "mm"),
+      #   legend.text = ggiraph::element_text_interactive(data_id = "legend.text", size = dots$legend_font_size),
+      #   strip.placement = "outside",
+      #   strip.text.x = ggplot2::element_text(margin = ggplot2::margin(l = 0, t = 0, r = 0, b = 2, "cm"), size = dots$strip_font_size),
+      #   strip.text.y.left = ggiraph::element_text_interactive(data_id = "strip.text",
+      #                                                          angle = dots$strip_angle,
+      #                                                          hjust = 0,
+      #                                                          colour = "grey20",
+      #                                                          size = dots$strip_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
+      #   strip.text.y.right = ggiraph::element_text_interactive(data_id = "strip.text",
+      #                                                         angle = dots$strip_angle,
+      #                                                         hjust = 0,
+      #                                                         colour = "grey20",
+      #                                                         size = dots$strip_font_size), # if(length(indep_vars)>0) ggplot2::element_blank() else
+      #   strip.background = ggiraph::element_rect_interactive(colour = NA)
+      # ) +
+      # ggplot2::labs(x = NULL, y = NULL)
 
     if (length(indep_vars) > 1L ||
         (length(indep_vars) >= 1L &&
