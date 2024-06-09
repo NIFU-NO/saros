@@ -120,7 +120,7 @@ prep_cat_prop_plot_html <-
       ) +
       ggplot2::scale_y_continuous(
         limits = c(-.003, if (prop_family) 1.015 else NA),
-        expand = c(0, 0),
+        expand = c(0, 0.03),
         labels = if (percentage) function(x) stringi::stri_c(ignore_null=TRUE, x * 100, "%") else ggplot2::waiver()
       ) +
       ggiraph::scale_fill_manual_interactive(

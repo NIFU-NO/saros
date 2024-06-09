@@ -93,7 +93,7 @@ prep_cat_freq_plot_html <-
         show.legend = FALSE
         ) +
       ggplot2::scale_y_continuous(limits = c(-.003, NA),
-                                  expand = c(0,0)) +
+                                  expand = c(0,0.03)) +
       ggiraph::scale_fill_manual_interactive(name="",
                                              values = colour_palette,
                                              data_id = function(x) x,
