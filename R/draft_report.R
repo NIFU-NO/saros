@@ -466,6 +466,12 @@
 #'
 #'   Width for PNG output.
 #'
+#' @param docx *Whether to produce docx-files with mschart versions of the figures*
+#'
+#'   `scalar<logical>` // *default:* `FALSE`
+#'
+#'   mschart figures are vector graphics which may be of use for some
+#'
 #' @param hide_variable_if_all_na *Hide variable from outputs if containing all NA*
 #'
 #'   `scalar<boolean>` // *default:* `TRUE` (`optional`)
@@ -735,6 +741,7 @@ draft_report <-
            png_width = 14,
            png_height = 16,
            font_family = "sans", # Drop
+           docx = FALSE,
 
            colour_palette_nominal = NULL, # Drop in saros2.0
            colour_palette_ordinal = NULL,

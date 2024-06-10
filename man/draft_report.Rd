@@ -94,6 +94,7 @@ draft_report(
   png_width = 14,
   png_height = 16,
   font_family = "sans",
+  docx = FALSE,
   colour_palette_nominal = NULL,
   colour_palette_ordinal = NULL,
   colour_na = "gray90",
@@ -615,6 +616,12 @@ Width for PNG output.}
 \verb{scalar<character>} // \emph{default:} \code{"sans"} (\code{optional})
 
 Word font family. See officer::fp_text.}
+
+\item{docx}{\emph{Whether to produce docx-files with mschart versions of the figures}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE}
+
+mschart figures are vector graphics which may be of use for some}
 
 \item{colour_palette_nominal, colour_palette_ordinal}{\emph{Colour palettes (nominal and ordinal)}
 

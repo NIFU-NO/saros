@@ -34,6 +34,7 @@ prepare_chunk.bi_catcat_prop_plot <-
     } else inverse <- FALSE
 
 
+    if(isTRUE(dots$docx)) {
     out_docx <-
       rlang::exec(
         embed_cat_plot_docx,
@@ -46,6 +47,7 @@ prepare_chunk.bi_catcat_prop_plot <-
         plot_height = plot_height,
         !!!dots)
     print(out_docx, target = filepaths$abs$docx)
+    }
 
     out_html <-
       rlang::exec(
