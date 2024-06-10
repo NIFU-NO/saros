@@ -735,6 +735,7 @@ draft_report <-
            png_width = 14,
            png_height = 16,
            font_family = "sans", # Drop
+           docx = FALSE,
 
            colour_palette_nominal = NULL, # Drop in saros2.0
            colour_palette_ordinal = NULL,
