@@ -20,11 +20,11 @@ prep_cat_freq_plot_html <-
     dots <- update_dots(dots = rlang::list2(...),
                         caller_function = "cat_freq_plot")
 
-    if(is.null(colour_palette)) {
-      n <- length(levels(data$.category))
-      hues <- seq(15, 375, length = n + 1)
-      colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
-    }
+    # if(is.null(colour_palette)) {
+    #   n <- length(levels(data$.category))
+    #   hues <- seq(15, 375, length = n + 1)
+    #   colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+    # }
 
     multi <- length(colour_palette) > 2
 
@@ -88,17 +88,22 @@ prep_cat_freq_plot_html <-
         mapping = ggplot2::aes(colour =
                                  ggplot2::after_scale(x = hex_bw(.data$fill))),
         position = ggplot2::position_dodge(width = .9), hjust = 2,
-        size = dots$label_font_size,
+        # size = dots$label_font_size,
         na.rm = TRUE,
         show.legend = FALSE
         ) +
       ggplot2::scale_y_continuous(limits = c(-.003, NA),
                                   expand = c(0,0.03)) +
-      ggiraph::scale_fill_manual_interactive(name="",
-                                             values = colour_palette,
-                                             data_id = function(x) x,
-                                             tooltip = function(x) x, drop = FALSE) +
-      ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white"), drop = FALSE) +
+      ggiraph::scale_fill_discrete_interactive(
+        name="",
+        # values = colour_palette,
+        data_id = function(x) x,
+        tooltip = function(x) x,
+        drop = FALSE) +
+      ggiraph::scale_colour_discrete_interactive(
+        guide = FALSE,
+        # values = c("black", "white"),
+        drop = FALSE) +
       ggplot2::scale_x_discrete(limits = rev, labels = function(x) string_wrap(x, width = dots$x_axis_label_width)) +
       ggplot2::guides(fill = ggiraph::guide_legend_interactive(data_id="fill.guide",
                                                                byrow = TRUE,
