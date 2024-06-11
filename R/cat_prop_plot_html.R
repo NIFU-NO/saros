@@ -23,11 +23,11 @@ prep_cat_prop_plot_html <-
 
 
 
-    if(is.null(colour_palette)) {
-      n <- length(levels(data$.category))
-      hues <- seq(15, 375, length = n + 1)
-      colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
-    }
+    # if(is.null(colour_palette)) {
+    #   n <- length(levels(data$.category))
+    #   hues <- seq(15, 375, length = n + 1)
+    #   colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+    # }
 
 
     multi <- length(colour_palette) > 2
@@ -45,7 +45,7 @@ prep_cat_prop_plot_html <-
       data$.data_label <- ifelse(data$.category == na_category,
                                       NA_character_, data$.data_label)
     }
-    if(length(names(colour_palette))==0) {
+    if(length(colour_palette) > 0 && length(names(colour_palette))==0) {
       colour_palette <- stats::setNames(colour_palette, levels(data$.category))
     }
 
@@ -89,7 +89,7 @@ prep_cat_prop_plot_html <-
         .onclick = stringi::stri_replace_all_regex(.data$.onclick,
                                                    pattern = "\n",
                                                    replacement = "\\\\n"),
-        .alpha = ifelse(.data$.category == names(colour_palette)[2] & checkbox, 0, 1)
+        .alpha = if(length(colour_palette)>0) ifelse(.data$.category == names(colour_palette)[2] & checkbox, 0, 1)
       ) %>%
       ggplot2::ggplot(
         mapping = ggplot2::aes(
@@ -114,7 +114,7 @@ prep_cat_prop_plot_html <-
         mapping = ggplot2::aes(
           colour = ggplot2::after_scale(x = hex_bw(.data$fill))),
         position = ggplot2::position_stack(vjust = .5, reverse = TRUE),
-        size = dots$label_font_size,
+        # size = dots$label_font_size,
         na.rm = TRUE,
         show.legend = FALSE
       ) +
@@ -123,14 +123,16 @@ prep_cat_prop_plot_html <-
         expand = c(0, 0.03),
         labels = if (percentage) function(x) stringi::stri_c(ignore_null=TRUE, x * 100, "%") else ggplot2::waiver()
       ) +
-      ggiraph::scale_fill_manual_interactive(
+      ggiraph::scale_fill_discrete_interactive(
         name = "",
-        values = colour_palette,
+        # values = colour_palette,
         data_id = function(x) x,
         tooltip = function(x) x,
         drop = FALSE
       ) +
-      ggiraph::scale_colour_manual_interactive(guide = FALSE, values = c("black", "white"), drop = FALSE) +
+      ggiraph::scale_colour_discrete_interactive(
+        guide = FALSE, #values = c("black", "white"),
+        drop = FALSE) +
       ggplot2::scale_x_discrete(limits = rev, labels = function(x) string_wrap(x, width = dots$x_axis_label_width)) +
       ggplot2::guides(
         alpha = "none",
