@@ -48,7 +48,7 @@ The development version from [GitHub](https://github.com/) with:
 
 ``` r
 install.packages("pak")
-pak::pak("sda030/saros")
+pak::pak("NIFU-NO/saros")
 ```
 
 
@@ -69,44 +69,6 @@ if(interactive()) {
 }
 ```
 
-    
-
-```{r example3}
-library(saros)
-output_index_qmd <-
-  draft_report(chapter_overview = 
-                 dplyr::mutate(ex_survey_ch_overview, 
-                               indep = ifelse(.data$indep == "x1_sex",
-                                              "x1_sex,x2_human", 
-                                              .data$indep)),
-              data = ex_survey[ex_survey$f_uni %in% c("Uni of A", "Uni of B"), ], 
-               title = "My first report - ",
-               mesos_var = "f_uni",
-               label_separator = " - ",
-               name_separator = "_",
-              organize_by = c("chapter", ".element_name", ".variable_label_prefix_dep", ".variable_label_prefix_indep"),
-               index_filename = "main_index.qmd",
-               data_label = "percentage_bare",
-               always_show_bi_for_indep = "x1_sex",
-               totals = TRUE,
-               hide_label_if_prop_below = .05, 
-               hide_test_if_n_below = 10,
-               mesos_first = TRUE,
-               digits = 0,
-               data_label_decimal_symbol = ",",
-             path = tempdir())
-```
-
-```{r, warning=FALSE, message=FALSE}
-system.time( # 519 sec
-  for(file in output_index_qmd) {
-    quarto::quarto_render(file, as_job = TRUE)
-  }
-  )
-if(interactive()) {
-  browseURL(fs::path(tempdir(), "Uni of C", "Uni of C_main_index.html"))
-}
-```
 
 
 ## Documentation
