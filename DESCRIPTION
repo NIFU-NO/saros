@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 1.0.6
+Version: 1.1.0
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -30,52 +30,25 @@ BugReports: https://github.com/NIFU-NO/saros/issues
 Depends:
     R (>= 4.2.0)
 Imports: 
-    cli,
-    bcrypt,
-    utils,
-    vctrs,
-    dplyr,
-    tidyr,
-    tidyselect,
-    glue,
     rlang,
-    stringi,
-    yaml,
-    forcats,
-     ggplot2,
-     ggiraph,
-     mschart,
-     officer,
-     fs,
-     clipr,
-     rstudioapi,
-     rvest
+    utils,
+    lifecycle,
+    cli,
+    tidyselect,
+    purrr,
+    grDevices,
+    saros.base,
+    saros.contents,
+    saros.utils
 Suggests:
     covr,
-    srvyr,
-    writexl,
-    haven,
-    readr,
-    ggfittext,
-    labelled,
     testthat (>= 3.0.0),
-    readxl,
-    htmltools,
-    reactable,
-	  stringr,
-	  tibble,
-    qs,
-    openai,
-    withr,
     quarto,
     spelling
-SystemRequirements: Quarto command line tools (https://github.com/quarto-dev/quarto-cli) for the rendering wrapper functionality.
 Config/testthat/edition: 3
 Encoding: UTF-8
-LazyData: true
+VignetteBuilder: quarto
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/Needs/website: rmarkdown
-Config/testthat/parallel: true
-Config/testthat/start-first: refine_chapter_overview
