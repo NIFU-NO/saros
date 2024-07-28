@@ -20,3 +20,5 @@
 ^CODE_OF_CONDUCT\.md$
 ^CRAN-SUBMISSION$
 data-raw/goodpractice
+^notes
+^R/_archive$

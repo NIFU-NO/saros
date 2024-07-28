@@ -1,0 +1,32 @@
+---
+title: "Preparing the data for a Saros-report drafting - for data cleaners"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preparing the data for a Saros-report drafting - for data cleaners}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+# Data preparation for Saros
+-   Ensure that all variables have variable labels (see `{labelled}`-package or `{sjLabelled}`).
+    -   Item sets (batteries/cosntructs) sharing the same main question should be meticulously ensured to have the exact same prefix to the label - a slight difference in whitespace will result in them being placed on different graphs.
+-   Categorical variables must be of type factor or ordered, not the temporary `labelled` class.
+    - Distinguishing between factor-class (unordered) and ordered class matters in Saros - for colour palettes.
+    - You do not want to create dummy variables.
+-   Open text variables must be stored as character. These will be visualized/displayed appropriately. Remember that you have the responsibility to consider anonymity!
+-   Continuous/integer variables are so far not really supported.
+-   Most other things can be adjusted in the draft_report() argument (see [For project managers](for_project_managers.Rmd) for more info on configurations).
+
+```{r setup}
+library(sarosverse)
+
+
+```
