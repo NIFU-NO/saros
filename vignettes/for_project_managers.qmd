@@ -1,0 +1,13 @@
+---
+vignette: >
+  %\VignetteIndexEntry{Setting up social science project - for project managers}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+# Configuring a project for the very first time
+
+-   
+
+

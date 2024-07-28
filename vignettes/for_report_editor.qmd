@@ -1,0 +1,10 @@
+---
+vignette: >
+  %\VignetteIndexEntry{Compiling chapters to publication-ready outputs - for the report editor}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(saros)
+```

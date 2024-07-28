@@ -1,0 +1,10 @@
+---
+vignette: >
+  %\VignetteIndexEntry{Maximizing the fun of exploring a Saros-based report - for the readers}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup}
+library(saros)
+```
