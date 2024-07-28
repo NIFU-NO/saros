@@ -2,51 +2,20 @@
 % Please edit documentation in R/chr_table.R
 \name{embed_chr_table_html}
 \alias{embed_chr_table_html}
-\title{Interactive table of text data}
+\title{Interactive table of text data (DEPRECATED)}
 \usage{
-embed_chr_table_html(
-  data,
-  dep = colnames(data),
-  ...,
-  mesos_group = NULL,
-  call = rlang::caller_env()
-)
+embed_chr_table_html(data, dep, ..., mesos_group = NULL)
 }
 \arguments{
-\item{data}{\emph{Survey data}
+\item{data}{\code{data.frame}, \code{tibble} or potentially a \code{srvyr}-object.}
 
-\verb{obj:<data.frame>|obj:<tbl_df>} // Required
+\item{dep}{\code{tidyselect}-syntax for dependent variable(s).}
 
-A data frame (or a srvyr-object) with the columns specified in the
-chapter_overview 'dep_cat', etc columns.}
+\item{...}{Dynamic dots, arguments forwarded to underlying function(s).}
 
-\item{dep}{\emph{Variable selections}
-
-<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for by.
-
-Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
-
-\item{...}{\emph{Dynamic dots}
-
-<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
-
-Arguments forwarded to the corresponding functions that create the elements.}
-
-\item{mesos_group}{\emph{Specific group to compare with}
-
-\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
-
-Both the absolute and relative folderpaths are required, as strings.}
-
-\item{call}{\emph{Internal call}
-
-\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
-
-Both the absolute and relative folderpaths are required, as strings.}
-}
-\value{
-Data frame
+\item{mesos_group}{String}
 }
 \description{
-Interactive table of text data
+This function has been deprecated.
+Use instead \code{\link[saros.contents:makeme]{saros.contents::makeme()}}
 }

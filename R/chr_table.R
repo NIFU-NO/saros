@@ -1,44 +1,30 @@
-#' Interactive table of text data
+#' Interactive table of text data (DEPRECATED)
 #'
-#' @inheritParams draft_report
-#' @inheritParams summarize_data
-#' @inheritParams gen_qmd_chapters
-#' @param dep *Variable selections*
+#' This function has been deprecated.
+#' Use instead [saros.contents::makeme()]
 #'
-#'  <`tidyselect`> // *Default:* `NULL`, meaning everything for dep, nothing for by.
-#'
-#'  Columns in `data`. Currently allows tidyselect-syntax, which will be removed.
-#'
-#' @return Data frame
+#' @inheritParams embed_cat_prop_plot
+#' @importFrom rlang !!!
+#' @export
 #'
 embed_chr_table_html <-
   function(
     data,
-    dep = colnames(data),
+    dep,
     ...,
-    mesos_group = NULL,
-    call = rlang::caller_env()) {
+    mesos_group = NULL) {
 
-    dots <- update_dots(dots = rlang::list2(...),
-                        caller_function = "chr_table")
 
-  dep_enq <- rlang::enquo(arg = dep)
-  dep_pos <- tidyselect::eval_select(dep_enq, data = data, error_call = call)
+    dots <- rlang::list2(...)
 
-  if(length(dep_pos)>1) cli::cli_abort("Too many chr-dep in one section. Refine your chapter_overview so that only one txt-col is submitted at once. Problem with {.arg {dep}}")
-  out <- dplyr::distinct(data, dplyr::pick({{dep}}))
-  out <- dplyr::filter(out, !is.na(.data[[dep]]), .data[[dep]] != "")
-  names(out) <- " "
+    lifecycle::deprecate_soft(
+      when = "1.1.0",
+      what = "embed_chr_table_html()",
+      with = "saros.contents::makeme(type = 'chr_table_html')"
+    )
 
-  mesos <- if(is_string(mesos_group)) stringi::stri_c(ignore_null=TRUE, dots$translations$mesos_group_prefix,
-                                                      mesos_group,
-                                                      dots$translations$mesos_group_suffix)
-  attr(out, "saros_caption") <-
-    get_raw_labels(data = data, col_pos = dep_pos) %>%
-    stringi::stri_c(ignore_null=TRUE, ., mesos,
-                   dots$translations$n_equal_prefix,
-                   sum(!is.na(data[[unname(dep_pos)]])),
-                   dots$translations$n_equal_suffix)
-  out
-
+    saros.contents::makeme(
+      data = data,
+      type = "chr_table_html",
+      !!!dots)
 }

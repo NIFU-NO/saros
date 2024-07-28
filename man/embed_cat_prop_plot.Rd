@@ -2,7 +2,7 @@
 % Please edit documentation in R/cat_prop_plot_html.R
 \name{embed_cat_prop_plot}
 \alias{embed_cat_prop_plot}
-\title{Embed Interactive Categorical Plot}
+\title{Embed Interactive Categorical Plot (DEPRECATED!)}
 \usage{
 embed_cat_prop_plot(
   data,
@@ -12,60 +12,27 @@ embed_cat_prop_plot(
   colour_palette = NULL,
   mesos_group = NULL,
   html_interactive = TRUE,
-  inverse = FALSE,
-  call = rlang::caller_env()
+  inverse = FALSE
 )
 }
 \arguments{
-\item{data}{\emph{Survey data}
+\item{data}{\code{data.frame}, \code{tibble} or potentially a \code{srvyr}-object.}
 
-\verb{obj:<data.frame>|obj:<tbl_df>} // Required
+\item{...}{Dynamic dots, arguments forwarded to underlying function(s).}
 
-A data frame (or a srvyr-object) with the columns specified in the
-chapter_overview 'dep_cat', etc columns.}
+\item{dep}{\code{tidyselect}-syntax for dependent variable(s).}
 
-\item{...}{\emph{Dynamic dots}
+\item{indep}{\code{tidyselect}-syntax for an optional independent variable.}
 
-<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+\item{colour_palette}{Character vector. Avoid using this.}
 
-Arguments forwarded to the corresponding functions that create the elements.}
+\item{mesos_group}{String}
 
-\item{dep, indep}{\emph{Variable selections}
+\item{html_interactive}{Flag, whether to include interactivity.}
 
-<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
-
-Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
-
-\item{colour_palette}{Character vector of colour codes.}
-
-\item{mesos_group}{\emph{Specific group to compare with}
-
-\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
-
-Both the absolute and relative folderpaths are required, as strings.}
-
-\item{html_interactive}{\emph{Toggle interactive plot}
-
-\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
-
-Whether plot is to be interactive (ggiraph) or static (ggplot2).}
-
-\item{inverse}{Flag, defaults to FALSE. If TRUE, swaps x-axis and faceting.}
-
-\item{call}{\emph{Internal call}
-
-\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
-
-Both the absolute and relative folderpaths are required, as strings.}
-}
-\value{
-ggplot
+\item{inverse}{Flag, whether to flip plot or table.}
 }
 \description{
-Embed Interactive Categorical Plot
-}
-\examples{
-\donttest{
-embed_cat_prop_plot(data = ex_survey, dep = b_1:b_3)
-}
+This function has been deprecated.
+Use instead \code{\link[saros.contents:makeme]{saros.contents::makeme()}}
 }

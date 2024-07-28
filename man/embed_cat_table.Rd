@@ -2,52 +2,28 @@
 % Please edit documentation in R/cat_table.R
 \name{embed_cat_table}
 \alias{embed_cat_table}
-\title{Embed Reactable Table}
+\title{Embed Reactable Table (DEPRECATED!)}
 \usage{
 embed_cat_table(
   data,
   ...,
   dep = tidyselect::everything(),
   indep = NULL,
-  mesos_group = NULL,
-  call = rlang::caller_env()
+  mesos_group = NULL
 )
 }
 \arguments{
-\item{data}{\emph{Survey data}
+\item{data}{\code{data.frame}, \code{tibble} or potentially a \code{srvyr}-object.}
 
-\verb{obj:<data.frame>|obj:<tbl_df>} // Required
+\item{...}{Dynamic dots, arguments forwarded to underlying function(s).}
 
-A data frame (or a srvyr-object) with the columns specified in the
-chapter_overview 'dep_cat', etc columns.}
+\item{dep}{\code{tidyselect}-syntax for dependent variable(s).}
 
-\item{...}{\emph{Dynamic dots}
+\item{indep}{\code{tidyselect}-syntax for an optional independent variable.}
 
-<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
-
-Arguments forwarded to the corresponding functions that create the elements.}
-
-\item{dep, indep}{\emph{Variable selections}
-
-<\code{tidyselect}> // \emph{Default:} \code{NULL}, meaning everything for dep, nothing for indep.
-
-Columns in \code{data}. Currently allows tidyselect-syntax, which will be removed.}
-
-\item{mesos_group}{\emph{Specific group to compare with}
-
-\verb{scalar<character>} // \emph{Default:} \code{NULL} (\code{optional})
-
-Both the absolute and relative folderpaths are required, as strings.}
-
-\item{call}{\emph{Internal call}
-
-\verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})
-
-Both the absolute and relative folderpaths are required, as strings.}
-}
-\value{
-A reactable object. If return_raw=FALSE, then just the table.
+\item{mesos_group}{String}
 }
 \description{
-Embed Reactable Table
+This function has been deprecated.
+Use instead \code{\link[saros.contents:makeme]{saros.contents::makeme()}}
 }
