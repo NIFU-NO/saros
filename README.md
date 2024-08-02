@@ -44,8 +44,14 @@ possible interest.
 - *Simplicity*: Setting up a reporting system, in particular a
   semi-automated one in Quarto, can be daunting - in particular if some
   of the chapter authors/collaborators have little familiarity with
-  R/Python or Quarto/RMarkdown. This package aims to simplify many of
-  the steps while maintaining flexibility and consistency.
+  R/Python or Quarto/RMarkdown.
+  - [Created figures are
+    minimal](https://nifu-no.github.io/saros.contents/makeme.html),
+    meaning that you are given full power to adjust them post-hoc using
+    usual
+    [ggplot2::theme()](https://ggplot2.tidyverse.org/reference/theme.html)
+    tools, including
+    [ggplot2::theme_set()](https://ggplot2.tidyverse.org/reference/theme_get.html).
 - *Flexibility*:
   - Several sets of chunk templates are built in, depending on the type
     of report you want. These templates are provided as data frames, so
@@ -54,7 +60,9 @@ possible interest.
     infixes and suffixes allows translations and adaptations.
 - *Consistency and reproducibility*: Ensure all your outputs within a
   chapter, a report, a project, or even an organization, use the same
-  formatting and structure.
+  formatting and structure. Figures and plots are purposely simple in
+  theming and aesthetics, so that the end-users can specify this
+  themselves:
   - When editing/rendering reports, use global options (and override
     when necessary). For the drafted report chunks, the saros content
     functions for plots, tables, etc use inheritance for finding its
@@ -221,6 +229,17 @@ permission from the author for use. Simply put, if your
 department/organization competes with NIFU on commissioned or open
 research calls within Norway, you are probably not going to get
 permission unfortunately.
+
+## Acknowledgements
+
+- The internal code for reordering unordered factors in
+  [saros.contents:::make_contents.cat_plot_html()](https://nifu-no.github.io/saros.contents/make_contents.cat_plot_html.html)
+  has been copied (without permission) from Julia Silge’s and David
+  Robinson’s excellent
+  [{tidytext}](https://juliasilge.github.io/tidytext/)-package.
+- The code for loading all saros-packages and resolving conflicts has
+  been copied (without permission) from the tidyverse-package and
+  adapted.
 
 ## Code of Conduct
 
