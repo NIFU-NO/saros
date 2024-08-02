@@ -1,0 +1,13 @@
+---
+title: "What's in a name?"
+---
+
+# Connection to the Astronomical concept of Saros
+The term "saros" also refers to a cyclical phenomenon in astronomy known as the Saros cycle, which represents a period of approximately 18 years, 11 days, and 8 hours. After one Saros cycle, the Sun, Earth, and Moon return to approximately the same relative positions, leading to a similar eclipse.
+
+-   Cyclical occurrences: In the case of this R package, cyclical events relates to surveys that are repeated annually or biannually, while in astronomy, cyclical events refers to the recurring pattern of eclipses.
+
+-   Consistency: The saros R package aims to maintain consistency in reporting and analysis across survey iterations, just as the astronomical Saros cycle represents a predictable pattern in the occurrence of solar and lunar eclipses.
+
+-   Time-saving: The saros R package is designed to automate and streamline the process of summarizing and reporting on survey data, saving researchers time and effort. Similarly, the Saros cycle is a useful tool for astronomers to predict and plan for future eclipses, making it easier to study these events without having to make complex calculations each time.
+
