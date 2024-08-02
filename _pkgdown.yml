@@ -2,3 +2,8 @@ url: https://nifu-no.github.io/saros/
 template:
   bootstrap: 5
 
+reference:
+- title: Re-exports
+  desc: "Functions re-exported from the underlying saros.* packages (saros.base, saros.contents, saros.utils). This conscious decoupling intends to increase robustness of package development by reducing dependencies."
+  contents:
+  - reexports
