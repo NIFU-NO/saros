@@ -1,4 +1,4 @@
-#' Conflicts between the saros and other packages
+#' Conflicts between saros and other packages
 #'
 #' This function lists all the conflicts between packages in saros
 #' and other packages that you have loaded.

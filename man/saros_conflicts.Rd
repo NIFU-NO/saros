@@ -2,7 +2,7 @@
 % Please edit documentation in R/conflicts.R
 \name{saros_conflicts}
 \alias{saros_conflicts}
-\title{Conflicts between the saros and other packages}
+\title{Conflicts between saros and other packages}
 \usage{
 saros_conflicts(only = NULL)
 }
