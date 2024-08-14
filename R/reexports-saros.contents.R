@@ -19,33 +19,21 @@ saros.contents::ggsaver
 #' @export
 saros.contents::make_link
 
-#' @importFrom saros.contents make_link_global_settings_get
+#' @importFrom saros.contents global_settings_get
 #' @export
-saros.contents::make_link_global_settings_get
+saros.contents::global_settings_get
 
-#' @importFrom saros.contents make_link_global_settings_reset
+#' @importFrom saros.contents global_settings_reset
 #' @export
-saros.contents::make_link_global_settings_reset
+saros.contents::global_settings_reset
 
-#' @importFrom saros.contents make_link_global_settings_set
+#' @importFrom saros.contents global_settings_set
 #' @export
-saros.contents::make_link_global_settings_set
+saros.contents::global_settings_set
 
 #' @importFrom saros.contents makeme
 #' @export
 saros.contents::makeme
-
-#' @importFrom saros.contents makeme_global_settings_get
-#' @export
-saros.contents::makeme_global_settings_get
-
-#' @importFrom saros.contents makeme_global_settings_reset
-#' @export
-saros.contents::makeme_global_settings_reset
-
-#' @importFrom saros.contents makeme_global_settings_set
-#' @export
-saros.contents::makeme_global_settings_set
 
 #' @importFrom saros.contents n_range
 #' @export

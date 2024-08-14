@@ -14,13 +14,10 @@
 \alias{get_makeme_types}
 \alias{ggsaver}
 \alias{make_link}
-\alias{make_link_global_settings_get}
-\alias{make_link_global_settings_reset}
-\alias{make_link_global_settings_set}
+\alias{global_settings_get}
+\alias{global_settings_reset}
+\alias{global_settings_set}
 \alias{makeme}
-\alias{makeme_global_settings_get}
-\alias{makeme_global_settings_reset}
-\alias{makeme_global_settings_set}
 \alias{n_range}
 \alias{attach_qualtrics_labels}
 \alias{copy_folder_contents_to_dir}
@@ -47,10 +44,10 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{saros.base}{\code{\link[saros.base]{draft_report}}, \code{\link[saros.base]{get_chunk_template_defaults}}, \code{\link[saros.base]{refine_chapter_overview}}}
+  \item{saros.base}{\code{\link[saros.base]{draft_report}}, \code{\link[saros.base]{get_chunk_template_defaults}}, \code{\link[saros.base]{read_default_draft_report_args}}, \code{\link[saros.base]{refine_chapter_overview}}, \code{\link[saros.base]{write_default_draft_report_args}}}
 
-  \item{saros.contents}{\code{\link[saros.contents]{fig_height_h_barchart}}, \code{\link[saros.contents]{get_data_label_opts}}, \code{\link[saros.contents]{get_makeme_types}}, \code{\link[saros.contents]{ggsaver}}, \code{\link[saros.contents]{make_link}}, \code{\link[saros.contents]{make_link_global_settings_get}}, \code{\link[saros.contents]{make_link_global_settings_reset}}, \code{\link[saros.contents]{make_link_global_settings_set}}, \code{\link[saros.contents]{makeme}}, \code{\link[saros.contents]{makeme_global_settings_get}}, \code{\link[saros.contents]{makeme_global_settings_reset}}, \code{\link[saros.contents]{makeme_global_settings_set}}, \code{\link[saros.contents]{n_range}}}
+  \item{saros.contents}{\code{\link[saros.contents]{fig_height_h_barchart}}, \code{\link[saros.contents]{get_data_label_opts}}, \code{\link[saros.contents]{get_makeme_types}}, \code{\link[saros.contents]{ggsaver}}, \code{\link[saros.contents]{global_settings_get}}, \code{\link[saros.contents]{global_settings_reset}}, \code{\link[saros.contents]{global_settings_set}}, \code{\link[saros.contents]{make_link}}, \code{\link[saros.contents]{makeme}}, \code{\link[saros.contents]{n_range}}}
 
-  \item{saros.utils}{\code{\link[saros.utils]{attach_qualtrics_labels}}, \code{\link[saros.utils]{copy_folder_contents_to_dir}}, \code{\link[saros.utils]{create_directory_structure}}, \code{\link[saros.utils]{create_email_credentials}}, \code{\link[saros.utils]{create_r_files}}, \code{\link[saros.utils]{download_zip_to_folder}}, \code{\link[saros.utils]{generate_yaml_from_directory}}, \code{\link[saros.utils]{initialize_saros_project}}, \code{\link[saros.utils]{omitted_recoder_df}}, \code{\link[saros.utils]{post_render_docx_img_replacer}}, \code{\link[saros.utils]{read_default_draft_report_args}}, \code{\link[saros.utils]{recode_checkbox_sets}}, \code{\link[saros.utils]{remove_special_chars_in_labels}}, \code{\link[saros.utils]{rename_by_labels}}, \code{\link[saros.utils]{replace_docx_imgs_with_mscharts}}, \code{\link[saros.utils]{replace_stata_labels}}, \code{\link[saros.utils]{sanitize_labels}}, \code{\link[saros.utils]{setup_access_restrictions}}, \code{\link[saros.utils]{swap_label_colnames}}, \code{\link[saros.utils]{write_default_draft_report_args}}}
+  \item{saros.utils}{\code{\link[saros.utils]{attach_qualtrics_labels}}, \code{\link[saros.utils]{copy_folder_contents_to_dir}}, \code{\link[saros.utils]{create_directory_structure}}, \code{\link[saros.utils]{create_email_credentials}}, \code{\link[saros.utils]{create_r_files}}, \code{\link[saros.utils]{download_zip_to_folder}}, \code{\link[saros.utils]{generate_yaml_from_directory}}, \code{\link[saros.utils]{initialize_saros_project}}, \code{\link[saros.utils]{omitted_recoder_df}}, \code{\link[saros.utils]{post_render_docx_img_replacer}}, \code{\link[saros.utils]{recode_checkbox_sets}}, \code{\link[saros.utils]{remove_special_chars_in_labels}}, \code{\link[saros.utils]{rename_by_labels}}, \code{\link[saros.utils]{replace_docx_imgs_with_mscharts}}, \code{\link[saros.utils]{replace_stata_labels}}, \code{\link[saros.utils]{sanitize_labels}}, \code{\link[saros.utils]{setup_access_restrictions}}, \code{\link[saros.utils]{swap_label_colnames}}}
 }}
 
