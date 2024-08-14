@@ -7,6 +7,8 @@
 \alias{draft_report}
 \alias{get_chunk_template_defaults}
 \alias{refine_chapter_overview}
+\alias{read_default_draft_report_args}
+\alias{write_default_draft_report_args}
 \alias{fig_height_h_barchart}
 \alias{get_data_label_opts}
 \alias{get_makeme_types}
@@ -30,7 +32,6 @@
 \alias{initialize_saros_project}
 \alias{omitted_recoder_df}
 \alias{post_render_docx_img_replacer}
-\alias{read_default_draft_report_args}
 \alias{recode_checkbox_sets}
 \alias{remove_special_chars_in_labels}
 \alias{rename_by_labels}
@@ -39,7 +40,6 @@
 \alias{sanitize_labels}
 \alias{setup_access_restrictions}
 \alias{swap_label_colnames}
-\alias{write_default_draft_report_args}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{

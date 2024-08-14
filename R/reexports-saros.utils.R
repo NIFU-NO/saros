@@ -39,10 +39,6 @@ saros.utils::omitted_recoder_df
 #' @export
 saros.utils::post_render_docx_img_replacer
 
-#' @importFrom saros.utils read_default_draft_report_args
-#' @export
-saros.utils::read_default_draft_report_args
-
 #' @importFrom saros.utils recode_checkbox_sets
 #' @export
 saros.utils::recode_checkbox_sets
@@ -75,6 +71,3 @@ saros.utils::setup_access_restrictions
 #' @export
 saros.utils::swap_label_colnames
 
-#' @importFrom saros.utils write_default_draft_report_args
-#' @export
-saros.utils::write_default_draft_report_args
