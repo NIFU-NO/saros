@@ -38,7 +38,7 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
-          version: release
+          version: pre-release
         env:
           GH_TOKEN: ${{ secrets.GH_GITHUB_COM_TOKEN }}
 
