@@ -1,28 +1,33 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
            role = c("aut", "cre", "cph"),
            email = "stephus.daus@gmail.com", 
            comment = c(ORCID = "0000-0003-0230-6997")),
+    person("Julia", "Silge", role = c("ctb"), comment = "Author of internal scale_x_reordered"),
+    person("David", "Robinson", role = c("ctb"), comment = "Author of internal scale_x_reordered"),
     person("Nordic Institute for The Studies of Innovation, Research and Education (NIFU)", 
            role = c("fnd")),
     person("Kristiania University College", 
            role = c("fnd"))
   )
 Maintainer: Stephan Daus <stephus.daus@gmail.com>
-Description: Produces highly customized reports, primarily intended for survey
-    research. Building on 'Quarto' (<https://quarto.org>), it generates draft
-    chapters of all specified dependent/independent variables, which can be
-    further edited by hand, containing figures, tables and analyses (currently
-    only uni-/bivariate tests of equivalent means/proportions). The feature
-    'mesos'-reports offer tailor-made batch report production where e.g. an
-    institution can compare itself to all other participants. Publication tools
-    are also included, such as password generation for 'mesos'-report sections
-    on a 'Quarto' Website.
+Description: Offers a systematic way for conditional reporting of figures and tables for many
+    (and bivariate combinations of) variables, typically from survey data.
+    Contains interactive 'ggiraph'-based 
+    (<https://CRAN.R-project.org/package=ggiraph>) plotting functions and
+    data frame-based summary tables (bivariate significance tests, 
+    frequencies/proportions, unique open ended responses, etc) with
+    many arguments for customization, and extensions possible. Uses a global 
+    options() system for neatly reducing redundant code.
+    Also contains tools for immediate saving of objects and returning a hashed link to the object,
+    useful for creating download links to high resolution images upon rendering in 'Quarto'. 
+    Suitable for highly customized reports, primarily intended for survey
+    research, in tandem with <https://CRAN.R-project.org/package=saros.base>.
 Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
 License: MIT + file LICENSE
 URL: https://nifu-no.github.io/saros/, https://github.com/NIFU-NO/saros 
@@ -30,21 +35,36 @@ BugReports: https://github.com/NIFU-NO/saros/issues
 Depends:
     R (>= 4.2.0)
 Imports: 
-    rlang,
-    utils,
     lifecycle,
-    cli,
-    tidyselect,
-    purrr,
     grDevices,
-    saros.base,
-    saros.contents,
-    saros.utils
+    cli,
+    utils,
+    vctrs,
+    glue,
+    dplyr,
+    tidyr,
+    tidyselect,
+    rlang,
+    stringi,
+    forcats,
+    ggplot2,
+    ggiraph,
+    mschart,
+    officer,
+    fs
 Suggests:
     covr,
+    srvyr,
+    writexl,
+    haven,
+    readr,
+    labelled,
     testthat (>= 3.0.0),
+	  tibble,
+    withr,
     quarto,
-    spelling
+    spelling,
+    vdiffr
 Config/testthat/edition: 3
 Encoding: UTF-8
 VignetteBuilder: quarto
@@ -52,3 +72,5 @@ RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Language: en-US
 Config/Needs/website: rmarkdown
+Config/testthat/parallel: true
+LazyData: true

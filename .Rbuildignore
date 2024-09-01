@@ -1,5 +1,5 @@
 ^\.github$
-^.Rproj$
+^\.Rproj$
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
@@ -17,3 +17,4 @@ data-raw/goodpractice
 ^LICENSE\.md$
 ^CODE_OF_CONDUCT\.md$
 ^notes
+^vignettes/*_files$
