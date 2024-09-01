@@ -15,6 +15,4 @@ Colours in hex-format, either black or white.
 \description{
 Code is taken from XXX.
 }
-\examples{
-hex_bw("#0dadfd")
-}
+\keyword{internal}

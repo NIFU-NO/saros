@@ -1,9 +1,37 @@
 url: https://nifu-no.github.io/saros/
 template:
   bootstrap: 5
-
+  light-switch: yes
 reference:
-- title: Re-exports
-  desc: "Functions re-exported from the underlying saros.* packages (saros.base, saros.contents, saros.utils). This conscious decoupling intends to increase robustness of package development by reducing dependencies."
+- title: The main function you will use
+  desc: You use this function with the `type`-argument to create most things you'll
+    need.
+  contents: makeme
+- title: Get, set and reset global options
+  desc: Global options allow you to easily set defaults for all your makeme function
+    calls, so you basically do not need to specify the same arguments throughout.
+    data, dep and indep will still need to be specified.
   contents:
-  - reexports
+  - global_settings_get
+  - global_settings_set
+  - global_settings_reset
+- title: Gets the possible data_label and type options for the makeme()-arguments
+  contents:
+  - get_data_label_opts
+  - get_makeme_types
+- title: Save output and create a link to it on rendering
+  contents:
+  - make_link
+  - ggsaver
+- title: Compute optimal figure heights for the built-in cat_plot
+  contents:
+  - fig_height_h_barchart
+  - fig_height_h_barchart2
+- title: Obtain sample size range for a makeme-object (experimental)
+  contents:
+  - n_range
+  - n_range2
+- title: Only relevant when expanding the S3 system with your own functions
+  contents: make_content
+- title: Example dataset
+  contents: ex_survey

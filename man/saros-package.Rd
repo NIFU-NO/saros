@@ -6,7 +6,7 @@
 \alias{saros-package}
 \title{saros: Semi-Automatic Reporting of Ordinary Surveys}
 \description{
-Produces highly customized reports, primarily intended for survey research. Building on 'Quarto' (\url{https://quarto.org}), it generates draft chapters of all specified dependent/independent variables, which can be further edited by hand, containing figures, tables and analyses (currently only uni-/bivariate tests of equivalent means/proportions). The feature 'mesos'-reports offer tailor-made batch report production where e.g. an institution can compare itself to all other participants. Publication tools are also included, such as password generation for 'mesos'-report sections on a 'Quarto' Website.
+Offers a systematic way for conditional reporting of figures and tables for many (and bivariate combinations of) variables, typically from survey data. Contains interactive 'ggiraph'-based (\url{https://CRAN.R-project.org/package=ggiraph}) plotting functions and data frame-based summary tables (bivariate significance tests, frequencies/proportions, unique open ended responses, etc) with many arguments for customization, and extensions possible. Uses a global options() system for neatly reducing redundant code. Also contains tools for immediate saving of objects and returning a hashed link to the object, useful for creating download links to high resolution images upon rendering in 'Quarto'. Suitable for highly customized reports, primarily intended for survey research, in tandem with \url{https://CRAN.R-project.org/package=saros.base}.
 }
 \seealso{
 Useful links:
@@ -22,6 +22,8 @@ Useful links:
 
 Other contributors:
 \itemize{
+  \item Julia Silge (Author of internal scale_x_reordered) [contributor]
+  \item David Robinson (Author of internal scale_x_reordered) [contributor]
   \item Nordic Institute for The Studies of Innovation, Research and Education (NIFU) [funder]
   \item Kristiania University College [funder]
 }

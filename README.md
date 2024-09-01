@@ -36,7 +36,7 @@ possible interest.
 | Project setup containing ready-made R-scripts           | Optional                                                                                                                                                                       | saros.utils    |
 | Data cleaning                                           | Only supplements [{tidyverse}](https://www.tidyverse.org/)/[{datawizard}](https://easystats.github.io/datawizard/)/ [{labelled}](https://larmarange.github.io/labelled/)-tools | saros.utils    |
 | Report drafting                                         |                                                                                                                                                                                | saros.base     |
-| Easy content generation for common standardized outputs | Standardized output types. Alternatively use your own functions                                                                                                                | saros.contents |
+| Easy content generation for common standardized outputs | Standardized output types. Alternatively use your own functions                                                                                                                | saros |
 | Web access restriction and distribution                 | Optional                                                                                                                                                                       | saros.utils    |
 
 ## Why saros?
@@ -46,7 +46,7 @@ possible interest.
   of the chapter authors/collaborators have little familiarity with
   R/Python or Quarto/RMarkdown.
   - [Created figures are
-    minimal](https://nifu-no.github.io/saros.contents/makeme.html),
+    minimal](https://nifu-no.github.io/saros/makeme.html),
     meaning that you are given full power to adjust them post-hoc using
     usual
     [ggplot2::theme()](https://ggplot2.tidyverse.org/reference/theme.html)
@@ -233,7 +233,7 @@ permission unfortunately.
 ## Acknowledgements
 
 - The internal code for reordering unordered factors in
-  [saros.contents:::make_contents.cat_plot_html()](https://nifu-no.github.io/saros.contents/make_contents.cat_plot_html.html)
+  [saros:::make_contents.cat_plot_html()](https://nifu-no.github.io/saros/make_contents.cat_plot_html.html)
   has been copied (without permission) from Julia Silge’s and David
   Robinson’s excellent
   [{tidytext}](https://juliasilge.github.io/tidytext/)-package.

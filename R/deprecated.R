@@ -1,7 +1,7 @@
 #' Embed Interactive Categorical Plot (DEPRECATED!)
 #'
 #' This function has been deprecated.
-#' Use instead [saros.contents::makeme()]
+#' Use instead [makeme()]
 #'
 #' @param data `data.frame`, `tibble` or potentially a `srvyr`-object.
 #' @param dep `tidyselect`-syntax for dependent variable(s).
@@ -30,10 +30,10 @@ embed_cat_prop_plot <-
     lifecycle::deprecate_soft(
       when = "1.1.0",
       what = "embed_cat_prop_plot()",
-      with = "saros.contents::makeme(type = 'cat_prop_plot_html')"
+      with = "makeme(type = 'cat_prop_plot_html')"
     )
 
-    saros.contents::makeme(
+    makeme(
       data = data,
       type = "cat_prop_plot_html",
       !!!dots)
@@ -44,7 +44,7 @@ embed_cat_prop_plot <-
 #' Embed Reactable Table (DEPRECATED!)
 #'
 #' This function has been deprecated.
-#' Use instead [saros.contents::makeme()]
+#' Use instead [makeme()]
 #'
 #' @inheritParams embed_cat_prop_plot
 #' @importFrom rlang !!!
@@ -63,10 +63,10 @@ embed_cat_table <-
     lifecycle::deprecate_soft(
       when = "1.1.0",
       what = "embed_cat_prop_plot()",
-      with = "saros.contents::makeme(type='cat_table_html')"
+      with = "makeme(type='cat_table_html')"
     )
 
-    saros.contents::makeme(
+    makeme(
       data = data,
       type = "cat_table_html",
       !!!dots)
@@ -76,7 +76,7 @@ embed_cat_table <-
 #' Interactive table of text data (DEPRECATED)
 #'
 #' This function has been deprecated.
-#' Use instead [saros.contents::makeme()]
+#' Use instead [makeme()]
 #'
 #' @inheritParams embed_cat_prop_plot
 #' @importFrom rlang !!!
@@ -95,10 +95,10 @@ embed_chr_table_html <-
     lifecycle::deprecate_soft(
       when = "1.1.0",
       what = "embed_chr_table_html()",
-      with = "saros.contents::makeme(type = 'chr_table_html')"
+      with = "makeme(type = 'chr_table_html')"
     )
 
-    saros.contents::makeme(
+    makeme(
       data = data,
       type = "chr_table_html",
       !!!dots)

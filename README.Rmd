@@ -37,13 +37,13 @@ knitr::opts_chunk$set(
 |Project setup containing ready-made R-scripts|Optional|saros.utils|
 |Data cleaning| Only supplements [{tidyverse}](https://www.tidyverse.org/)/[{datawizard}](https://easystats.github.io/datawizard/)/ [{labelled}](https://larmarange.github.io/labelled/)-tools|saros.utils|
 |Report drafting||saros.base|
-|Easy content generation for common standardized outputs|Standardized output types. Alternatively use your own functions|saros.contents|
+|Easy content generation for common standardized outputs|Standardized output types. Alternatively use your own functions||
 |Web access restriction and distribution|Optional|saros.utils|
 
 
 ## Why saros?
 -   *Simplicity*: Setting up a reporting system, in particular a semi-automated one in Quarto, can be daunting - in particular if some of the chapter authors/collaborators have little familiarity with R/Python or Quarto/RMarkdown. 
-    -   [Created figures are minimal](https://nifu-no.github.io/saros.contents/makeme.html), meaning that you are given full power to adjust them post-hoc using usual [ggplot2::theme()](https://ggplot2.tidyverse.org/reference/theme.html) tools, including [ggplot2::theme_set()](https://ggplot2.tidyverse.org/reference/theme_get.html).
+    -   [Created figures are minimal](https://nifu-no.github.io/saros/makeme.html), meaning that you are given full power to adjust them post-hoc using usual [ggplot2::theme()](https://ggplot2.tidyverse.org/reference/theme.html) tools, including [ggplot2::theme_set()](https://ggplot2.tidyverse.org/reference/theme_get.html).
 -   *Flexibility*:
     -   Several sets of chunk templates are built in, depending on the type of report you want. These templates are provided as data frames, so you can easily adjust these or create your own.
     -   A multitude of settings with optional glue-templating of prefixes, infixes and suffixes allows translations and adaptations.
@@ -147,7 +147,7 @@ refine_chapter_overview(data = ex_survey,
 Outside of Norway, this package can be used in accordance with the MIT license. However, persons affiliated with Norwegian non-profit or profit/commercial organizations must have the explicit written permission from the author for use. Simply put, if your department/organization competes with NIFU on commissioned or open research calls within Norway, you are probably not going to get permission unfortunately.
 
 ## Acknowledgements
--   The internal code for reordering unordered factors in [saros.contents:::make_contents.cat_plot_html()](https://nifu-no.github.io/saros.contents/make_contents.cat_plot_html.html) has been copied (without permission) from Julia Silge's and David Robinson's excellent [{tidytext}](https://juliasilge.github.io/tidytext/)-package.
+-   The internal code for reordering unordered factors in [saros:::make_contents.cat_plot_html()](https://nifu-no.github.io/saros/make_contents.cat_plot_html.html) has been copied (without permission) from Julia Silge's and David Robinson's excellent [{tidytext}](https://juliasilge.github.io/tidytext/)-package.
 -   The code for loading all saros-packages and resolving conflicts has been copied (without permission) from the tidyverse-package and adapted.
 
 ## Code of Conduct
