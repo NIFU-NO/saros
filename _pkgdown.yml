@@ -35,3 +35,8 @@ reference:
   contents: make_content
 - title: Example dataset
   contents: ex_survey
+- title: Deprecated functions replaced by makeme()
+  contents:
+  - embed_cat_prop_plot
+  - embed_cat_table
+  - embed_chr_table_html
