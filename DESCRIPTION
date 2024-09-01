@@ -60,14 +60,12 @@ Suggests:
     readr,
     labelled,
     testthat (>= 3.0.0),
-	  tibble,
+	tibble,
     withr,
-    quarto,
     spelling,
     vdiffr
 Config/testthat/edition: 3
 Encoding: UTF-8
-VignetteBuilder: quarto
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Language: en-US
