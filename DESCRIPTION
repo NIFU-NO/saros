@@ -27,7 +27,7 @@ Description: Offers a systematic way for conditional reporting of figures and ta
     Also contains tools for immediate saving of objects and returning a hashed link to the object,
     useful for creating download links to high resolution images upon rendering in 'Quarto'. 
     Suitable for highly customized reports, primarily intended for survey
-    research, in tandem with <https://CRAN.R-project.org/package=saros.base>.
+    research. Complements <https://CRAN.R-project.org/package=saros.base>.
 Note: Free to use for non-Norwegian institutions, otherwise see LICENSE.
 License: MIT + file LICENSE
 URL: https://nifu-no.github.io/saros/, https://github.com/NIFU-NO/saros 

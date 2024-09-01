@@ -1,3 +1,47 @@
+# saros 1.2.0
+
+## Major changes
+- `embed_*`-functions are replaced by `makeme(type="cat_plot")` etc
+    - `makeme()` takes S3-methods which eases expansions.
+    - `embed_*` are thus lifecycle soft-deprecated.
+
+## New features
+- `n_range()` gives the n_range for a given dataset, dependent and independent variables.
+- `n_range2()` same as `n_range()` but takes a `makeme()`-object for convenience.
+- `make_link()` for generating downloadable figures, tables, data or anything else, on the spot.
+- `ggsaver()` is a minor wrapper to ease using make_link with ggplot2::ggsave().
+- `fig_height_h_barchart()` estimates the optimal figure height for a horizontal barchart.
+- `fig_height_h_barchart2()` same as above, but takes a makeme()-object for convenience.
+- `makeme.cat_plot()` allows sorting within each dependent variable-by-independent variable (facet-sort)
+
+## Bugfixes
+- Too many to list, but see saros 1.1.0 for some of them.
+
+# saros 1.1.0
+<!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
+
+-feat: Removed colour_palette  (#328)
+-fix: Argument `chapter_qmd_start_section_filepath` now has effect. (#321)
+-fix: simplified create_email_credentials (#305)
+-fix: pkgdown for recode_checkbox_sets (#304)
+-fix: cat_*_plot now displays keys for unused categories in legend (#301)
+-fix: `single_y_bivariates_if_deps_above` no longer affects univariates (#300)
+-fix: More robust estimate_plot_height if dep only has one NA category (#299)
+-fix: Significance test now works in edge cases (#297)
+-feat: chr_table now ignores NA and empty strings. (#296)
+-fix: `serialized_format` now actually supports `{qs}`, if installed. (#293)
+-feat: Added default to replace_heading_for_group (#291)
+-feat: Removed flexi-app  (#289)
+-feat: Removed unnecessary rendering-assistance tools. (#287)
+-feat: `gen_qmd_index` has now been refactored (#286)
+- simplified to `gen_qmd_file`, which better handles index and report
+- Also allows separate qmd_snippets at start and end for index and
+- Extract formats from report_header_yaml which is used to create links
+-fix: insert_obj_in_qmd now uses conv_to_valid_obj_name() again (#284)
+-feat: Removed saving png files as it is rarely used. (#283)
+-fix: `crosstable3()` now handles character vectors. (#278)
+
+
 # saros 1.0.5
 
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
