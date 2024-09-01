@@ -1,5 +1,8 @@
 ---
-title: "What's in a name?"
+vignette: >
+  %\VignetteIndexEntry{What's in a name?}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # Connection to the Astronomical concept of Saros
