@@ -31,13 +31,13 @@ possible interest.
 
 ## Overview: tools for five stages of the report production
 
-| What                                                    | Note                                                                                                                                                                           | Sub-package    |
-|---------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
-| Project setup containing ready-made R-scripts           | Optional                                                                                                                                                                       | saros.utils    |
-| Data cleaning                                           | Only supplements [{tidyverse}](https://www.tidyverse.org/)/[{datawizard}](https://easystats.github.io/datawizard/)/ [{labelled}](https://larmarange.github.io/labelled/)-tools | saros.utils    |
-| Report drafting                                         |                                                                                                                                                                                | saros.base     |
-| Easy content generation for common standardized outputs | Standardized output types. Alternatively use your own functions                                                                                                                | saros |
-| Web access restriction and distribution                 | Optional                                                                                                                                                                       | saros.utils    |
+| What | Note | Sub-package |
+|----|----|----|
+| Project setup containing ready-made R-scripts and folders | Optional | saros.base |
+| Data cleaning | Only supplements [{tidyverse}](https://www.tidyverse.org/)/[{datawizard}](https://easystats.github.io/datawizard/)/ [{labelled}](https://larmarange.github.io/labelled/)-tools | saros.utils (not on CRAN) |
+| Report drafting |  | saros.base |
+| Easy content generation for common standardized outputs | Standardized output types. Alternatively use your own functions | saros |
+| Web access restriction and distribution | Optional | saros.base |
 
 ## Why saros?
 
@@ -46,9 +46,8 @@ possible interest.
   of the chapter authors/collaborators have little familiarity with
   R/Python or Quarto/RMarkdown.
   - [Created figures are
-    minimal](https://nifu-no.github.io/saros/makeme.html),
-    meaning that you are given full power to adjust them post-hoc using
-    usual
+    minimal](https://nifu-no.github.io/saros/makeme.html), meaning that
+    you are given full power to adjust them post-hoc using usual
     [ggplot2::theme()](https://ggplot2.tidyverse.org/reference/theme.html)
     tools, including
     [ggplot2::theme_set()](https://ggplot2.tidyverse.org/reference/theme_get.html).
@@ -93,13 +92,12 @@ possible interest.
 
 ### Preliminaries:
 
-1.  Optionally set up your project directory for either [a completely
-    new
-    project](https://nifu-no.github.io/saros.utils/create_email_credentials.html).
+1.  Optionally set up your project directory for [a completely new
+    project](https://nifu-no.github.io/saros.base/create_email_credentials.html).
 2.  Clean your raw data: - Variables should be stored in the data type
     that they should be displayed as (factor, ordered factor, integer,
     character, etc). Ordered factors will in certain outputs be kept in
-    the order given, whereas a set of unordered factors may be
+    the given order, whereas a set of unordered factors may be
     e.g. `sorted_by = ".upper"` (e.g values of the upper-most
     categories). - Variables should have variable labels, and sets of
     variables should have the same variable label prefix. Prefix and
@@ -109,6 +107,31 @@ possible interest.
     [saros.utils](https://nifu-no.github.io/saros.utils/reference/index.html)
 
 ### {saros}-tools
+
+- [`makeme()`](https://nifu-no.github.io/saros/makeme.html) makes most
+  types of output for your report you would need for surveys. The
+  function can be extended with S3-methods tailored for your needs.
+  - The core idea behind this function is the reusability of global
+    options, which makes it possible to globally adjust all outputs with
+    a small switch.
+- [`make_link()`](https://nifu-no.github.io/saros/make_link.html) will
+  upon rendering save a plot, dataset or any other object to disk and
+  return a “download plot”-link with a unique (hashed) filename.
+- [`n_range()`](https://nifu-no.github.io/saros/n_range.html) returns
+  the sample size range given a dataset, dependent variables and
+  independent variables.
+  - An alternative
+    [`n_range2()`](https://nifu-no.github.io/saros/n_range2.html) allows
+    directly using a makeme() output.
+- [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/fig_height_h_barchart.html)
+  estimates the best figure height for a horizontal barchart, based on a
+  data frame, dep and indep variables, and other arguments.
+  - An alternative
+    [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/fig_height_h_barchart2.html)
+    takes a
+    [`makeme(type="cat_plot")`](https://nifu-no.github.io/saros/makeme.html).
+
+### {saros.base}-tools
 
 1.  Optionally specify chunk templates for what you want for each set of
     related variables. Or use among the built-in sets of templates.
@@ -140,21 +163,21 @@ possible interest.
     compartmentalized authoring.
 5.  After rendering your Quarto Project (using regular Quarto/RStudio
     tools), optionally [batch configure access
-    restrictions](https://nifu-no.github.io/saros.utils/setup_access_restrictions.html)
+    restrictions](https://nifu-no.github.io/saros.base/setup_access_restrictions.html)
     and [send out glue-tailored
-    emails](https://nifu-no.github.io/saros.utils/create_email_credentials.html)
+    emails](https://nifu-no.github.io/saros.base/create_email_credentials.html)
     to institutions that have participated in your survey, now receiving
     password-protected access to their own report.
 6.  Having done this once for a report, you might want to create a
     project template for your organization. Folder structures can be
     [mapped to a YAML
-    file](https://nifu-no.github.io/saros.utils/generate_yaml_from_directory.html)
+    file](https://nifu-no.github.io/saros.base/generate_yaml_from_directory.html)
     so that it can later be easily [created at once with your preferred
     directory numbering
-    scheme](https://nifu-no.github.io/saros.utils/download_zip_to_folder.html).
+    scheme](https://nifu-no.github.io/saros.base/download_zip_to_folder.html).
     If located on e.g. Github this can be [downloaded, unzipped and
     placed in a new project
-    folder](https://nifu-no.github.io/saros.utils/download_zip_to_folder.html).
+    folder](https://nifu-no.github.io/saros.base/download_zip_to_folder.html).
 
 ## Installation
 
