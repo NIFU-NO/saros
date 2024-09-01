@@ -35,6 +35,13 @@ jobs:
           extra-packages: any::pkgdown, local::.
           needs: website
 
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: release
+        env:
+          GH_TOKEN: ${{ secrets.GH_GITHUB_COM_TOKEN }}
+
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
