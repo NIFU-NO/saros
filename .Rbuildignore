@@ -16,6 +16,6 @@ data-raw/goodpractice
 ^vignettes/\.quarto$
 ^LICENSE\.md$
 ^CODE_OF_CONDUCT\.md$
-^notes
+^notes/
 ^vignettes/*_files$
 ^vignettes/
