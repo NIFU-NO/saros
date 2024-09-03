@@ -46,8 +46,9 @@ possible interest.
   of the chapter authors/collaborators have little familiarity with
   R/Python or Quarto/RMarkdown.
   - [Created figures are
-    minimal](https://nifu-no.github.io/saros/makeme.html), meaning that
-    you are given full power to adjust them post-hoc using usual
+    minimal](https://nifu-no.github.io/saros/reference/makeme.html),
+    meaning that you are given full power to adjust them post-hoc using
+    usual
     [ggplot2::theme()](https://ggplot2.tidyverse.org/reference/theme.html)
     tools, including
     [ggplot2::theme_set()](https://ggplot2.tidyverse.org/reference/theme_get.html).
@@ -93,7 +94,7 @@ possible interest.
 ### Preliminaries:
 
 1.  Optionally set up your project directory for [a completely new
-    project](https://nifu-no.github.io/saros.base/create_email_credentials.html).
+    project](https://nifu-no.github.io/saros.base/reference/create_email_credentials.html).
 2.  Clean your raw data: - Variables should be stored in the data type
     that they should be displayed as (factor, ordered factor, integer,
     character, etc). Ordered factors will in certain outputs be kept in
@@ -108,28 +109,28 @@ possible interest.
 
 ### {saros}-tools
 
-- [`makeme()`](https://nifu-no.github.io/saros/makeme.html) makes most
-  types of output for your report you would need for surveys. The
-  function can be extended with S3-methods tailored for your needs.
+- [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.html)
+  makes most types of output for your report you would need for surveys.
+  The function can be extended with S3-methods tailored for your needs.
   - The core idea behind this function is the reusability of global
     options, which makes it possible to globally adjust all outputs with
     a small switch.
-- [`make_link()`](https://nifu-no.github.io/saros/make_link.html) will
-  upon rendering save a plot, dataset or any other object to disk and
-  return a “download plot”-link with a unique (hashed) filename.
-- [`n_range()`](https://nifu-no.github.io/saros/n_range.html) returns
-  the sample size range given a dataset, dependent variables and
+- [`make_link()`](https://nifu-no.github.io/saros/reference/make_link.html)
+  will upon rendering save a plot, dataset or any other object to disk
+  and return a “download plot”-link with a unique (hashed) filename.
+- [`n_range()`](https://nifu-no.github.io/saros/reference/n_range.html)
+  returns the sample size range given a dataset, dependent variables and
   independent variables.
   - An alternative
-    [`n_range2()`](https://nifu-no.github.io/saros/n_range2.html) allows
-    directly using a makeme() output.
-- [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/fig_height_h_barchart.html)
+    [`n_range2()`](https://nifu-no.github.io/saros/reference/n_range2.html)
+    allows directly using a makeme() output.
+- [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart.html)
   estimates the best figure height for a horizontal barchart, based on a
   data frame, dep and indep variables, and other arguments.
   - An alternative
-    [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/fig_height_h_barchart2.html)
+    [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.html)
     takes a
-    [`makeme(type="cat_plot")`](https://nifu-no.github.io/saros/makeme.html).
+    [`makeme(type="cat_plot")`](https://nifu-no.github.io/saros/reference/makeme.html).
 
 ### {saros.base}-tools
 
@@ -141,10 +142,10 @@ possible interest.
     at least the columns ‘chapter’ and ‘dep’. ‘dep’ uses
     tidyselect-syntax in each cell. If not using any, all variables are
     processed and placed in the same qmd-file. [More
-    details](https://nifu-no.github.io/saros.base/refine_chapter_overview.html)
+    details](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.html)
 3.  [Combine the raw data, chunk templates and chapter_overview to make
     a chapter
-    structure](https://nifu-no.github.io/saros.base/refine_chapter_overview.html).
+    structure](https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.html).
     This will create a data frame containing your report structure,
     which can be further tailored. Arguments to
     refine_chapter_overview() allows e.g ignoring:
@@ -155,7 +156,7 @@ possible interest.
     - variables with all NA for a given “crowd” (a target group, all
       others combined, or all)
 4.  [Draft the
-    report](https://nifu-no.github.io/saros.base/draft_report.html),
+    report](https://nifu-no.github.io/saros.base/reference/draft_report.html),
     using the output from refine_chapter_overview() and your raw data.
     Optionally provide a range of YAML-defaults and
     QMD-prefixes/suffixes to your chapter-files, index-files or full
@@ -163,21 +164,21 @@ possible interest.
     compartmentalized authoring.
 5.  After rendering your Quarto Project (using regular Quarto/RStudio
     tools), optionally [batch configure access
-    restrictions](https://nifu-no.github.io/saros.base/setup_access_restrictions.html)
+    restrictions](https://nifu-no.github.io/saros.base/reference/setup_access_restrictions.html)
     and [send out glue-tailored
-    emails](https://nifu-no.github.io/saros.base/create_email_credentials.html)
+    emails](https://nifu-no.github.io/saros.base/reference/create_email_credentials.html)
     to institutions that have participated in your survey, now receiving
     password-protected access to their own report.
 6.  Having done this once for a report, you might want to create a
     project template for your organization. Folder structures can be
     [mapped to a YAML
-    file](https://nifu-no.github.io/saros.base/generate_yaml_from_directory.html)
+    file](https://nifu-no.github.io/saros.base/reference/generate_yaml_from_directory.html)
     so that it can later be easily [created at once with your preferred
     directory numbering
-    scheme](https://nifu-no.github.io/saros.base/download_zip_to_folder.html).
+    scheme](https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html).
     If located on e.g. Github this can be [downloaded, unzipped and
     placed in a new project
-    folder](https://nifu-no.github.io/saros.base/download_zip_to_folder.html).
+    folder](https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html).
 
 ## Installation
 
@@ -256,9 +257,8 @@ permission unfortunately.
 ## Acknowledgements
 
 - The internal code for reordering unordered factors in
-  [saros:::make_contents.cat_plot_html()](https://nifu-no.github.io/saros/make_contents.cat_plot_html.html)
-  has been copied (without permission) from Julia Silge’s and David
-  Robinson’s excellent
+  `saros:::make_contents.cat_plot_html()` has been copied (without
+  permission) from Julia Silge’s and David Robinson’s excellent
   [{tidytext}](https://juliasilge.github.io/tidytext/)-package.
 - The code for loading all saros-packages and resolving conflicts has
   been copied (without permission) from the tidyverse-package and
