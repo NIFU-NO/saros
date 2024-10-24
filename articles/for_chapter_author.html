@@ -12,7 +12,6 @@
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="for_chapter_author_files/libs/quarto-html/popper.min.js"></script><script src="for_chapter_author_files/libs/quarto-html/tippy.umd.min.js"></script><link href="for_chapter_author_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="for_chapter_author_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<script src="for_chapter_author_files/libs/quarto-contrib/kbd/kbd.js"></script><link href="for_chapter_author_files/libs/quarto-contrib/kbd/kbd.css" rel="stylesheet">
 <!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="for_chapter_author">
 </head>
 <body>
@@ -37,8 +36,11 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/for_chapter_author.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="../articles/for_data_cleaner.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="../articles/for_developers.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="../articles/for_project_managers.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="../articles/for_readers.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="../articles/for_report_editor.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="../articles/saros_name.html">UNKNOWN TITLE</a></li>
   </ul>
 </li>
@@ -71,7 +73,7 @@
 
 
 
-      <small class="dont-index">Source: <a href="https://github.com/NIFU-NO/saros/blob/main/vignettes/for_chapter_author.qmd" class="external-link"><code>vignettes/for_chapter_author.qmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/NIFU-NO/saros/blob/v1.2.0/vignettes/for_chapter_author.qmd" class="external-link"><code>vignettes/for_chapter_author.qmd</code></a></small>
       <div class="d-none name"><code></code></div>
     </div>
 
@@ -80,67 +82,14 @@
 
 
 
-    <section class="section level2"><h2 id="configuring-your-computer">Configuring your computer<a class="anchor" aria-label="anchor" href="#configuring-your-computer"></a>
-</h2>
-<p>See <a href="https://nifu-no.github.io/saros.base/articles/vig_01_basic_file_system.html">basic computer installation of R, etc</a></p>
-<p>Then open RStudio and install the package <a href="https://nifu-no.github.io/saros/">saros</a></p>
-<div class="cell">
+    <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"saros"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://nifu-no.github.io/saros/">saros</a></span><span class="op">)</span></span></code></pre></div>
 </div>
-</section><section class="section level2"><h2 id="work-with-quarto-documents--qmdsec-work-qmd">Work with Quarto documents (*.qmd){sec-work-qmd}<a class="anchor" aria-label="anchor" href="#work-with-quarto-documents--qmdsec-work-qmd"></a>
-</h2>
-<ol type="1">
-<li>File location:</li>
-<li>Make sure the files are not in a folder with long paths on a Sharepoint/Teams folder (over 260 characters). This will cause trouble when you have to return.</li>
-<li>Each chapter should be in its own folder. Do not use a folder with your name on it where you have several chapters. It just becomes a mess.</li>
-<li>Leave all files associated with the chapter in the same folder, also versions sent to quality assurance, etc. Everything in one place. Feel free to use subfolders to keep things tidy.</li>
-<li>All files/folders that you consider “archive” that others should ignore can be named with an underscore at the beginning of the file/folder name. E.g. the file “_biter_jeg_har_klipt_ut.qmd”</li>
-<li>First press Edit ➠ Folding ➠ Collapse all.</li>
-<li>Open one chunk at a time by tapping on it. Feel free to close them afterwards (arrow on the left side of the chunk).</li>
-<li>Preview figures, graphs, etc by pressing the green button to the right of the chunk, or press Ctrl + Shift + Enter to run the entire chunk that the cursor is on.</li>
-<li>Tap Show in new window above the preview for shapes that are larger than the preview. If necessary, adjust the window to see everything.</li>
-<li>Write text for the results.</li>
-<li>Do you want to see how everything looks in the end? Press the <strong>Render</strong> button and an HTML page will eventually open. If you get error messages, read them carefully and check with <a href="../For_kapittelforfattare/99_Feilmeldinger.qmd">this list</a>.</li>
-<li>By pressing the gear to the right of the Render button, you can set the output to the Viewer window in RStudio (applies to HTML output). Some people prefer this.</li>
-<li>To save time in the long run, you should consider switching on caching, which means that figures and tables are temporarily stored and reused. It takes an extra long time (5x usual) to run the first time, but then these cached versions can be used later if there are no changes. It will be very useful if you only work with one figure at a time, or only with text. If you make small changes to many figures at the same time, in several rounds, it will not pay off in terms of time.</li>
-</ol>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">execute</span><span class="kw">:</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cache</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span><span class="co"> # Placed under execute which you already have.</span></span></code></pre></div>
-<ol start="3" type="1">
-<li>The keyboard shortcut to render the entire document is <kbd aria-hidden="true">Ctrl</kbd><span class="visually-hidden">Ctrl</span> (think K for compile).</li>
-<li>Figures that are so compressed that you cannot read the text (or vice versa, too large), adjust the height:</li>
-</ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 4</span></span></code></pre></div>
-<ol start="9" type="1">
-<li>Beyond the height of the figure, colors in the figures and the like, don’t overthink the layout. Much that happens automatically will change globally when the entire website/report is compiled. However, figures must look good both in the HTML version (quite easy) and Word (a bit more difficult).</li>
-</ol>
-<section class="level2"><h3 id="glossary">Glossary<a class="anchor" aria-label="anchor" href="#glossary"></a>
-</h3>
-<div>
-<blockquote>
-<p><strong>Note</strong></p>
-<dl>
-<dt>Chunk / code cell</dt>
-<dd>
-A bit of R code, defined as anything between <code>``{r}</code> and <code>```</code>. It may have special settings, indicated by <code>#|</code> (called hashpipe), at the top. If you do not want to run the code temporarily (for example, if you are unsure whether it should be included), you can comment out the code itself (then keep the settings), or delete it completely, and rather retrieve it from the original if desired.
-</dd>
-<dt>Render/compile</dt>
-<dd>
-Runs all the chunks and assembles the document for e.g. an HTML page, PDF or DOCX. Can also be called compile in Norwegian.
-</dd>
-<dt>YAML header</dt>
-<dd>
-YAML is a way of writing settings for a document (potentially also for an entire project) that is both human and computer readable. Will never appear after compilation.
-</dd>
-<dt>Quarto/QMD</dt>
-<dd>
-Quarto is the technology that assembles R code, plain text, with YAML settings, etc. QMD is the file name for such a document.
-</dd>
-</dl>
-</blockquote>
-</div>
-</section></section><script id="quarto-html-after-body" type="application/javascript">
+
+
+
+<script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
