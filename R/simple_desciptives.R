@@ -4,7 +4,7 @@ simple_descriptives <- function(data, y_var, x_var = NULL, na.rm=FALSE, max_k = 
   if((is.numeric(data[[y_var]]) || is.ordered(data[[y_var]])) &&
      (is.null(x_var) || length(unique(data[[x_var]])) <= max_k)) {
 
-    if(isTRUE(na.rm) && rlang::is_string(x_var)) data <- data[!is.na(data[[x_var]]), , drop=FALSE]
+    data[[y_var]] <- as.numeric(data[[y_var]]) # Ensure ordered variables can be handled
 
     out <-
       data |>
