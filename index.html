@@ -11,8 +11,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Semi-Automatic Reporting of Ordinary Surveys">
-<meta name="description" content="Offers a systematic way for conditional reporting of figures and tables for many (and bivariate combinations of) variables, typically from survey data. Contains interactive ggiraph-based (&lt;https://CRAN.R-project.org/package=ggiraph&gt;) plotting functions and data frame-based summary tables (bivariate significance tests, frequencies/proportions, unique open ended responses, etc) with many arguments for customization, and extensions possible. Uses a global options() system for neatly reducing redundant code. Also contains tools for immediate saving of objects and returning a hashed link to the object, useful for creating download links to high resolution images upon rendering in Quarto. Suitable for highly customized reports, primarily intended for survey research. Complements &lt;https://CRAN.R-project.org/package=saros.base&gt;.">
-<meta property="og:description" content="Offers a systematic way for conditional reporting of figures and tables for many (and bivariate combinations of) variables, typically from survey data. Contains interactive ggiraph-based (&lt;https://CRAN.R-project.org/package=ggiraph&gt;) plotting functions and data frame-based summary tables (bivariate significance tests, frequencies/proportions, unique open ended responses, etc) with many arguments for customization, and extensions possible. Uses a global options() system for neatly reducing redundant code. Also contains tools for immediate saving of objects and returning a hashed link to the object, useful for creating download links to high resolution images upon rendering in Quarto. Suitable for highly customized reports, primarily intended for survey research. Complements &lt;https://CRAN.R-project.org/package=saros.base&gt;.">
+<meta name="description" content="Offers a systematic way for conditional reporting of figures and tables for many (and bivariate combinations of) variables, typically from survey data. Contains interactive ggiraph-based (&lt;https://CRAN.R-project.org/package=ggiraph&gt;) plotting functions and data frame-based summary tables (bivariate significance tests, frequencies/proportions, unique open ended responses, etc) with many arguments for customization, and extensions possible. Uses a global options() system for neatly reducing redundant code. Also contains tools for immediate saving of objects and returning a hashed link to the object, useful for creating download links to high resolution images upon rendering in Quarto. Suitable for highly customized reports, primarily intended for survey research.">
+<meta property="og:description" content="Offers a systematic way for conditional reporting of figures and tables for many (and bivariate combinations of) variables, typically from survey data. Contains interactive ggiraph-based (&lt;https://CRAN.R-project.org/package=ggiraph&gt;) plotting functions and data frame-based summary tables (bivariate significance tests, frequencies/proportions, unique open ended responses, etc) with many arguments for customization, and extensions possible. Uses a global options() system for neatly reducing redundant code. Also contains tools for immediate saving of objects and returning a hashed link to the object, useful for creating download links to high resolution images upon rendering in Quarto. Suitable for highly customized reports, primarily intended for survey research.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -36,11 +36,8 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/for_chapter_author.html">UNKNOWN TITLE</a></li>
-    <li><a class="dropdown-item" href="articles/for_data_cleaner.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="articles/for_developers.html">UNKNOWN TITLE</a></li>
-    <li><a class="dropdown-item" href="articles/for_project_managers.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="articles/for_readers.html">UNKNOWN TITLE</a></li>
-    <li><a class="dropdown-item" href="articles/for_report_editor.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="articles/saros_name.html">UNKNOWN TITLE</a></li>
   </ul>
 </li>
@@ -127,7 +124,7 @@
 <em>Simplicity</em>: Setting up a reporting system, in particular a semi-automated one in Quarto, can be daunting - in particular if some of the chapter authors/collaborators have little familiarity with R/Python or Quarto/RMarkdown.
 <ul>
 <li>
-<a href="https://nifu-no.github.io/saros/makeme.html">Created figures are minimal</a>, meaning that you are given full power to adjust them post-hoc using usual <a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">ggplot2::theme()</a> tools, including <a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">ggplot2::theme_set()</a>.</li>
+<a href="https://nifu-no.github.io/saros/reference/makeme.html">Created figures are minimal</a>, meaning that you are given full power to adjust them post-hoc using usual <a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">ggplot2::theme()</a> tools, including <a href="https://ggplot2.tidyverse.org/reference/theme_get.html" class="external-link">ggplot2::theme_set()</a>.</li>
 </ul>
 </li>
 <li>
@@ -172,7 +169,7 @@
 <h3 id="preliminaries">Preliminaries:<a class="anchor" aria-label="anchor" href="#preliminaries"></a>
 </h3>
 <ol style="list-style-type: decimal">
-<li>Optionally set up your project directory for <a href="https://nifu-no.github.io/saros.base/create_email_credentials.html">a completely new project</a>.</li>
+<li>Optionally set up your project directory for <a href="https://nifu-no.github.io/saros.base/reference/create_email_credentials.html">a completely new project</a>.</li>
 <li>Clean your raw data: - Variables should be stored in the data type that they should be displayed as (factor, ordered factor, integer, character, etc). Ordered factors will in certain outputs be kept in the given order, whereas a set of unordered factors may be e.g. <code>sorted_by = ".upper"</code> (e.g values of the upper-most categories). - Variables should have variable labels, and sets of variables should have the same variable label prefix. Prefix and suffix can be split by e.g ” - “. Use e.g. <a href="https://larmarange.github.io/labelled/reference/index.html#manipulating-variable-labels" class="external-link">{labelled}</a> for most operations. For advanced cleaning, see <a href="https://nifu-no.github.io/saros.utils/reference/index.html">saros.utils</a>
 </li>
 </ol>
@@ -182,23 +179,23 @@
 </h3>
 <ul>
 <li>
-<a href="https://nifu-no.github.io/saros/makeme.html"><code>makeme()</code></a> makes most types of output for your report you would need for surveys. The function can be extended with S3-methods tailored for your needs.
+<a href="https://nifu-no.github.io/saros/reference/makeme.html"><code>makeme()</code></a> makes most types of output for your report you would need for surveys. The function can be extended with S3-methods tailored for your needs.
 <ul>
 <li>The core idea behind this function is the reusability of global options, which makes it possible to globally adjust all outputs with a small switch.</li>
 </ul>
 </li>
 <li>
-<a href="https://nifu-no.github.io/saros/make_link.html"><code>make_link()</code></a> will upon rendering save a plot, dataset or any other object to disk and return a “download plot”-link with a unique (hashed) filename.</li>
+<a href="https://nifu-no.github.io/saros/reference/make_link.html"><code>make_link()</code></a> will upon rendering save a plot, dataset or any other object to disk and return a “download plot”-link with a unique (hashed) filename.</li>
 <li>
-<a href="https://nifu-no.github.io/saros/n_range.html"><code>n_range()</code></a> returns the sample size range given a dataset, dependent variables and independent variables.
+<a href="https://nifu-no.github.io/saros/reference/n_range.html"><code>n_range()</code></a> returns the sample size range given a dataset, dependent variables and independent variables.
 <ul>
-<li>An alternative <a href="https://nifu-no.github.io/saros/n_range2.html"><code>n_range2()</code></a> allows directly using a makeme() output.</li>
+<li>An alternative <a href="https://nifu-no.github.io/saros/reference/n_range2.html"><code>n_range2()</code></a> allows directly using a makeme() output.</li>
 </ul>
 </li>
 <li>
-<a href="https://nifu-no.github.io/saros/fig_height_h_barchart.html"><code>fig_height_h_barchart()</code></a> estimates the best figure height for a horizontal barchart, based on a data frame, dep and indep variables, and other arguments.
+<a href="https://nifu-no.github.io/saros/reference/fig_height_h_barchart.html"><code>fig_height_h_barchart()</code></a> estimates the best figure height for a horizontal barchart, based on a data frame, dep and indep variables, and other arguments.
 <ul>
-<li>An alternative <a href="https://nifu-no.github.io/saros/fig_height_h_barchart2.html"><code>fig_height_h_barchart2()</code></a> takes a <a href="https://nifu-no.github.io/saros/makeme.html"><code>makeme(type="cat_plot")</code></a>.</li>
+<li>An alternative <a href="https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.html"><code>fig_height_h_barchart2()</code></a> takes a <a href="https://nifu-no.github.io/saros/reference/makeme.html"><code>makeme(type="cat_plot")</code></a>.</li>
 </ul>
 </li>
 </ul>
@@ -208,10 +205,10 @@
 </h3>
 <ol style="list-style-type: decimal">
 <li>Optionally specify chunk templates for what you want for each set of related variables. Or use among the built-in sets of templates.</li>
-<li>Optionally, create a chapter_overview (a compact description of which dependent (and independent) variables goes in which chapter-file). A data.frame where a row is a chapter. Must contain at least the columns ‘chapter’ and ‘dep’. ‘dep’ uses tidyselect-syntax in each cell. If not using any, all variables are processed and placed in the same qmd-file. <a href="https://nifu-no.github.io/saros.base/refine_chapter_overview.html">More details</a>
+<li>Optionally, create a chapter_overview (a compact description of which dependent (and independent) variables goes in which chapter-file). A data.frame where a row is a chapter. Must contain at least the columns ‘chapter’ and ‘dep’. ‘dep’ uses tidyselect-syntax in each cell. If not using any, all variables are processed and placed in the same qmd-file. <a href="https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.html">More details</a>
 </li>
 <li>
-<a href="https://nifu-no.github.io/saros.base/refine_chapter_overview.html">Combine the raw data, chunk templates and chapter_overview to make a chapter structure</a>. This will create a data frame containing your report structure, which can be further tailored. Arguments to refine_chapter_overview() allows e.g ignoring:
+<a href="https://nifu-no.github.io/saros.base/reference/refine_chapter_overview.html">Combine the raw data, chunk templates and chapter_overview to make a chapter structure</a>. This will create a data frame containing your report structure, which can be further tailored. Arguments to refine_chapter_overview() allows e.g ignoring:
 <ul>
 <li>non-significant bivariate relationships between dependent and independent variables,</li>
 <li>low observation counts (sample size) for categories, variables or dependent-independent cell combinations, and/or</li>
@@ -219,9 +216,9 @@
 </ul>
 </li>
 <li>
-<a href="https://nifu-no.github.io/saros.base/draft_report.html">Draft the report</a>, using the output from refine_chapter_overview() and your raw data. Optionally provide a range of YAML-defaults and QMD-prefixes/suffixes to your chapter-files, index-files or full report-files, as well as creating chapter-datasets for compartmentalized authoring.</li>
-<li>After rendering your Quarto Project (using regular Quarto/RStudio tools), optionally <a href="https://nifu-no.github.io/saros.base/setup_access_restrictions.html">batch configure access restrictions</a> and <a href="https://nifu-no.github.io/saros.base/create_email_credentials.html">send out glue-tailored emails</a> to institutions that have participated in your survey, now receiving password-protected access to their own report.</li>
-<li>Having done this once for a report, you might want to create a project template for your organization. Folder structures can be <a href="https://nifu-no.github.io/saros.base/generate_yaml_from_directory.html">mapped to a YAML file</a> so that it can later be easily <a href="https://nifu-no.github.io/saros.base/download_zip_to_folder.html">created at once with your preferred directory numbering scheme</a>. If located on e.g. Github this can be <a href="https://nifu-no.github.io/saros.base/download_zip_to_folder.html">downloaded, unzipped and placed in a new project folder</a>.</li>
+<a href="https://nifu-no.github.io/saros.base/reference/draft_report.html">Draft the report</a>, using the output from refine_chapter_overview() and your raw data. Optionally provide a range of YAML-defaults and QMD-prefixes/suffixes to your chapter-files, index-files or full report-files, as well as creating chapter-datasets for compartmentalized authoring.</li>
+<li>After rendering your Quarto Project (using regular Quarto/RStudio tools), optionally <a href="https://nifu-no.github.io/saros.base/reference/setup_access_restrictions.html">batch configure access restrictions</a> and <a href="https://nifu-no.github.io/saros.base/reference/create_email_credentials.html">send out glue-tailored emails</a> to institutions that have participated in your survey, now receiving password-protected access to their own report.</li>
+<li>Having done this once for a report, you might want to create a project template for your organization. Folder structures can be <a href="https://nifu-no.github.io/saros.base/reference/generate_yaml_from_directory.html">mapped to a YAML file</a> so that it can later be easily <a href="https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html">created at once with your preferred directory numbering scheme</a>. If located on e.g. Github this can be <a href="https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html">downloaded, unzipped and placed in a new project folder</a>.</li>
 </ol>
 </div>
 </div>
@@ -294,7 +291,7 @@
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
 </h2>
 <ul>
-<li>The internal code for reordering unordered factors in <a href="https://nifu-no.github.io/saros/make_contents.cat_plot_html.html">saros:::make_contents.cat_plot_html()</a> has been copied (without permission) from Julia Silge’s and David Robinson’s excellent <a href="https://juliasilge.github.io/tidytext/" class="external-link">{tidytext}</a>-package.</li>
+<li>The internal code for reordering unordered factors in <code>saros:::make_contents.cat_plot_html()</code> has been copied (without permission) from Julia Silge’s and David Robinson’s excellent <a href="https://juliasilge.github.io/tidytext/" class="external-link">{tidytext}</a>-package.</li>
 <li>The code for loading all saros-packages and resolving conflicts has been copied (without permission) from the tidyverse-package and adapted.</li>
 </ul>
 </div>
@@ -368,7 +365,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
