@@ -59,6 +59,7 @@ Suggests:
     haven,
     readr,
     labelled,
+    quarto,
     testthat (>= 3.0.0),
 	tibble,
     withr,
@@ -69,6 +70,7 @@ Encoding: UTF-8
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 Language: en-US
+VignetteBuilder: quarto
 Config/Needs/website: rmarkdown
 Config/testthat/parallel: true
 LazyData: true
