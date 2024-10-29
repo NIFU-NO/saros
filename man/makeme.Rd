@@ -79,7 +79,7 @@ Columns in \code{data}. \code{dep} is compulsory.}
 
 \item{type}{\emph{Kind of output}
 
-\verb{scalar<character>} // \emph{default:} \code{"prop_plot"} (\code{optional})
+\verb{scalar<character>} // \emph{default:} \code{"cat_plot_html"} (\code{optional})
 
 For a list of registered types in your session, use \code{get_makeme_types()}.}
 
@@ -283,6 +283,7 @@ of ordered factors is always respected in output. Unordered factors will be
 reordered by \code{sort_by}. Currently, this works best for a single \code{dep}.
 
 \describe{
+\item{NULL}{No sorting.}
 \item{".top"}{The proportion for the highest category available in the variable.}
 \item{".upper"}{The sum of the proportions for the categories above the middle category.}
 \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
@@ -382,22 +383,34 @@ ggplot-object, optionally an extended ggplot object with ggiraph features.
 This function allows embedding of interactive or static plots based on various types of data using tidyselect syntax for variable selection.
 }
 \examples{
-makeme(data = ex_survey,
-       dep = b_1:b_3)
-makeme(data = ex_survey,
-       dep = b_1, indep = x1_sex)
-makeme(data = ex_survey,
-       dep = b_1:b_3, indep = c(x1_sex, x2_human),
-       type = "sigtest_table_html")
-makeme(data = ex_survey,
-       dep = b_1, indep = x1_sex,
-       type = "cat_prop_plot_docx")
-makeme(data = ex_survey,
-       dep = p_1:p_4, indep = x2_human,
-       type = "cat_table_html")
-makeme(data = ex_survey,
-       dep = b_1:b_3,
-       crowd = c("target", "others", "all"),
-       mesos_var = "f_uni",
-       mesos_group = "Uni of A")
+makeme(
+  data = ex_survey,
+  dep = b_1:b_3
+)
+makeme(
+  data = ex_survey,
+  dep = b_1, indep = x1_sex
+)
+makeme(
+  data = ex_survey,
+  dep = b_1:b_3, indep = c(x1_sex, x2_human),
+  type = "sigtest_table_html"
+)
+makeme(
+  data = ex_survey,
+  dep = b_1, indep = x1_sex,
+  type = "cat_prop_plot_docx"
+)
+makeme(
+  data = ex_survey,
+  dep = p_1:p_4, indep = x2_human,
+  type = "cat_table_html"
+)
+makeme(
+  data = ex_survey,
+  dep = b_1:b_3,
+  crowd = c("target", "others", "all"),
+  mesos_var = "f_uni",
+  mesos_group = "Uni of A"
+)
 }
