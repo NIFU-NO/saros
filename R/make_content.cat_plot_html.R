@@ -12,23 +12,29 @@ make_content.cat_plot_html <-
     hide_axis_text <-
       isTRUE(dots$hide_axis_text_if_single_variable) &&
         length(indep_vars) == 0 &&
-        dplyr::n_distinct(data$.variable_label) == 1
+        dplyr::n_distinct(data$.variable_label, na.rm = TRUE) == 1
 
     if (isTRUE(hide_axis_text)) {
       data$.variable_label <- ""
     }
 
     # max_nchar_cat <- max(c(nchar(levels(data$.category)), 0), na.rm = TRUE)
-
+    # browser()
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
-    x <- if (length(indep_vars) == 1 && isFALSE(dots$inverse)) indep_vars else ".variable_label"
+    x <- if (length(indep_vars) == 1 && isFALSE(dots$inverse)) {
+      indep_vars
+    } else if (all(!is.na(data[[".variable_label"]]))) {
+      ".variable_label"
+    } else {
+      ".variable_name"
+    }
 
     if (!is.ordered(data[[x]])) {
       data[[x]] <- reorder_within(
         x = data[[x]],
         by = ifelse(is.na(data[[".sum_value"]]), 0, data[[".sum_value"]]),
-        within = data[, c(".variable_label")],
+        within = data[, c(x)],
         fun = mean, na.rm = TRUE
       )
     }

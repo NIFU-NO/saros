@@ -35,21 +35,28 @@ make_content.cat_table_html <-
     if (length(indep_label) == 1 && length(dots$indep) == 0) {
       cli::cli_abort("Something wrong in function.")
     }
+    col_as_basis <-
+      if (all(!is.na(data_summary[[".variable_label"]]))) {
+        ".variable_label"
+      } else {
+        cli::cli_warn("No variable labels found for {.var {sort(unique(data_summary[['.variable_name']]))}}. Using variable names.")
 
+        ".variable_name"
+      }
     data_out <-
       data_summary |>
       dplyr::arrange(
-        as.integer(.data[[".variable_label"]]),
+        as.integer(factor(.data[[col_as_basis]])),
         if (length(dots$indep) > 0) as.integer(.data[[dots$indep]])
       ) |>
       tidyr::pivot_wider(
-        id_cols = tidyselect::all_of(c(".variable_label", dots$indep, ".count_total")),
+        id_cols = tidyselect::all_of(c(col_as_basis, dots$indep, ".count_total")),
         names_from = ".category", values_from = ".data_label",
         names_expand = TRUE
       )
     names(data_out)[names(data_out) == "NA"] <- "NA"
     new_col_order <-
-      c(".variable_label", dots$indep, cat_lvls, ".count_total")
+      c(col_as_basis, dots$indep, cat_lvls, ".count_total")
     data_out <-
       data_out |>
       dplyr::relocate(tidyselect::all_of(new_col_order), .after = 1) |>
@@ -74,7 +81,7 @@ make_content.cat_table_html <-
     if (isTRUE(dots$table_main_question_as_header) &&
       rlang::is_string(dots$main_question) && stringi::stri_length(dots$main_question) > 0) {
       data_out <- dplyr::rename_with(data_out,
-        .cols = ".variable_label",
+        .cols = col_as_basis,
         .fn = function(x) dots$main_question
       )
     }
