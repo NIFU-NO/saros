@@ -188,7 +188,7 @@ crosstable.data.frame <-
               .category = factor(NA),
               .count = NA_integer_,
               .count_se = NA_real_,
-                              .count_all = NA_integer_,
+              .count_total = NA_integer_,
               .proportion = NA_real_,
               .proportion_se = NA_real_,
               .mean = NA_real_,
@@ -201,8 +201,8 @@ crosstable.data.frame <-
       })
     out <- do.call(rbind, output)
     out <-
-      out[#do.call(order, out[c(".variable_name", indep, ".category", ".proportion")]),
-        c(".variable_name", ".variable_label",
+      out[
+        , # do.call(order, out[c(".variable_name", indep, ".category", ".proportion")]),
         c(
           ".variable_name", ".variable_label",
           ".category",
