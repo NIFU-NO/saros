@@ -18,7 +18,7 @@ make_content.cat_plot_html <-
       data$.variable_label <- ""
     }
 
-    max_nchar_cat <- max(nchar(levels(data$.category)), na.rm = TRUE)
+    # max_nchar_cat <- max(c(nchar(levels(data$.category)), 0), na.rm = TRUE)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
