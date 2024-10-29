@@ -16,7 +16,7 @@
 #'
 #' @param type *Kind of output*
 #'
-#'   `scalar<character>` // *default:* `"prop_plot"` (`optional`)
+#'   `scalar<character>` // *default:* `"cat_plot_html"` (`optional`)
 #'
 #' For a list of registered types in your session, use `get_makeme_types()`.
 #'
@@ -256,6 +256,7 @@
 #'   reordered by `sort_by`. Currently, this works best for a single `dep`.
 #'
 #' \describe{
+#' \item{NULL}{No sorting.}
 #' \item{".top"}{The proportion for the highest category available in the variable.}
 #' \item{".upper"}{The sum of the proportions for the categories above the middle category.}
 #' \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
@@ -327,47 +328,57 @@
 #' @export
 #'
 #' @examples
-#' makeme(data = ex_survey,
-#'        dep = b_1:b_3)
-#' makeme(data = ex_survey,
-#'        dep = b_1, indep = x1_sex)
-#' makeme(data = ex_survey,
-#'        dep = b_1:b_3, indep = c(x1_sex, x2_human),
-#'        type = "sigtest_table_html")
-#' makeme(data = ex_survey,
-#'        dep = b_1, indep = x1_sex,
-#'        type = "cat_prop_plot_docx")
-#' makeme(data = ex_survey,
-#'        dep = p_1:p_4, indep = x2_human,
-#'        type = "cat_table_html")
-#' makeme(data = ex_survey,
-#'        dep = b_1:b_3,
-#'        crowd = c("target", "others", "all"),
-#'        mesos_var = "f_uni",
-#'        mesos_group = "Uni of A")
+#' makeme(
+#'   data = ex_survey,
+#'   dep = b_1:b_3
+#' )
+#' makeme(
+#'   data = ex_survey,
+#'   dep = b_1, indep = x1_sex
+#' )
+#' makeme(
+#'   data = ex_survey,
+#'   dep = b_1:b_3, indep = c(x1_sex, x2_human),
+#'   type = "sigtest_table_html"
+#' )
+#' makeme(
+#'   data = ex_survey,
+#'   dep = b_1, indep = x1_sex,
+#'   type = "cat_prop_plot_docx"
+#' )
+#' makeme(
+#'   data = ex_survey,
+#'   dep = p_1:p_4, indep = x2_human,
+#'   type = "cat_table_html"
+#' )
+#' makeme(
+#'   data = ex_survey,
+#'   dep = b_1:b_3,
+#'   crowd = c("target", "others", "all"),
+#'   mesos_var = "f_uni",
+#'   mesos_group = "Uni of A"
+#' )
 makeme <-
   function(data,
            dep = tidyselect::everything(),
            indep = NULL,
-           type = c("cat_plot_html",
-                    "int_plot_html",
-                    "cat_table_html",
-                    "int_table_html",
-                    "sigtest_table_html",
-
-                    "cat_prop_plot_docx",
-                    "cat_freq_plot_docx",
-                    "int_plot_docx"),
+           type = c(
+             "cat_plot_html",
+             "int_plot_html",
+             "cat_table_html",
+             "int_table_html",
+             "sigtest_table_html",
+             "cat_prop_plot_docx",
+             "cat_freq_plot_docx",
+             "int_plot_docx"
+           ),
            ...,
-
            require_common_categories = TRUE,
-
            # Multiple output, splits and selective hiding of variables
-           crowd = c("all"), #"target", "others",
+           crowd = c("all"), # "target", "others",
            mesos_var = NULL,
            mesos_group = NULL,
            simplify_output = TRUE,
-
            # Hide variable (combinations) for a crowd if...
            hide_for_crowd_if_all_na = TRUE,
            hide_for_crowd_if_valid_n_below = 0,
@@ -376,8 +387,6 @@ makeme <-
            hide_for_crowd_if_cell_n_below = 0,
            hide_for_all_crowds_if_hidden_for_crowd = NULL,
            hide_indep_cat_for_all_crowds_if_hidden_for_crowd = FALSE,
-
-
            add_n_to_label = FALSE,
            add_n_to_category = FALSE,
            totals = FALSE,
@@ -394,35 +403,30 @@ makeme <-
            data_label_decimal_symbol = ".",
            x_axis_label_width = 25,
            strip_width = 25,
-
            # Sorting
            sort_by = ".upper",
            descend = TRUE,
            variables_always_at_top = NULL,
            variables_always_at_bottom = NULL,
-
-
-
            # For tables
            table_wide = TRUE,
            table_main_question_as_header = FALSE,
-
            translations =
-             list(last_sep = " and ", # Not in use
-                  table_heading_N = "Total (N)",
-                  add_n_to_label_prefix = " (N = ",
-                  add_n_to_label_suffix = ")",
-                  add_n_to_category_prefix = " (N = [",
-                  add_n_to_category_infix = ",",
-                  add_n_to_category_suffix = "])",
-                  by_total = "Everyone",
-                  sigtest_variable_header_1 = "Var 1",
-                  sigtest_variable_header_2 = "Var 2",
-                  crowd_all = "All",
-                  crowd_target = "Target",
-                  crowd_others = "Others"
+             list(
+               last_sep = " and ", # Not in use
+               table_heading_N = "Total (N)",
+               add_n_to_label_prefix = " (N = ",
+               add_n_to_label_suffix = ")",
+               add_n_to_category_prefix = " (N = [",
+               add_n_to_category_infix = ",",
+               add_n_to_category_suffix = "])",
+               by_total = "Everyone",
+               sigtest_variable_header_1 = "Var 1",
+               sigtest_variable_header_2 = "Var 2",
+               crowd_all = "All",
+               crowd_target = "Target",
+               crowd_others = "Others"
              ),
-
            # Only for docx, for ggplot2 it is set globally or wtih gplot2::theme()
            plot_height = 15,
            colour_palette = NULL,
@@ -434,12 +438,7 @@ makeme <-
            legend_font_size = 6,
            font_family = "sans",
            path = NULL,
-           docx_template = NULL
-
-
-  ) {
-
-
+           docx_template = NULL) {
     ##
 
 
@@ -448,10 +447,12 @@ makeme <-
     indep_enq <- rlang::enquo(arg = indep)
     indep_pos <- tidyselect::eval_select(indep_enq, data = data)
 
-    args <- check_options(call = match.call(),
-                          ignore_args = .saros.env$ignore_args,
-                          defaults_env = global_settings_get(fn_name="makeme"),
-                          default_values = formals(makeme))
+    args <- check_options(
+      call = match.call(),
+      ignore_args = .saros.env$ignore_args,
+      defaults_env = global_settings_get(fn_name = "makeme"),
+      default_values = formals(makeme)
+    )
 
     args$data <- data # reinsert after check_options
     args$dep <- names(dep_pos)
@@ -463,10 +464,9 @@ makeme <-
     validate_makeme_options(params = args)
 
 
-    if(!args$type %in% c("sigtest_table_html")) {
+    if (!args$type %in% c("sigtest_table_html")) {
       check_multiple_indep(data, indep = {{ indep }})
       check_category_pairs(data = data, cols_pos = c(dep_pos))
-
     }
 
 
@@ -476,36 +476,39 @@ makeme <-
 
     # Set hide_for_all_crowds_if_hidden_for_crowd first to get its excluded variables early
     # This only happens if hide_for_all_crowds_if_hidden_for_crowd are in the set of crowd.
-    args$crowd <- c(args$hide_for_all_crowds_if_hidden_for_crowd[args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd],
-                    args$crowd[!args$crowd %in% args$hide_for_all_crowds_if_hidden_for_crowd[args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd]
-                    ])
+    args$crowd <- c(
+      args$hide_for_all_crowds_if_hidden_for_crowd[args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd],
+      args$crowd[!args$crowd %in% args$hide_for_all_crowds_if_hidden_for_crowd[args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd]]
+    )
 
 
     kept_cols_list <- rlang::set_names(vector(mode = "list", length = length(args$crowd)), args$crowd)
     omitted_cols_list <- rlang::set_names(vector(mode = "list", length = length(args$crowd)), args$crowd)
     kept_indep_cats_list <- rlang::set_names(vector(mode = "list", length = length(args$crowd)), args$crowd)
 
-    for(crwd in names(kept_cols_list)) {
-
+    for (crwd in names(kept_cols_list)) {
       kept_cols_tmp <-
-        keep_cols(data = args$data,
-                  dep = args$dep,
-                  indep = args$indep,
-                  crowd = crwd,
-                  mesos_var = args$mesos_var,
-                  mesos_group = args$mesos_group,
-                  hide_for_crowd_if_all_na = args$hide_for_crowd_if_all_na, # 1
-                  hide_for_crowd_if_valid_n_below = args$hide_for_crowd_if_valid_n_below, # 2
-                  hide_for_crowd_if_category_k_below = args$hide_for_crowd_if_category_k_below, # 3
-                  hide_for_crowd_if_category_n_below = args$hide_for_crowd_if_category_n_below, # 4
-                  hide_for_crowd_if_cell_n_below = args$hide_for_crowd_if_cell_n_below#, # 5
-                  # hide_for_all_crowds_if_hidden_for_crowd_vars = omitted_vars
+        keep_cols(
+          data = args$data,
+          dep = args$dep,
+          indep = args$indep,
+          crowd = crwd,
+          mesos_var = args$mesos_var,
+          mesos_group = args$mesos_group,
+          hide_for_crowd_if_all_na = args$hide_for_crowd_if_all_na, # 1
+          hide_for_crowd_if_valid_n_below = args$hide_for_crowd_if_valid_n_below, # 2
+          hide_for_crowd_if_category_k_below = args$hide_for_crowd_if_category_k_below, # 3
+          hide_for_crowd_if_category_n_below = args$hide_for_crowd_if_category_n_below, # 4
+          hide_for_crowd_if_cell_n_below = args$hide_for_crowd_if_cell_n_below # , # 5
+          # hide_for_all_crowds_if_hidden_for_crowd_vars = omitted_vars
         )
       omitted_cols_list[[crwd]] <- kept_cols_tmp[["omitted_vars"]]
 
       kept_indep_cats_list[[crwd]] <-
-        keep_indep_cats(data = kept_cols_tmp[["data"]],
-                        indep = args$indep)
+        keep_indep_cats(
+          data = kept_cols_tmp[["data"]],
+          indep = args$indep
+        )
     }
 
 
@@ -513,9 +516,8 @@ makeme <-
     kept_indep_cats_list <-
       lapply(rlang::set_names(names(kept_indep_cats_list)), function(crwd) {
         lapply(rlang::set_names(names(kept_indep_cats_list[[crwd]])), function(x) {
-          if(is.character(args$hide_for_all_crowds_if_hidden_for_crowd) &&
-             !crwd %in% args$hide_for_all_crowds_if_hidden_for_crowd) {
-
+          if (is.character(args$hide_for_all_crowds_if_hidden_for_crowd) &&
+            !crwd %in% args$hide_for_all_crowds_if_hidden_for_crowd) {
             kept_globally <-
               kept_indep_cats_list[args$hide_for_all_crowds_if_hidden_for_crowd] |>
               unlist() |>
@@ -536,46 +538,55 @@ makeme <-
 
 
 
-    for(crwd in names(out)) {
+    for (crwd in names(out)) {
       #
       omitted_vars_crwd <-
         omitted_cols_list[
-          c(crwd,
+          c(
+            crwd,
             args$hide_for_all_crowds_if_hidden_for_crowd
-          )] |>
-        lapply(FUN = function(x) if("omitted_vars" %in% names(x)) x["omitted_vars"]) |>
+          )
+        ] |>
+        lapply(FUN = function(x) if ("omitted_vars" %in% names(x)) x["omitted_vars"]) |>
         unlist() |>
         unique()
 
 
       dep_crwd <- args$dep[!args$dep %in% omitted_vars_crwd]
-      if(length(dep_crwd)==0) next
+      if (length(dep_crwd) == 0) next
 
       indep_crwd <- args$indep
-      if(length(indep_crwd)==0) indep_crwd <- NULL
+      if (length(indep_crwd) == 0) indep_crwd <- NULL
 
 
 
       subset_data <-
-        dplyr::filter(args$data[, # subetting would remove variable labels, filter keeps them
-                               !colnames(args$data) %in% omitted_vars_crwd, drop=FALSE],
-                      makeme_keep_rows(data = data,
-                                       crwd = crwd,
-                                       mesos_var = mesos_var,
-                                       mesos_group = mesos_group))
+        dplyr::filter(
+          args$data[, # subetting would remove variable labels, filter keeps them
+            !colnames(args$data) %in% omitted_vars_crwd,
+            drop = FALSE
+          ],
+          makeme_keep_rows(
+            data = data,
+            crwd = crwd,
+            mesos_var = mesos_var,
+            mesos_group = mesos_group
+          )
+        )
 
-      if(isTRUE(args$hide_indep_cat_for_all_crowds_if_hidden_for_crowd)) {
-        for(x in indep_crwd) {
+      if (isTRUE(args$hide_indep_cat_for_all_crowds_if_hidden_for_crowd)) {
+        for (x in indep_crwd) {
           subset_data <-
             dplyr::filter(subset_data, as.character(subset_data[[x]]) %in%
-                                       kept_indep_cats_list[[crwd]][[x]])
+              kept_indep_cats_list[[crwd]][[x]])
         }
       }
 
-      if(nrow(subset_data) == 0) {
-        indep_msg <- if(is.character(args$indep)) paste0('indep=', cli::ansi_collapse(args$indep))
+      if (nrow(subset_data) == 0) {
+        indep_msg <- if (is.character(args$indep)) paste0("indep=", cli::ansi_collapse(args$indep))
         cli::cli_warn(c("No data left to make you {.arg {args$type}} with dep={.arg {args$dep}}, {.arg {indep_msg}}, crowd={.arg {crwd}}.",
-                        i="Skipping."))
+          i = "Skipping."
+        ))
         next
       }
 
@@ -584,46 +595,45 @@ makeme <-
         unlist()
 
       # Future: switch or S3
-      if(all(variable_type_dep %in% c("integer", "numeric"))) {
-
-
+      if (all(variable_type_dep %in% c("integer", "numeric"))) {
         args$data_summary <-
           rlang::exec(summarize_int_cat_data, !!!args)
-
-      } else if(all(variable_type_dep %in% c("factor", "ordered"))) {
-
-
+      } else if (all(variable_type_dep %in% c("factor", "ordered"))) {
         args$data_summary <-
-          summarize_cat_cat_data(data = subset_data,
-                                 dep = dep_crwd,
-                                 indep = indep_crwd,
-                                 ...,
-                                 label_separator = args$label_separator,
-                                 showNA = args$showNA,
-                                 totals = args$totals,
-                                 sort_by = args$sort_by,
-                                 descend = args$descend,
-                                 data_label = args$data_label,
-                                 digits = args$digits,
-                                 add_n_to_label = args$add_n_to_label,
-                                 add_n_to_category = args$add_n_to_category,
-                                 hide_label_if_prop_below = args$hide_label_if_prop_below,
-                                 data_label_decimal_symbol = args$data_label_decimal_symbol,
-                                 categories_treated_as_na = args$categories_treated_as_na,
-                                 variables_always_at_bottom = args$variables_always_at_bottom,
-                                 variables_always_at_top = args$variables_always_at_top,
-                                 translations = args$translations)
+          summarize_cat_cat_data(
+            data = subset_data,
+            dep = dep_crwd,
+            indep = indep_crwd,
+            ...,
+            label_separator = args$label_separator,
+            showNA = args$showNA,
+            totals = args$totals,
+            sort_by = args$sort_by,
+            descend = args$descend,
+            data_label = args$data_label,
+            digits = args$digits,
+            add_n_to_label = args$add_n_to_label,
+            add_n_to_category = args$add_n_to_category,
+            hide_label_if_prop_below = args$hide_label_if_prop_below,
+            data_label_decimal_symbol = args$data_label_decimal_symbol,
+            categories_treated_as_na = args$categories_treated_as_na,
+            variables_always_at_bottom = args$variables_always_at_bottom,
+            variables_always_at_top = args$variables_always_at_top,
+            translations = args$translations
+          )
       }
 
       args$main_question <-
         as.character(unique(args$data_summary[[".variable_label_prefix"]]))
 
-      if(!args$type %in% c("sigtest_table_html")) {
+      if (!args$type %in% c("sigtest_table_html")) {
         args$data_summary <-
-          post_process_makeme_data(data = args$data_summary,
-                                   indep = indep_crwd,
-                                   showNA = args$showNA,
-                                   colour_2nd_binary_cat = if(grepl(x=args$type, pattern="docx")) args$colour_2nd_binary_cat)
+          post_process_makeme_data(
+            data = args$data_summary,
+            indep = indep_crwd,
+            showNA = args$showNA,
+            colour_2nd_binary_cat = if (grepl(x = args$type, pattern = "docx")) args$colour_2nd_binary_cat
+          )
       }
 
       args_crwd <- args
@@ -633,18 +643,22 @@ makeme <-
       out[[crwd]] <-
         suppressPackageStartupMessages(
           rlang::exec(make_content,
-                      type = args_crwd$type,
-                      !!!args_crwd[!names(args_crwd) %in% c("type")])
+            type = args_crwd$type,
+            !!!args_crwd[!names(args_crwd) %in% c("type")]
+          )
         )
     }
 
-    for(crwd in names(out)) {
-      if(rlang::is_string(args$translations[[paste0("crowd_", crwd)]])) {
+    for (crwd in names(out)) {
+      if (rlang::is_string(args$translations[[paste0("crowd_", crwd)]])) {
         names(out)[names(out) == crwd] <- args$translations[[paste0("crowd_", crwd)]]
       }
     }
     out <- out[lapply(out, function(x) !is.null(x)) |> unlist()]
 
-    if(isTRUE(args$simplify_output) && length(out)==1) out[[1]] else out
-
+    if (isTRUE(args$simplify_output) && length(out) == 1) {
+      out[[1]]
+    } else {
+      out
+    }
   }

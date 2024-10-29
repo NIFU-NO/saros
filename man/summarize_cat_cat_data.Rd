@@ -68,6 +68,7 @@ of ordered factors is always respected in output. Unordered factors will be
 reordered by \code{sort_by}. Currently, this works best for a single \code{dep}.
 
 \describe{
+\item{NULL}{No sorting.}
 \item{".top"}{The proportion for the highest category available in the variable.}
 \item{".upper"}{The sum of the proportions for the categories above the middle category.}
 \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
