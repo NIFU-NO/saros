@@ -6,6 +6,13 @@ make_content.cat_plot_html <-
 
     data <- dots$data_summary
 
+    if (dots$showNA %in% c("never") &&
+      length(levels(data[[".category"]])) == 0) {
+      showna_arg_str <- "showNA = 'always'"
+      cli::cli_warn("Variables contain NA on all dep-by-indep cells. Returning NULL. Consider {.arg {showna_arg_str}} or check your data.")
+      return()
+    }
+
     indep_vars <- colnames(data)[!colnames(data) %in%
       .saros.env$summary_data_sort2]
 
@@ -172,7 +179,7 @@ make_content.cat_plot_html <-
       }
     }
 
-    if (!dots$vertical) {
+    if (isFALSE(dots$vertical) && length(levels(p$data[[".category"]])) > 0) {
       p + ggplot2::coord_flip()
     } else {
       p
