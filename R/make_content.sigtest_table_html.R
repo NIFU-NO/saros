@@ -49,6 +49,9 @@ make_content.sigtest_table_html <-
         }
       ) |>
       dplyr::bind_rows()
+    if (requireNamespace("scales") && !is.null(out$.p_value)) {
+      out[[".p_value"]] <- scales::pvalue(out$.p_value)
+    }
     if (rlang::is_string(dots$translations$sigtest_variable_header_1)) {
       names(out)[names(out) == "y"] <- dots$translations$sigtest_variable_header_1
     } else {
