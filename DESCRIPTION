@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 1.2.2
+Version: 1.2.3
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -60,6 +60,7 @@ Suggests:
     readr,
     labelled,
     quarto,
+    scales,
     testthat (>= 3.0.0),
 	tibble,
     withr,
