@@ -57,12 +57,13 @@ make_content.cat_table_html <-
     names(data_out)[names(data_out) == "NA"] <- "NA"
     new_col_order <-
       c(col_as_basis, dots$indep, cat_lvls, ".count_total")
+
     data_out <-
       data_out |>
       dplyr::relocate(tidyselect::all_of(new_col_order), .after = 1) |>
       dplyr::rename_with(
         .cols = tidyselect::all_of(cat_lvls),
-        .fn = ~ stringi::stri_c(ignore_null = TRUE, .x, if (dots$data_label %in% c("percentage", "percentage_bare")) " (%)")
+        .fn = ~ stringi::stri_c(ignore_null = FALSE, .x, if (dots$data_label %in% c("percentage", "percentage_bare")) " (%)")
       ) |>
       dplyr::rename_with(
         .cols = ".count_total",
