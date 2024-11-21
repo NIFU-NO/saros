@@ -1,18 +1,18 @@
 validate_makeme_options <- function(params) {
-
   unwanted_args <- names(params)[!names(params) %in% c(names(formals(makeme)))]
-  if(length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
+  if (length(unwanted_args) > 0) cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
 
   env <- lapply(formals(makeme)[!names(formals(makeme)) %in% .saros.env$ignore_args], eval)
   check_and_set_default <- function(target,
                                     param_name,
                                     validation_fun) {
-
     if (!validation_fun(target[[param_name]])) {
       default <- env[[param_name]]
       cli::cli_warn(paste0("{.arg {param_name}} is invalid (it is {.obj_type_friendly {target[[param_name]]}}, and specified as {target[[param_name]]}). Using default: {default}"))
       default
-    } else target[[param_name]]
+    } else {
+      target[[param_name]]
+    }
   }
   is_scalar_finite_doubleish <- function(x) {
     is.numeric(x) && length(x) == 1 && is.finite(x)
@@ -32,7 +32,6 @@ validate_makeme_options <- function(params) {
       mesos_var = list(fun = function(x) is.null(x) || rlang::is_string(x)),
       mesos_group = list(fun = function(x) is.null(x) || rlang::is_string(x)),
       hide_for_all_if_hidden_for_crowd = list(fun = function(x) is.null(x) || rlang::is_string(x)),
-
       path = list(fun = function(x) is.null(x) || rlang::is_string(x)),
       label_separator = list(fun = function(x) is.null(x) || is.character(x)),
       variables_always_at_top = list(fun = function(x) is.null(x) || is.character(x)),
@@ -77,16 +76,15 @@ validate_makeme_options <- function(params) {
 
       # List
       translations = list(fun = function(x) rlang::is_bare_list(x) && all(unlist(lapply(x, function(.x) is.character(.x))))) ### SHOULD BE MORE SPECIFIC FOR EACH ITEM?
-
-
     )
 
-  for(par in names(arg_params)) {
-
+  for (par in names(arg_params)) {
     params[[par]] <-
-      check_and_set_default(target = params,
-                            param_name = par,
-                            validation_fun = arg_params[[par]]$fun)
+      check_and_set_default(
+        target = params,
+        param_name = par,
+        validation_fun = arg_params[[par]]$fun
+      )
   }
 
   params$type <- params$type[1]
@@ -94,33 +92,36 @@ validate_makeme_options <- function(params) {
   params$data_label <- params$data_label[1]
 
 
-  if(any(c("target", "others") %in% params$crowd) &&
-     !(rlang::is_string(params$mesos_var) && rlang::is_string(params$mesos_group))) {
-
-      cli::cli_abort("{.arg mesos_var} and {.arg mesos_group} must be specified (as strings) when {.arg crowd} contains {.val 'target'} or {.val 'others'}.")
-
+  if (any(c("target", "others") %in% params$crowd) &&
+    !(rlang::is_string(params$mesos_var) && rlang::is_string(params$mesos_group))) {
+    cli::cli_abort("{.arg mesos_var} and {.arg mesos_group} must be specified (as strings) when {.arg crowd} contains {.val 'target'} or {.val 'others'}.")
   }
 
-  if(rlang::is_string(params$mesos_var)) {
-    if(!any(colnames(params$data) == params$mesos_var)) {
+  if (rlang::is_string(params$mesos_var)) {
+    if (!any(colnames(params$data) == params$mesos_var)) {
       cli::cli_abort("{.arg mesos_var}: {.arg {params$mesos_var}} not found in data.")
     }
-    if(all(is.na(params$data[[params$mesos_var]]))) {
+    if (all(is.na(params$data[[params$mesos_var]]))) {
       cli::cli_abort("{.arg mesos_var}: All mesos_var entries are NA.")
     }
-    if(!rlang::is_string(params$mesos_group) || !params$mesos_group %in% as.character(unique(params$data[[params$mesos_var]]))) {
-      cli::cli_abort("{.arg mesos_group} ({.val {mesos_group}}) must be a value found in {params$mesos_var}.")
+    if (!rlang::is_string(params$mesos_group) || !params$mesos_group %in% as.character(unique(params$data[[params$mesos_var]]))) {
+      cli::cli_abort("{.arg mesos_group} ({.val {params$mesos_group}}) must be a value found in {params$mesos_var}.")
     }
   }
 
   variables_always_at_top_invalid <- params$variables_always_at_top[!params$variables_always_at_top %in% colnames(params$data)]
-  if(length(variables_always_at_top_invalid)>0) cli::cli_warn(c("{.arg variables_always_at_top} contains variables not found in {.arg data}:",
-                                                                    i="{.val {variables_always_at_top_invalid}}."))
+  if (length(variables_always_at_top_invalid) > 0) {
+    cli::cli_warn(c("{.arg variables_always_at_top} contains variables not found in {.arg data}:",
+      i = "{.val {variables_always_at_top_invalid}}."
+    ))
+  }
   variables_always_at_bottom_invalid <- params$variables_always_at_bottom[!params$variables_always_at_bottom %in% colnames(params$data)]
-  if(length(variables_always_at_bottom_invalid)>0) cli::cli_warn(c("{.arg variables_always_at_bottom} contains variables not found in {.arg data}:",
-                                                                    i="{.val {variables_always_at_bottom_invalid}}."))
+  if (length(variables_always_at_bottom_invalid) > 0) {
+    cli::cli_warn(c("{.arg variables_always_at_bottom} contains variables not found in {.arg data}:",
+      i = "{.val {variables_always_at_bottom_invalid}}."
+    ))
+  }
 
 
   params
-
 }
