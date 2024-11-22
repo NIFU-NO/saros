@@ -83,7 +83,7 @@ crosstable.data.frame <-
             (showNA == "ifany" && any(is.na(col)))) {
             out$.category <- forcats::fct_na_value_to_level(f = col, level = "NA")
           } else {
-            out <- out[!is.na(out$.category), ]
+            out <- out[!is.na(out$.category), , drop = FALSE]
           }
 
 
