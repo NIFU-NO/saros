@@ -46,7 +46,7 @@
 #' @export
 #'
 #' @examples
-#' make_link(mtcars, folder=tempdir())
+#' make_link(mtcars, folder = tempdir())
 make_link <- function(data,
                       folder = NULL,
                       file_prefix = NULL,
@@ -55,30 +55,39 @@ make_link <- function(data,
                       link_prefix = "[download figure data](",
                       link_suffix = ")",
                       ...) {
-
-  if(is.null(data)) {
+  if (is.null(data)) {
     cli::cli_warn("{.arg data} should not be NULL. Returning NULL.")
     return(NULL)
   }
 
   args <-
-    check_options(call = match.call(),
-                        ignore_args = .saros.env$ignore_args,
-                        defaults_env = global_settings_get(fn_name = "make_link"),
-                        default_values = formals(make_link))
+    check_options(
+      call = match.call(),
+      ignore_args = .saros.env$ignore_args,
+      defaults_env = global_settings_get(fn_name = "make_link"),
+      default_values = formals(make_link)
+    )
 
-  if(!rlang::is_string(args$folder)) args$folder <- "."
+  if (!rlang::is_string(args$folder)) args$folder <- "."
 
-  path <- fs::path(args$folder,
-                   paste0(args$file_prefix, rlang::hash(data), args$file_suffix))
+  path <- fs::path(
+    args$folder,
+    paste0(args$file_prefix, rlang::hash(data), args$file_suffix)
+  )
 
   # save_fn <- args$save_fn
 
-  tryCatch({args$save_fn(data, path, ...)
-           I(paste0(args$link_prefix, path, args$link_suffix))
-           },
-           error = function(cnd) { #={data}
-             cli::cli_warn(c(x="Function {rlang::call_name(quote(safe_fn()))} failed with arguments {.arg path}={path}, {.arg data} is {.obj_type_friendly {data}}."),
-                            parent = cnd)
-           })
+  tryCatch(
+    {
+      if (!file.exists(path)) {
+        args$save_fn(data, path, ...)
+      }
+      I(paste0(args$link_prefix, path, args$link_suffix))
+    },
+    error = function(cnd) { # ={data}
+      cli::cli_warn(c(x = "Function {rlang::call_name(quote(safe_fn()))} failed with arguments {.arg path}={path}, {.arg data} is {.obj_type_friendly {data}}."),
+        parent = cnd
+      )
+    }
+  )
 }

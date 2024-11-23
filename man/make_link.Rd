@@ -67,5 +67,5 @@ are identical, and all are stored in the same folder. It also allows the user
 to download multiple files without worrying about accidentally overwriting them.
 }
 \examples{
-make_link(mtcars, folder=tempdir())
+make_link(mtcars, folder = tempdir())
 }

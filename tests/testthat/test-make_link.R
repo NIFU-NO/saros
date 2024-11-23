@@ -4,13 +4,15 @@ testthat::test_that("make_link generates correct link for default settings", {
 })
 
 testthat::test_that("make_link generates correct link with custom prefix and suffix", {
-  result <- saros::make_link(mtcars, folder = tempdir(), file_prefix = "data_", file_suffix = ".txt",
-                                      link_prefix = "[clicking me](", link_suffix = ") is the way to go")
+  result <- saros::make_link(mtcars,
+    folder = tempdir(), file_prefix = "data_", file_suffix = ".txt",
+    link_prefix = "[clicking me](", link_suffix = ") is the way to go"
+  )
   testthat::expect_true(grepl(x = as.character(result), "\\[clicking me\\]\\(.+/data_d0487363db4e6cc64fdb740cb6617fc0\\.txt\\) is the way to go"))
 })
 
 testthat::test_that("make_link uses custom save function", {
-  result <- saros::make_link(mtcars, folder = tempdir(), save_fn = saveRDS, file_suffix=".rds")
+  result <- saros::make_link(mtcars, folder = tempdir(), save_fn = saveRDS, file_suffix = ".rds")
   testthat::expect_true(grepl(x = as.character(result), "\\[download figure data\\]\\(.+/d0487363db4e6cc64fdb740cb6617fc0\\.rds\\)$"))
 })
 
@@ -34,7 +36,8 @@ testthat::test_that("make_link creates file in specified folder", {
 
 testthat::test_that("make_link throws error if save function fails", {
   save_fn <- function(data, path) stop("Intentional error")
-  testthat::expect_error(saros::make_link(mtcars,
-                                                   folder = tempdir(),
-                                                   save_fn = save_fn))
+  testthat::expect_error(saros::make_link(mtcars[1:8, ],
+    folder = tempdir(),
+    save_fn = save_fn
+  ))
 })
