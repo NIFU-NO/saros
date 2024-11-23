@@ -83,7 +83,7 @@ crosstable.data.frame <-
             (showNA == "ifany" && any(is.na(col)))) {
             out$.category <- forcats::fct_na_value_to_level(f = col, level = "NA")
           } else {
-            out <- out[!is.na(out$.category), ]
+            out <- out[!is.na(out$.category), , drop = FALSE]
           }
 
 
@@ -112,8 +112,7 @@ crosstable.data.frame <-
 
 
 
-
-            out <- out[rlang::inject(order(!!!out[, c(indep, ".category"), drop = FALSE])), ]
+            out <- out[rlang::inject(order(!!!out[, c(indep, ".category"), drop = FALSE])), , drop = FALSE]
             summary_mean <- out
             summary_mean$.mean <- suppressWarnings(as.numeric(summary_mean$.category))
             summary_mean <- tryCatch(
