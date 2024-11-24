@@ -15,6 +15,55 @@
 #'   Data frame if using a tabular data `save_fn`, or possibly any
 #'   R object, if a serializing `save_fn` is provided (e.g. [saveRDS()]).
 #'
+#'
+#' @return String.
+#' @export
+#'
+#' @examples
+#' make_link(mtcars, folder = tempdir())
+make_link <- function(data, ...) {
+  if (is.null(data)) {
+    cli::cli_warn("{.arg data} should not be NULL. Returning NULL.")
+    return(NULL)
+  }
+  UseMethod("make_link", data)
+}
+
+
+
+#' @export
+make_link.list <- function(
+    data,
+    ...,
+    simplify_single_lists = FALSE,
+    separator_list_items = ". ") {
+  # if (isTRUE(simplify_single_lists) && rlang::is_bare_list(data) && length(data) == 1) {
+  #   data <- data[[1]]
+  #   make_link.default(data, ...)
+  # }
+
+  out <- lapply(data, FUN = function(y) make_link(y, ...))
+  I(paste0(out, collapse = separator_list_items))
+}
+
+
+#' Save data to a file and return a Markdown link
+#'
+#' The file is automatically named by a hash of the object, removing the need
+#' to come up with unique file names inside a Quarto report. This has the
+#' added benefit of reducing storage needs if the objects needing linking to
+#' are identical, and all are stored in the same folder. It also allows the user
+#' to download multiple files without worrying about accidentally overwriting them.
+#'
+#'
+#' @inheritParams makeme
+#' @param data *Data or object*
+#'
+#'   `<data.frame|tbl|obj>`
+#'
+#'   Data frame if using a tabular data `save_fn`, or possibly any
+#'   R object, if a serializing `save_fn` is provided (e.g. [saveRDS()]).
+#'
 #' @param folder *Where to store file*
 #'
 #'   `scalar<character>` // *default:* `"."` (`optional`)
@@ -42,33 +91,31 @@
 #'
 #'   The stuff that is returned.
 #'
+#'
+#'
 #' @return String.
 #' @export
 #'
 #' @examples
 #' make_link(mtcars, folder = tempdir())
-make_link <- function(data,
-                      folder = NULL,
-                      file_prefix = NULL,
-                      file_suffix = ".csv",
-                      save_fn = utils::write.csv,
-                      link_prefix = "[download figure data](",
-                      link_suffix = ")",
-                      ...) {
-  if (is.null(data)) {
-    cli::cli_warn("{.arg data} should not be NULL. Returning NULL.")
-    return(NULL)
-  }
-
+make_link.default <- function(data,
+                              folder = NULL,
+                              file_prefix = NULL,
+                              file_suffix = ".csv",
+                              save_fn = utils::write.csv,
+                              link_prefix = "[download figure data](",
+                              link_suffix = ")",
+                              ...) {
   args <-
     check_options(
       call = match.call(),
       ignore_args = .saros.env$ignore_args,
       defaults_env = global_settings_get(fn_name = "make_link"),
-      default_values = formals(make_link)
+      default_values = formals(make_link.default)
     )
 
   if (!rlang::is_string(args$folder)) args$folder <- "."
+
 
   path <- fs::path(
     args$folder,
@@ -76,6 +123,7 @@ make_link <- function(data,
   )
 
   # save_fn <- args$save_fn
+
 
   tryCatch(
     {
