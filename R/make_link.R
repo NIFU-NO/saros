@@ -29,8 +29,15 @@ make_link <- function(data, ...) {
   UseMethod("make_link", data)
 }
 
-#' @title make_link
-#' @description make_link
+
+#' Save data to a file and return a Markdown link
+#'
+#' The file is automatically named by a hash of the object, removing the need
+#' to come up with unique file names inside a Quarto report. This has the
+#' added benefit of reducing storage needs if the objects needing linking to
+#' are identical, and all are stored in the same folder. It also allows the user
+#' to download multiple files without worrying about accidentally overwriting them.
+#'
 #'
 #' @inheritParams make_link
 #' @param separator_list_items *Separator string between multiple list items*
@@ -48,8 +55,14 @@ make_link.list <- function(
 }
 
 
-#' @title make_link
-#' @description make_link
+#' Save data to a file and return a Markdown link
+#'
+#' The file is automatically named by a hash of the object, removing the need
+#' to come up with unique file names inside a Quarto report. This has the
+#' added benefit of reducing storage needs if the objects needing linking to
+#' are identical, and all are stored in the same folder. It also allows the user
+#' to download multiple files without worrying about accidentally overwriting them.
+#'
 #'
 #' @inheritParams make_link
 #'
