@@ -4,16 +4,7 @@
 \alias{make_link}
 \title{Save data to a file and return a Markdown link}
 \usage{
-make_link(
-  data,
-  folder = NULL,
-  file_prefix = NULL,
-  file_suffix = ".csv",
-  save_fn = utils::write.csv,
-  link_prefix = "[download figure data](",
-  link_suffix = ")",
-  ...
-)
+make_link(data, ...)
 }
 \arguments{
 \item{data}{\emph{Data or object}
@@ -22,33 +13,6 @@ make_link(
 
 Data frame if using a tabular data \code{save_fn}, or possibly any
 R object, if a serializing \code{save_fn} is provided (e.g. \code{\link[=saveRDS]{saveRDS()}}).}
-
-\item{folder}{\emph{Where to store file}
-
-\verb{scalar<character>} // \emph{default:} \code{"."} (\code{optional})
-
-Defaults to same folder.}
-
-\item{file_prefix, file_suffix}{\emph{File prefix/suffix}
-
-\verb{scalar<character>} // \emph{default:} \code{""} and \code{".csv"} (\code{optional})
-
-\code{file_suffix} should include the dot before the extension.}
-
-\item{save_fn}{\emph{Saving function}
-
-\code{function} // \emph{default:} \code{utils::write.csv}
-
-Can be any saving/writing function. However, first argument must be
-the object to be saved, and the second must be the path. Hence,
-\code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} must be wrapped in another function with \code{filename} and
-\code{object} swapped. See \code{\link[=ggsaver]{ggsaver()}} for an example of such a wrapper function.}
-
-\item{link_prefix, link_suffix}{\emph{Link prefix/suffix}
-
-\verb{scalar<character>} // \emph{default:} \code{"[download data]("} and \code{")"}
-
-The stuff that is returned.}
 
 \item{...}{\emph{Dynamic dots}
 
@@ -67,5 +31,5 @@ are identical, and all are stored in the same folder. It also allows the user
 to download multiple files without worrying about accidentally overwriting them.
 }
 \examples{
-make_link(mtcars, folder=tempdir())
+make_link(mtcars, folder = tempdir())
 }

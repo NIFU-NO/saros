@@ -15,6 +15,44 @@
 #'   Data frame if using a tabular data `save_fn`, or possibly any
 #'   R object, if a serializing `save_fn` is provided (e.g. [saveRDS()]).
 #'
+#'
+#' @return String.
+#' @export
+#'
+#' @examples
+#' make_link(mtcars, folder = tempdir())
+make_link <- function(data, ...) {
+  if (is.null(data)) {
+    cli::cli_warn("{.arg data} should not be NULL. Returning NULL.")
+    return(NULL)
+  }
+  UseMethod("make_link", data)
+}
+
+#' @title make_link
+#' @description make_link
+#'
+#' @inheritParams make_link
+#' @param separator_list_items *Separator string between multiple list items*
+#'
+#'   `scalar<character>` // *default:* `". "` (`optional`)
+#'
+#'
+#' @export
+make_link.list <- function(
+    data,
+    ...,
+    separator_list_items = ". ") {
+  out <- lapply(data, FUN = function(y) make_link(y, ...))
+  I(paste0(out, collapse = separator_list_items))
+}
+
+
+#' @title make_link
+#' @description make_link
+#'
+#' @inheritParams make_link
+#'
 #' @param folder *Where to store file*
 #'
 #'   `scalar<character>` // *default:* `"."` (`optional`)
@@ -42,43 +80,51 @@
 #'
 #'   The stuff that is returned.
 #'
+#'
+#'
 #' @return String.
 #' @export
 #'
 #' @examples
-#' make_link(mtcars, folder=tempdir())
-make_link <- function(data,
-                      folder = NULL,
-                      file_prefix = NULL,
-                      file_suffix = ".csv",
-                      save_fn = utils::write.csv,
-                      link_prefix = "[download figure data](",
-                      link_suffix = ")",
-                      ...) {
-
-  if(is.null(data)) {
-    cli::cli_warn("{.arg data} should not be NULL. Returning NULL.")
-    return(NULL)
-  }
-
+#' make_link(mtcars, folder = tempdir())
+make_link.default <- function(data,
+                              folder = NULL,
+                              file_prefix = NULL,
+                              file_suffix = ".csv",
+                              save_fn = utils::write.csv,
+                              link_prefix = "[download figure data](",
+                              link_suffix = ")",
+                              ...) {
   args <-
-    check_options(call = match.call(),
-                        ignore_args = .saros.env$ignore_args,
-                        defaults_env = global_settings_get(fn_name = "make_link"),
-                        default_values = formals(make_link))
+    check_options(
+      call = match.call(),
+      ignore_args = .saros.env$ignore_args,
+      defaults_env = global_settings_get(fn_name = "make_link"),
+      default_values = formals(make_link.default)
+    )
 
-  if(!rlang::is_string(args$folder)) args$folder <- "."
+  if (!rlang::is_string(args$folder)) args$folder <- "."
 
-  path <- fs::path(args$folder,
-                   paste0(args$file_prefix, rlang::hash(data), args$file_suffix))
+
+  path <- fs::path(
+    args$folder,
+    paste0(args$file_prefix, rlang::hash(data), args$file_suffix)
+  )
 
   # save_fn <- args$save_fn
 
-  tryCatch({args$save_fn(data, path, ...)
-           I(paste0(args$link_prefix, path, args$link_suffix))
-           },
-           error = function(cnd) { #={data}
-             cli::cli_warn(c(x="Function {rlang::call_name(quote(safe_fn()))} failed with arguments {.arg path}={path}, {.arg data} is {.obj_type_friendly {data}}."),
-                            parent = cnd)
-           })
+
+  tryCatch(
+    {
+      if (!file.exists(path)) {
+        args$save_fn(data, path, ...)
+      }
+      I(paste0(args$link_prefix, path, args$link_suffix))
+    },
+    error = function(cnd) { # ={data}
+      cli::cli_warn(c(x = "Function {rlang::call_name(quote(safe_fn()))} failed with arguments {.arg path}={path}, {.arg data} is {.obj_type_friendly {data}}."),
+        parent = cnd
+      )
+    }
+  )
 }
