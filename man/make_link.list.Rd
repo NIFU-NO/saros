@@ -2,9 +2,19 @@
 % Please edit documentation in R/make_link.R
 \name{make_link.list}
 \alias{make_link.list}
-\title{make_link}
+\title{Save data to a file and return a Markdown link}
 \usage{
-\method{make_link}{list}(data, ..., separator_list_items = ". ")
+\method{make_link}{list}(
+  data,
+  ...,
+  folder = NULL,
+  file_prefix = NULL,
+  file_suffix = ".csv",
+  save_fn = utils::write.csv,
+  link_prefix = "[download figure data](",
+  link_suffix = ")",
+  separator_list_items = ". "
+)
 }
 \arguments{
 \item{data}{\emph{Data or object}
@@ -20,10 +30,41 @@ R object, if a serializing \code{save_fn} is provided (e.g. \code{\link[=saveRDS
 
 Arguments forwarded to the corresponding functions that create the elements.}
 
+\item{folder}{\emph{Where to store file}
+
+\verb{scalar<character>} // \emph{default:} \code{"."} (\code{optional})
+
+Defaults to same folder.}
+
+\item{file_prefix, file_suffix}{\emph{File prefix/suffix}
+
+\verb{scalar<character>} // \emph{default:} \code{""} and \code{".csv"} (\code{optional})
+
+\code{file_suffix} should include the dot before the extension.}
+
+\item{save_fn}{\emph{Saving function}
+
+\code{function} // \emph{default:} \code{utils::write.csv}
+
+Can be any saving/writing function. However, first argument must be
+the object to be saved, and the second must be the path. Hence,
+\code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} must be wrapped in another function with \code{filename} and
+\code{object} swapped. See \code{\link[=ggsaver]{ggsaver()}} for an example of such a wrapper function.}
+
+\item{link_prefix, link_suffix}{\emph{Link prefix/suffix}
+
+\verb{scalar<character>} // \emph{default:} \code{"[download data]("} and \code{")"}
+
+The stuff that is returned.}
+
 \item{separator_list_items}{\emph{Separator string between multiple list items}
 
 \verb{scalar<character>} // \emph{default:} \code{". "} (\code{optional})}
 }
 \description{
-make_link
+The file is automatically named by a hash of the object, removing the need
+to come up with unique file names inside a Quarto report. This has the
+added benefit of reducing storage needs if the objects needing linking to
+are identical, and all are stored in the same folder. It also allows the user
+to download multiple files without worrying about accidentally overwriting them.
 }
