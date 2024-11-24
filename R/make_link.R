@@ -8,63 +8,13 @@
 #'
 #'
 #' @inheritParams makeme
+#'
 #' @param data *Data or object*
 #'
 #'   `<data.frame|tbl|obj>`
 #'
 #'   Data frame if using a tabular data `save_fn`, or possibly any
 #'   R object, if a serializing `save_fn` is provided (e.g. [saveRDS()]).
-#'
-#'
-#' @return String.
-#' @export
-#'
-#' @examples
-#' make_link(mtcars, folder = tempdir())
-make_link <- function(data, ...) {
-  if (is.null(data)) {
-    cli::cli_warn("{.arg data} should not be NULL. Returning NULL.")
-    return(NULL)
-  }
-  UseMethod("make_link", data)
-}
-
-
-#' Save data to a file and return a Markdown link
-#'
-#' The file is automatically named by a hash of the object, removing the need
-#' to come up with unique file names inside a Quarto report. This has the
-#' added benefit of reducing storage needs if the objects needing linking to
-#' are identical, and all are stored in the same folder. It also allows the user
-#' to download multiple files without worrying about accidentally overwriting them.
-#'
-#'
-#' @inheritParams make_link
-#' @param separator_list_items *Separator string between multiple list items*
-#'
-#'   `scalar<character>` // *default:* `". "` (`optional`)
-#'
-#'
-#' @export
-make_link.list <- function(
-    data,
-    ...,
-    separator_list_items = ". ") {
-  out <- lapply(data, FUN = function(y) make_link(y, ...))
-  I(paste0(out, collapse = separator_list_items))
-}
-
-
-#' Save data to a file and return a Markdown link
-#'
-#' The file is automatically named by a hash of the object, removing the need
-#' to come up with unique file names inside a Quarto report. This has the
-#' added benefit of reducing storage needs if the objects needing linking to
-#' are identical, and all are stored in the same folder. It also allows the user
-#' to download multiple files without worrying about accidentally overwriting them.
-#'
-#'
-#' @inheritParams make_link
 #'
 #' @param folder *Where to store file*
 #'
@@ -94,20 +44,97 @@ make_link.list <- function(
 #'   The stuff that is returned.
 #'
 #'
+#' @return String.
+#' @export
+#'
+#' @examples
+#' make_link(mtcars, folder = tempdir())
+make_link <- function(
+    data,
+    folder = NULL,
+    file_prefix = NULL,
+    file_suffix = ".csv",
+    save_fn = utils::write.csv,
+    link_prefix = "[download figure data](",
+    link_suffix = ")",
+    ...) {
+  if (is.null(data)) {
+    cli::cli_warn("{.arg data} should not be NULL. Returning NULL.")
+    return(NULL)
+  }
+
+  UseMethod("make_link", data)
+}
+
+
+#' Save data to a file and return a Markdown link
+#'
+#' The file is automatically named by a hash of the object, removing the need
+#' to come up with unique file names inside a Quarto report. This has the
+#' added benefit of reducing storage needs if the objects needing linking to
+#' are identical, and all are stored in the same folder. It also allows the user
+#' to download multiple files without worrying about accidentally overwriting them.
+#'
+#'
+#' @inheritParams make_link
+#' @param separator_list_items *Separator string between multiple list items*
+#'
+#'   `scalar<character>` // *default:* `". "` (`optional`)
+#'
+#'
+#' @export
+make_link.list <- function(
+    data,
+    ...,
+    folder = NULL,
+    file_prefix = NULL,
+    file_suffix = ".csv",
+    save_fn = utils::write.csv,
+    link_prefix = "[download figure data](",
+    link_suffix = ")",
+    separator_list_items = ". ") {
+  # Capture all arguments, including those in `...`
+  args <- match.call(expand.dots = TRUE)
+
+  # Remove the `data` argument from the list
+  args$data <- NULL
+
+  # Apply `funB` to each element in `data`
+  out <- lapply(data, function(x) {
+    args$data <- x # Set the current element of the list as `data`
+    do.call(make_link, as.list(args[-1])) # Forward all arguments to `funB`
+  })
+
+  I(paste0(out, collapse = separator_list_items))
+}
+
+
+#' Save data to a file and return a Markdown link
+#'
+#' The file is automatically named by a hash of the object, removing the need
+#' to come up with unique file names inside a Quarto report. This has the
+#' added benefit of reducing storage needs if the objects needing linking to
+#' are identical, and all are stored in the same folder. It also allows the user
+#' to download multiple files without worrying about accidentally overwriting them.
+#'
+#'
+#' @inheritParams make_link
+#'
 #'
 #' @return String.
 #' @export
 #'
 #' @examples
 #' make_link(mtcars, folder = tempdir())
-make_link.default <- function(data,
-                              folder = NULL,
-                              file_prefix = NULL,
-                              file_suffix = ".csv",
-                              save_fn = utils::write.csv,
-                              link_prefix = "[download figure data](",
-                              link_suffix = ")",
-                              ...) {
+make_link.default <- function(
+    data,
+    ...,
+    folder = NULL,
+    file_prefix = NULL,
+    file_suffix = ".csv",
+    save_fn = utils::write.csv,
+    link_prefix = "[download figure data](",
+    link_suffix = ")") {
   args <-
     check_options(
       call = match.call(),
@@ -117,6 +144,14 @@ make_link.default <- function(data,
     )
 
   if (!rlang::is_string(args$folder)) args$folder <- "."
+  if (!rlang::is_string(args$file_prefix)) args$file_prefix <- ""
+  if (!fs::dir_exists(args$folder)) {
+    cli::cli_warn("The folder '{args$folder}' does not exist. Attempting to create it.")
+    fs::dir_create(args$folder)
+  }
+
+
+
 
 
   path <- fs::path(
@@ -130,7 +165,7 @@ make_link.default <- function(data,
   tryCatch(
     {
       if (!file.exists(path)) {
-        args$save_fn(data, path, ...)
+        args$save_fn(data, path)
       }
       I(paste0(args$link_prefix, path, args$link_suffix))
     },

@@ -2,17 +2,17 @@
 % Please edit documentation in R/make_link.R
 \name{make_link.default}
 \alias{make_link.default}
-\title{make_link}
+\title{Save data to a file and return a Markdown link}
 \usage{
 \method{make_link}{default}(
   data,
+  ...,
   folder = NULL,
   file_prefix = NULL,
   file_suffix = ".csv",
   save_fn = utils::write.csv,
   link_prefix = "[download figure data](",
-  link_suffix = ")",
-  ...
+  link_suffix = ")"
 )
 }
 \arguments{
@@ -22,6 +22,12 @@
 
 Data frame if using a tabular data \code{save_fn}, or possibly any
 R object, if a serializing \code{save_fn} is provided (e.g. \code{\link[=saveRDS]{saveRDS()}}).}
+
+\item{...}{\emph{Dynamic dots}
+
+<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
+
+Arguments forwarded to the corresponding functions that create the elements.}
 
 \item{folder}{\emph{Where to store file}
 
@@ -49,18 +55,16 @@ the object to be saved, and the second must be the path. Hence,
 \verb{scalar<character>} // \emph{default:} \code{"[download data]("} and \code{")"}
 
 The stuff that is returned.}
-
-\item{...}{\emph{Dynamic dots}
-
-<\href{https://rlang.r-lib.org/reference/dyn-dots.html}{\code{dynamic-dots}}>
-
-Arguments forwarded to the corresponding functions that create the elements.}
 }
 \value{
 String.
 }
 \description{
-make_link
+The file is automatically named by a hash of the object, removing the need
+to come up with unique file names inside a Quarto report. This has the
+added benefit of reducing storage needs if the objects needing linking to
+are identical, and all are stored in the same folder. It also allows the user
+to download multiple files without worrying about accidentally overwriting them.
 }
 \examples{
 make_link(mtcars, folder = tempdir())
