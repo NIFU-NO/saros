@@ -22,6 +22,8 @@ reference:
 - title: Save output and create a link to it on rendering
   contents:
   - make_link
+  - make_link.default
+  - make_link.list
   - ggsaver
 - title: Compute optimal figure heights for the built-in cat_plot
   contents:
