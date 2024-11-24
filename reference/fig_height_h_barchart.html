@@ -13,7 +13,7 @@ legend properties."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -191,29 +191,31 @@ legend properties.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">fig_height_h_barchart</span><span class="op">(</span>n_y <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                      n_cats_y <span class="op">=</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>                      max_chars_y <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span>                      n_x <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>                      n_cats_x <span class="op">=</span> <span class="fl">4</span>,</span></span>
-<span class="r-in"><span>                      max_chars_x <span class="op">=</span> <span class="fl">12</span>,</span></span>
-<span class="r-in"><span>                      freq <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>                      x_axis_label_width <span class="op">=</span> <span class="fl">20</span>,</span></span>
-<span class="r-in"><span>                      strip_angle <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                      main_font_size <span class="op">=</span> <span class="fl">8</span>,</span></span>
-<span class="r-in"><span>                      legend_location <span class="op">=</span> <span class="st">"panel"</span>,</span></span>
-<span class="r-in"><span>                      n_legend_lines <span class="op">=</span> <span class="fl">2</span>,</span></span>
-<span class="r-in"><span>                      legend_key_chars_equivalence <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                      max_chars_per_figure_width <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>                      multiplier_per_horizontal_line <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>                      multiplier_per_vertical_letter <span class="op">=</span> <span class="fl">.15</span>,</span></span>
-<span class="r-in"><span>                      multiplier_per_facet <span class="op">=</span> <span class="fl">.95</span>,</span></span>
-<span class="r-in"><span>                      multiplier_per_legend_line <span class="op">=</span> <span class="fl">1.5</span>,</span></span>
-<span class="r-in"><span>                      fixed_constant <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                      figure_width_in_cm <span class="op">=</span> <span class="fl">16</span>,</span></span>
-<span class="r-in"><span>                      margin_in_cm <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>                      max <span class="op">=</span> <span class="fl">8</span>,</span></span>
-<span class="r-in"><span>                      min <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">fig_height_h_barchart</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  n_y <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  n_cats_y <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>  max_chars_y <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>  n_x <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  n_cats_x <span class="op">=</span> <span class="fl">4</span>,</span></span>
+<span class="r-in"><span>  max_chars_x <span class="op">=</span> <span class="fl">12</span>,</span></span>
+<span class="r-in"><span>  freq <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  x_axis_label_width <span class="op">=</span> <span class="fl">20</span>,</span></span>
+<span class="r-in"><span>  strip_angle <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  main_font_size <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>  legend_location <span class="op">=</span> <span class="st">"panel"</span>,</span></span>
+<span class="r-in"><span>  n_legend_lines <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  legend_key_chars_equivalence <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  max_chars_per_figure_width <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>  multiplier_per_horizontal_line <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>  multiplier_per_vertical_letter <span class="op">=</span> <span class="fl">.15</span>,</span></span>
+<span class="r-in"><span>  multiplier_per_facet <span class="op">=</span> <span class="fl">.95</span>,</span></span>
+<span class="r-in"><span>  multiplier_per_legend_line <span class="op">=</span> <span class="fl">1.5</span>,</span></span>
+<span class="r-in"><span>  fixed_constant <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  figure_width_in_cm <span class="op">=</span> <span class="fl">16</span>,</span></span>
+<span class="r-in"><span>  margin_in_cm <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>  max <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>  min <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.1</span>
 </code></pre></div>
     </div>
