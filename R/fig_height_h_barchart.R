@@ -347,11 +347,11 @@ fig_height_h_barchart2 <- # Returns a numeric value
     check_double(multiplier_per_horizontal_line, null_allowed = TRUE)
     check_double(multiplier_per_vertical_letter)
     check_double(multiplier_per_legend_line)
+    check_double(fixed_constant)
     check_integerish(legend_key_chars_equivalence)
     check_integerish(max_chars_per_figure_width)
 
     check_integerish(n_legend_lines, null_allowed = TRUE)
-    check_integerish(fixed_constant)
     check_integerish(margin_in_cm)
     check_integerish(figure_width_in_cm)
     check_integerish(strip_angle)
