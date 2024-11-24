@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_link.R
 \name{make_link.default}
 \alias{make_link.default}
-\title{Save data to a file and return a Markdown link}
+\title{make_link}
 \usage{
 \method{make_link}{default}(
   data,
@@ -60,11 +60,7 @@ Arguments forwarded to the corresponding functions that create the elements.}
 String.
 }
 \description{
-The file is automatically named by a hash of the object, removing the need
-to come up with unique file names inside a Quarto report. This has the
-added benefit of reducing storage needs if the objects needing linking to
-are identical, and all are stored in the same folder. It also allows the user
-to download multiple files without worrying about accidentally overwriting them.
+make_link
 }
 \examples{
 make_link(mtcars, folder = tempdir())

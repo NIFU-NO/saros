@@ -29,40 +29,29 @@ make_link <- function(data, ...) {
   UseMethod("make_link", data)
 }
 
-
-
+#' @title make_link
+#' @description make_link
+#'
+#' @inheritParams make_link
+#' @param separator_list_items *Separator string between multiple list items*
+#'
+#'   `scalar<character>` // *default:* `". "` (`optional`)
+#'
+#'
 #' @export
 make_link.list <- function(
     data,
     ...,
-    simplify_single_lists = FALSE,
     separator_list_items = ". ") {
-  # if (isTRUE(simplify_single_lists) && rlang::is_bare_list(data) && length(data) == 1) {
-  #   data <- data[[1]]
-  #   make_link.default(data, ...)
-  # }
-
   out <- lapply(data, FUN = function(y) make_link(y, ...))
   I(paste0(out, collapse = separator_list_items))
 }
 
 
-#' Save data to a file and return a Markdown link
+#' @title make_link
+#' @description make_link
 #'
-#' The file is automatically named by a hash of the object, removing the need
-#' to come up with unique file names inside a Quarto report. This has the
-#' added benefit of reducing storage needs if the objects needing linking to
-#' are identical, and all are stored in the same folder. It also allows the user
-#' to download multiple files without worrying about accidentally overwriting them.
-#'
-#'
-#' @inheritParams makeme
-#' @param data *Data or object*
-#'
-#'   `<data.frame|tbl|obj>`
-#'
-#'   Data frame if using a tabular data `save_fn`, or possibly any
-#'   R object, if a serializing `save_fn` is provided (e.g. [saveRDS()]).
+#' @inheritParams make_link
 #'
 #' @param folder *Where to store file*
 #'
