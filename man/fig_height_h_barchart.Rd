@@ -7,16 +7,18 @@
 fig_height_h_barchart(
   n_y,
   n_cats_y,
-  max_chars_y,
+  max_chars_labels_y = 20,
+  max_chars_cats_y = 20,
   n_x = NULL,
   n_cats_x = NULL,
-  max_chars_x = NULL,
+  max_chars_labels_x = NULL,
+  max_chars_cats_x = NULL,
   freq = FALSE,
   x_axis_label_width = 20,
   strip_angle = 0,
   main_font_size = 7,
   legend_location = c("plot", "panel"),
-  n_legend_lines = 2,
+  n_legend_lines = NULL,
   legend_key_chars_equivalence = 5,
   max_chars_per_figure_width = 100,
   multiplier_per_horizontal_line = NULL,
@@ -27,21 +29,24 @@ fig_height_h_barchart(
   figure_width_in_cm = 14,
   margin_in_cm = 0,
   max = 8,
-  min = 1
+  min = 1,
+  showNA = c("ifany", "never", "always")
 )
 }
 \arguments{
-\item{n_y}{Integer. Number of dependent variables.}
+\item{n_y, n_x}{Integer. Number of dependent/independent variables.}
 
 \item{n_cats_y}{Integer. Number of categories across the dependent variables.}
 
-\item{max_chars_y}{Integer. Maximum number of characters across the dependent variables.}
+\item{max_chars_labels_y}{Integer. Maximum number of characters across the dependent variables' labels.}
 
-\item{n_x}{Integer. Number of independent variables.}
+\item{max_chars_cats_y}{Integer. Maximum number of characters across the dependent variables' response categories (levels).}
 
-\item{n_cats_x}{Integer. Number of categories across the independent variables.}
+\item{n_cats_x}{Integer or NULL. Number of categories across the independent variables.}
 
-\item{max_chars_x}{Integer. Maximum number of characters across the independent variables.}
+\item{max_chars_labels_x}{Integer or NULL. Maximum number of characters across the independent variables' labels.}
+
+\item{max_chars_cats_x}{Integer or NULL. Maximum number of characters across the independent variables' response categories (levels).}
 
 \item{freq}{Logical. If TRUE, frequency plot with categories next to each other. If FALSE (default), proportion plot with stacked categories.}
 
@@ -76,6 +81,8 @@ fig_height_h_barchart(
 \item{max}{Numeric. Maximum height.}
 
 \item{min}{Numeric. Minimum height.}
+
+\item{showNA}{String, one of "ifany", "always" or "never". Not yet in use.}
 }
 \value{
 Numeric value representing the estimated height of the figure.
@@ -90,10 +97,11 @@ legend properties.
 fig_height_h_barchart(
   n_y = 5,
   n_cats_y = 3,
-  max_chars_y = 10,
+  max_chars_labels_y = 20,
+  max_chars_cats_y = 8,
   n_x = 2,
   n_cats_x = 4,
-  max_chars_x = 12,
+  max_chars_labels_x = 12,
   freq = FALSE,
   x_axis_label_width = 20,
   strip_angle = 0,

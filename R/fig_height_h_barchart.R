@@ -3,9 +3,10 @@ estimate_categories_per_line <- function(figure_width_cm = 12,
                                          max_chars_cats = 20, # Maximum characters across the categories
                                          legend_key_chars = 5,
                                          font_size = 8,
-                                         margin_cm = 0) {
+                                         margin_cm = 0,
+                                         conversion_font_size_to_char_width_in_cm = .035) {
   # Calculate the width of one character in cm, assuming a monospace font approximation
-  char_width_cm <- font_size * 0.035
+  char_width_cm <- font_size * conversion_font_size_to_char_width_in_cm
 
   # Estimate the width per category in cm
   width_per_category_cm <- (legend_key_chars + max_chars_cats) * char_width_cm
@@ -21,8 +22,8 @@ estimate_categories_per_line <- function(figure_width_cm = 12,
 }
 
 
-get_max_lines <- function(max_cat_char, width) {
-  ceiling(max_cat_char / width)
+get_max_lines <- function(max_char_labels, width) {
+  ceiling(max_char_labels / width)
 }
 
 
@@ -47,12 +48,13 @@ calculate_height <- function(strip_height,
 #' variables, number of categories, maximum characters in the labels, and
 #' legend properties.
 #'
-#' @param n_y Integer. Number of dependent variables.
+#' @param n_y,n_x Integer. Number of dependent/independent variables.
 #' @param n_cats_y Integer. Number of categories across the dependent variables.
-#' @param max_chars_y Integer. Maximum number of characters across the dependent variables.
-#' @param n_x Integer. Number of independent variables.
-#' @param n_cats_x Integer. Number of categories across the independent variables.
-#' @param max_chars_x Integer. Maximum number of characters across the independent variables.
+#' @param max_chars_labels_y Integer. Maximum number of characters across the dependent variables' labels.
+#' @param max_chars_cats_y Integer. Maximum number of characters across the dependent variables' response categories (levels).
+#' @param n_cats_x Integer or NULL. Number of categories across the independent variables.
+#' @param max_chars_labels_x Integer or NULL. Maximum number of characters across the independent variables' labels.
+#' @param max_chars_cats_x Integer or NULL. Maximum number of characters across the independent variables' response categories (levels).
 #' @param freq Logical. If TRUE, frequency plot with categories next to each other. If FALSE (default), proportion plot with stacked categories.
 #' @param x_axis_label_width Numeric. Width allocated for x-axis labels.
 #' @param strip_angle Integer. Angle of the strip text.
@@ -70,6 +72,7 @@ calculate_height <- function(strip_height,
 #' @param margin_in_cm Numeric. Margin in centimeters.
 #' @param max Numeric. Maximum height.
 #' @param min Numeric. Minimum height.
+#' @param showNA String, one of "ifany", "always" or "never". Not yet in use.
 #'
 #' @return Numeric value representing the estimated height of the figure.
 #' @export
@@ -78,10 +81,11 @@ calculate_height <- function(strip_height,
 #' fig_height_h_barchart(
 #'   n_y = 5,
 #'   n_cats_y = 3,
-#'   max_chars_y = 10,
+#'   max_chars_labels_y = 20,
+#'   max_chars_cats_y = 8,
 #'   n_x = 2,
 #'   n_cats_x = 4,
-#'   max_chars_x = 12,
+#'   max_chars_labels_x = 12,
 #'   freq = FALSE,
 #'   x_axis_label_width = 20,
 #'   strip_angle = 0,
@@ -103,16 +107,18 @@ calculate_height <- function(strip_height,
 fig_height_h_barchart <- # Returns a numeric value
   function(n_y,
            n_cats_y,
-           max_chars_y,
+           max_chars_labels_y = 20,
+           max_chars_cats_y = 20,
            n_x = NULL,
            n_cats_x = NULL,
-           max_chars_x = NULL,
+           max_chars_labels_x = NULL,
+           max_chars_cats_x = NULL,
            freq = FALSE,
            x_axis_label_width = 20,
            strip_angle = 0,
            main_font_size = 7,
            legend_location = c("plot", "panel"),
-           n_legend_lines = 2,
+           n_legend_lines = NULL,
            legend_key_chars_equivalence = 5,
            max_chars_per_figure_width = 100,
            multiplier_per_horizontal_line = NULL,
@@ -123,7 +129,8 @@ fig_height_h_barchart <- # Returns a numeric value
            figure_width_in_cm = 14,
            margin_in_cm = 0,
            max = 8,
-           min = 1) {
+           min = 1,
+           showNA = c("ifany", "never", "always")) {
     args <- check_options(
       call = match.call(),
       ignore_args = .saros.env$ignore_args,
@@ -133,7 +140,8 @@ fig_height_h_barchart <- # Returns a numeric value
 
     n_x <- args$n_x
     n_cats_x <- args$n_cats_x
-    max_chars_x <- args$max_chars_x
+    max_chars_labels_x <- args$max_chars_labels_x
+    max_chars_cats_x <- args$max_chars_cats_x
     freq <- args$freq
     x_axis_label_width <- args$x_axis_label_width
     strip_angle <- args$strip_angle
@@ -151,13 +159,16 @@ fig_height_h_barchart <- # Returns a numeric value
     margin_in_cm <- args$margin_in_cm
     max <- args$max
     min <- args$min
+    showNA <- args$showNA[[1]]
 
     check_integerish(n_y)
     check_integerish(n_cats_y)
-    check_integerish(max_chars_y)
+    check_integerish(max_chars_labels_y)
+    check_integerish(max_chars_cats_y)
     check_integerish(n_x, null_allowed = TRUE)
     check_integerish(n_cats_x, null_allowed = TRUE)
-    check_integerish(max_chars_x, null_allowed = TRUE)
+    check_integerish(max_chars_labels_x, null_allowed = TRUE)
+    check_integerish(max_chars_cats_x, null_allowed = TRUE)
     check_bool(freq)
     check_double(strip_angle)
     check_double(main_font_size)
@@ -188,7 +199,7 @@ fig_height_h_barchart <- # Returns a numeric value
       categories_per_line <-
         estimate_categories_per_line(
           figure_width_cm = figure_width_in_cm,
-          max_chars_cats = max_chars_y, # Maximum characters across the categories
+          max_chars_cats = max_chars_cats_y, # Maximum characters across the categories
           font_size = main_font_size,
           legend_key_chars = legend_key_chars_equivalence,
           margin_cm = margin_in_cm
@@ -199,10 +210,10 @@ fig_height_h_barchart <- # Returns a numeric value
 
 
     max_lines_y <- get_max_lines(
-      max_cat_char = max_chars_y,
+      max_char_labels = max_chars_labels_y,
       width = x_axis_label_width
     )
-    if (n_cats_y == 0) unique_y_cats <- 1
+    # if (n_cats_y == 0) unique_y_cats <- 1
 
     if (isFALSE(freq)) {
       n_cats_y <- 1
@@ -212,7 +223,7 @@ fig_height_h_barchart <- # Returns a numeric value
 
     if (!is.null(n_x) && n_x > 0) {
       max_lines_x <- get_max_lines(
-        max_cat_char = max_chars_x,
+        max_char_labels = max_chars_labels_x,
         width = x_axis_label_width
       )
 
@@ -222,7 +233,8 @@ fig_height_h_barchart <- # Returns a numeric value
 
       if (strip_angle >= 45 && strip_angle <= 135) { # vertical strip
         strip_height <-
-          max_chars_y * multiplier_per_vertical_letter
+          max_chars_labels_y * # Incorrect, should really be the longest line in the split variable labels
+            multiplier_per_vertical_letter
       } else { # horizontal strip
         strip_height <-
           max_lines_y * multiplier_per_horizontal_line
@@ -312,10 +324,13 @@ fig_height_h_barchart2 <- # Returns a numeric value
 
     n_y <- dplyr::n_distinct(data$.variable_name)
     n_cats_y <- dplyr::n_distinct(data$.category)
-    max_chars_y <- max(nchar(as.character(data$.variable_label)), na.rm = TRUE)
+    max_chars_cats_y <- max(nchar(as.character(data$.category)), na.rm = TRUE)
+    max_chars_labels_y <- max(nchar(as.character(data$.variable_label)), na.rm = TRUE)
     n_x <- if (length(indep_vars) == 1) 1
     n_cats_x <- if (length(indep_vars) == 1) dplyr::n_distinct(data[[indep_vars]])
-    max_chars_x <- if (length(indep_vars) == 1) max(nchar(as.character(data[[indep_vars]])), na.rm = TRUE)
+    max_chars_cats_x <- if (length(indep_vars) == 1) max(nchar(as.character(data[[indep_vars]])), na.rm = TRUE)
+    max_chars_labels_x <- nchar(as.character(attr(data[[indep_vars]], "label")))
+    if (length(max_chars_labels_x) == 0) max_chars_labels_x <- 0
 
     freq <- args$freq
     x_axis_label_width <- args$x_axis_label_width
@@ -335,12 +350,6 @@ fig_height_h_barchart2 <- # Returns a numeric value
     max <- args$max
     min <- args$min
 
-    check_integerish(n_y)
-    check_integerish(n_cats_y)
-    check_integerish(max_chars_y)
-    check_integerish(n_x, null_allowed = TRUE)
-    check_integerish(n_cats_x, null_allowed = TRUE)
-    check_integerish(max_chars_x, null_allowed = TRUE)
     check_bool(freq)
     check_double(strip_angle)
     check_double(main_font_size)
@@ -360,6 +369,7 @@ fig_height_h_barchart2 <- # Returns a numeric value
     legend_location <- legend_location[1]
 
 
+    ### Can we just call fig_height_h_barchart() with the inputs above?
 
     if (is.null(multiplier_per_horizontal_line)) {
       multiplier_per_horizontal_line <- main_font_size / 72.27
@@ -371,7 +381,7 @@ fig_height_h_barchart2 <- # Returns a numeric value
       categories_per_line <-
         estimate_categories_per_line(
           figure_width_cm = figure_width_in_cm,
-          max_chars_cats = max_chars_y, # Maximum characters across the categories
+          max_chars_cats = max_chars_cats_y, # Maximum characters across the categories
           font_size = main_font_size,
           legend_key_chars = legend_key_chars_equivalence,
           margin_cm = margin_in_cm
@@ -382,10 +392,10 @@ fig_height_h_barchart2 <- # Returns a numeric value
 
 
     max_lines_y <- get_max_lines(
-      max_cat_char = max_chars_y,
+      max_char_labels = max_chars_labels_y,
       width = x_axis_label_width
     )
-    if (n_cats_y == 0) unique_y_cats <- 1
+    # if (n_cats_y == 0) unique_y_cats <- 1
 
     if (isFALSE(freq)) {
       n_cats_y <- 1
@@ -395,7 +405,7 @@ fig_height_h_barchart2 <- # Returns a numeric value
 
     if (!is.null(n_x) && n_x > 0) {
       max_lines_x <- get_max_lines(
-        max_cat_char = max_chars_x,
+        max_char_labels = max_chars_labels_x,
         width = x_axis_label_width
       )
 
@@ -405,7 +415,7 @@ fig_height_h_barchart2 <- # Returns a numeric value
 
       if (strip_angle >= 45 && strip_angle <= 135) { # vertical strip
         strip_height <-
-          max_chars_y * multiplier_per_vertical_letter
+          max_chars_labels_y * multiplier_per_vertical_letter
       } else { # horizontal strip
         strip_height <-
           max_lines_y * multiplier_per_horizontal_line
