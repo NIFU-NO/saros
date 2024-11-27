@@ -13,7 +13,7 @@ legend properties."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,16 +64,18 @@ legend properties.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">fig_height_h_barchart</span><span class="op">(</span></span>
 <span>  <span class="va">n_y</span>,</span>
 <span>  <span class="va">n_cats_y</span>,</span>
-<span>  <span class="va">max_chars_y</span>,</span>
+<span>  max_chars_labels_y <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  max_chars_cats_y <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  n_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n_cats_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_chars_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_chars_labels_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_chars_cats_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  freq <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  x_axis_label_width <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  strip_angle <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  main_font_size <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  legend_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"plot"</span>, <span class="st">"panel"</span><span class="op">)</span>,</span>
-<span>  n_legend_lines <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  n_legend_lines <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_key_chars_equivalence <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  max_chars_per_figure_width <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  multiplier_per_horizontal_line <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -84,7 +86,8 @@ legend properties.</p>
 <span>  figure_width_in_cm <span class="op">=</span> <span class="fl">14</span>,</span>
 <span>  margin_in_cm <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  max <span class="op">=</span> <span class="fl">8</span>,</span>
-<span>  min <span class="op">=</span> <span class="fl">1</span></span>
+<span>  min <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  showNA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ifany"</span>, <span class="st">"never"</span>, <span class="st">"always"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,28 +95,32 @@ legend properties.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-n-y">n_y<a class="anchor" aria-label="anchor" href="#arg-n-y"></a></dt>
-<dd><p>Integer. Number of dependent variables.</p></dd>
+<dl><dt id="arg-n-y-n-x">n_y, n_x<a class="anchor" aria-label="anchor" href="#arg-n-y-n-x"></a></dt>
+<dd><p>Integer. Number of dependent/independent variables.</p></dd>
 
 
 <dt id="arg-n-cats-y">n_cats_y<a class="anchor" aria-label="anchor" href="#arg-n-cats-y"></a></dt>
 <dd><p>Integer. Number of categories across the dependent variables.</p></dd>
 
 
-<dt id="arg-max-chars-y">max_chars_y<a class="anchor" aria-label="anchor" href="#arg-max-chars-y"></a></dt>
-<dd><p>Integer. Maximum number of characters across the dependent variables.</p></dd>
+<dt id="arg-max-chars-labels-y">max_chars_labels_y<a class="anchor" aria-label="anchor" href="#arg-max-chars-labels-y"></a></dt>
+<dd><p>Integer. Maximum number of characters across the dependent variables' labels.</p></dd>
 
 
-<dt id="arg-n-x">n_x<a class="anchor" aria-label="anchor" href="#arg-n-x"></a></dt>
-<dd><p>Integer. Number of independent variables.</p></dd>
+<dt id="arg-max-chars-cats-y">max_chars_cats_y<a class="anchor" aria-label="anchor" href="#arg-max-chars-cats-y"></a></dt>
+<dd><p>Integer. Maximum number of characters across the dependent variables' response categories (levels).</p></dd>
 
 
 <dt id="arg-n-cats-x">n_cats_x<a class="anchor" aria-label="anchor" href="#arg-n-cats-x"></a></dt>
-<dd><p>Integer. Number of categories across the independent variables.</p></dd>
+<dd><p>Integer or NULL. Number of categories across the independent variables.</p></dd>
 
 
-<dt id="arg-max-chars-x">max_chars_x<a class="anchor" aria-label="anchor" href="#arg-max-chars-x"></a></dt>
-<dd><p>Integer. Maximum number of characters across the independent variables.</p></dd>
+<dt id="arg-max-chars-labels-x">max_chars_labels_x<a class="anchor" aria-label="anchor" href="#arg-max-chars-labels-x"></a></dt>
+<dd><p>Integer or NULL. Maximum number of characters across the independent variables' labels.</p></dd>
+
+
+<dt id="arg-max-chars-cats-x">max_chars_cats_x<a class="anchor" aria-label="anchor" href="#arg-max-chars-cats-x"></a></dt>
+<dd><p>Integer or NULL. Maximum number of characters across the independent variables' response categories (levels).</p></dd>
 
 
 <dt id="arg-freq">freq<a class="anchor" aria-label="anchor" href="#arg-freq"></a></dt>
@@ -183,6 +190,10 @@ legend properties.</p>
 <dt id="arg-min">min<a class="anchor" aria-label="anchor" href="#arg-min"></a></dt>
 <dd><p>Numeric. Minimum height.</p></dd>
 
+
+<dt id="arg-showna">showNA<a class="anchor" aria-label="anchor" href="#arg-showna"></a></dt>
+<dd><p>String, one of "ifany", "always" or "never". Not yet in use.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -194,10 +205,11 @@ legend properties.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">fig_height_h_barchart</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  n_y <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>  n_cats_y <span class="op">=</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>  max_chars_y <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>  max_chars_labels_y <span class="op">=</span> <span class="fl">20</span>,</span></span>
+<span class="r-in"><span>  max_chars_cats_y <span class="op">=</span> <span class="fl">8</span>,</span></span>
 <span class="r-in"><span>  n_x <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>  n_cats_x <span class="op">=</span> <span class="fl">4</span>,</span></span>
-<span class="r-in"><span>  max_chars_x <span class="op">=</span> <span class="fl">12</span>,</span></span>
+<span class="r-in"><span>  max_chars_labels_x <span class="op">=</span> <span class="fl">12</span>,</span></span>
 <span class="r-in"><span>  freq <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  x_axis_label_width <span class="op">=</span> <span class="fl">20</span>,</span></span>
 <span class="r-in"><span>  strip_angle <span class="op">=</span> <span class="fl">0</span>,</span></span>
