@@ -35,5 +35,5 @@ String.
 Provides a range (or single value) for N in data, given dep and indep
 }
 \examples{
-n_range(data=ex_survey, dep=b_1:b_3, indep=x1_sex)
+n_range(data = ex_survey, dep = b_1:b_3, indep = x1_sex)
 }

@@ -9,8 +9,9 @@ make_content.cat_plot_html <-
     if (dots$showNA %in% c("never") &&
       length(levels(data[[".category"]])) == 0) {
       showna_arg_str <- "showNA = 'always'"
-      cli::cli_warn("Variables contain NA on all dep-by-indep cells. Returning NULL. Consider {.arg {showna_arg_str}} or check your data.")
-      return()
+      cli::cli_warn("Variables contain NA on all dep-by-indep cells. Returning an empty plot. Consider {.arg {showna_arg_str}} or check your data.")
+      return(ggplot2::ggplot() +
+        ggplot2::theme_void())
     }
 
     indep_vars <- colnames(data)[!colnames(data) %in%
