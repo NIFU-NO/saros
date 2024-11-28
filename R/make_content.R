@@ -96,12 +96,12 @@ make_content <- function(type, ...) {
 get_makeme_types <- function() {
   out <- as.character(utils::methods("make_content"))
   stringi::stri_replace_first_fixed(out[out != "make_content.default"],
-                                    pattern = "make_content.", replacement = "")
+    pattern = "make_content.", replacement = ""
+  )
 }
 
 
 #' @export
 make_content.default <- function(type, ...) {
-  dots <- rlang::list2(...)
   cli::cli_abort("Invalid make_content-type: {type}. Check that you have loaded the required packages/methods and registererd your custom method.")
 }
