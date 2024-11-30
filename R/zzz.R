@@ -33,8 +33,6 @@ if (!exists(".saros.env")) .saros.env <- NULL
     "call",
     "n_y",
     "n_cats_y",
-    "max_chars_cats_y",
-    "max_chars_labels_y",
     "ggobj",
     "..."
   )
@@ -42,7 +40,9 @@ if (!exists(".saros.env")) .saros.env <- NULL
 
   fn_opt_list <- list(
     makeme = makeme,
-    make_link = make_link, n_rng = n_rng, n_range = n_range,
+    make_link = make_link,
+    n_rng = n_rng,
+    n_range = n_range,
     fig_height_h_barchart = fig_height_h_barchart
   )
 

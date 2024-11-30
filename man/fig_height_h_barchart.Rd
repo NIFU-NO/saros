@@ -15,21 +15,24 @@ fig_height_h_barchart(
   max_chars_cats_x = NULL,
   freq = FALSE,
   x_axis_label_width = 20,
+  strip_width = 20,
   strip_angle = 0,
   main_font_size = 7,
   legend_location = c("plot", "panel"),
   n_legend_lines = NULL,
   legend_key_chars_equivalence = 5,
-  max_chars_per_figure_width = 100,
-  multiplier_per_horizontal_line = NULL,
+  multiplier_per_horizontal_line = 1,
   multiplier_per_vertical_letter = 1,
   multiplier_per_facet = 1,
+  multiplier_per_bar = 1,
   multiplier_per_legend_line = 1,
+  multiplier_per_plot = 1,
   fixed_constant = 0,
-  figure_width_in_cm = 14,
   margin_in_cm = 0,
-  max = 8,
-  min = 1,
+  figure_width_in_cm = 14,
+  max = 12,
+  min = 2,
+  hide_axis_text_if_single_variable = FALSE,
   showNA = c("ifany", "never", "always")
 )
 }
@@ -50,37 +53,41 @@ fig_height_h_barchart(
 
 \item{freq}{Logical. If TRUE, frequency plot with categories next to each other. If FALSE (default), proportion plot with stacked categories.}
 
-\item{x_axis_label_width}{Numeric. Width allocated for x-axis labels.}
+\item{x_axis_label_width, strip_width}{Numeric. Width allocated for x-axis labels and strip labels respectively.}
 
 \item{strip_angle}{Integer. Angle of the strip text.}
 
 \item{main_font_size}{Numeric. Font size for the main text.}
 
-\item{legend_location}{Character. Location of the legend ("panel" or "plot").}
+\item{legend_location}{Character. Location of the legend. "plot" (default) or "panel".}
 
 \item{n_legend_lines}{Integer. Number of lines in the legend.}
 
 \item{legend_key_chars_equivalence}{Integer. Approximate number of characters the legend key equals.}
 
-\item{max_chars_per_figure_width}{Integer. Maximum number of characters per figure width.}
-
 \item{multiplier_per_horizontal_line}{Numeric. Multiplier per horizontal line.}
 
 \item{multiplier_per_vertical_letter}{Numeric. Multiplier per vertical letter.}
 
-\item{multiplier_per_facet}{Numeric. Multiplier per facet.}
+\item{multiplier_per_facet}{Numeric. Multiplier per facet height.}
+
+\item{multiplier_per_bar}{Numeric. Multiplier per bar height (thickness).}
 
 \item{multiplier_per_legend_line}{Numeric. Multiplier per legend line.}
 
+\item{multiplier_per_plot}{Numeric. Multiplier for entire plot estimates.}
+
 \item{fixed_constant}{Numeric. Fixed constant to be added to the height.}
 
-\item{figure_width_in_cm}{Numeric. Width of the figure in centimeters.}
-
 \item{margin_in_cm}{Numeric. Margin in centimeters.}
+
+\item{figure_width_in_cm}{Numeric. Width of the figure in centimeters.}
 
 \item{max}{Numeric. Maximum height.}
 
 \item{min}{Numeric. Minimum height.}
+
+\item{hide_axis_text_if_single_variable}{Whether the label is hidden for single dependent variable plots.}
 
 \item{showNA}{String, one of "ifany", "always" or "never". Not yet in use.}
 }
@@ -99,7 +106,7 @@ fig_height_h_barchart(
   n_cats_y = 3,
   max_chars_labels_y = 20,
   max_chars_cats_y = 8,
-  n_x = 2,
+  n_x = 1,
   n_cats_x = 4,
   max_chars_labels_x = 12,
   freq = FALSE,
@@ -109,15 +116,10 @@ fig_height_h_barchart(
   legend_location = "panel",
   n_legend_lines = 2,
   legend_key_chars_equivalence = 5,
-  max_chars_per_figure_width = 100,
-  multiplier_per_horizontal_line = NULL,
+  multiplier_per_horizontal_line = 1,
   multiplier_per_vertical_letter = .15,
   multiplier_per_facet = .95,
   multiplier_per_legend_line = 1.5,
-  fixed_constant = 0,
   figure_width_in_cm = 16,
-  margin_in_cm = 0,
-  max = 8,
-  min = 1
 )
 }

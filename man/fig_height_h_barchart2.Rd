@@ -6,20 +6,21 @@
 \usage{
 fig_height_h_barchart2(
   ggobj,
+  main_font_size = 7,
+  strip_angle = 0,
   freq = FALSE,
   x_axis_label_width = 20,
-  strip_angle = 0,
-  main_font_size = 8,
-  legend_location = c("panel", "plot"),
-  n_legend_lines = 2,
+  strip_width = 20,
+  legend_location = c("plot", "panel"),
+  n_legend_lines = NULL,
+  showNA = c("ifany", "never", "always"),
   legend_key_chars_equivalence = 5,
-  max_chars_per_figure_width = 100,
   multiplier_per_horizontal_line = NULL,
-  multiplier_per_vertical_letter = 0.01,
-  multiplier_per_facet = 0.95,
-  multiplier_per_legend_line = 1.5,
+  multiplier_per_vertical_letter = 1,
+  multiplier_per_facet = 1,
+  multiplier_per_legend_line = 1,
   fixed_constant = 0,
-  figure_width_in_cm = 16,
+  figure_width_in_cm = 14,
   margin_in_cm = 0,
   max = 8,
   min = 1
@@ -28,27 +29,27 @@ fig_height_h_barchart2(
 \arguments{
 \item{ggobj}{\code{ggplot2}-object}
 
-\item{freq}{Logical. If TRUE, frequency plot with categories next to each other. If FALSE (default), proportion plot with stacked categories.}
-
-\item{x_axis_label_width}{Numeric. Width allocated for x-axis labels.}
+\item{main_font_size}{Numeric. Font size for the main text.}
 
 \item{strip_angle}{Integer. Angle of the strip text.}
 
-\item{main_font_size}{Numeric. Font size for the main text.}
+\item{freq}{Logical. If TRUE, frequency plot with categories next to each other. If FALSE (default), proportion plot with stacked categories.}
 
-\item{legend_location}{Character. Location of the legend ("panel" or "plot").}
+\item{x_axis_label_width, strip_width}{Numeric. Width allocated for x-axis labels and strip labels respectively.}
+
+\item{legend_location}{Character. Location of the legend. "plot" (default) or "panel".}
 
 \item{n_legend_lines}{Integer. Number of lines in the legend.}
 
-\item{legend_key_chars_equivalence}{Integer. Approximate number of characters the legend key equals.}
+\item{showNA}{String, one of "ifany", "always" or "never". Not yet in use.}
 
-\item{max_chars_per_figure_width}{Integer. Maximum number of characters per figure width.}
+\item{legend_key_chars_equivalence}{Integer. Approximate number of characters the legend key equals.}
 
 \item{multiplier_per_horizontal_line}{Numeric. Multiplier per horizontal line.}
 
 \item{multiplier_per_vertical_letter}{Numeric. Multiplier per vertical letter.}
 
-\item{multiplier_per_facet}{Numeric. Multiplier per facet.}
+\item{multiplier_per_facet}{Numeric. Multiplier per facet height.}
 
 \item{multiplier_per_legend_line}{Numeric. Multiplier per legend line.}
 
