@@ -13,7 +13,7 @@ legend properties."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -72,21 +72,24 @@ legend properties.</p>
 <span>  max_chars_cats_x <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  freq <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  x_axis_label_width <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  strip_width <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  strip_angle <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  main_font_size <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  legend_location <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"plot"</span>, <span class="st">"panel"</span><span class="op">)</span>,</span>
 <span>  n_legend_lines <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_key_chars_equivalence <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  max_chars_per_figure_width <span class="op">=</span> <span class="fl">100</span>,</span>
-<span>  multiplier_per_horizontal_line <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  multiplier_per_horizontal_line <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  multiplier_per_vertical_letter <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  multiplier_per_facet <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  multiplier_per_bar <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  multiplier_per_legend_line <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  multiplier_per_plot <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  fixed_constant <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  figure_width_in_cm <span class="op">=</span> <span class="fl">14</span>,</span>
 <span>  margin_in_cm <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  max <span class="op">=</span> <span class="fl">8</span>,</span>
-<span>  min <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  figure_width_in_cm <span class="op">=</span> <span class="fl">14</span>,</span>
+<span>  max <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  min <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  hide_axis_text_if_single_variable <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  showNA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ifany"</span>, <span class="st">"never"</span>, <span class="st">"always"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -127,8 +130,8 @@ legend properties.</p>
 <dd><p>Logical. If TRUE, frequency plot with categories next to each other. If FALSE (default), proportion plot with stacked categories.</p></dd>
 
 
-<dt id="arg-x-axis-label-width">x_axis_label_width<a class="anchor" aria-label="anchor" href="#arg-x-axis-label-width"></a></dt>
-<dd><p>Numeric. Width allocated for x-axis labels.</p></dd>
+<dt id="arg-x-axis-label-width-strip-width">x_axis_label_width, strip_width<a class="anchor" aria-label="anchor" href="#arg-x-axis-label-width-strip-width"></a></dt>
+<dd><p>Numeric. Width allocated for x-axis labels and strip labels respectively.</p></dd>
 
 
 <dt id="arg-strip-angle">strip_angle<a class="anchor" aria-label="anchor" href="#arg-strip-angle"></a></dt>
@@ -140,7 +143,7 @@ legend properties.</p>
 
 
 <dt id="arg-legend-location">legend_location<a class="anchor" aria-label="anchor" href="#arg-legend-location"></a></dt>
-<dd><p>Character. Location of the legend ("panel" or "plot").</p></dd>
+<dd><p>Character. Location of the legend. "plot" (default) or "panel".</p></dd>
 
 
 <dt id="arg-n-legend-lines">n_legend_lines<a class="anchor" aria-label="anchor" href="#arg-n-legend-lines"></a></dt>
@@ -149,10 +152,6 @@ legend properties.</p>
 
 <dt id="arg-legend-key-chars-equivalence">legend_key_chars_equivalence<a class="anchor" aria-label="anchor" href="#arg-legend-key-chars-equivalence"></a></dt>
 <dd><p>Integer. Approximate number of characters the legend key equals.</p></dd>
-
-
-<dt id="arg-max-chars-per-figure-width">max_chars_per_figure_width<a class="anchor" aria-label="anchor" href="#arg-max-chars-per-figure-width"></a></dt>
-<dd><p>Integer. Maximum number of characters per figure width.</p></dd>
 
 
 <dt id="arg-multiplier-per-horizontal-line">multiplier_per_horizontal_line<a class="anchor" aria-label="anchor" href="#arg-multiplier-per-horizontal-line"></a></dt>
@@ -164,23 +163,31 @@ legend properties.</p>
 
 
 <dt id="arg-multiplier-per-facet">multiplier_per_facet<a class="anchor" aria-label="anchor" href="#arg-multiplier-per-facet"></a></dt>
-<dd><p>Numeric. Multiplier per facet.</p></dd>
+<dd><p>Numeric. Multiplier per facet height.</p></dd>
+
+
+<dt id="arg-multiplier-per-bar">multiplier_per_bar<a class="anchor" aria-label="anchor" href="#arg-multiplier-per-bar"></a></dt>
+<dd><p>Numeric. Multiplier per bar height (thickness).</p></dd>
 
 
 <dt id="arg-multiplier-per-legend-line">multiplier_per_legend_line<a class="anchor" aria-label="anchor" href="#arg-multiplier-per-legend-line"></a></dt>
 <dd><p>Numeric. Multiplier per legend line.</p></dd>
 
 
+<dt id="arg-multiplier-per-plot">multiplier_per_plot<a class="anchor" aria-label="anchor" href="#arg-multiplier-per-plot"></a></dt>
+<dd><p>Numeric. Multiplier for entire plot estimates.</p></dd>
+
+
 <dt id="arg-fixed-constant">fixed_constant<a class="anchor" aria-label="anchor" href="#arg-fixed-constant"></a></dt>
 <dd><p>Numeric. Fixed constant to be added to the height.</p></dd>
 
 
-<dt id="arg-figure-width-in-cm">figure_width_in_cm<a class="anchor" aria-label="anchor" href="#arg-figure-width-in-cm"></a></dt>
-<dd><p>Numeric. Width of the figure in centimeters.</p></dd>
-
-
 <dt id="arg-margin-in-cm">margin_in_cm<a class="anchor" aria-label="anchor" href="#arg-margin-in-cm"></a></dt>
 <dd><p>Numeric. Margin in centimeters.</p></dd>
+
+
+<dt id="arg-figure-width-in-cm">figure_width_in_cm<a class="anchor" aria-label="anchor" href="#arg-figure-width-in-cm"></a></dt>
+<dd><p>Numeric. Width of the figure in centimeters.</p></dd>
 
 
 <dt id="arg-max">max<a class="anchor" aria-label="anchor" href="#arg-max"></a></dt>
@@ -189,6 +196,10 @@ legend properties.</p>
 
 <dt id="arg-min">min<a class="anchor" aria-label="anchor" href="#arg-min"></a></dt>
 <dd><p>Numeric. Minimum height.</p></dd>
+
+
+<dt id="arg-hide-axis-text-if-single-variable">hide_axis_text_if_single_variable<a class="anchor" aria-label="anchor" href="#arg-hide-axis-text-if-single-variable"></a></dt>
+<dd><p>Whether the label is hidden for single dependent variable plots.</p></dd>
 
 
 <dt id="arg-showna">showNA<a class="anchor" aria-label="anchor" href="#arg-showna"></a></dt>
@@ -207,7 +218,7 @@ legend properties.</p>
 <span class="r-in"><span>  n_cats_y <span class="op">=</span> <span class="fl">3</span>,</span></span>
 <span class="r-in"><span>  max_chars_labels_y <span class="op">=</span> <span class="fl">20</span>,</span></span>
 <span class="r-in"><span>  max_chars_cats_y <span class="op">=</span> <span class="fl">8</span>,</span></span>
-<span class="r-in"><span>  n_x <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  n_x <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  n_cats_x <span class="op">=</span> <span class="fl">4</span>,</span></span>
 <span class="r-in"><span>  max_chars_labels_x <span class="op">=</span> <span class="fl">12</span>,</span></span>
 <span class="r-in"><span>  freq <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
@@ -217,18 +228,13 @@ legend properties.</p>
 <span class="r-in"><span>  legend_location <span class="op">=</span> <span class="st">"panel"</span>,</span></span>
 <span class="r-in"><span>  n_legend_lines <span class="op">=</span> <span class="fl">2</span>,</span></span>
 <span class="r-in"><span>  legend_key_chars_equivalence <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  max_chars_per_figure_width <span class="op">=</span> <span class="fl">100</span>,</span></span>
-<span class="r-in"><span>  multiplier_per_horizontal_line <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>  multiplier_per_horizontal_line <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>  multiplier_per_vertical_letter <span class="op">=</span> <span class="fl">.15</span>,</span></span>
 <span class="r-in"><span>  multiplier_per_facet <span class="op">=</span> <span class="fl">.95</span>,</span></span>
 <span class="r-in"><span>  multiplier_per_legend_line <span class="op">=</span> <span class="fl">1.5</span>,</span></span>
-<span class="r-in"><span>  fixed_constant <span class="op">=</span> <span class="fl">0</span>,</span></span>
 <span class="r-in"><span>  figure_width_in_cm <span class="op">=</span> <span class="fl">16</span>,</span></span>
-<span class="r-in"><span>  margin_in_cm <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>  max <span class="op">=</span> <span class="fl">8</span>,</span></span>
-<span class="r-in"><span>  min <span class="op">=</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
