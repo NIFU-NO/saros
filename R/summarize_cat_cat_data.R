@@ -83,28 +83,63 @@ add_collapsed_categories <-
       )
   }
 
-
+replace_with_empty_string <- function(str) {
+  if (is.null(str) || is.na(str)) "" else str
+}
 
 
 add_n_to_label <- function(data_summary,
+                           add_n_to_dep_label = FALSE,
+                           add_n_to_dep_label_prefix = " (N = ",
+                           add_n_to_dep_label_suffix = ")",
+                           add_n_to_indep_label = FALSE,
+                           add_n_to_indep_label_prefix = " (N = ",
+                           add_n_to_indep_label_suffix = ")",
                            add_n_to_label = FALSE,
                            add_n_to_label_prefix = " (N = ",
                            add_n_to_label_suffix = ")") {
-  if (isFALSE(add_n_to_label)) {
+  if (isFALSE(add_n_to_dep_label) && isFALSE(add_n_to_indep_label) && isFALSE(add_n_to_label)) {
     return(data_summary)
   }
 
-  if (is.null(add_n_to_label_prefix) || is.na(add_n_to_label_prefix)) {
-    add_n_to_label_prefix <- ""
+
+  add_n_to_dep_label_prefix <- replace_with_empty_string(add_n_to_dep_label_prefix)
+  add_n_to_dep_label_suffix <- replace_with_empty_string(add_n_to_dep_label_suffix)
+  add_n_to_indep_label_prefix <- replace_with_empty_string(add_n_to_indep_label_prefix)
+  add_n_to_indep_label_suffix <- replace_with_empty_string(add_n_to_indep_label_suffix)
+  add_n_to_label_prefix <- replace_with_empty_string(add_n_to_label_prefix)
+  add_n_to_label_suffix <- replace_with_empty_string(add_n_to_label_suffix)
+  # browser()
+
+  if (isTRUE(add_n_to_dep_label) || isTRUE(add_n_to_label)) {
+    add_to_var <- ".variable_label"
+    count_var <- ".count_per_dep"
+    data_summary <-
+      data_summary |>
+      tidyr::unite(
+        col = !!add_to_var,
+        tidyselect::all_of(c(add_to_var, count_var)),
+        sep = add_n_to_dep_label_prefix, remove = FALSE, na.rm = TRUE
+      ) |>
+      dplyr::mutate(.variable_label = paste0(.data[[add_to_var]], add_n_to_dep_label_suffix))
+  }
+  if (isTRUE(add_n_to_indep_label)) {
+    add_to_var <- names(data_summary)[!names(data_summary) %in% .saros.env$summary_data_sort2]
+    count_var <- ".count_per_indep_group"
+    if (length(add_to_var)) {
+      data_summary <-
+        data_summary |>
+        tidyr::unite(
+          col = !!add_to_var,
+          tidyselect::all_of(c(add_to_var, count_var)),
+          sep = add_n_to_indep_label_prefix, remove = FALSE, na.rm = TRUE
+        ) |>
+        dplyr::mutate(.variable_label = paste0(.data[[add_to_var]], add_n_to_indep_label_suffix))
+    }
   }
 
-  data_summary |>
-    tidyr::unite(
-      col = ".variable_label",
-      tidyselect::all_of(c(".variable_label", ".count_total")),
-      sep = add_n_to_label_prefix, remove = FALSE, na.rm = TRUE
-    ) |>
-    dplyr::mutate(.variable_label = paste0(.data[[".variable_label"]], add_n_to_label_suffix))
+
+  data_summary
 }
 
 
@@ -118,12 +153,9 @@ add_n_to_category <- function(data_summary,
     return(data_summary)
   }
 
-  if (is.null(add_n_to_category_prefix) || is.na(add_n_to_category_prefix)) {
-    add_n_to_category_prefix <- ""
-  }
-  if (is.null(add_n_to_category_infix) || is.na(add_n_to_category_infix)) {
-    add_n_to_category_infix <- ","
-  }
+  add_n_to_category_prefix <- replace_with_empty_string(add_n_to_category_prefix)
+  add_n_to_category_infix <- replace_with_empty_string(add_n_to_category_infix)
+  add_n_to_category_suffix <- replace_with_empty_string(add_n_to_category_suffix)
 
   out <-
     data_summary |>
@@ -267,6 +299,8 @@ summarize_cat_cat_data <-
            sort_by = ".upper",
            data_label = c("percentage_bare", "percentage", "proportion", "count"),
            digits = 0,
+           add_n_to_dep_label = FALSE,
+           add_n_to_indep_label = FALSE,
            add_n_to_label = FALSE,
            add_n_to_category = FALSE,
            hide_label_if_prop_below = .01,
@@ -339,6 +373,12 @@ summarize_cat_cat_data <-
         )
       ) |>
       add_n_to_label(
+        add_n_to_dep_label = add_n_to_dep_label,
+        add_n_to_dep_label_prefix = translations$add_n_to_dep_label_prefix,
+        add_n_to_dep_label_suffix = translations$add_n_to_dep_label_suffix,
+        add_n_to_indep_label = add_n_to_indep_label,
+        add_n_to_indep_label_prefix = translations$add_n_to_indep_label_prefix,
+        add_n_to_indep_label_suffix = translations$add_n_to_indep_label_suffix,
         add_n_to_label = add_n_to_label,
         add_n_to_label_prefix = translations$add_n_to_label_prefix,
         add_n_to_label_suffix = translations$add_n_to_label_suffix

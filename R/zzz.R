@@ -10,7 +10,8 @@ if (!exists(".saros.env")) .saros.env <- NULL
     c(
       ".variable_name", ".category",
       ".count", ".count_se",
-      ".count_total",
+      ".count_per_dep",
+      ".count_per_indep_group",
       ".proportion", ".proportion_se",
       ".mean", ".mean_se",
       ".variable_label", ".variable_label_prefix",

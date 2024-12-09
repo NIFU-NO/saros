@@ -23,6 +23,8 @@ makeme(
   hide_for_crowd_if_cell_n_below = 0,
   hide_for_all_crowds_if_hidden_for_crowd = NULL,
   hide_indep_cat_for_all_crowds_if_hidden_for_crowd = FALSE,
+  add_n_to_dep_label = FALSE,
+  add_n_to_indep_label = FALSE,
   add_n_to_label = FALSE,
   add_n_to_category = FALSE,
   totals = FALSE,
@@ -45,12 +47,16 @@ makeme(
   variables_always_at_bottom = NULL,
   table_wide = TRUE,
   table_main_question_as_header = FALSE,
+  n_categories_limit = 12,
   translations = list(last_sep = " and ", table_heading_N = "Total (N)",
-    add_n_to_label_prefix = " (N = ", add_n_to_label_suffix = ")",
-    add_n_to_category_prefix = " (N = [", add_n_to_category_infix = ",",
-    add_n_to_category_suffix = "])", by_total = "Everyone", sigtest_variable_header_1 =
-    "Var 1", sigtest_variable_header_2 = "Var 2", crowd_all = "All", crowd_target =
-    "Target", crowd_others = "Others"),
+    table_heading_data_label = "\%", add_n_to_dep_label_prefix = " (N = ",
+    add_n_to_dep_label_suffix = ")", add_n_to_indep_label_prefix = " (N = ",
+    add_n_to_indep_label_suffix = ")", add_n_to_label_prefix = " (N = ",
+    add_n_to_label_suffix = ")", add_n_to_category_prefix = " (N = [",
+    add_n_to_category_infix = ",", add_n_to_category_suffix = "])", by_total =
+    "Everyone", sigtest_variable_header_1 = "Var 1", sigtest_variable_header_2 = "Var 2",
+    crowd_all = "All", 
+     crowd_target = "Target", crowd_others = "Others"),
   plot_height = 15,
   colour_palette = NULL,
   colour_2nd_binary_cat = "#ffffff",
@@ -174,7 +180,19 @@ crowds specified in \code{hide_for_all_crowds_if_hidden_for_crowd}? This is usef
 \code{indep} is academic disciplines, \code{mesos_var} is institutions, and a specific
 institution is not interested in seeing academic disciplines they do not offer themselves.}
 
-\item{add_n_to_label}{\emph{Add N= to the variable label}
+\item{add_n_to_dep_label, add_n_to_indep_label}{\emph{Add N= to the variable label}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+For some plots and tables it is useful to attach the \code{"N="} to the end of the label of
+the dependent and/or independent variable.
+Whether it is \code{N} or \code{N_valid} depends on your \code{showNA}-setting. See also
+\code{translations$add_n_to_dep_label_prefix},
+\code{translations$add_n_to_dep_label_suffix},
+\code{translations$add_n_to_indep_label_prefix},
+\code{translations$add_n_to_indep_label_suffix}.}
+
+\item{add_n_to_label}{\emph{Add N= to the variable label of both dep and indep}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
@@ -320,6 +338,13 @@ Whether to pivot table wider.}
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
 Whether to include the main question as a header in the table.}
+
+\item{n_categories_limit}{\emph{Limit for cat_table_ wide format}
+
+\verb{scalar<integer>} // \emph{default:} \code{12} (\code{optional})
+
+If there are more than this number of categories in the categorical variable,
+cat_table_* will have a long format instead of wide format.}
 
 \item{translations}{\emph{Localize your output}
 

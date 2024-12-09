@@ -55,6 +55,7 @@ validate_makeme_options <- function(params) {
 
       # Numeric and integer
       hide_label_if_prop_below = list(fun = function(x) is_scalar_finite_doubleish(x) && x >= 0 && x <= 1),
+      n_categories_limit = list(fun = function(x) rlang::is_integerish(x, n = 1) && x >= 0),
       digits = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0),
       label_font_size = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 72),
       main_font_size = list(fun = function(x) rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 72),

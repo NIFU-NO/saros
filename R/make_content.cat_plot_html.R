@@ -56,6 +56,7 @@ make_content.cat_plot_html <-
               "n = %.0f",
               stringi::stri_c("P = %.", dots$digits, "f%%", ignore_null = TRUE),
               "%s",
+              "n (valid) = %.0f",
               "N (valid) = %.0f",
               sep = "\n", ignore_null = TRUE
             ),
@@ -63,7 +64,8 @@ make_content.cat_plot_html <-
             .data$.count,
             .data$.proportion * 100,
             .data$.variable_label,
-            .data$.count_total
+            .data$.count_per_indep_group,
+            .data$.count_per_dep
           ),
         .tooltip = ifelse(!is.na(.data$.tooltip) & rlang::is_string(indep_vars),
           yes = sprintf(
@@ -96,7 +98,7 @@ make_content.cat_plot_html <-
         cumulative = TRUE
       ) +
       ggiraph::geom_col_interactive(
-        mapping = ggplot2::aes(tooltip = .data$.tooltip), # BUG: Messes up order of categories if enabled.
+        mapping = ggplot2::aes(tooltip = .data$.tooltip),
         position = if (prop_family) ggplot2::position_stack(reverse = TRUE) else ggplot2::position_dodge(width = .9),
         na.rm = TRUE,
         show.legend = TRUE

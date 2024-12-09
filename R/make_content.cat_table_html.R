@@ -29,8 +29,12 @@ make_content.cat_table_html <-
 
     # indep_label <- unname(get_raw_labels(data = dots$data, col_pos = dots$indep))
 
+
+    levels(data_summary[[".category"]])[
+      is.na(levels(data_summary[[".category"]])) |
+        levels(data_summary[[".category"]]) == ""
+    ] <- "NA"
     cat_lvls <- levels(data_summary[[".category"]])
-    cat_lvls[is.na(cat_lvls)] <- "NA"
 
     if (length(indep_label) == 1 && length(dots$indep) == 0) {
       cli::cli_abort("Something wrong in function.")
@@ -43,32 +47,48 @@ make_content.cat_table_html <-
 
         ".variable_name"
       }
+
     data_out <-
       data_summary |>
       dplyr::arrange(
         as.integer(factor(.data[[col_as_basis]])),
         if (length(dots$indep) > 0) as.integer(.data[[dots$indep]])
-      ) |>
-      tidyr::pivot_wider(
-        id_cols = tidyselect::all_of(c(col_as_basis, dots$indep, ".count_total")),
-        names_from = ".category", values_from = ".data_label",
-        names_expand = TRUE
       )
-    names(data_out)[names(data_out) == "NA"] <- "NA"
-    new_col_order <-
-      c(col_as_basis, dots$indep, cat_lvls, ".count_total")
+    if (length(cat_lvls) <= dots$n_categories_limit) {
+      data_out <-
+        data_out |>
+        tidyr::pivot_wider(
+          id_cols = tidyselect::all_of(c(col_as_basis, dots$indep, ".count_per_indep_group")),
+          names_from = ".category", values_from = ".data_label",
+          names_expand = TRUE
+        )
+      new_col_order <-
+        c(col_as_basis, dots$indep, cat_lvls, ".count_per_indep_group")
+      data_out <-
+        data_out |>
+        dplyr::relocate(tidyselect::all_of(new_col_order), .after = 1) |>
+        dplyr::rename_with(
+          .cols = tidyselect::all_of(cat_lvls),
+          .fn = ~ stringi::stri_c(ignore_null = FALSE, .x, if (dots$data_label %in% c("percentage", "percentage_bare")) " (%)")
+        ) |>
+        dplyr::rename_with(
+          .cols = ".count_per_indep_group",
+          .fn = function(x) dots$translations$table_heading_N
+        )
+    } else {
+      data_out <- data_out[, c(col_as_basis, ".category", ".count", ".data_label"), drop = FALSE] |>
+        dplyr::rename_with(
+          .cols = ".count",
+          .fn = function(x) dots$translations$table_heading_N
+        ) |>
+        dplyr::rename_with(
+          .cols = ".data_label",
+          .fn = function(x) dots$translations$table_heading_data_label
+        )
+    }
+    # browser()
+    # names(data_out)[names(data_out) == "NA"] <- "NA"
 
-    data_out <-
-      data_out |>
-      dplyr::relocate(tidyselect::all_of(new_col_order), .after = 1) |>
-      dplyr::rename_with(
-        .cols = tidyselect::all_of(cat_lvls),
-        .fn = ~ stringi::stri_c(ignore_null = FALSE, .x, if (dots$data_label %in% c("percentage", "percentage_bare")) " (%)")
-      ) |>
-      dplyr::rename_with(
-        .cols = ".count_total",
-        .fn = function(x) dots$translations$table_heading_N
-      )
     if (length(dots$indep) > 0 &&
       is.character(indep_label) &&
       length(indep_label) == length(dots$indep) &&

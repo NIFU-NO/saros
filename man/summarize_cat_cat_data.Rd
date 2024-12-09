@@ -14,6 +14,8 @@ summarize_cat_cat_data(
   sort_by = ".upper",
   data_label = c("percentage_bare", "percentage", "proportion", "count"),
   digits = 0,
+  add_n_to_dep_label = FALSE,
+  add_n_to_indep_label = FALSE,
   add_n_to_label = FALSE,
   add_n_to_category = FALSE,
   hide_label_if_prop_below = 0.01,
@@ -93,7 +95,19 @@ One of "proportion", "percentage", "percentage_bare", "count", "mean", or "media
 
 Number of decimal places.}
 
-\item{add_n_to_label}{\emph{Add N= to the variable label}
+\item{add_n_to_dep_label, add_n_to_indep_label}{\emph{Add N= to the variable label}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+For some plots and tables it is useful to attach the \code{"N="} to the end of the label of
+the dependent and/or independent variable.
+Whether it is \code{N} or \code{N_valid} depends on your \code{showNA}-setting. See also
+\code{translations$add_n_to_dep_label_prefix},
+\code{translations$add_n_to_dep_label_suffix},
+\code{translations$add_n_to_indep_label_prefix},
+\code{translations$add_n_to_indep_label_suffix}.}
+
+\item{add_n_to_label}{\emph{Add N= to the variable label of both dep and indep}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
