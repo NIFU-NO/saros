@@ -200,7 +200,19 @@
 #'
 #'   A list of translations where the name is the code and the value is the translation. See the examples.
 #'
-#' @param add_n_to_label *Add N= to the variable label*
+#' @param add_n_to_dep_label,add_n_to_indep_label *Add N= to the variable label*
+#'
+#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'
+#'   For some plots and tables it is useful to attach the `"N="` to the end of the label of
+#'   the dependent and/or independent variable.
+#'   Whether it is `N` or `N_valid` depends on your `showNA`-setting. See also
+#'   `translations$add_n_to_dep_label_prefix`,
+#'   `translations$add_n_to_dep_label_suffix`,
+#'   `translations$add_n_to_indep_label_prefix`,
+#'   `translations$add_n_to_indep_label_suffix`.
+#'
+#' @param add_n_to_label *Add N= to the variable label of both dep and indep*
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
 #'
@@ -288,6 +300,12 @@
 #'
 #'   Whether to pivot table wider.
 #'
+#' @param n_categories_limit *Limit for cat_table_ wide format*
+#'
+#'   `scalar<integer>` // *default:* `12` (`optional`)
+#'
+#'   If there are more than this number of categories in the categorical variable,
+#'   cat_table_* will have a long format instead of wide format.
 #'
 #' @param plot_height *DOCX-setting*
 #'
@@ -387,6 +405,8 @@ makeme <-
            hide_for_crowd_if_cell_n_below = 0,
            hide_for_all_crowds_if_hidden_for_crowd = NULL,
            hide_indep_cat_for_all_crowds_if_hidden_for_crowd = FALSE,
+           add_n_to_dep_label = FALSE,
+           add_n_to_indep_label = FALSE,
            add_n_to_label = FALSE,
            add_n_to_category = FALSE,
            totals = FALSE,
@@ -411,10 +431,16 @@ makeme <-
            # For tables
            table_wide = TRUE,
            table_main_question_as_header = FALSE,
+           n_categories_limit = 12,
            translations =
              list(
                last_sep = " and ", # Not in use
                table_heading_N = "Total (N)",
+               table_heading_data_label = "%",
+               add_n_to_dep_label_prefix = " (N = ",
+               add_n_to_dep_label_suffix = ")",
+               add_n_to_indep_label_prefix = " (N = ",
+               add_n_to_indep_label_suffix = ")",
                add_n_to_label_prefix = " (N = ",
                add_n_to_label_suffix = ")",
                add_n_to_category_prefix = " (N = [",
@@ -598,7 +624,7 @@ makeme <-
       if (all(variable_type_dep %in% c("integer", "numeric"))) {
         args$data_summary <-
           rlang::exec(summarize_int_cat_data, !!!args)
-      } else if (all(variable_type_dep %in% c("factor", "ordered"))) {
+      } else if (all(variable_type_dep %in% c("factor", "ordered", "character"))) {
         args$data_summary <-
           summarize_cat_cat_data(
             data = subset_data,
@@ -612,6 +638,8 @@ makeme <-
             descend = args$descend,
             data_label = args$data_label,
             digits = args$digits,
+            add_n_to_dep_label = args$add_n_to_dep_label,
+            add_n_to_indep_label = args$add_n_to_indep_label,
             add_n_to_label = args$add_n_to_label,
             add_n_to_category = args$add_n_to_category,
             hide_label_if_prop_below = args$hide_label_if_prop_below,

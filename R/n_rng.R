@@ -149,7 +149,7 @@ n_rng2 <- function(ggobj,
   }
   data <- ggobj$data
 
-  n <- unique(range(data$.count_total, na.rm = TRUE))
+  n <- unique(range(data$.count_per_indep_group, na.rm = TRUE))
 
   glue_together_range(
     n = n, glue_template_1 = glue_template_1,

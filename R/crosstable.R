@@ -141,6 +141,13 @@ crosstable.data.frame <-
             } else {
               grouped_count <- summary_prop
             }
+
+
+            # Summaries per dep variable (e.g. b_1, b_2)
+            summary_prop[[".count_per_dep"]] <- sum(grouped_count$.count, na.rm = TRUE)
+
+
+            # Summaries per indep group (e.g. males, females)
             grouped_count <- tryCatch(
               stats::aggregate(
                 x = grouped_count$.count,
@@ -151,9 +158,11 @@ crosstable.data.frame <-
                 data.frame(matrix(NA, ncol = max(c(1, length(indep))), dimnames = list(NULL, indep)))
               }
             )
-            names(grouped_count)[ncol(grouped_count)] <- ".count_total"
+            names(grouped_count)[ncol(grouped_count)] <- ".count_per_indep_group"
             summary_prop <- merge(summary_prop, grouped_count, by = indep)
-            summary_prop$.proportion <- summary_prop$.count / summary_prop[[".count_total"]]
+            summary_prop$.proportion <- summary_prop$.count / summary_prop[[".count_per_indep_group"]]
+
+
             summary_prop$.category <- factor(
               x = summary_prop$.category,
               levels = fct_lvls,
@@ -187,7 +196,8 @@ crosstable.data.frame <-
               .category = factor(NA),
               .count = NA_integer_,
               .count_se = NA_real_,
-              .count_total = NA_integer_,
+              .count_per_dep = NA_integer_,
+              .count_per_indep_group = NA_integer_,
               .proportion = NA_real_,
               .proportion_se = NA_real_,
               .mean = NA_real_,
@@ -206,7 +216,8 @@ crosstable.data.frame <-
           ".variable_name", ".variable_label",
           ".category",
           ".count", ".count_se",
-          ".count_total",
+          ".count_per_dep",
+          ".count_per_indep_group",
           ".proportion", ".proportion_se",
           ".mean", ".mean_se",
           # ".mean_base",
@@ -295,7 +306,8 @@ crosstable.tbl_svy <-
         summary_mean <- srvyr::group_by(out, srvyr::across(tidyselect::all_of(indep)))
         summary_mean <- srvyr::summarize(summary_mean,
           .mean = srvyr::survey_mean(as.numeric(.data$.category)),
-          .count_total = srvyr::survey_total(na.rm = TRUE)
+          .count_per_dep = NA_integer_, # Not yet implemented here
+          .count_per_indep_group = srvyr::survey_total(na.rm = TRUE)
         )
         summary_mean <- srvyr::ungroup(summary_mean)
         summary_mean <- srvyr::as_tibble(summary_mean)
@@ -326,7 +338,8 @@ crosstable.tbl_svy <-
           .variable_label = unname(get_raw_labels(data = data, col_pos = .x)),
           .category = factor(NA),
           .count = NA_integer_,
-          .count_total = NA_integer_,
+          .count_per_dep = NA_integer_,
+          .count_per_indep_group = NA_integer_,
           .proportion = NA_real_,
           .count_se = NA_real_,
           .proportion_se = NA_real_,
@@ -346,7 +359,8 @@ crosstable.tbl_svy <-
           ".variable_name", ".variable_label",
           ".category",
           ".count", ".count_se",
-          ".count_total",
+          ".count_per_dep",
+          ".count_per_indep_group",
           ".proportion", ".proportion_se",
           ".mean", ".mean_se",
           # ".mean_base",
