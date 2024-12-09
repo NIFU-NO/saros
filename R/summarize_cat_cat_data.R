@@ -117,7 +117,7 @@ add_n_to_label <- function(data_summary,
     data_summary <-
       data_summary |>
       tidyr::unite(
-        col = add_to_var,
+        col = !!add_to_var,
         tidyselect::all_of(c(add_to_var, count_var)),
         sep = add_n_to_dep_label_prefix, remove = FALSE, na.rm = TRUE
       ) |>
@@ -130,7 +130,7 @@ add_n_to_label <- function(data_summary,
       data_summary <-
         data_summary |>
         tidyr::unite(
-          col = add_to_var,
+          col = !!add_to_var,
           tidyselect::all_of(c(add_to_var, count_var)),
           sep = add_n_to_indep_label_prefix, remove = FALSE, na.rm = TRUE
         ) |>
