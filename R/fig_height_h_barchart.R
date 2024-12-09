@@ -407,7 +407,8 @@ fig_height_h_barchart2 <- # Returns a numeric value
         stringi::stri_replace_all_regex(
           str = as.character(data[[indep_vars]]),
           pattern = "(.+)___.+",
-          replacement = "$1"
+          replacement = "$1",
+          dot_all = TRUE
         )
     }
 
