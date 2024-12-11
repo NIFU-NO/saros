@@ -111,7 +111,7 @@ add_n_to_label <- function(data_summary,
   add_n_to_label_suffix <- replace_with_empty_string(add_n_to_label_suffix)
   # browser()
 
-  if (isTRUE(add_n_to_dep_label) || isTRUE(add_n_to_label)) {
+  if (isTRUE(add_n_to_dep_label)) {
     add_to_var <- ".variable_label"
     count_var <- ".count_per_dep"
     data_summary <-
@@ -133,8 +133,8 @@ add_n_to_label <- function(data_summary,
           col = !!add_to_var,
           tidyselect::all_of(c(add_to_var, count_var)),
           sep = add_n_to_indep_label_prefix, remove = FALSE, na.rm = TRUE
-        ) |>
-        dplyr::mutate(.variable_label = paste0(.data[[add_to_var]], add_n_to_indep_label_suffix))
+        )
+      data_summary[[add_to_var]] <- paste0(data_summary[[add_to_var]], add_n_to_indep_label_suffix)
     }
   }
 
