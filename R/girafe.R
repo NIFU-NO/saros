@@ -130,6 +130,7 @@ girafe <- function(
         default_values = formals(girafe)
     )
 
+
     # If in a Quarto/Rmarkdown document rendering context, avoid doing the tests below unnecessarily often?
     if (!(rlang::is_integerish(args$char_limit))) cli::cli_abort("{.arg char_limit} must be an integer.")
     if (!(rlang::is_integerish(args$label_wrap_width))) cli::cli_abort("{.arg label_wrap_width} must be an integer.")
@@ -165,11 +166,11 @@ girafe <- function(
             }
 
 
-        if (all(fill_levels %in% c(checked, not_checked))) {
+        if (all(fill_levels %in% c(args$checked, args$not_checked))) {
             checkbox <- TRUE
             ggobj <- convert_to_checkbox_plot(ggobj,
-                checked = checked,
-                not_checked = not_checked
+                checked = args$checked,
+                not_checked = args$not_checked
             )
         }
 
@@ -181,12 +182,12 @@ girafe <- function(
             suppressMessages(
                 ggobj +
                     scale_discrete_special(
-                        palette_codes = palette_codes,
+                        palette_codes = args$palette_codes,
                         lvls = fill_levels,
-                        ncol = ncol,
-                        byrow = byrow,
-                        label_wrap_width = label_wrap_width,
-                        priority_palette_codes = priority_palette_codes
+                        ncol = args$ncol,
+                        byrow = args$byrow,
+                        label_wrap_width = args$label_wrap_width,
+                        priority_palette_codes = args$priority_palette_codes
                     ) +
                     ggplot2::guides(fill = if (isTRUE(checkbox)) {
                         "none"
@@ -195,7 +196,7 @@ girafe <- function(
                             ncol =
                                 guess_legend_ncols(
                                     ggobj = ggobj,
-                                    char_limit = char_limit
+                                    char_limit = args$char_limit
                                 )
                         )
                     }),
