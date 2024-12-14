@@ -25,6 +25,8 @@ reference:
   - make_link.default
   - make_link.list
   - ggsaver
+- title: "Advanced Palette-Retrieving ggiraph::girafe wrapper"
+  - girafe
 - title: Compute optimal figure heights for the built-in cat_plot
   contents:
   - fig_height_h_barchart
