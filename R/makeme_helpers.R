@@ -75,8 +75,8 @@ summarize_data_by_type <- function(args, subset_data, dep_crwd, indep_crwd, ...)
             hide_label_if_prop_below = args$hide_label_if_prop_below,
             data_label_decimal_symbol = args$data_label_decimal_symbol,
             categories_treated_as_na = args$categories_treated_as_na,
-            variables_always_at_bottom = args$variables_always_at_bottom,
-            variables_always_at_top = args$variables_always_at_top,
+            labels_always_at_bottom = args$labels_always_at_bottom,
+            labels_always_at_top = args$labels_always_at_top,
             translations = args$translations
         )
     }

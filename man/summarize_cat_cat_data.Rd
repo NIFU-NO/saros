@@ -23,8 +23,8 @@ summarize_cat_cat_data(
   categories_treated_as_na = NULL,
   label_separator = NULL,
   descend = FALSE,
-  variables_always_at_bottom = NULL,
-  variables_always_at_top = NULL,
+  labels_always_at_bottom = NULL,
+  labels_always_at_top = NULL,
   translations = list(),
   call = rlang::caller_env()
 )
@@ -159,7 +159,7 @@ Separator for main question from sub-question.}
 Reverse sorting of \code{sort_by} in figures and tables. See \code{arrange_section_by}
 for sorting of report sections.}
 
-\item{variables_always_at_top, variables_always_at_bottom}{\emph{Top/bottom variables}
+\item{labels_always_at_top, labels_always_at_bottom}{\emph{Top/bottom variables}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 

@@ -225,8 +225,8 @@ flip_exception_categories <- function(data_summary,
 sort_data <- function(data_summary,
                       sort_by = NULL,
                       descend = FALSE,
-                      variables_always_at_bottom = NULL,
-                      variables_always_at_top = NULL,
+                      labels_always_at_bottom = NULL,
+                      labels_always_at_top = NULL,
                       translations = eval(formals(makeme)$translations),
                       indep_names = character(0),
                       call = rlang::caller_env()) {
@@ -261,15 +261,15 @@ sort_data <- function(data_summary,
   if (!all(is.na(data_summary$.variable_label))) {
     data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label, uniques)
 
-    variables_always_at_bottom <- variables_always_at_bottom[variables_always_at_bottom %in% uniques]
+    labels_always_at_bottom <- labels_always_at_bottom[labels_always_at_bottom %in% uniques]
     data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
-      variables_always_at_bottom,
+      labels_always_at_bottom,
       after = length(uniques)
     )
 
-    variables_always_at_top <- variables_always_at_top[variables_always_at_top %in% uniques]
+    labels_always_at_top <- labels_always_at_top[labels_always_at_top %in% uniques]
     data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
-      variables_always_at_top,
+      labels_always_at_top,
       after = 0
     )
   }
@@ -324,8 +324,8 @@ summarize_cat_cat_data <-
            categories_treated_as_na = NULL,
            label_separator = NULL,
            descend = FALSE,
-           variables_always_at_bottom = NULL,
-           variables_always_at_top = NULL,
+           labels_always_at_bottom = NULL,
+           labels_always_at_top = NULL,
            translations = list(),
            call = rlang::caller_env()) {
     showNA <- rlang::arg_match(showNA)
@@ -413,8 +413,8 @@ summarize_cat_cat_data <-
         indep_names = indep,
         sort_by = sort_by,
         descend = descend,
-        variables_always_at_bottom = variables_always_at_bottom,
-        variables_always_at_top = variables_always_at_top,
+        labels_always_at_bottom = labels_always_at_bottom,
+        labels_always_at_top = labels_always_at_top,
         translations = translations
       )
   }

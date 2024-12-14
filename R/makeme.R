@@ -164,7 +164,7 @@
 #'
 #'   If TRUE, display plot vertically.
 #'
-#' @param variables_always_at_top,variables_always_at_bottom *Top/bottom variables*
+#' @param labels_always_at_top,labels_always_at_bottom *Top/bottom variables*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
@@ -426,8 +426,8 @@ makeme <-
            # Sorting
            sort_by = ".upper",
            descend = TRUE,
-           variables_always_at_top = NULL,
-           variables_always_at_bottom = NULL,
+           labels_always_at_top = NULL,
+           labels_always_at_bottom = NULL,
            # For tables
            table_wide = TRUE,
            table_main_question_as_header = FALSE,
@@ -645,8 +645,8 @@ makeme <-
             hide_label_if_prop_below = args$hide_label_if_prop_below,
             data_label_decimal_symbol = args$data_label_decimal_symbol,
             categories_treated_as_na = args$categories_treated_as_na,
-            variables_always_at_bottom = args$variables_always_at_bottom,
-            variables_always_at_top = args$variables_always_at_top,
+            labels_always_at_bottom = args$labels_always_at_bottom,
+            labels_always_at_top = args$labels_always_at_top,
             translations = args$translations
           )
       }
