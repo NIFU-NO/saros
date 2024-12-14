@@ -44,7 +44,8 @@ if (!exists(".saros.env")) .saros.env <- NULL
     make_link = make_link,
     n_rng = n_rng,
     n_range = n_range,
-    fig_height_h_barchart = fig_height_h_barchart
+    fig_height_h_barchart = fig_height_h_barchart,
+    girafe = girafe
   )
 
   for (fn_name in names(fn_opt_list)) {
