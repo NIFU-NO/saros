@@ -1,6 +1,6 @@
 custom_palette <- function(palette_codes, fct_levels, priority_palette_codes = NULL) {
     function(n, lvls = fct_levels) {
-        for (i in seq_len(palette_codes)) {
+        for (i in seq_along(palette_codes)) {
             if (all(lvls %in% names(palette_codes[[i]]))) {
                 matched_palette <- palette_codes[[i]]
                 break
