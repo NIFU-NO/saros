@@ -33,6 +33,8 @@ fig_height_h_barchart(
   max = 12,
   min = 2,
   hide_axis_text_if_single_variable = FALSE,
+  add_n_to_dep_label = FALSE,
+  add_n_to_indep_label = FALSE,
   showNA = c("ifany", "never", "always")
 )
 }
@@ -87,7 +89,11 @@ fig_height_h_barchart(
 
 \item{min}{Numeric. Minimum height.}
 
-\item{hide_axis_text_if_single_variable}{Whether the label is hidden for single dependent variable plots.}
+\item{hide_axis_text_if_single_variable}{Boolean. Whether the label is hidden for single dependent variable plots.}
+
+\item{add_n_to_dep_label, add_n_to_indep_label}{Boolean. If TRUE, will add 10 characters to the max label lengths. This is
+primarily useful when obtaining these settings from the global environment,
+avoiding the need to compute this for each figure chunk.}
 
 \item{showNA}{String, one of "ifany", "always" or "never". Not yet in use.}
 }
@@ -120,6 +126,6 @@ fig_height_h_barchart(
   multiplier_per_vertical_letter = .15,
   multiplier_per_facet = .95,
   multiplier_per_legend_line = 1.5,
-  figure_width_in_cm = 16,
+  figure_width_in_cm = 16
 )
 }

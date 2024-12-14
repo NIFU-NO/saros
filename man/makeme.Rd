@@ -43,8 +43,8 @@ makeme(
   strip_width = 25,
   sort_by = ".upper",
   descend = TRUE,
-  variables_always_at_top = NULL,
-  variables_always_at_bottom = NULL,
+  labels_always_at_top = NULL,
+  labels_always_at_bottom = NULL,
   table_wide = TRUE,
   table_main_question_as_header = FALSE,
   n_categories_limit = 12,
@@ -321,7 +321,7 @@ reordered by \code{sort_by}. Currently, this works best for a single \code{dep}.
 Reverse sorting of \code{sort_by} in figures and tables. See \code{arrange_section_by}
 for sorting of report sections.}
 
-\item{variables_always_at_top, variables_always_at_bottom}{\emph{Top/bottom variables}
+\item{labels_always_at_top, labels_always_at_bottom}{\emph{Top/bottom variables}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 

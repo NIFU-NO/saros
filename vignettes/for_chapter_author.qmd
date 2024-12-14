@@ -20,7 +20,7 @@ install.packages("saros")
 1. File location:
   1. Make sure the files are not in a folder with long paths on a Sharepoint/Teams folder (over 260 characters). This will cause trouble when you have to return.
   2. Each chapter should be in its own folder. Do not use a folder with your name on it where you have several chapters. It just becomes a mess.
-  3. Leave all files associated with the chapter in the same folder, also versions sent to quality assurance, etc. Everything in one place. Feel free to use subfolders to keep things tidy.
+  3. Leave all files associated with the chapter in the same folder, also versions sent to quality assurance, etc. Everything in one place. Feel free to use sub folders to keep things tidy.
   4. All files/folders that you consider "archive" that others should ignore can be named with an underscore at the beginning of the file/folder name. E.g. the file "\_biter_jeg_har_klipt_ut.qmd"
 2. First press Edit ➠ Folding ➠ Collapse all.
 3. Open one chunk at a time by tapping on it. Feel free to close them afterwards (arrow on the left side of the chunk).
@@ -49,7 +49,7 @@ install.packages("saros")
 ::: callout-note
 
 Chunk / code cell
-: A bit of R code, defined as anything between ```` ``{r} ```` and ```` ``` ````. It may have special settings, indicated by `#|` (called hashpipe), at the top. If you do not want to run the code temporarily (for example, if you are unsure whether it should be included), you can comment out the code itself (then keep the settings), or delete it completely, and rather retrieve it from the original if desired.
+: A bit of R code, defined as anything between ```` ``{r} ```` and ```` ``` ````. It may have special settings, indicated by `#|` (called hash pipe), at the top. If you do not want to run the code temporarily (for example, if you are unsure whether it should be included), you can comment out the code itself (then keep the settings), or delete it completely, and rather retrieve it from the original if desired.
 
 Render/compile
 : Runs all the chunks and assembles the document for e.g. an HTML page, PDF or DOCX. Can also be called compile in Norwegian.

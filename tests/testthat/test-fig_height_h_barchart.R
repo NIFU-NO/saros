@@ -48,10 +48,10 @@ testthat::test_that("fig_height_h_barchart handles frequency plot", {
 
 testthat::test_that("fig_height_h_barchart handles missing n_x and n_cats_x", {
   result <- saros::fig_height_h_barchart(
-    n_y = 8,
+    n_y = 6,
     n_cats_y = 3,
     max_chars_cats_y = 35,
-    max_chars_labels_y = 135,
+    max_chars_labels_y = 25,
     x_axis_label_width = 20,
     strip_angle = 0,
     main_font_size = 7,
@@ -62,7 +62,7 @@ testthat::test_that("fig_height_h_barchart handles missing n_x and n_cats_x", {
     max = 8,
     min = 1
   )
-  testthat::expect_equal(result, 2.46)
+  testthat::expect_equal(result, 3.69)
 })
 
 testthat::test_that("fig_height_h_barchart handles NULL multiplier_per_horizontal_line", {

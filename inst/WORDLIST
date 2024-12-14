@@ -4,6 +4,7 @@ CMD
 Codecov
 Colour
 Colours
+Ctrl
 DOCX
 Github
 Kristiania
@@ -21,12 +22,14 @@ RMarkdown
 RStudio
 Reactable
 Rinker
+Sharepoint
 Silge's
 Silge’s
 SurveyXact
 Tidyselect
 YAML
 barchart
+callout
 chapter’
 chisq
 chr
@@ -43,12 +46,17 @@ folderpaths
 fp
 funder
 ggiraph
+ggobj
 ggplot
 ggsave
+har
 https
 ifany
 indep
 infixes
+jeg
+kbd
+klipt
 labelled
 lifecycle
 maintainer's
@@ -73,4 +81,5 @@ tidyselect
 tidytext
 tidyverse
 unicode
+ut
 yaml

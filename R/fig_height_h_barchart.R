@@ -109,7 +109,10 @@ combine_figure_heights <- function(panel_height,
 #' @param max Numeric. Maximum height.
 #' @param min Numeric. Minimum height.
 #' @param showNA String, one of "ifany", "always" or "never". Not yet in use.
-#' @param hide_axis_text_if_single_variable Whether the label is hidden for single dependent variable plots.
+#' @param hide_axis_text_if_single_variable Boolean. Whether the label is hidden for single dependent variable plots.
+#' @param add_n_to_dep_label,add_n_to_indep_label Boolean. If TRUE, will add 10 characters to the max label lengths. This is
+#'      primarily useful when obtaining these settings from the global environment,
+#'      avoiding the need to compute this for each figure chunk.
 #'
 #' @return Numeric value representing the estimated height of the figure.
 #' @export
@@ -134,7 +137,7 @@ combine_figure_heights <- function(panel_height,
 #'   multiplier_per_vertical_letter = .15,
 #'   multiplier_per_facet = .95,
 #'   multiplier_per_legend_line = 1.5,
-#'   figure_width_in_cm = 16,
+#'   figure_width_in_cm = 16
 #' )
 fig_height_h_barchart <- # Returns a numeric value
   function(n_y,
@@ -165,6 +168,8 @@ fig_height_h_barchart <- # Returns a numeric value
            max = 12,
            min = 2,
            hide_axis_text_if_single_variable = FALSE,
+           add_n_to_dep_label = FALSE,
+           add_n_to_indep_label = FALSE,
            showNA = c("ifany", "never", "always")) {
     ######
     args <- check_options(
@@ -228,6 +233,8 @@ fig_height_h_barchart <- # Returns a numeric value
     check_integerish(min)
     legend_location <- legend_location[1]
     check_bool(hide_axis_text_if_single_variable)
+    check_bool(add_n_to_dep_label)
+    check_bool(add_n_to_indep_label)
 
 
 
@@ -277,7 +284,7 @@ fig_height_h_barchart <- # Returns a numeric value
       if (isTRUE(hide_axis_text_if_single_variable) && n_y == 1) {
         1 # Will make max_lines_y equal to 1
       } else {
-        max_chars_labels_y
+        max_chars_labels_y + add_n_to_dep_label * 10
       }
 
 
@@ -290,6 +297,7 @@ fig_height_h_barchart <- # Returns a numeric value
 
       max_lines_y_per_facet <-
         max_lines_y *
+          n_y *
           n_cats_y # To account for freq-plots. unsure if valid in bivariate plots
 
       n_facets <- 1
@@ -323,7 +331,7 @@ fig_height_h_barchart <- # Returns a numeric value
 
 
       max_lines_x_per_bar <- get_max_lines(
-        max_chars_per_unit = max_chars_cats_x,
+        max_chars_per_unit = max_chars_cats_x + add_n_to_indep_label * 10,
         total_width_available = max(c(x_axis_label_width, 1), na.rm = TRUE)
       )
       max_lines_x_per_facet <-

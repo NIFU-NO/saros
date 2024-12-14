@@ -111,30 +111,46 @@ add_n_to_label <- function(data_summary,
   add_n_to_label_suffix <- replace_with_empty_string(add_n_to_label_suffix)
   # browser()
 
-  if (isTRUE(add_n_to_dep_label) || isTRUE(add_n_to_label)) {
+  if (isTRUE(add_n_to_dep_label)) {
     add_to_var <- ".variable_label"
     count_var <- ".count_per_dep"
-    data_summary <-
-      data_summary |>
-      tidyr::unite(
-        col = !!add_to_var,
-        tidyselect::all_of(c(add_to_var, count_var)),
-        sep = add_n_to_dep_label_prefix, remove = FALSE, na.rm = TRUE
-      ) |>
-      dplyr::mutate(.variable_label = paste0(.data[[add_to_var]], add_n_to_dep_label_suffix))
+    levels(data_summary[[add_to_var]]) <-
+      paste0(
+        levels(data_summary[[add_to_var]]),
+        add_n_to_dep_label_prefix,
+        unique(data_summary[order(as.integer(data_summary[[add_to_var]])), count_var, drop = TRUE]),
+        add_n_to_dep_label_suffix
+      )
+    # data_summary <-
+    #   data_summary |>
+    #   tidyr::unite(
+    #     col = !!add_to_var,
+    #     tidyselect::all_of(c(add_to_var, count_var)),
+    #     sep = add_n_to_dep_label_prefix, remove = FALSE, na.rm = TRUE
+    #   ) |>
+    #   dplyr::mutate(.variable_label = paste0(.data[[add_to_var]], add_n_to_dep_label_suffix))
   }
   if (isTRUE(add_n_to_indep_label)) {
     add_to_var <- names(data_summary)[!names(data_summary) %in% .saros.env$summary_data_sort2]
     count_var <- ".count_per_indep_group"
     if (length(add_to_var)) {
-      data_summary <-
-        data_summary |>
-        tidyr::unite(
-          col = !!add_to_var,
-          tidyselect::all_of(c(add_to_var, count_var)),
-          sep = add_n_to_indep_label_prefix, remove = FALSE, na.rm = TRUE
-        ) |>
-        dplyr::mutate(.variable_label = paste0(.data[[add_to_var]], add_n_to_indep_label_suffix))
+      levels(data_summary[[add_to_var]]) <-
+        paste0(
+          levels(data_summary[[add_to_var]]),
+          add_n_to_indep_label_prefix,
+          unique(data_summary[order(as.integer(data_summary[[add_to_var]])), count_var, drop = TRUE]),
+          add_n_to_indep_label_suffix
+        )
+
+      # data_summary <-
+      #   data_summary |>
+      #   tidyr::unite(
+      #     col = !!add_to_var,
+      #     tidyselect::all_of(c(add_to_var, count_var)),
+      #     sep = add_n_to_indep_label_prefix, remove = FALSE, na.rm = TRUE
+      #   )
+      # data_summary[[add_to_var]] <- paste0(data_summary[[add_to_var]], add_n_to_indep_label_suffix)
+      # if (var_ordered_status) data_summary[[add_to_var]] <- ordered(data_summary[[add_to_var]])
     }
   }
 
@@ -209,8 +225,8 @@ flip_exception_categories <- function(data_summary,
 sort_data <- function(data_summary,
                       sort_by = NULL,
                       descend = FALSE,
-                      variables_always_at_bottom = NULL,
-                      variables_always_at_top = NULL,
+                      labels_always_at_bottom = NULL,
+                      labels_always_at_top = NULL,
                       translations = eval(formals(makeme)$translations),
                       indep_names = character(0),
                       call = rlang::caller_env()) {
@@ -245,15 +261,15 @@ sort_data <- function(data_summary,
   if (!all(is.na(data_summary$.variable_label))) {
     data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label, uniques)
 
-    variables_always_at_bottom <- variables_always_at_bottom[variables_always_at_bottom %in% uniques]
+    labels_always_at_bottom <- labels_always_at_bottom[labels_always_at_bottom %in% uniques]
     data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
-      variables_always_at_bottom,
+      labels_always_at_bottom,
       after = length(uniques)
     )
 
-    variables_always_at_top <- variables_always_at_top[variables_always_at_top %in% uniques]
+    labels_always_at_top <- labels_always_at_top[labels_always_at_top %in% uniques]
     data_summary$.variable_label <- forcats::fct_relevel(data_summary$.variable_label,
-      variables_always_at_top,
+      labels_always_at_top,
       after = 0
     )
   }
@@ -308,8 +324,8 @@ summarize_cat_cat_data <-
            categories_treated_as_na = NULL,
            label_separator = NULL,
            descend = FALSE,
-           variables_always_at_bottom = NULL,
-           variables_always_at_top = NULL,
+           labels_always_at_bottom = NULL,
+           labels_always_at_top = NULL,
            translations = list(),
            call = rlang::caller_env()) {
     showNA <- rlang::arg_match(showNA)
@@ -397,8 +413,8 @@ summarize_cat_cat_data <-
         indep_names = indep,
         sort_by = sort_by,
         descend = descend,
-        variables_always_at_bottom = variables_always_at_bottom,
-        variables_always_at_top = variables_always_at_top,
+        labels_always_at_bottom = labels_always_at_bottom,
+        labels_always_at_top = labels_always_at_top,
         translations = translations
       )
   }
