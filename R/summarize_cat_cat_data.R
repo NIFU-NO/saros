@@ -109,7 +109,6 @@ add_n_to_label <- function(data_summary,
   add_n_to_indep_label_suffix <- replace_with_empty_string(add_n_to_indep_label_suffix)
   add_n_to_label_prefix <- replace_with_empty_string(add_n_to_label_prefix)
   add_n_to_label_suffix <- replace_with_empty_string(add_n_to_label_suffix)
-  # browser()
 
   if (isTRUE(add_n_to_dep_label)) {
     add_to_var <- ".variable_label"
@@ -121,36 +120,34 @@ add_n_to_label <- function(data_summary,
         unique(data_summary[order(as.integer(data_summary[[add_to_var]])), count_var, drop = TRUE]),
         add_n_to_dep_label_suffix
       )
-    # data_summary <-
-    #   data_summary |>
-    #   tidyr::unite(
-    #     col = !!add_to_var,
-    #     tidyselect::all_of(c(add_to_var, count_var)),
-    #     sep = add_n_to_dep_label_prefix, remove = FALSE, na.rm = TRUE
-    #   ) |>
-    #   dplyr::mutate(.variable_label = paste0(.data[[add_to_var]], add_n_to_dep_label_suffix))
   }
   if (isTRUE(add_n_to_indep_label)) {
     add_to_var <- names(data_summary)[!names(data_summary) %in% .saros.env$summary_data_sort2]
     count_var <- ".count_per_indep_group"
     if (length(add_to_var)) {
-      levels(data_summary[[add_to_var]]) <-
-        paste0(
-          levels(data_summary[[add_to_var]]),
-          add_n_to_indep_label_prefix,
-          unique(data_summary[order(as.integer(data_summary[[add_to_var]])), count_var, drop = TRUE]),
-          add_n_to_indep_label_suffix
+      data_summary <-
+        dplyr::arrange(
+          data_summary,
+          as.integer(.data[[add_to_var]]),
+          .data[[".variable_label"]]
         )
-
-      # data_summary <-
-      #   data_summary |>
-      #   tidyr::unite(
-      #     col = !!add_to_var,
-      #     tidyselect::all_of(c(add_to_var, count_var)),
-      #     sep = add_n_to_indep_label_prefix, remove = FALSE, na.rm = TRUE
-      #   )
-      # data_summary[[add_to_var]] <- paste0(data_summary[[add_to_var]], add_n_to_indep_label_suffix)
-      # if (var_ordered_status) data_summary[[add_to_var]] <- ordered(data_summary[[add_to_var]])
+      data_summary[[add_to_var]] <-
+        factor(
+          paste0(
+            as.character(data_summary[[add_to_var]]),
+            add_n_to_indep_label_prefix,
+            data_summary[[count_var]],
+            add_n_to_indep_label_suffix
+          ),
+          levels = unique(paste0(
+            as.character(data_summary[[add_to_var]]),
+            add_n_to_indep_label_prefix,
+            data_summary[[count_var]],
+            add_n_to_indep_label_suffix
+          )),
+          exclude = character(),
+          ordered = is.ordered(data_summary[[add_to_var]])
+        )
     }
   }
 
