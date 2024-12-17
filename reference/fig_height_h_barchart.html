@@ -13,7 +13,7 @@ legend properties."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,6 +90,8 @@ legend properties.</p>
 <span>  max <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  min <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  hide_axis_text_if_single_variable <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add_n_to_dep_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add_n_to_indep_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  showNA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ifany"</span>, <span class="st">"never"</span>, <span class="st">"always"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -199,7 +201,13 @@ legend properties.</p>
 
 
 <dt id="arg-hide-axis-text-if-single-variable">hide_axis_text_if_single_variable<a class="anchor" aria-label="anchor" href="#arg-hide-axis-text-if-single-variable"></a></dt>
-<dd><p>Whether the label is hidden for single dependent variable plots.</p></dd>
+<dd><p>Boolean. Whether the label is hidden for single dependent variable plots.</p></dd>
+
+
+<dt id="arg-add-n-to-dep-label-add-n-to-indep-label">add_n_to_dep_label, add_n_to_indep_label<a class="anchor" aria-label="anchor" href="#arg-add-n-to-dep-label-add-n-to-indep-label"></a></dt>
+<dd><p>Boolean. If TRUE, will add 10 characters to the max label lengths. This is
+primarily useful when obtaining these settings from the global environment,
+avoiding the need to compute this for each figure chunk.</p></dd>
 
 
 <dt id="arg-showna">showNA<a class="anchor" aria-label="anchor" href="#arg-showna"></a></dt>
@@ -232,7 +240,7 @@ legend properties.</p>
 <span class="r-in"><span>  multiplier_per_vertical_letter <span class="op">=</span> <span class="fl">.15</span>,</span></span>
 <span class="r-in"><span>  multiplier_per_facet <span class="op">=</span> <span class="fl">.95</span>,</span></span>
 <span class="r-in"><span>  multiplier_per_legend_line <span class="op">=</span> <span class="fl">1.5</span>,</span></span>
-<span class="r-in"><span>  figure_width_in_cm <span class="op">=</span> <span class="fl">16</span>,</span></span>
+<span class="r-in"><span>  figure_width_in_cm <span class="op">=</span> <span class="fl">16</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 </code></pre></div>
