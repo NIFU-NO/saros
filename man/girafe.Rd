@@ -15,7 +15,10 @@ girafe(
   ncol = NULL,
   byrow = TRUE,
   checked = NULL,
-  not_checked = NULL
+  not_checked = NULL,
+  width_svg = NULL,
+  height_svg = NULL,
+  pointsize = 12
 )
 }
 \arguments{
@@ -40,6 +43,8 @@ or a static ggplot2-plot.}
 \item{byrow}{Whether to display legend keys by row or by column.}
 
 \item{checked, not_checked}{Optional string. If specified and the fill categories of the plot matches these, a special plot is returned where not_checked is hidden. Its usefulness comes in plots which are intended for checkbox responses where unchecked is not always a conscious choice.}
+
+\item{pointsize, height_svg, width_svg}{See \code{\link[ggiraph:girafe]{ggiraph::girafe()}}.}
 }
 \value{
 If interactive, only side-effect of generating ggiraph-plot. If interactive=FALSE, returns modified ggobj.

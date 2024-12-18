@@ -104,6 +104,7 @@ convert_to_checkbox_plot <- function(ggobj, checked = "Selected", not_checked = 
 #' @param ncol Optional integer or NULL.
 #' @param byrow Whether to display legend keys by row or by column.
 #' @param checked,not_checked Optional string. If specified and the fill categories of the plot matches these, a special plot is returned where not_checked is hidden. Its usefulness comes in plots which are intended for checkbox responses where unchecked is not always a conscious choice.
+#' @param pointsize,height_svg,width_svg See [ggiraph::girafe()].
 #' @return If interactive, only side-effect of generating ggiraph-plot. If interactive=FALSE, returns modified ggobj.
 #' @export
 #'
@@ -121,7 +122,10 @@ girafe <- function(
     ncol = NULL,
     byrow = TRUE,
     checked = NULL,
-    not_checked = NULL) {
+    not_checked = NULL,
+    width_svg = NULL,
+    height_svg = NULL,
+    pointsize = 12) {
     # Check global settings, then provided settings, and finally resort to defaults.
     args <- check_options(
         call = match.call(),
@@ -204,7 +208,11 @@ girafe <- function(
             )
 
         if (isTRUE(interactive)) {
-            ggiraph::girafe(ggobj = ggobj, ...)
+            ggiraph::girafe(
+                ggobj = ggobj, pointsize = args$pointsize,
+                width_svg = args$width_svg, height_svg = args$height_svg,
+                ...
+            )
         } else {
             ggobj
         }
