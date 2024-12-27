@@ -400,6 +400,8 @@ fig_height_h_barchart2 <- # Returns a numeric value
     data <- ggobj$data
     # gg <- ggobj
 
+
+
     if (!(inherits(data, "data.frame") && nrow(data) > 0)) {
       cli::cli_warn("{.arg ggobj} must be a ggplot2-object with a nrow>0 data in it. Returning {.arg min}: {.val {min}}.")
       return(min)
@@ -457,7 +459,7 @@ fig_height_h_barchart2 <- # Returns a numeric value
     n_x <- if (length(indep_vars) == 1) 1
     n_cats_x <- if (length(indep_vars) == 1) dplyr::n_distinct(data[[indep_vars]])
     max_chars_cats_x <- if (length(indep_vars) == 1) max(nchar(as.character(data[[indep_vars]])), na.rm = TRUE)
-    max_chars_labels_x <- nchar(as.character(attr(data[[indep_vars]], "label")))
+    max_chars_labels_x <- if (length(indep_vars) == 1) nchar(as.character(attr(data[[indep_vars]], "label")))
     if (length(max_chars_labels_x) == 0) max_chars_labels_x <- 0
 
 
