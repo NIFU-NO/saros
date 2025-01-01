@@ -97,7 +97,7 @@ Arguments forwarded to the corresponding functions that create the elements.}
 
 \item{require_common_categories}{\emph{Check common categories}
 
-\verb{scalar<logical>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
 
 Whether to check if all items share common categories.}
 

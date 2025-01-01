@@ -142,7 +142,7 @@
 #'
 #' @param require_common_categories *Check common categories*
 #'
-#'   `scalar<logical>` // *default:* `NULL` (`optional`)
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
 #'
 #'   Whether to check if all items share common categories.
 #'
