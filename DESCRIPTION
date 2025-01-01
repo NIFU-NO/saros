@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 1.4.0
+Version: 1.4.1
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -35,37 +35,38 @@ BugReports: https://github.com/NIFU-NO/saros/issues
 Depends:
     R (>= 4.2.0)
 Imports: 
-    lifecycle,
-    grDevices,
     cli,
-    utils,
-    vctrs,
-    glue,
     dplyr,
-    tidyr,
-    tidyselect,
-    rlang,
-    stringi,
     forcats,
-    ggplot2,
+    fs,
     ggiraph,
+    ggplot2,
+    glue,
+    grDevices,
+    lifecycle,
     mschart,
     officer,
-    fs
+    rlang,
+    stringi,
+    tidyr,
+    tidyselect,
+    utils,
+    vctrs
 Suggests:
     covr,
-    srvyr,
-    writexl,
     haven,
-    readr,
     labelled,
     quarto,
+    knitr,
+    readr,
     scales,
+    spelling,
+    srvyr,
     testthat (>= 3.0.0),
 	tibble,
+    vdiffr,
     withr,
-    spelling,
-    vdiffr
+    writexl
 Config/testthat/edition: 3
 Encoding: UTF-8
 RoxygenNote: 7.3.2
