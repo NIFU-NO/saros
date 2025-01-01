@@ -30,6 +30,7 @@ makeme(
   totals = FALSE,
   categories_treated_as_na = NULL,
   label_separator = " - ",
+  error_on_duplicates = TRUE,
   showNA = c("ifany", "always", "never"),
   data_label = c("percentage_bare", "percentage", "proportion", "count"),
   html_interactive = TRUE,
@@ -230,6 +231,13 @@ Categories that should be treated as NA.}
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
 Separator for main question from sub-question.}
+
+\item{error_on_duplicates}{\emph{Error or warn on duplicate labels}
+
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
+
+Whether to abort (\code{TRUE}) or warn (\code{FALSE}) if the same label (suffix) is
+used across multiple variables.}
 
 \item{showNA}{\emph{Show NA categories}
 
