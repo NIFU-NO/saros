@@ -3,8 +3,10 @@ vignette: >
   %\VignetteIndexEntry{Maximizing the fun of exploring a Saros-based report - for the readers}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
+execute:
+  eval: false
 ---
 
-```{r setup}
+```{r setup2}
 library(saros)
 ```

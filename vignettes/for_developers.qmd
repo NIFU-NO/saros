@@ -3,6 +3,8 @@ vignette: >
   %\VignetteIndexEntry{Understanding Saros architecture and constructing extensions}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
+execute:
+  eval: false
 ---
 
 ```{r setup}

@@ -140,9 +140,16 @@
 #'
 #'   Separator for main question from sub-question.
 #'
+#' @param error_on_duplicates *Error or warn on duplicate labels*
+#'
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
+#'
+#'   Whether to abort (`TRUE`) or warn (`FALSE`) if the same label (suffix) is
+#'   used across multiple variables.
+#'
 #' @param require_common_categories *Check common categories*
 #'
-#'   `scalar<logical>` // *default:* `NULL` (`optional`)
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
 #'
 #'   Whether to check if all items share common categories.
 #'
@@ -412,6 +419,7 @@ makeme <-
            totals = FALSE,
            categories_treated_as_na = NULL,
            label_separator = " - ",
+           error_on_duplicates = TRUE,
            showNA = c("ifany", "always", "never"),
            data_label = c("percentage_bare", "percentage", "proportion", "count"),
            html_interactive = TRUE,
@@ -653,6 +661,8 @@ makeme <-
 
       args$main_question <-
         as.character(unique(args$data_summary[[".variable_label_prefix"]]))
+
+      check_no_duplicated_label_suffix(data_summary = args$data_summary, error_on_duplicates = args$error_on_duplicates)
 
       if (!args$type %in% c("sigtest_table_html")) {
         args$data_summary <-

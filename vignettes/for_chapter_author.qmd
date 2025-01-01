@@ -3,6 +3,8 @@ vignette: >
   %\VignetteIndexEntry{Editing a Saros-drafted chapter - for chapter authors}
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
+execute:
+  eval: false
 ---
 
 # Configuring your computer

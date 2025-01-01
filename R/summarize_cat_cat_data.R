@@ -300,7 +300,10 @@ sort_data <- function(data_summary,
 #'   Both the absolute and relative folderpaths are required, as strings.
 #' @importFrom rlang !!!
 #' @keywords internal
-#' @return Dataset
+#' @return Dataset with the columns: `.variable_name`, `.variable_label`, `.category`,
+#'   `.count`, `.count_se`, `.count_per_dep`, `.count_per_indep_group`, `.proportion`, `.proportion_se`,
+#'   `.mean`, `.mean_se`, <indep>-variable(s), `.data_label`, `.comb_categories`, `.sum_value`,
+#'   `.variable_label_prefix`
 #'
 summarize_cat_cat_data <-
   function(data,
