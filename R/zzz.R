@@ -7,16 +7,16 @@ if (!exists(".saros.env")) .saros.env <- NULL
   .saros.env$summary_data_sort1 <<-
     c(".top", ".upper", ".mid_upper", ".lower", ".mid_lower", ".bottom")
   .saros.env$summary_data_sort2 <<-
-    c(
+    c( # Can this be constructed on the fly from class or crosstable_empty_output()? Or opposite?
       ".variable_name",
       ".variable_position",
+      ".variable_label", ".variable_label_prefix",
       ".category",
       ".count", ".count_se",
-      ".count_per_dep",
-      ".count_per_indep_group",
+      ".count_per_dep", ".count_per_dep_se",
+      ".count_per_indep_group", ".count_per_indep_group_se",
       ".proportion", ".proportion_se",
       ".mean", ".mean_se",
-      ".variable_label", ".variable_label_prefix",
       ".data_label",
       ".comb_categories",
       ".sum_value",

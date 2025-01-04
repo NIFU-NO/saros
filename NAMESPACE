@@ -3,6 +3,8 @@
 S3method(crosstable,data.frame)
 S3method(crosstable,tbl_df)
 S3method(crosstable,tbl_svy)
+S3method(crosstable2,data.frame)
+S3method(crosstable2,tbl_df)
 S3method(make_content,cat_freq_plot_docx)
 S3method(make_content,cat_plot_html)
 S3method(make_content,cat_prop_plot_docx)
