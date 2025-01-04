@@ -335,7 +335,6 @@ summarize_cat_cat_data <-
     if (!(inherits(data, what = "data.frame") || !inherits(data, what = "survey"))) {
       cli::cli_abort("{.arg data} should be a data.frame/tibble or survey object, not {.obj_type_friendly {data}}.")
     }
-    check_sort_by(x = cross_table_output$.category, sort_by = sort_by)
 
     if (any(dep %in% indep)) {
       return()
@@ -350,6 +349,9 @@ summarize_cat_cat_data <-
         totals = totals,
         translations = translations
       )
+
+          check_sort_by(x = cross_table_output$.category, sort_by = sort_by)
+
 
     # fct_unions <- get_common_levels(data=data, col_pos=match(dep, colnames(data)))
     fct_unions <- levels(cross_table_output[[".category"]])
