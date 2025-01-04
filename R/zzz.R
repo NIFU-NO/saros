@@ -8,16 +8,21 @@ if (!exists(".saros.env")) .saros.env <- NULL
     c(".top", ".upper", ".mid_upper", ".lower", ".mid_lower", ".bottom")
   .saros.env$summary_data_sort2 <<-
     c(
-      ".variable_name", ".category",
+      ".variable_name",
+      ".variable_position",
+      ".category",
       ".count", ".count_se",
       ".count_per_dep",
       ".count_per_indep_group",
       ".proportion", ".proportion_se",
       ".mean", ".mean_se",
       ".variable_label", ".variable_label_prefix",
-      ".data_label", ".comb_categories",
+      ".data_label",
+      ".comb_categories",
       ".sum_value",
-      ".id", ".tooltip", ".onclick"
+      ".id",
+      ".tooltip",
+      ".onclick"
     )
   .saros.env$data_label_opts <<-
     c(

@@ -189,9 +189,11 @@ crosstable.data.frame <-
             # }
 
             out$.variable_name <- .x
+            out$.variable_position = match(.x, colnames(data))
           } else {
             out <- data.frame(
               .variable_name = .x,
+              .variable_position = match(.x, colnames(data)),
               .variable_label = unname(get_raw_labels(data = data, col_pos = .x)),
               .category = factor(NA),
               .count = NA_integer_,
@@ -213,7 +215,9 @@ crosstable.data.frame <-
       out[
         , # do.call(order, out[c(".variable_name", indep, ".category", ".proportion")]),
         c(
-          ".variable_name", ".variable_label",
+          ".variable_name", 
+          ".variable_position",
+          ".variable_label",
           ".category",
           ".count", ".count_se",
           ".count_per_dep",
