@@ -8,7 +8,7 @@ testthat::test_that("crosstable", {
         indep = NULL, showNA = "ifany"
       )
   })
-  testthat::expect_equal(dim(x), c(9, 11))
+  testthat::expect_equal(dim(x), c(9, 14))
   testthat::expect_equal(
     object =
       x |>
@@ -27,7 +27,7 @@ testthat::test_that("crosstable", {
         showNA = "ifany"
       )
   })
-  testthat::expect_equal(dim(x), c(18, 12))
+  testthat::expect_equal(dim(x), c(18, 15))
   testthat::expect_equal(
     object =
       x |>
@@ -55,7 +55,7 @@ testthat::test_that("crosstable works with explicit NA level", {
         indep = "x1_sex", showNA = "ifany"
       )
   })
-  testthat::expect_equal(dim(x), c(34, 12))
+  testthat::expect_equal(dim(x), c(34, 15))
 })
 
 
@@ -75,5 +75,5 @@ testthat::test_that("crosstable works with dep and indep having nothing in commo
         indep = "B", showNA = "never"
       )
   })
-  testthat::expect_equal(dim(x), c(1, 12))
+  testthat::expect_equal(dim(x), c(1, 15))
 })

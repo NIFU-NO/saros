@@ -350,20 +350,12 @@ summarize_cat_cat_data <-
         translations = translations
       )
 
+          check_sort_by(x = cross_table_output$.category, sort_by = sort_by)
+
+
     # fct_unions <- get_common_levels(data=data, col_pos=match(dep, colnames(data)))
     fct_unions <- levels(cross_table_output[[".category"]])
 
-    valid_values <- c(
-      .saros.env$summary_data_sort1,
-      .saros.env$summary_data_sort2,
-      unique(as.character(cross_table_output$.category))
-    )
-    if (!all(sort_by %in% valid_values)) {
-      cli::cli_abort(c(
-        x = "Not all {.arg sort_by} are valid: {sort_by}.",
-        i = "Valid values are {valid_values}"
-      ))
-    }
 
     cross_table_output |>
       mutate_data_label(

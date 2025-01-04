@@ -283,7 +283,8 @@
 #' \item{".lower"}{The sum of the proportions for the categories below the middle category.}
 #' \item{".bottom"}{The proportions for the lowest category available in the variable.}
 #' \item{".variable_label"}{Sort by the variable labels.}
-#' \item{".id"}{Sort by the variable names.}
+#' \item{".variable_name"}{Sort by the variable names.}
+#' \item{".variable_position"}{Sort by the variable position in the supplied data frame.}
 #' \item{".by_group"}{The groups of the by argument.}
 #' \item{character()}{Character vector of category labels to sum together.}
 #' }

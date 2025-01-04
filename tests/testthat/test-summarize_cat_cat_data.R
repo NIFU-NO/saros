@@ -158,7 +158,7 @@ testthat::test_that("crosstable srvyr gives same output as regular tbl with 0 in
   suppressMessages(library(dplyr))
   suppressMessages(library(srvyr))
   x <-
-    ex_survey |>
+    saros::ex_survey |>
     saros:::summarize_cat_cat_data(dep = paste0("b_", 1:3),
 
                            sort_by = c("A lot", "A bit"),
@@ -173,7 +173,7 @@ testthat::test_that("crosstable srvyr gives same output as regular tbl with 0 in
     ) |>
     arrange(dplyr::pick(tidyselect::everything()))
   x_srv <-
-    ex_survey |>
+    saros::ex_survey |>
     srvyr::as_survey(strata = f_uni) |>
     saros:::summarize_cat_cat_data(dep = paste0("b_", 1:3),
 

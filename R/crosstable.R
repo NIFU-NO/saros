@@ -1,11 +1,11 @@
-crosstable <- function(data,
+crosstable2 <- function(data,
                        ...) {
-  UseMethod("crosstable")
+  UseMethod("crosstable2")
 }
 
 
 #' @export
-crosstable.data.frame <-
+crosstable2.data.frame <-
   function(data,
            dep = colnames(data),
            indep = NULL,
@@ -189,9 +189,11 @@ crosstable.data.frame <-
             # }
 
             out$.variable_name <- .x
+            out$.variable_position = match(.x, colnames(data))
           } else {
             out <- data.frame(
               .variable_name = .x,
+              .variable_position = match(.x, colnames(data)),
               .variable_label = unname(get_raw_labels(data = data, col_pos = .x)),
               .category = factor(NA),
               .count = NA_integer_,
@@ -213,7 +215,9 @@ crosstable.data.frame <-
       out[
         , # do.call(order, out[c(".variable_name", indep, ".category", ".proportion")]),
         c(
-          ".variable_name", ".variable_label",
+          ".variable_name", 
+          ".variable_position",
+          ".variable_label",
           ".category",
           ".count", ".count_se",
           ".count_per_dep",
@@ -239,174 +243,4 @@ crosstable.data.frame <-
   }
 
 #' @export
-crosstable.tbl_df <- crosstable.data.frame
-
-#' @export
-crosstable.tbl_svy <-
-  function(data,
-           dep = colnames(data),
-           indep = NULL,
-           showNA = eval(formals(makeme)$showNA),
-           totals = eval(formals(makeme)$totals),
-           translations = eval(formals(makeme)$translations),
-           ...,
-           call = rlang::caller_env()) {
-    if (inherits(data, "tbl_svy") &&
-      !requireNamespace("srvyr", quietly = TRUE)) {
-      cli::cli_abort("Needs {.pkg srvyr} to use tbl_svy objects: {.run install.packages('srvyr')}.")
-    }
-
-    showNA <- rlang::arg_match(showNA, values = eval(formals(makeme)$showNA), error_call = call)
-
-    # indep_names <- colnames(data[, indep, drop = FALSE])
-    indep_labels <- get_raw_labels(data = data$variables, col_pos = indep)
-    col_names <- colnames(data[, dep, drop = FALSE])[!(colnames(data[, dep, drop = FALSE]) %in% indep)]
-
-    # indep_names <- colnames(srvyr::select(data, indep))
-    # col_names <- colnames(srvyr::select(data, dep)) |> .[!. %in% indep_names]
-
-    output <- lapply(stats::setNames(col_names, col_names), function(.x) {
-      out <- srvyr::rename(data, .category = tidyselect::all_of(.x))
-      col <- srvyr::pull(out, .data$.category)
-
-      if (!is.character(col) && !is.factor(col) && dplyr::n_distinct(col, na.rm = FALSE) <= 10) {
-        out <- srvyr::mutate(out, .category = factor(.data$col))
-        col <- srvyr::pull(out, .data$.category)
-      }
-
-      if (showNA == "always" || (showNA == "ifany" && any(is.na(col)))) {
-        out <- srvyr::mutate(out, .category = forcats::fct_na_value_to_level(f = col, level = "NA"))
-      } else {
-        out <- srvyr::filter(out, !is.na(.data$.category))
-      }
-
-      if (nrow(out) > 0) {
-        col <- srvyr::pull(out, .data$.category)
-
-        fct_lvls <- if (is.factor(col)) levels(col) else sort(unique(col))
-
-        # indep_vars <- colnames(srvyr::select(data, indep))
-
-        for (indep_var in indep) {
-          indep_col <- srvyr::pull(out, .data[[indep_var]])
-
-          if (showNA == "always" || (showNA == "ifany" && any(is.na(indep_col)))) {
-            out <- srvyr::mutate(out, srvyr::across(
-              .cols = tidyselect::all_of(indep_var),
-              .fns = ~ forcats::fct_na_value_to_level(f = .x, level = "NA")
-            ))
-          } else {
-            out <- srvyr::filter(out, dplyr::if_all(
-              .cols = tidyselect::all_of(indep_var),
-              .fns = ~ !is.na(.x)
-            ))
-          }
-        }
-
-        summary_mean <- srvyr::group_by(out, srvyr::across(tidyselect::all_of(indep)))
-        summary_mean <- srvyr::summarize(summary_mean,
-          .mean = srvyr::survey_mean(as.numeric(.data$.category)),
-          .count_per_dep = NA_integer_, # Not yet implemented here
-          .count_per_indep_group = srvyr::survey_total(na.rm = TRUE)
-        )
-        summary_mean <- srvyr::ungroup(summary_mean)
-        summary_mean <- srvyr::as_tibble(summary_mean)
-
-        summary_prop <- srvyr::group_by(out, srvyr::across(tidyselect::all_of(c(indep, ".category"))))
-        summary_prop <- srvyr::summarize(summary_prop,
-          .count = srvyr::survey_total(na.rm = TRUE),
-          .proportion = srvyr::survey_prop(proportion = TRUE)
-        )
-        summary_prop <- srvyr::ungroup(summary_prop)
-        summary_prop <- srvyr::as_tibble(summary_prop)
-        # print(get_raw_labels(data = srvyr::as_tibble(data), col_pos = .x))
-        summary_prop <- dplyr::mutate(summary_prop,
-          .category = factor(x = .data$.category, levels = fct_lvls, labels = fct_lvls),
-          .variable_label = get_raw_labels(data = srvyr::as_tibble(data), col_pos = .x)
-          # .mean_base = as.integer(.category) * .count
-        )
-
-        if (length(indep) > 0) {
-          out <- dplyr::left_join(summary_prop, summary_mean, by = intersect(names(summary_prop), names(summary_mean)))
-        } else {
-          out <- cbind(summary_prop, summary_mean)
-        }
-        out$.variable_name <- .x
-      } else {
-        out <- data.frame(
-          .variable_name = .x,
-          .variable_label = unname(get_raw_labels(data = data, col_pos = .x)),
-          .category = factor(NA),
-          .count = NA_integer_,
-          .count_per_dep = NA_integer_,
-          .count_per_indep_group = NA_integer_,
-          .proportion = NA_real_,
-          .count_se = NA_real_,
-          .proportion_se = NA_real_,
-          .mean = NA_real_,
-          .mean_se = NA_real_
-        )
-        out[, indep] <- NA_character_
-      }
-      as.data.frame(out)
-    })
-
-    out <- do.call(rbind, output)
-    out <-
-      out[
-        , # do.call(order, out[c(".variable_name", indep, ".category", ".proportion")]),
-        c(
-          ".variable_name", ".variable_label",
-          ".category",
-          ".count", ".count_se",
-          ".count_per_dep",
-          ".count_per_indep_group",
-          ".proportion", ".proportion_se",
-          ".mean", ".mean_se",
-          # ".mean_base",
-          indep
-        )
-      ]
-
-    # # Add totals when 'indep' is not NULL and 'totals' is TRUE
-    # if(length(indep)>0 && isTRUE(totals)) {
-    #   # Combine the indep_names and .variable_name into a single factor for aggregating
-    #   out$group <- rlang::exec(interaction, !!!as.list(out[, c(".variable_name", indep)]), drop = TRUE)
-    #
-    #   # Calculate totals using aggregate function
-    #   total_counts <- stats::aggregate(.count,  ~ group, data = out, FUN = sum)
-    #   total_props <- stats::aggregate(.proportion ~ group, data = out, FUN = sum)
-    #   total_means <- stats::aggregate(.mean ~ group, data = out, FUN = sum)
-    #
-    #   print(total_counts)
-    #   print(total_props)
-    #   print(total_means)
-    #   print(out)
-    #   # Combine totals into a data.frame
-    #   tryCatch(expr = {
-    #   totals <- tibble::tibble(
-    #     .category = "Total",
-    #     .variable_name = out$.variable_name,
-    #     .variable_label = out$.variable_label,
-    #     .count = total_counts$.count,
-    #     .count_se = NA,
-    #     .proportion = total_props$.proportion,
-    #     .proportion_se = NA,
-    #     .mean = total_means$.mean,
-    #     .mean_se = NA
-    #   )}, error=browser())
-    #
-    #   out <- rbind(out, totals)
-    # }
-
-    for (indep_var in indep) {
-      attr(out[[indep_var]], "label") <- indep_labels[[indep_var]]
-    }
-
-    out <- dplyr::arrange(out, dplyr::pick(tidyselect::all_of(c(
-      ".variable_name", indep, ".category", ".proportion"
-    ))))
-
-    rownames(out) <- NULL
-    out
-  }
+crosstable2.tbl_df <- crosstable2.data.frame
