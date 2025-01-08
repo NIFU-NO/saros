@@ -630,9 +630,16 @@ makeme <-
         unlist()
 
       # Future: switch or S3
-      if (all(variable_type_dep %in% c("integer", "numeric"))) {
+      if (all(variable_type_dep %in% c("integer", "numeric")) &&
+        (all(indep_crwd) %in% c("factor", "ordered", "character") ||
+          length(indep_crwd) == 0)) {
         args$data_summary <-
-          rlang::exec(summarize_int_cat_data, !!!args)
+          summarize_int_cat_data(
+            data = subset_data,
+            dep = dep_crwd,
+            indep = indep_crwd,
+            ...
+          )
       } else if (all(variable_type_dep %in% c("factor", "ordered", "character"))) {
         args$data_summary <-
           summarize_cat_cat_data(
@@ -658,6 +665,11 @@ makeme <-
             labels_always_at_top = args$labels_always_at_top,
             translations = args$translations
           )
+      } else {
+        cli::cli_abort(c(
+          "You have provided a mix of categorical and continuous variables.",
+          "I do not know what to do with that!"
+        ))
       }
 
       args$main_question <-
