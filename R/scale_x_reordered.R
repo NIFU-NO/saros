@@ -44,15 +44,18 @@ reorder_within <- function(x, by, within, fun = mean, sep = "___", ...) {
 }
 
 
-scale_x_reorder <- function(..., x_axis_label_width = 20) {
-
-  ggplot2::scale_x_discrete(labels = 
-                              function(x) reorder_func(x, x_axis_label_width = x_axis_label_width),
-                            ...)
+reorder_func <- function(x, sep = "___", x_axis_label_width = 20) {
+  reg <- paste0(sep, ".+$")
+  string_wrap(stringi::stri_replace_all_regex(str = x, pattern = reg, replacement = ""),
+    width = x_axis_label_width
+  )
 }
 
 
-reorder_func <- function(x, sep = "___", x_axis_label_width = 20) {
-  reg <- paste0(sep, ".+$")
-  string_wrap(gsub(reg, "", x), width = x_axis_label_width)
+scale_x_reorder <- function(..., sep = "___", x_axis_label_width = 20) {
+  ggplot2::scale_x_discrete(
+    labels =
+      function(x) reorder_func(x, sep = sep, x_axis_label_width = x_axis_label_width),
+    ...
+  )
 }

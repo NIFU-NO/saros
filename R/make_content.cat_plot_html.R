@@ -38,7 +38,9 @@ make_content.cat_plot_html <-
       ".variable_name"
     }
 
-    if (!is.ordered(data[[x]])) {
+    needs_reorder <- length(indep_vars)
+
+    if (!is.ordered(data[[x]]) && isTRUE(needs_reorder)) {
       data[[x]] <- reorder_within(
         x = data[[x]],
         by = ifelse(is.na(data[[".sum_value"]]), 0, data[[".sum_value"]]),
@@ -127,7 +129,7 @@ make_content.cat_plot_html <-
         guide = FALSE,
         drop = FALSE
       ) +
-      scale_x_reorder(limits = rev, x_axis_label_width = dots$x_axis_label_width) +
+      scale_x_reorder(limits = rev, sep = if (needs_reorder) "___", x_axis_label_width = dots$x_axis_label_width) +
       ggplot2::guides(
         fill = ggiraph::guide_legend_interactive(data_id = "fill.guide"),
         colour = "none"
