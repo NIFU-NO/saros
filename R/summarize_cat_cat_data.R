@@ -302,7 +302,7 @@ sort_data <- function(data_summary,
 #' @keywords internal
 #' @return Dataset with the columns: `.variable_name`, `.variable_label`, `.category`,
 #'   `.count`, `.count_se`, `.count_per_dep`, `.count_per_indep_group`, `.proportion`, `.proportion_se`,
-#'   `.mean`, `.mean_se`, <indep>-variable(s), `.data_label`, `.comb_categories`, `.sum_value`,
+#'   `.mean`, `.mean_se`, indep-variable(s), `.data_label`, `.comb_categories`, `.sum_value`,
 #'   `.variable_label_prefix`
 #'
 summarize_cat_cat_data <-
@@ -350,7 +350,7 @@ summarize_cat_cat_data <-
         translations = translations
       )
 
-          check_sort_by(x = cross_table_output$.category, sort_by = sort_by)
+    check_sort_by(x = cross_table_output$.category, sort_by = sort_by)
 
 
     # fct_unions <- get_common_levels(data=data, col_pos=match(dep, colnames(data)))

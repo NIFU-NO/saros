@@ -4,7 +4,7 @@ summarize_int_cat_data <-
            indep = NULL,
            ...,
            call = rlang::caller_env()) {
-    dots <- rlang::list2(...)
+    # dots <- rlang::list2(...)
     if (!(inherits(data, what = "data.frame") || !inherits(data, what = "survey"))) {
       cli::cli_abort("{.arg data} should be a data.frame/tibble or survey object, not {.obj_type_friendly {data}}.")
     }
