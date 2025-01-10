@@ -1,3 +1,17 @@
+# saros 1.5.0
+
+## Major changes
+- Lots of settings for `makeme()` useful for creating plots comparing a group with all other groups combined, or everyone. 
+- `fig_height_h_barchart()` finally works adequately for 90 percent of figure combinations.
+- Global settings inheritance for `makeme()`, `make_link()`, `girafe()`, `n_range()`, `n_range2()`
+- New function `makeme(type="int_plot_html")` for violin plots
+
+## Minor changes
+- `makeme(type="cat_plot_html")` no longer shows a line one the y axis for single variable plots.
+- Refactored `crosstable.data.frame()` and `crosstable.survey()` methods.
+- Many more tests.
+- Countless bugfixes.
+
 # saros 1.2.0
 
 ## Major changes
@@ -12,7 +26,7 @@
 - `ggsaver()` is a minor wrapper to ease using make_link with ggplot2::ggsave().
 - `fig_height_h_barchart()` estimates the optimal figure height for a horizontal barchart.
 - `fig_height_h_barchart2()` same as above, but takes a makeme()-object for convenience.
-- `makeme.cat_plot()` allows sorting within each dependent variable-by-independent variable (facet-sort)
+- `makeme(type="cat_plot_html")` allows sorting within each dependent variable-by-independent variable (facet-sort)
 
 ## Bugfixes
 - Too many to list, but see saros 1.1.0 for some of them.
@@ -22,10 +36,10 @@
 
 -feat: Removed colour_palette  (#328)
 -fix: Argument `chapter_qmd_start_section_filepath` now has effect. (#321)
--fix: simplified create_email_credentials (#305)
+-fix: simplified `create_email_credentials()` (#305)
 -fix: pkgdown for recode_checkbox_sets (#304)
 -fix: cat_*_plot now displays keys for unused categories in legend (#301)
--fix: `single_y_bivariates_if_deps_above` no longer affects univariates (#300)
+-fix: `single_y_bivariates_if_deps_above()` no longer affects univariates (#300)
 -fix: More robust estimate_plot_height if dep only has one NA category (#299)
 -fix: Significance test now works in edge cases (#297)
 -feat: chr_table now ignores NA and empty strings. (#296)

@@ -181,7 +181,7 @@ Both the absolute and relative folderpaths are required, as strings.}
 \value{
 Dataset with the columns: \code{.variable_name}, \code{.variable_label}, \code{.category},
 \code{.count}, \code{.count_se}, \code{.count_per_dep}, \code{.count_per_indep_group}, \code{.proportion}, \code{.proportion_se},
-\code{.mean}, \code{.mean_se}, \if{html}{\out{<indep>}}-variable(s), \code{.data_label}, \code{.comb_categories}, \code{.sum_value},
+\code{.mean}, \code{.mean_se}, indep-variable(s), \code{.data_label}, \code{.comb_categories}, \code{.sum_value},
 \code{.variable_label_prefix}
 }
 \description{

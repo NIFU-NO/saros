@@ -4,7 +4,7 @@ make_content.sigtest_table_html <-
     dots <- rlang::list2(...)
 
     data <- dots$data
-    data_summary <- dots$data_summary
+    # data_summary <- dots$data_summary
 
 
     out <-
