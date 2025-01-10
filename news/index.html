@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,6 +46,26 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.5.0" id="saros-150">saros 1.5.0<a class="anchor" aria-label="anchor" href="#saros-150"></a></h2>
+<div class="section level3">
+<h3 id="major-changes-1-5-0">Major changes<a class="anchor" aria-label="anchor" href="#major-changes-1-5-0"></a></h3>
+<ul><li>Lots of settings for <code><a href="../reference/makeme.html">makeme()</a></code> useful for creating plots comparing a group with all other groups combined, or everyone.</li>
+<li>
+<code><a href="../reference/fig_height_h_barchart.html">fig_height_h_barchart()</a></code> finally works adequately for 90 percent of figure combinations.</li>
+<li>Global settings inheritance for <code><a href="../reference/makeme.html">makeme()</a></code>, <code><a href="../reference/make_link.html">make_link()</a></code>, <code><a href="../reference/girafe.html">girafe()</a></code>, <code><a href="../reference/n_range.html">n_range()</a></code>, <code><a href="../reference/n_range2.html">n_range2()</a></code>
+</li>
+<li>New function <code>makeme(type="int_plot_html")</code> for violin plots</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-changes-1-5-0">Minor changes<a class="anchor" aria-label="anchor" href="#minor-changes-1-5-0"></a></h3>
+<ul><li>
+<code>makeme(type="cat_plot_html")</code> no longer shows a line one the y axis for single variable plots.</li>
+<li>Refactored <code>crosstable.data.frame()</code> and <code>crosstable.survey()</code> methods.</li>
+<li>Many more tests.</li>
+<li>Countless bugfixes.</li>
+</ul></div>
+</div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.0" id="saros-120">saros 1.2.0<a class="anchor" aria-label="anchor" href="#saros-120"></a></h2><p class="text-muted">CRAN release: 2024-09-03</p>
 <div class="section level3">
 <h3 id="major-changes-1-2-0">Major changes<a class="anchor" aria-label="anchor" href="#major-changes-1-2-0"></a></h3>
@@ -72,7 +92,7 @@
 <li>
 <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> same as above, but takes a makeme()-object for convenience.</li>
 <li>
-<code>makeme.cat_plot()</code> allows sorting within each dependent variable-by-independent variable (facet-sort)</li>
+<code>makeme(type="cat_plot_html")</code> allows sorting within each dependent variable-by-independent variable (facet-sort)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bugfixes-1-2-0">Bugfixes<a class="anchor" aria-label="anchor" href="#bugfixes-1-2-0"></a></h3>
@@ -82,7 +102,7 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="saros-110">saros 1.1.0<a class="anchor" aria-label="anchor" href="#saros-110"></a></h2>
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
-<p>-feat: Removed colour_palette (<a href="https://github.com/NIFU-NO/saros/issues/328" class="external-link">#328</a>) -fix: Argument <code>chapter_qmd_start_section_filepath</code> now has effect. (<a href="https://github.com/NIFU-NO/saros/issues/321" class="external-link">#321</a>) -fix: simplified create_email_credentials (<a href="https://github.com/NIFU-NO/saros/issues/305" class="external-link">#305</a>) -fix: pkgdown for recode_checkbox_sets (<a href="https://github.com/NIFU-NO/saros/issues/304" class="external-link">#304</a>) -fix: cat_*_plot now displays keys for unused categories in legend (<a href="https://github.com/NIFU-NO/saros/issues/301" class="external-link">#301</a>) -fix: <code>single_y_bivariates_if_deps_above</code> no longer affects univariates (<a href="https://github.com/NIFU-NO/saros/issues/300" class="external-link">#300</a>) -fix: More robust estimate_plot_height if dep only has one NA category (<a href="https://github.com/NIFU-NO/saros/issues/299" class="external-link">#299</a>) -fix: Significance test now works in edge cases (<a href="https://github.com/NIFU-NO/saros/issues/297" class="external-link">#297</a>) -feat: chr_table now ignores NA and empty strings. (<a href="https://github.com/NIFU-NO/saros/issues/296" class="external-link">#296</a>) -fix: <code>serialized_format</code> now actually supports <a href="https://github.com/qsbase/qs" class="external-link">qs</a>, if installed. (<a href="https://github.com/NIFU-NO/saros/issues/293" class="external-link">#293</a>) -feat: Added default to replace_heading_for_group (<a href="https://github.com/NIFU-NO/saros/issues/291" class="external-link">#291</a>) -feat: Removed flexi-app (<a href="https://github.com/NIFU-NO/saros/issues/289" class="external-link">#289</a>) -feat: Removed unnecessary rendering-assistance tools. (<a href="https://github.com/NIFU-NO/saros/issues/287" class="external-link">#287</a>) -feat: <code>gen_qmd_index</code> has now been refactored (<a href="https://github.com/NIFU-NO/saros/issues/286" class="external-link">#286</a>) - simplified to <code>gen_qmd_file</code>, which better handles index and report - Also allows separate qmd_snippets at start and end for index and - Extract formats from report_header_yaml which is used to create links -fix: insert_obj_in_qmd now uses conv_to_valid_obj_name() again (<a href="https://github.com/NIFU-NO/saros/issues/284" class="external-link">#284</a>) -feat: Removed saving png files as it is rarely used. (<a href="https://github.com/NIFU-NO/saros/issues/283" class="external-link">#283</a>) -fix: <code>crosstable3()</code> now handles character vectors. (<a href="https://github.com/NIFU-NO/saros/issues/278" class="external-link">#278</a>)</p>
+<p>-feat: Removed colour_palette (<a href="https://github.com/NIFU-NO/saros/issues/328" class="external-link">#328</a>) -fix: Argument <code>chapter_qmd_start_section_filepath</code> now has effect. (<a href="https://github.com/NIFU-NO/saros/issues/321" class="external-link">#321</a>) -fix: simplified <code>create_email_credentials()</code> (<a href="https://github.com/NIFU-NO/saros/issues/305" class="external-link">#305</a>) -fix: pkgdown for recode_checkbox_sets (<a href="https://github.com/NIFU-NO/saros/issues/304" class="external-link">#304</a>) -fix: cat_*_plot now displays keys for unused categories in legend (<a href="https://github.com/NIFU-NO/saros/issues/301" class="external-link">#301</a>) -fix: <code>single_y_bivariates_if_deps_above()</code> no longer affects univariates (<a href="https://github.com/NIFU-NO/saros/issues/300" class="external-link">#300</a>) -fix: More robust estimate_plot_height if dep only has one NA category (<a href="https://github.com/NIFU-NO/saros/issues/299" class="external-link">#299</a>) -fix: Significance test now works in edge cases (<a href="https://github.com/NIFU-NO/saros/issues/297" class="external-link">#297</a>) -feat: chr_table now ignores NA and empty strings. (<a href="https://github.com/NIFU-NO/saros/issues/296" class="external-link">#296</a>) -fix: <code>serialized_format</code> now actually supports <a href="https://github.com/qsbase/qs" class="external-link">qs</a>, if installed. (<a href="https://github.com/NIFU-NO/saros/issues/293" class="external-link">#293</a>) -feat: Added default to replace_heading_for_group (<a href="https://github.com/NIFU-NO/saros/issues/291" class="external-link">#291</a>) -feat: Removed flexi-app (<a href="https://github.com/NIFU-NO/saros/issues/289" class="external-link">#289</a>) -feat: Removed unnecessary rendering-assistance tools. (<a href="https://github.com/NIFU-NO/saros/issues/287" class="external-link">#287</a>) -feat: <code>gen_qmd_index</code> has now been refactored (<a href="https://github.com/NIFU-NO/saros/issues/286" class="external-link">#286</a>) - simplified to <code>gen_qmd_file</code>, which better handles index and report - Also allows separate qmd_snippets at start and end for index and - Extract formats from report_header_yaml which is used to create links -fix: insert_obj_in_qmd now uses conv_to_valid_obj_name() again (<a href="https://github.com/NIFU-NO/saros/issues/284" class="external-link">#284</a>) -feat: Removed saving png files as it is rarely used. (<a href="https://github.com/NIFU-NO/saros/issues/283" class="external-link">#283</a>) -fix: <code>crosstable3()</code> now handles character vectors. (<a href="https://github.com/NIFU-NO/saros/issues/278" class="external-link">#278</a>)</p>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.5" id="saros-105">saros 1.0.5<a class="anchor" aria-label="anchor" href="#saros-105"></a></h2>
