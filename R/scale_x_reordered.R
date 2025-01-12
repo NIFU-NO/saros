@@ -45,10 +45,11 @@ reorder_within <- function(x, by, within, fun = mean, sep = "___", ...) {
 
 
 reorder_func <- function(x, sep = "___", x_axis_label_width = 20) {
-  reg <- paste0(sep, ".+$")
-  string_wrap(stringi::stri_replace_all_regex(str = x, pattern = reg, replacement = ""),
-    width = x_axis_label_width
-  )
+  if (!is.null(sep)) {
+    reg <- paste0(sep, ".+$")
+    x <- stringi::stri_replace_all_regex(str = x, pattern = reg, replacement = "")
+  }
+  string_wrap(x, width = x_axis_label_width)
 }
 
 

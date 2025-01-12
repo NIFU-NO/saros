@@ -13,6 +13,7 @@ make_content.cat_plot_html <-
       return(ggplot2::ggplot() +
         ggplot2::theme_void())
     }
+    dep_var <- if (all(!is.na(data[[".variable_label"]]))) ".variable_label" else ".variable_name"
 
     indep_vars <- colnames(data)[!colnames(data) %in%
       .saros.env$summary_data_sort2]
@@ -20,77 +21,87 @@ make_content.cat_plot_html <-
     hide_axis_text <-
       isTRUE(dots$hide_axis_text_if_single_variable) &&
         length(indep_vars) == 0 &&
-        dplyr::n_distinct(data$.variable_label, na.rm = TRUE) == 1
+        dplyr::n_distinct(data[[dep_var]], na.rm = TRUE) == 1
 
     if (isTRUE(hide_axis_text)) {
-      data$.variable_label <- ""
+      data[[dep_var]] <- ""
     }
 
     # max_nchar_cat <- max(c(nchar(levels(data$.category)), 0), na.rm = TRUE)
-    # browser()
+
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in% c("percentage", "percentage_bare", "proportion")
-    x <- if (length(indep_vars) == 1 && isFALSE(dots$inverse)) {
-      indep_vars
-    } else if (all(!is.na(data[[".variable_label"]]))) {
-      ".variable_label"
-    } else {
-      ".variable_name"
+
+    x_axis_var <- dep_var
+    facet_var <- character()
+    if (length(indep_vars) == 1 && isFALSE(dots$inverse)) {
+      x_axis_var <- indep_vars
+      facet_var <- dep_var
+    }
+    if (length(indep_vars) == 1 && isTRUE(dots$inverse)) {
+      x_axis_var <- dep_var
+      facet_var <- indep_vars
     }
 
-    needs_reorder <- length(indep_vars)
 
-    if (!is.ordered(data[[x]]) && isTRUE(needs_reorder)) {
-      data[[x]] <- reorder_within(
-        x = data[[x]],
+    needs_reorder <- !is.ordered(data[[x_axis_var]]) && length(indep_vars) > 0
+    if (isTRUE(needs_reorder)) {
+      data[[x_axis_var]] <- reorder_within(
+        x = data[[x_axis_var]],
         by = ifelse(is.na(data[[".sum_value"]]), 0, data[[".sum_value"]]),
-        within = data[, c(x)],
+        within = data[, facet_var, drop = FALSE],
         fun = mean, na.rm = TRUE
       )
     }
+    tooltip_glue_specs <-
+      c(
+        "Category" = "{(.category)}",
+        "Dependent" = paste0("{(", dep_var, ")}"),
+        "Independent group(s)" =
+          if (length(indep_vars)) {
+            paste0("{stringi::stri_replace_all_regex(", indep_vars, ", pattern = '___.+$', replacement = '')}", collapse = ", ")
+          },
+        "Percentage" = "{(.percentage)}",
+        "n (cell)" = "{(.count)}",
+        "N (per independent var; valid)" = "{(.count_per_indep_group)}",
+        "N (total; valid)" = "{(.count_per_dep)}"
+      )
 
-    p <-
+    names(tooltip_glue_specs) <- paste0(names(tooltip_glue_specs), ":")
+    #    max_width_prefix <- max(stringi::stri_length(names(tooltip_glue_specs)), na.rm = TRUE) + 1
+    #    names(tooltip_glue_specs) <- stringi::stri_pad_right(names(tooltip_glue_specs), pad = " ", width = max_width_prefix)
+    #    names(tooltip_glue_specs) <- convert_trailing_chars(names(tooltip_glue_specs), from_char = " ", to_char = "&nbsp;")
+    tooltip_glue_specs <- setNames(paste0("<b>", unname(tooltip_glue_specs), "</b>"), nm = names(tooltip_glue_specs))
+    tooltip_glue_specs <- paste0(names(tooltip_glue_specs), "&nbsp;", unname(tooltip_glue_specs))
+
+    tooltip_glue_spec <- stringi::stri_c(tooltip_glue_specs, collapse = "\n", ignore_null = TRUE)
+    ##
+    onclick_glue_spec <- c(
+      tooltip_glue_specs,
+      "Dependent variable name: {(.variable_name)}",
+      paste0("Independent variable name: ", paste0(indep_vars, collapse = ", "))
+    )
+    onclick_glue_spec <- stringi::stri_replace_all_regex(onclick_glue_spec, pattern = "</*[bi]>|</*strong>|</*em>", replacement = "")
+    onclick_glue_spec <- stringi::stri_c(onclick_glue_spec, collapse = "\n", ignore_null = TRUE)
+
+    p_data <-
       dplyr::mutate(data,
         .id = seq_len(nrow(data)),
-        .tooltip = # Tooltip contains all data except variable name
-          sprintf(
-            fmt = stringi::stri_c("%s",
-              "n = %.0f",
-              stringi::stri_c("P = %.", dots$digits, "f%%", ignore_null = TRUE),
-              "%s",
-              "n (valid) = %.0f",
-              "N (valid) = %.0f",
-              sep = "\n", ignore_null = TRUE
-            ),
-            .data$.category,
-            .data$.count,
-            .data$.proportion * 100,
-            .data$.variable_label,
-            .data$.count_per_indep_group,
-            .data$.count_per_dep
-          ),
-        .tooltip = ifelse(!is.na(.data$.tooltip) & rlang::is_string(indep_vars),
-          yes = sprintf(
-            fmt = stringi::stri_c("%s", "%s", sep = "\n", ignore_null = TRUE),
-            .data$.tooltip,
-            .data[[indep_vars]]
-          ),
-          no = .data$.tooltip
-        ),
-        .onclick = sprintf(
-          fmt = stringi::stri_c("%s", "Variable: %s", sep = "\n", ignore_null = TRUE),
-          .data$.tooltip, .data$.variable_name
-        ),
+        .percentage = round(.data$.proportion * 100, digits = dots$digits),
+        .tooltip = glue::glue(tooltip_glue_spec),
+        .onclick = glue::glue(onclick_glue_spec),
         .onclick = paste0('alert(\"', .data[[".onclick"]], '\");'),
         .onclick = stringi::stri_replace_all_regex(.data$.onclick,
           pattern = "\n",
           replacement = "\\\\n"
         )
-      ) |>
+      )
+    p <-
+      p_data |>
       ggplot2::ggplot(
         mapping = ggplot2::aes(
           y = .data[[if (prop_family) ".proportion" else stringi::stri_c(".", dots$data_label, ignore_null = TRUE)]],
-          x = .data[[x]],
+          x = .data[[x_axis_var]],
           fill = .data$.category,
           group = .data$.category,
           label = .data$.data_label,
@@ -137,11 +148,11 @@ make_content.cat_plot_html <-
 
     if (length(indep_vars) > 1L ||
       (length(indep_vars) >= 1L &&
-        (dplyr::n_distinct(data$.variable_label) > 1 ||
-          (dplyr::n_distinct(data$.variable_label) == 1 &&
+        (dplyr::n_distinct(data$.variable_name) > 1 ||
+          (dplyr::n_distinct(data$.variable_name) == 1 &&
             isFALSE(dots$hide_axis_text_if_single_variable))))) {
       if (isFALSE(dots$inverse)) {
-        lab <- ".variable_label"
+        lab <- dep_var
         if (is.factor(p$data[[lab]])) {
           levels(p$data[[lab]]) <- string_wrap(levels(p$data[[lab]]), width = dots$strip_width)
         } else {
@@ -150,7 +161,7 @@ make_content.cat_plot_html <-
 
         p <- p +
           ggiraph::facet_grid_interactive(
-            rows = ggplot2::vars(.data$.variable_label),
+            rows = ggplot2::vars(.data[[dep_var]]),
             labeller = ggiraph::labeller_interactive(
               .mapping = ggplot2::aes(
                 data_id = .data[[lab]],
@@ -171,11 +182,11 @@ make_content.cat_plot_html <-
 
         p <- p +
           ggiraph::facet_grid_interactive(
-            rows = ggplot2::vars(.data[[indep_vars]]),
+            rows = ggplot2::vars(!!!rlang::syms(indep_vars)),
             labeller = ggiraph::labeller_interactive(
               .mapping = ggplot2::aes(
-                data_id = .data[[indep_vars]],
-                tooltip = .data[[indep_vars]]
+                data_id = .data[[indep_vars[1]]],
+                tooltip = .data[[indep_vars[1]]]
               )
             ),
             interactive_on = "text",
