@@ -71,7 +71,7 @@ make_content.cat_plot_html <-
     #    max_width_prefix <- max(stringi::stri_length(names(tooltip_glue_specs)), na.rm = TRUE) + 1
     #    names(tooltip_glue_specs) <- stringi::stri_pad_right(names(tooltip_glue_specs), pad = " ", width = max_width_prefix)
     #    names(tooltip_glue_specs) <- convert_trailing_chars(names(tooltip_glue_specs), from_char = " ", to_char = "&nbsp;")
-    tooltip_glue_specs <- setNames(paste0("<b>", unname(tooltip_glue_specs), "</b>"), nm = names(tooltip_glue_specs))
+    tooltip_glue_specs <- stats::setNames(paste0("<b>", unname(tooltip_glue_specs), "</b>"), nm = names(tooltip_glue_specs))
     tooltip_glue_specs <- paste0(names(tooltip_glue_specs), "&nbsp;", unname(tooltip_glue_specs))
 
     tooltip_glue_spec <- stringi::stri_c(tooltip_glue_specs, collapse = "\n", ignore_null = TRUE)
