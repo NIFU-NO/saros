@@ -29,11 +29,19 @@ make_content.cat_table_html <-
 
     # indep_label <- unname(get_raw_labels(data = dots$data, col_pos = dots$indep))
 
-
     levels(data_summary[[".category"]])[
-      is.na(levels(data_summary[[".category"]])) |
-        levels(data_summary[[".category"]]) == ""
-    ] <- "NA"
+      levels(data_summary[[".category"]]) == ""
+    ] <- NA_character_
+
+    if (dots$showNA == "never") {
+      data_summary[[".category"]] <- forcats::fct_na_level_to_value(data_summary[[".category"]])
+    } else {
+      data_summary[[".category"]] <- forcats::fct_na_value_to_level(data_summary[[".category"]])
+    }
+    # levels(data_summary[[".category"]])[
+    #   is.na(levels(data_summary[[".category"]])) |
+    #     levels(data_summary[[".category"]]) == ""
+    # ] <- "NA"
     cat_lvls <- levels(data_summary[[".category"]])
 
     if (length(indep_label) == 1 && length(dots$indep) == 0) {
