@@ -24,16 +24,32 @@ make_content.cat_table_html <-
       indep_label <- unique(indep_label)
       if (nchar(indep_label) == 0) indep_label <- dots$indep[1] # browser() #cli::cli_warn("Indep {.var {indep_pos}} lacks a label.")
     } else {
-      indep_label <- character(0)
+      indep_label <- character()
     }
 
     # indep_label <- unname(get_raw_labels(data = dots$data, col_pos = dots$indep))
 
-
     levels(data_summary[[".category"]])[
-      is.na(levels(data_summary[[".category"]])) |
-        levels(data_summary[[".category"]]) == ""
-    ] <- "NA"
+      levels(data_summary[[".category"]]) == ""
+    ] <- NA_character_
+
+    if (dots$showNA == "never") {
+      data_summary[[".category"]] <- forcats::fct_na_level_to_value(data_summary[[".category"]])
+      data_summary <- data_summary[!is.na(data_summary[[".category"]]), , drop = FALSE]
+      for (ind in dots$indep) {
+        data_summary[[ind]] <- forcats::fct_na_level_to_value(data_summary[[ind]])
+        data_summary <- data_summary[!is.na(data_summary[[ind]]), , drop = FALSE]
+      }
+    } else {
+      data_summary[[".category"]] <- forcats::fct_na_value_to_level(data_summary[[".category"]], level = "NA")
+      for (ind in dots$indep) {
+        data_summary[[ind]] <- forcats::fct_na_value_to_level(data_summary[[ind]], level = "NA")
+      }
+    }
+    if (nrow(data_summary) == 0) {
+      return()
+    }
+
     cat_lvls <- levels(data_summary[[".category"]])
 
     if (length(indep_label) == 1 && length(dots$indep) == 0) {

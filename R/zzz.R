@@ -22,7 +22,8 @@ if (!exists(".saros.env")) .saros.env <- NULL
       ".sum_value",
       ".id",
       ".tooltip",
-      ".onclick"
+      ".onclick",
+      ".percentage"
     )
   .saros.env$data_label_opts <<-
     c(
