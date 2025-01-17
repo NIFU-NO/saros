@@ -709,6 +709,8 @@ makeme <-
 
     if (isTRUE(args$simplify_output) && length(out) == 1) {
       out[[1]]
+    } else if (length(out) == 0) {
+      NULL
     } else {
       out
     }
