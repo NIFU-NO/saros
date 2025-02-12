@@ -1,3 +1,10 @@
+# saros 1.5.1
+-   Feature: Added `".percentage"` as valid (sorting) column
+-   Feature: `cat_table_html` returns NULL if nothing to display
+-   Fix: `scale_x_reordered` now only sorts when needed
+-   Fix: `cat_table_html` takes showNA properly
+-   Minor: refactoring of `cat_plot_html`
+
 # saros 1.5.0
 
 ## Major changes
