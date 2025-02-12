@@ -23,6 +23,7 @@ custom_palette <- function(palette_codes, fct_levels, priority_palette_codes = N
                     lvls[!lvls %in% names(matched_palette)]
                 )
             )
+            matched_palette <- matched_palette[!is.na(names(matched_palette))]
         }
         if (is.null(matched_palette) && length(palette_codes[[length(palette_codes)]]) < length(lvls)) { # If no match and insufficient palettes, then generate
             matched_palette <- scales::hue_pal()(length(lvls))
