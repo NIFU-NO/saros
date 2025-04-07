@@ -40,7 +40,7 @@ make_content.sigtest_table_html <-
                 data = data, # Not data2, because we want total n
                 y_var = .x$y,
                 x_var = .x$x,
-                na.rm = dots$showNA %in% c("ifany", "always"),
+                na.rm = dots$showNA %in% c("never"),
                 table_wide = dots$table_wide
               ))
             }
