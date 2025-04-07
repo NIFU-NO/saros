@@ -76,8 +76,10 @@ make_content.cat_plot_html <-
 
     tooltip_glue_spec <- stringi::stri_c(tooltip_glue_specs, collapse = "\n", ignore_null = TRUE)
     ##
+    onclick_glue_spec <- stats::setNames(paste0("<b>", unname(tooltip_glue_specs), "</b>"), nm = names(tooltip_glue_specs))
+    onclick_glue_spec <- paste0(names(onclick_glue_spec), " ", unname(onclick_glue_spec))
     onclick_glue_spec <- c(
-      tooltip_glue_specs,
+      onclick_glue_spec,
       "Dependent variable name: {(.variable_name)}",
       paste0("Independent variable name: ", paste0(indep_vars, collapse = ", "))
     )
