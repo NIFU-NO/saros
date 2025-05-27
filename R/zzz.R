@@ -75,3 +75,15 @@ if (!exists(".saros.env")) .saros.env <- NULL
     }
   }
 }
+
+.onUnload <- function(libpath) {
+  # Clean up global options
+  options(saros = NULL)
+
+  # Clean up package environment
+  if (exists(".saros.env")) {
+    rm(".saros.env", envir = .GlobalEnv)
+  }
+
+  invisible()
+}
