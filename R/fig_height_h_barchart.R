@@ -172,6 +172,7 @@ fig_height_h_barchart <- # Returns a numeric value
            add_n_to_indep_label = FALSE,
            showNA = c("ifany", "never", "always")) {
     ######
+
     args <- check_options(
       call = match.call(),
       ignore_args = .saros.env$ignore_args,
@@ -422,10 +423,10 @@ fig_height_h_barchart2 <- # Returns a numeric value
         )
     }
 
-
+    call <- match.call()
 
     args <- check_options(
-      call = match.call(),
+      call = call,
       ignore_args = .saros.env$ignore_args,
       defaults_env = global_settings_get(fn_name = "fig_height_h_barchart"),
       default_values = formals(fig_height_h_barchart)
@@ -447,8 +448,8 @@ fig_height_h_barchart2 <- # Returns a numeric value
     fixed_constant <- args$fixed_constant
     figure_width_in_cm <- args$figure_width_in_cm
     margin_in_cm <- args$margin_in_cm
-    max <- args$max
-    min <- args$min
+    max_value <- args$max
+    min_value <- args$min
     hide_axis_text_if_single_variable <- args$hide_axis_text_if_single_variable
     showNA <- args$showNA[[1]]
 
@@ -491,7 +492,7 @@ fig_height_h_barchart2 <- # Returns a numeric value
       fixed_constant = fixed_constant,
       margin_in_cm = margin_in_cm,
       figure_width_in_cm = figure_width_in_cm,
-      max = max,
-      min = min
+      max = max_value,
+      min = min_value
     )
   }

@@ -1,3 +1,6 @@
+# saros 1.5.3
+-   Fix: `makeme` now handles arguments in parent frame scopes correctly.
+
 # saros 1.5.1
 -   Feature: Added `".percentage"` as valid (sorting) column
 -   Feature: `cat_table_html` returns NULL if nothing to display
