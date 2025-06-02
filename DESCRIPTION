@@ -1,7 +1,7 @@
 Type: Package
 Package: saros
 Title: Semi-Automatic Reporting of Ordinary Surveys
-Version: 1.5.3
+Version: 1.5.4
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
