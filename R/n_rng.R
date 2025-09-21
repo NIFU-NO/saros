@@ -3,14 +3,14 @@ glue_together_range <- function(
   glue_template_1,
   glue_template_2
 ) {
-  if (is.null(n)) {
+  if (is.null(n) || all(is.na(n))) {
     return("")
   }
   n <-
     range(n, na.rm = TRUE) |>
     unique()
 
-  if (all(is.na(n)) || all(n %in% c(Inf, -Inf))) {
+  if (all(n %in% c(Inf, -Inf))) {
     return("")
   }
 
