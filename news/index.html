@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.5.4" id="saros-154">saros 1.5.4<a class="anchor" aria-label="anchor" href="#saros-154"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.5.5" id="saros-155">saros 1.5.5<a class="anchor" aria-label="anchor" href="#saros-155"></a></h2>
+<ul><li>Using <code>air</code> for consistent code formatting</li>
+<li>Feature: makeme() has new output type = “int_plot_html” for interactive interval plots with violin and box plots</li>
+<li>Major change: <code><a href="../reference/makeme.html">makeme()</a></code> returns an empty data.frame instead of <code>NULL</code> if not plot or table can be created, simplifying downstream code (e.g. <code>gt::gt()</code> fails if served <code>NULL</code>).</li>
+<li>Fix: Corrected documentation reference from <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::theme_set()</a></code> to <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::set_theme()</a></code>
+</li>
+<li>Dev: Added VS Code configuration for improved development experience</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.5.4" id="saros-154">saros 1.5.4<a class="anchor" aria-label="anchor" href="#saros-154"></a></h2><p class="text-muted">CRAN release: 2025-06-04</p>
 <ul><li>Fix: Corrected error introduced in 1.5.3</li>
 </ul></div>
     <div class="section level2">
