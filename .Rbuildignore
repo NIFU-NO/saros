@@ -21,3 +21,4 @@ data-raw/goodpractice
 ^vignettes/*_files$
 ^\.vscode$
 ^[.]?air[.]toml$
+\.copilot-instructions\.md
