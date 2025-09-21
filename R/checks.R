@@ -13,7 +13,7 @@ check_bool <- function(
   call = rlang::caller_env(),
   arg = rlang::caller_arg(x)
 ) {
-  if (!(is.logical(x) && length(x) == 1 && !is.na(x)) || is.na(x)) {
+  if (!(is.logical(x) && length(x) == 1 && !is.na(x))) {
     cli::cli_abort(err_msg(" logical of length 1"), call = call)
   }
 }
