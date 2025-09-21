@@ -389,7 +389,7 @@ Colour as a single string for NA values, if showNA is "ifany" or "always".}
 
 \verb{scalar<integer>} // \emph{default:} \code{6} (\code{optional})
 
-ONLY FOR DOCX-OUTPUT. Other output is adjusted using e.g. ggplot2::theme() or set with a global theme (ggplot2::theme_set()).
+ONLY FOR DOCX-OUTPUT. Other output is adjusted using e.g. ggplot2::theme() or set with a global theme (ggplot2::set_theme()).
 Font sizes for general text (6), data label text (3), strip text (6) and legend text (6).}
 
 \item{font_family}{\emph{Font family}

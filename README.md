@@ -51,7 +51,7 @@ possible interest.
     usual
     [ggplot2::theme()](https://ggplot2.tidyverse.org/reference/theme.html)
     tools, including
-    [ggplot2::theme_set()](https://ggplot2.tidyverse.org/reference/theme_get.html).
+    [ggplot2::set_theme()](https://ggplot2.tidyverse.org/reference/theme_get.html).
 - *Flexibility*:
   - Several sets of chunk templates are built in, depending on the type
     of report you want. These templates are provided as data frames, so
