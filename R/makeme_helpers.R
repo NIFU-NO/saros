@@ -157,11 +157,13 @@ process_crowd_data <- function(
     indep_msg <- if (is.character(args$indep)) {
       paste0("indep=", cli::ansi_collapse(args$indep))
     }
+
     cli::cli_warn(c(
       "No data left to make you {.arg {args$type}} with dep={.arg {args$dep}}, {.arg {indep_msg}}, crowd={.arg {crwd}}.",
       i = "Skipping."
     ))
     return(NULL)
+    indep_msg
   }
 
   list(subset_data = subset_data, dep_crwd = dep_crwd, indep_crwd = indep_crwd)

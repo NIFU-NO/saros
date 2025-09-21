@@ -11,5 +11,6 @@ check_multiple_indep <-
         ),
         call = call
       )
+      indep_call
     }
   }

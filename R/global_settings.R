@@ -40,6 +40,7 @@ global_settings_set <- function(
   options(saros = saros_options)
   if (isFALSE(quiet)) {
     msg_part <- paste0("options('saros')$", fn_name, "_defaults")
+    msg_part
     cli::cli_inform("{.arg {msg_part}} has now been set.")
   }
   invisible(list(old = current_options, new = updated_options))
@@ -62,8 +63,9 @@ global_settings_reset <- function(fn_name = "makeme") {
   options(saros = saros_options)
   msg_part <- paste0("options('saros')$", fn_name, "_defaults")
   cli::cli_inform("{.val {msg_part}} has now been reset to factory defaults.")
-  invisible(list(
+  return(invisible(list(
     old = old,
     new = saros_options[[paste0(fn_name, "_defaults")]]
-  ))
+  )))
+  msg_part
 }
