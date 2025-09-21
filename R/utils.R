@@ -53,45 +53,44 @@ subset_vector <-
       } else if (set == ".mid_lower") {
         vec[1:m]
       } else if (set == ".spread") {
-        if (n == spread_n) {
+        if (n <= spread_n) {
           vec
         } else {
-          max_set <- c()
-          if (n %% 2 != 0L) {
-            if (spread_n == 1L) {
-              m
-            }
+          # Algorithm to maximize spread: select extremes first, then fill in
+          indices <- c()
+
+          # Always start with extremes if we need more than 1 element
+          if (spread_n >= 2L) {
+            indices <- c(1L, n)
+          }
+
+          # If we need just 1 element, take the middle
+          if (spread_n == 1L) {
+            indices <- round(stats::median(seq_len(n)))
+          } else if (spread_n > 2L) {
+            # Add middle element if we need an odd number of elements
             if (spread_n %% 2 != 0L) {
-              max_set <- c(max_set, m)
+              indices <- c(indices, round(stats::median(seq_len(n))))
             }
-            if (spread_n > 1L) {
-              max_set <- c(max_set, 1L, n)
-            }
-            if (spread_n > 4L) {
-              max_set <- c(max_set, 2L, n - 1L)
-            }
-            if (spread_n > 5L || spread_n == 4) {
-              max_set <- c(max_set, 3L, n - 2L)
-            }
-            if (spread_n > 6L) {
-              max_set <- c(max_set, 4L, n - 3L)
-            }
-          } else if (n %% 2L == 0L) {
-            if (spread_n > 1L) {
-              max_set <- c(max_set, 1L, n)
-            }
-            if (spread_n > 3L && n <= 6) {
-              max_set <- c(max_set, 2L, n - 1L)
-            }
-            if (spread_n > 4L || (spread_n > 3L && n > 6)) {
-              max_set <- c(max_set, 3L, n - 2L)
-            }
-            if (spread_n %% 2 != 0L) {
-              m <- round(stats::median(seq_len(n)))
-              max_set <- c(max_set, m)
+
+            # Fill in remaining positions by maximizing gaps
+            remaining <- spread_n - length(indices)
+            if (remaining > 0L) {
+              # Create a sequence of evenly spaced positions
+              positions <- seq(1, n, length.out = spread_n)
+              indices <- unique(round(positions))
             }
           }
-          unique(vec[sort(max_set)])
+
+          # Ensure we don't exceed bounds and have the right number of elements
+          indices <- sort(unique(pmax(1L, pmin(n, indices))))
+          if (length(indices) > spread_n) {
+            # If we have too many, keep the most spread out ones
+            keep_positions <- seq(1, length(indices), length.out = spread_n)
+            indices <- indices[round(keep_positions)]
+          }
+
+          vec[indices]
         }
       }
     }
