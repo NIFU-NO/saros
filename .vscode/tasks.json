@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install package",
+			"type": "shell",
+			"command": "C:/Program Files/R/R-4.5.1/bin/x64/R.exe",
+			"args": [
+				"--no-echo",
+				"--no-restore",
+				"-e",
+				"devtools::install()"
+			],
+			"group": "build"
+		}
+	]
+}
