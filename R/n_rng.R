@@ -132,8 +132,6 @@ n_range <- function(
   dep_pos <- tidyselect::eval_select(dep_enq, data = data)
   indep_enq <- rlang::enquo(arg = indep)
   indep_pos <- tidyselect::eval_select(indep_enq, data = data)
-  mesos_var_enq <- rlang::enquo(arg = mesos_var)
-  mesos_var_pos <- tidyselect::eval_select(mesos_var_enq, data = data)
 
   args <- check_options(
     call = match.call(),

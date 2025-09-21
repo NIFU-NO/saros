@@ -36,7 +36,7 @@ subset_vector <-
       vec[n]
     } else if (set == ".bottom") {
       vec[1]
-    } else if (n %% 2 == 0L & set != ".spread") {
+    } else if (n %% 2 == 0L && set != ".spread") {
       if (set %in% c(".mid_upper", ".upper")) {
         vec[(n / 2 + 1):n]
       } else if (set %in% c(".mid_lower", ".lower")) {
@@ -70,7 +70,7 @@ subset_vector <-
             if (spread_n > 4L) {
               max_set <- c(max_set, 2L, n - 1L)
             }
-            if (spread_n > 5L | spread_n == 4) {
+            if (spread_n > 5L || spread_n == 4) {
               max_set <- c(max_set, 3L, n - 2L)
             }
             if (spread_n > 6L) {
@@ -80,10 +80,10 @@ subset_vector <-
             if (spread_n > 1L) {
               max_set <- c(max_set, 1L, n)
             }
-            if (spread_n > 3L & n <= 6) {
+            if (spread_n > 3L && n <= 6) {
               max_set <- c(max_set, 2L, n - 1L)
             }
-            if (spread_n > 4L | (spread_n > 3L & n > 6)) {
+            if (spread_n > 4L || (spread_n > 3L && n > 6)) {
               max_set <- c(max_set, 3L, n - 2L)
             }
             if (spread_n %% 2 != 0L) {
@@ -102,13 +102,11 @@ subset_vector <-
 check_category_pairs <-
   function(data, cols_pos, call = rlang::caller_env(), return_error = TRUE) {
     lapply(X = seq_along(cols_pos), FUN = function(i) {
-      x <- unname(cols_pos)[[i]]
       y <- names(cols_pos)[[i]]
 
       cols_rest <-
         cols_pos[-c(1:match(y, names(cols_pos)))]
       lapply(X = seq_along(cols_rest), FUN = function(e) {
-        x2 <- unname(cols_rest)[[e]]
         y2 <- names(cols_rest)[[e]]
 
         val_y <- if (is.factor(data[[y]])) {
