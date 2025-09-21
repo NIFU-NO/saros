@@ -1,4 +1,3 @@
-
 #' Get Global Options for saros-functions
 #'
 #' @inheritParams global_settings_set
@@ -24,18 +23,26 @@ global_settings_get <- function(fn_name = "makeme") {
 #' @export
 #'
 #' @examples global_settings_set(new=list(digits=2))
-global_settings_set <- function(new, fn_name = "makeme", quiet = FALSE, null_deletes = FALSE) {
+global_settings_set <- function(
+  new,
+  fn_name = "makeme",
+  quiet = FALSE,
+  null_deletes = FALSE
+) {
   saros_options <- getOption("saros", list())
   current_options <- saros_options[[paste0(fn_name, "_defaults")]]
-  updated_options <- utils::modifyList(current_options, new, keep.null = !null_deletes)
+  updated_options <- utils::modifyList(
+    current_options,
+    new,
+    keep.null = !null_deletes
+  )
   saros_options[[paste0(fn_name, "_defaults")]] <- updated_options
   options(saros = saros_options)
-  if(isFALSE(quiet)) {
+  if (isFALSE(quiet)) {
     msg_part <- paste0("options('saros')$", fn_name, "_defaults")
     cli::cli_inform("{.arg {msg_part}} has now been set.")
   }
-  invisible(list(old = current_options,
-                 new = updated_options))
+  invisible(list(old = current_options, new = updated_options))
 }
 
 #' Reset Global Options for saros-functions
@@ -48,11 +55,15 @@ global_settings_set <- function(new, fn_name = "makeme", quiet = FALSE, null_del
 global_settings_reset <- function(fn_name = "makeme") {
   saros_options <- getOption("saros", list())
   old <- saros_options[[paste0(fn_name, "_defaults")]]
-  saros_options[[paste0(fn_name, "_defaults")]] <- .saros.env[[paste0(fn_name, "_defaults")]]
+  saros_options[[paste0(fn_name, "_defaults")]] <- .saros.env[[paste0(
+    fn_name,
+    "_defaults"
+  )]]
   options(saros = saros_options)
   msg_part <- paste0("options('saros')$", fn_name, "_defaults")
   cli::cli_inform("{.val {msg_part}} has now been reset to factory defaults.")
-  invisible(list(old = old,
-                 new = saros_options[[paste0(fn_name, "_defaults")]]))
+  invisible(list(
+    old = old,
+    new = saros_options[[paste0(fn_name, "_defaults")]]
+  ))
 }
-

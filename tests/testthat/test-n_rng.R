@@ -1,6 +1,5 @@
 testthat::test_that("n_rng returns correct string for single dependent variable", {
-  data <- data.frame(dep1 = c(1, NA, 3),
-                     indep1 = c(NA, 2, 3))
+  data <- data.frame(dep1 = c(1, NA, 3), indep1 = c(NA, 2, 3))
   result <- saros:::n_rng(data, dep = "dep1")
   testthat::expect_equal(result, "2")
 })
@@ -20,7 +19,12 @@ testthat::test_that("n_rng returns correct string for dependent and independent 
 
 testthat::test_that("n_rng returns 0 when no data", {
   data <- data.frame(dep1 = numeric(0), indep1 = numeric(0))
-  result <- saros:::n_rng(data, dep = "dep1", indep = "indep1", glue_template_1 = "{n}")
+  result <- saros:::n_rng(
+    data,
+    dep = "dep1",
+    indep = "indep1",
+    glue_template_1 = "{n}"
+  )
   testthat::expect_equal(result, "0")
 })
 
@@ -32,7 +36,12 @@ testthat::test_that("n_rng returns 0 for all NA values in dependent variables", 
 
 testthat::test_that("n_rng returns 0 for all NA values in independent variables", {
   data <- data.frame(dep1 = c(1, 2, 3), indep1 = c(NA, NA, NA))
-  result <- saros:::n_rng(data, dep = "dep1", indep = "indep1", glue_template_1 = "{n}")
+  result <- saros:::n_rng(
+    data,
+    dep = "dep1",
+    indep = "indep1",
+    glue_template_1 = "{n}"
+  )
   testthat::expect_equal(result, "0")
 })
 

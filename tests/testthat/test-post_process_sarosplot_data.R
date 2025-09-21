@@ -1,7 +1,10 @@
 testthat::test_that("post_process_makeme_data reverses factor levels for independent variable", {
   data <- data.frame(indep1 = factor(c("A", "B", "C")), .category = c(1, 2, 3))
   result <- saros:::post_process_makeme_data(data, indep = "indep1")
-  testthat::expect_equal(levels(result$indep1), rev(levels(factor(c("A", "B", "C")))))
+  testthat::expect_equal(
+    levels(result$indep1),
+    rev(levels(factor(c("A", "B", "C"))))
+  )
 })
 
 testthat::test_that("post_process_makeme_data does not reverse factor levels if no independent variable", {
@@ -12,26 +15,45 @@ testthat::test_that("post_process_makeme_data does not reverse factor levels if 
 
 testthat::test_that("post_process_makeme_data does not reverse factor levels for NA categories if showNA is never", {
   data <- data.frame(indep1 = factor(c("A", "B", "C")), .category = c(1, 2, NA))
-  result <- saros:::post_process_makeme_data(data, indep = "indep1", showNA = "never")
+  result <- saros:::post_process_makeme_data(
+    data,
+    indep = "indep1",
+    showNA = "never"
+  )
   testthat::expect_equal(result$.category, c(1, 2, NA))
 })
 
 testthat::test_that("post_process_makeme_data reverses .category for binary categories with colour_2nd_binary_cat", {
   data <- data.frame(.category = factor(c("Yes", "No")))
-  result <- saros:::post_process_makeme_data(data, colour_2nd_binary_cat = "#FFFFFF")
-  testthat::expect_equal(levels(result$.category), rev(levels(factor(c("Yes", "No")))))
+  result <- saros:::post_process_makeme_data(
+    data,
+    colour_2nd_binary_cat = "#FFFFFF"
+  )
+  testthat::expect_equal(
+    levels(result$.category),
+    rev(levels(factor(c("Yes", "No"))))
+  )
 })
 
 testthat::test_that("post_process_makeme_data does not reverse .category for non-binary categories", {
   data <- data.frame(.category = factor(c("Yes", "No", "Maybe")))
-  result <- saros:::post_process_makeme_data(data, colour_2nd_binary_cat = "#FFFFFF")
-  testthat::expect_equal(levels(result$.category), levels(factor(c("Yes", "No", "Maybe"))))
+  result <- saros:::post_process_makeme_data(
+    data,
+    colour_2nd_binary_cat = "#FFFFFF"
+  )
+  testthat::expect_equal(
+    levels(result$.category),
+    levels(factor(c("Yes", "No", "Maybe")))
+  )
 })
 
 testthat::test_that("post_process_makeme_data does not reverse .category if colour_2nd_binary_cat is NULL", {
   data <- data.frame(.category = factor(c("Yes", "No")))
   result <- saros:::post_process_makeme_data(data)
-  testthat::expect_equal(levels(result$.category), levels(factor(c("Yes", "No"))))
+  testthat::expect_equal(
+    levels(result$.category),
+    levels(factor(c("Yes", "No")))
+  )
 })
 
 testthat::test_that("post_process_makeme_data handles empty data frame", {

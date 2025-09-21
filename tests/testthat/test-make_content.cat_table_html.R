@@ -7,18 +7,26 @@ testthat::test_that("make_content.cat_table_html works", {
       showNA = "never",
       add_n_to_dep_label = TRUE
     )
-  testthat::expect_equal(as.character(result$.variable_label[[4]]), "Blue Party (N = 266)")
+  testthat::expect_equal(
+    as.character(result$.variable_label[[4]]),
+    "Blue Party (N = 266)"
+  )
 })
 
 testthat::test_that("make_content.cat_table_html works with NA on both dep and indep", {
   expected_df <-
-    NULL
+    data.frame()
   data.frame(
     a = factor(c("M", "F", NA), exclude = NULL),
     b = factor(c(NA, NA, "Z"), exclude = NULL)
   ) |>
     labelled::set_variable_labels(a = "Gender", b = "Generation") |>
-    saros::makeme(dep = a, indep = b, showNA = "never", type = "cat_table_html") |>
+    saros::makeme(
+      dep = a,
+      indep = b,
+      showNA = "never",
+      type = "cat_table_html"
+    ) |>
     testthat::expect_equal(expected = expected_df)
 })
 
@@ -38,7 +46,12 @@ testthat::test_that("make_content.cat_table_html works with NA on both dep and i
     b = factor(c(NA, NA, "Z"), exclude = NULL)
   ) |>
     labelled::set_variable_labels(a = "Gender", b = "Generation") |>
-    saros::makeme(dep = a, indep = b, showNA = "always", type = "cat_table_html") |>
+    saros::makeme(
+      dep = a,
+      indep = b,
+      showNA = "always",
+      type = "cat_table_html"
+    ) |>
     testthat::expect_equal(expected = expected_df)
 })
 

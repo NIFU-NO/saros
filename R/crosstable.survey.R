@@ -1,4 +1,3 @@
-
 # #' @export
 # crosstable.tbl_svy <-
 #   function(data,
@@ -93,8 +92,6 @@
 #       out
 #     })
 
-
-
 #     # # Add totals when 'indep' is not NULL and 'totals' is TRUE. Not yet working.
 #     # if(length(indep)>0 && isTRUE(totals)) {
 #     #   # Combine the indep_names and .variable_name into a single factor for aggregating
@@ -129,7 +126,6 @@
 #   return(result)
 #   }
 
-
 ##################################
 
 # Helper function: Prepare data for processing for tbl_svy
@@ -144,7 +140,10 @@ crosstable_prepare_data_svy <- function(data, dep_var, indep, showNA) {
   }
 
   if (showNA == "always" || (showNA == "ifany" && any(is.na(col)))) {
-    out <- srvyr::mutate(out, .category = forcats::fct_na_value_to_level(f = col, level = "NA"))
+    out <- srvyr::mutate(
+      out,
+      .category = forcats::fct_na_value_to_level(f = col, level = "NA")
+    )
   } else {
     out <- srvyr::filter(out, !is.na(.data$.category))
   }
@@ -152,15 +151,21 @@ crosstable_prepare_data_svy <- function(data, dep_var, indep, showNA) {
   for (indep_var in indep) {
     indep_col <- srvyr::pull(out, .data[[indep_var]])
     if (showNA == "always" || (showNA == "ifany" && any(is.na(indep_col)))) {
-      out <- srvyr::mutate(out, srvyr::across(
-        .cols = tidyselect::all_of(indep_var),
-        .fns = ~ forcats::fct_na_value_to_level(f = .x, level = "NA")
-      ))
+      out <- srvyr::mutate(
+        out,
+        srvyr::across(
+          .cols = tidyselect::all_of(indep_var),
+          .fns = ~ forcats::fct_na_value_to_level(f = .x, level = "NA")
+        )
+      )
     } else {
-      out <- srvyr::filter(out, dplyr::if_all(
-        .cols = tidyselect::all_of(indep_var),
-        .fns = ~ !is.na(.x)
-      ))
+      out <- srvyr::filter(
+        out,
+        dplyr::if_all(
+          .cols = tidyselect::all_of(indep_var),
+          .fns = ~ !is.na(.x)
+        )
+      )
     }
   }
   return(out)
@@ -168,10 +173,17 @@ crosstable_prepare_data_svy <- function(data, dep_var, indep, showNA) {
 
 # Helper function: Calculate mean values for tbl_svy
 crosstable_calculate_means_svy <- function(data, indep) {
-  summary_mean <- srvyr::group_by(data, srvyr::across(tidyselect::all_of(indep)))
-  summary_mean <- srvyr::summarize(summary_mean,
-    .mean = srvyr::survey_mean(suppressWarnings(as.numeric(.data$.category)), na.rm = TRUE),
-    .count_per_dep = NA_integer_,  # Placeholder
+  summary_mean <- srvyr::group_by(
+    data,
+    srvyr::across(tidyselect::all_of(indep))
+  )
+  summary_mean <- srvyr::summarize(
+    summary_mean,
+    .mean = srvyr::survey_mean(
+      suppressWarnings(as.numeric(.data$.category)),
+      na.rm = TRUE
+    ),
+    .count_per_dep = NA_integer_, # Placeholder
     .count_per_indep_group = srvyr::survey_total(na.rm = TRUE)
   )
   summary_mean <- srvyr::ungroup(summary_mean)
@@ -179,36 +191,55 @@ crosstable_calculate_means_svy <- function(data, indep) {
 }
 
 # Helper function: Calculate proportions for tbl_svy
-crosstable_calculate_proportions_svy <- function(data, dep_var, fct_lvls, indep) {
-  summary_prop <- srvyr::group_by(data, srvyr::across(tidyselect::all_of(c(indep, ".category"))))
+crosstable_calculate_proportions_svy <- function(
+  data,
+  dep_var,
+  fct_lvls,
+  indep
+) {
+  summary_prop <- srvyr::group_by(
+    data,
+    srvyr::across(tidyselect::all_of(c(indep, ".category")))
+  )
 
   # Calculate total counts and proportions
-  summary_prop <- srvyr::summarize(summary_prop,
+  summary_prop <- srvyr::summarize(
+    summary_prop,
     .count = srvyr::survey_total(na.rm = TRUE),
     .proportion = srvyr::survey_prop(proportion = TRUE)
   )
   summary_prop <- srvyr::ungroup(summary_prop)
 
   # Summaries per dep variable (e.g. b_1, b_2)
-  summary_prop <- 
-    cbind(summary_prop, 
-          srvyr::summarize(data,
-                   .count_per_dep = srvyr::survey_total(na.rm = TRUE)
-  ))
-  
+  summary_prop <-
+    cbind(
+      summary_prop,
+      srvyr::summarize(data, .count_per_dep = srvyr::survey_total(na.rm = TRUE))
+    )
+
   # Calculate .count_per_indep_group
-  grouped_count <- srvyr::group_by(data, srvyr::across(tidyselect::all_of(indep)))
-  grouped_count <- srvyr::summarize(grouped_count,
+  grouped_count <- srvyr::group_by(
+    data,
+    srvyr::across(tidyselect::all_of(indep))
+  )
+  grouped_count <- srvyr::summarize(
+    grouped_count,
     .count_per_indep_group = srvyr::survey_total(na.rm = TRUE)
   )
   grouped_count <- srvyr::ungroup(grouped_count)
 
   # Merge .count_per_indep_group into summary_prop
-#  summary_prop <- dplyr::left_join(summary_prop, grouped_count, by = indep)
+  #  summary_prop <- dplyr::left_join(summary_prop, grouped_count, by = indep)
   summary_prop <- merge(summary_prop, grouped_count, by = indep)
   ###
-  summary_prop <- dplyr::mutate(summary_prop,
-    .category = factor(x = .data$.category, levels = fct_lvls, labels = fct_lvls, exclude = character())
+  summary_prop <- dplyr::mutate(
+    summary_prop,
+    .category = factor(
+      x = .data$.category,
+      levels = fct_lvls,
+      labels = fct_lvls,
+      exclude = character()
+    )
   )
 
   return(summary_prop)
@@ -216,47 +247,81 @@ crosstable_calculate_proportions_svy <- function(data, dep_var, fct_lvls, indep)
 
 
 # Helper function: Process a single dependent variable for tbl_svy
-crosstable_process_dep_svy <- function(data, dep_var, indep, showNA, translations, call) {
-
+crosstable_process_dep_svy <- function(
+  data,
+  dep_var,
+  indep,
+  showNA,
+  translations,
+  call
+) {
   out <- crosstable_prepare_data_svy(data, dep_var, indep, showNA)
-  if (nrow(out) == 0) return(crosstable_empty_output(dep_var, indep, data = srvyr::as_tibble(data)))
+  if (nrow(out) == 0) {
+    return(crosstable_empty_output(
+      dep_var,
+      indep,
+      data = srvyr::as_tibble(data)
+    ))
+  }
   col <- srvyr::pull(out, .data$.category)
   fct_lvls <- if (is.factor(col)) levels(col) else sort(unique(col))
 
-
   summary_mean <- crosstable_calculate_means_svy(out, indep)
-  summary_prop <- crosstable_calculate_proportions_svy(out, dep_var, fct_lvls, indep)
+  summary_prop <- crosstable_calculate_proportions_svy(
+    out,
+    dep_var,
+    fct_lvls,
+    indep
+  )
 
   merged_output <- crosstable_merge_summaries(summary_prop, summary_mean, indep)
-  crosstable_finalize_variable_output(merged_output, dep_var, srvyr::as_tibble(data))
+  crosstable_finalize_variable_output(
+    merged_output,
+    dep_var,
+    srvyr::as_tibble(data)
+  )
 }
 
 
-
 #' @export
-crosstable.tbl_svy <- function(data,
-                               dep = colnames(data),
-                               indep = NULL,
-                               showNA = eval(formals(makeme)$showNA),
-                               totals = eval(formals(makeme)$totals),
-                               translations = eval(formals(makeme)$translations),
-                               ...,
-                               call = rlang::caller_env()) {
+crosstable.tbl_svy <- function(
+  data,
+  dep = colnames(data),
+  indep = NULL,
+  showNA = eval(formals(makeme)$showNA),
+  totals = eval(formals(makeme)$totals),
+  translations = eval(formals(makeme)$translations),
+  ...,
+  call = rlang::caller_env()
+) {
   # Validate inputs
-  if (inherits(data, "tbl_svy") &&
-      !requireNamespace("srvyr", quietly = TRUE)) {
-    cli::cli_abort("Needs {.pkg srvyr} to use tbl_svy objects: {.run install.packages('srvyr')}.")
+  if (
+    inherits(data, "tbl_svy") &&
+      !requireNamespace("srvyr", quietly = TRUE)
+  ) {
+    cli::cli_abort(
+      "Needs {.pkg srvyr} to use tbl_svy objects: {.run install.packages('srvyr')}."
+    )
   }
 
-  showNA <- rlang::arg_match(showNA, values = eval(formals(makeme)$showNA), error_call = call)
-  
-  crosstable_validate_columns(data = srvyr::as_tibble(data), dep = dep, indep = indep)
+  showNA <- rlang::arg_match(
+    showNA,
+    values = eval(formals(makeme)$showNA),
+    error_call = call
+  )
+
+  crosstable_validate_columns(
+    data = srvyr::as_tibble(data),
+    dep = dep,
+    indep = indep
+  )
 
   # Prepare dependent and independent variable labels
   indep_labels <- get_raw_labels(data = srvyr::as_tibble(data), col_pos = indep)
   dep_cols <- setdiff(dep, indep)
-  if(length(dep_cols) == 0) return()
-
+  if (length(dep_cols) == 0) {
+    return()
+  }
 
   # Generate crosstables for each dependent variable
   output <- lapply(stats::setNames(dep_cols, dep_cols), function(dep_var) {

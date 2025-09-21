@@ -325,7 +325,7 @@
 #'
 #'   `scalar<integer>` // *default:* `6` (`optional`)
 #'
-#'   ONLY FOR DOCX-OUTPUT. Other output is adjusted using e.g. ggplot2::theme() or set with a global theme (ggplot2::theme_set()).
+#'   ONLY FOR DOCX-OUTPUT. Other output is adjusted using e.g. ggplot2::theme() or set with a global theme (ggplot2::set_theme()).
 #'   Font sizes for general text (6), data label text (3), strip text (6) and legend text (6).
 #'
 #' @param font_family *Font family*
@@ -385,97 +385,97 @@
 #'   mesos_group = "Uni of A"
 #' )
 makeme <-
-  function(data,
-           dep = tidyselect::everything(),
-           indep = NULL,
-           type = c(
-             "cat_plot_html",
-             "int_plot_html",
-             "cat_table_html",
-             "int_table_html",
-             "sigtest_table_html",
-             "cat_prop_plot_docx",
-             "cat_freq_plot_docx",
-             "int_plot_docx"
-           ),
-           ...,
-           require_common_categories = TRUE,
-           # Multiple output, splits and selective hiding of variables
-           crowd = c("all"), # "target", "others",
-           mesos_var = NULL,
-           mesos_group = NULL,
-           simplify_output = TRUE,
-           # Hide variable (combinations) for a crowd if...
-           hide_for_crowd_if_all_na = TRUE,
-           hide_for_crowd_if_valid_n_below = 0,
-           hide_for_crowd_if_category_k_below = 2,
-           hide_for_crowd_if_category_n_below = 0,
-           hide_for_crowd_if_cell_n_below = 0,
-           hide_for_all_crowds_if_hidden_for_crowd = NULL,
-           hide_indep_cat_for_all_crowds_if_hidden_for_crowd = FALSE,
-           add_n_to_dep_label = FALSE,
-           add_n_to_indep_label = FALSE,
-           add_n_to_label = FALSE,
-           add_n_to_category = FALSE,
-           totals = FALSE,
-           categories_treated_as_na = NULL,
-           label_separator = " - ",
-           error_on_duplicates = TRUE,
-           showNA = c("ifany", "always", "never"),
-           data_label = c("percentage_bare", "percentage", "proportion", "count"),
-           html_interactive = TRUE,
-           hide_axis_text_if_single_variable = TRUE,
-           hide_label_if_prop_below = .01,
-           inverse = FALSE,
-           vertical = FALSE,
-           digits = 0,
-           data_label_decimal_symbol = ".",
-           x_axis_label_width = 25,
-           strip_width = 25,
-           # Sorting
-           sort_by = ".upper",
-           descend = TRUE,
-           labels_always_at_top = NULL,
-           labels_always_at_bottom = NULL,
-           # For tables
-           table_wide = TRUE,
-           table_main_question_as_header = FALSE,
-           n_categories_limit = 12,
-           translations =
-             list(
-               last_sep = " and ", # Not in use
-               table_heading_N = "Total (N)",
-               table_heading_data_label = "%",
-               add_n_to_dep_label_prefix = " (N = ",
-               add_n_to_dep_label_suffix = ")",
-               add_n_to_indep_label_prefix = " (N = ",
-               add_n_to_indep_label_suffix = ")",
-               add_n_to_label_prefix = " (N = ",
-               add_n_to_label_suffix = ")",
-               add_n_to_category_prefix = " (N = [",
-               add_n_to_category_infix = ",",
-               add_n_to_category_suffix = "])",
-               by_total = "Everyone",
-               sigtest_variable_header_1 = "Var 1",
-               sigtest_variable_header_2 = "Var 2",
-               crowd_all = "All",
-               crowd_target = "Target",
-               crowd_others = "Others"
-             ),
-           # Only for docx, for ggplot2 it is set globally or wtih gplot2::theme()
-           plot_height = 15,
-           colour_palette = NULL,
-           colour_2nd_binary_cat = "#ffffff",
-           colour_na = "grey",
-           label_font_size = 6,
-           main_font_size = 6,
-           strip_font_size = 6,
-           legend_font_size = 6,
-           font_family = "sans",
-           path = NULL,
-           docx_template = NULL) {
+  function(
+    data,
+    dep = tidyselect::everything(),
+    indep = NULL,
+    type = c(
+      "cat_plot_html",
+      "int_plot_html",
+      "cat_table_html",
+      "int_table_html",
+      "sigtest_table_html",
+      "cat_prop_plot_docx",
+      "cat_freq_plot_docx",
+      "int_plot_docx"
+    ),
+    ...,
+    require_common_categories = TRUE,
+    # Multiple output, splits and selective hiding of variables
+    crowd = c("all"), # "target", "others",
+    mesos_var = NULL,
+    mesos_group = NULL,
+    simplify_output = TRUE,
+    # Hide variable (combinations) for a crowd if...
+    hide_for_crowd_if_all_na = TRUE,
+    hide_for_crowd_if_valid_n_below = 0,
+    hide_for_crowd_if_category_k_below = 2,
+    hide_for_crowd_if_category_n_below = 0,
+    hide_for_crowd_if_cell_n_below = 0,
+    hide_for_all_crowds_if_hidden_for_crowd = NULL,
+    hide_indep_cat_for_all_crowds_if_hidden_for_crowd = FALSE,
+    add_n_to_dep_label = FALSE,
+    add_n_to_indep_label = FALSE,
+    add_n_to_label = FALSE,
+    add_n_to_category = FALSE,
+    totals = FALSE,
+    categories_treated_as_na = NULL,
+    label_separator = " - ",
+    error_on_duplicates = TRUE,
+    showNA = c("ifany", "always", "never"),
+    data_label = c("percentage_bare", "percentage", "proportion", "count"),
+    html_interactive = TRUE,
+    hide_axis_text_if_single_variable = TRUE,
+    hide_label_if_prop_below = .01,
+    inverse = FALSE,
+    vertical = FALSE,
+    digits = 0,
+    data_label_decimal_symbol = ".",
+    x_axis_label_width = 25,
+    strip_width = 25,
+    # Sorting
+    sort_by = ".upper",
+    descend = TRUE,
+    labels_always_at_top = NULL,
+    labels_always_at_bottom = NULL,
+    # For tables
+    table_wide = TRUE,
+    table_main_question_as_header = FALSE,
+    n_categories_limit = 12,
+    translations = list(
+      last_sep = " and ", # Not in use
+      table_heading_N = "Total (N)",
+      table_heading_data_label = "%",
+      add_n_to_dep_label_prefix = " (N = ",
+      add_n_to_dep_label_suffix = ")",
+      add_n_to_indep_label_prefix = " (N = ",
+      add_n_to_indep_label_suffix = ")",
+      add_n_to_label_prefix = " (N = ",
+      add_n_to_label_suffix = ")",
+      add_n_to_category_prefix = " (N = [",
+      add_n_to_category_infix = ",",
+      add_n_to_category_suffix = "])",
+      by_total = "Everyone",
+      sigtest_variable_header_1 = "Var 1",
+      sigtest_variable_header_2 = "Var 2",
+      crowd_all = "All",
+      crowd_target = "Target",
+      crowd_others = "Others"
+    ),
+    # Only for docx, for ggplot2 it is set globally or wtih gplot2::theme()
+    plot_height = 15,
+    colour_palette = NULL,
+    colour_2nd_binary_cat = "#ffffff",
+    colour_na = "grey",
+    label_font_size = 6,
+    main_font_size = 6,
+    strip_font_size = 6,
+    legend_font_size = 6,
+    font_family = "sans",
+    path = NULL,
+    docx_template = NULL
+  ) {
     ##
-
 
     dep_enq <- rlang::enquo(arg = dep)
     dep_pos <- tidyselect::eval_select(dep_enq, data = data)
@@ -498,28 +498,37 @@ makeme <-
 
     validate_makeme_options(params = args)
 
-
     if (!args$type %in% c("sigtest_table_html")) {
       check_multiple_indep(data, indep = {{ indep }})
       check_category_pairs(data = data, cols_pos = c(dep_pos))
     }
 
-
-
-
-    # if(grepl(x=args$type, pattern = "freq")) args$data_label <- "count"
-
     # Set hide_for_all_crowds_if_hidden_for_crowd first to get its excluded variables early
     # This only happens if hide_for_all_crowds_if_hidden_for_crowd are in the set of crowd.
     args$crowd <- c(
-      args$hide_for_all_crowds_if_hidden_for_crowd[args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd],
-      args$crowd[!args$crowd %in% args$hide_for_all_crowds_if_hidden_for_crowd[args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd]]
+      args$hide_for_all_crowds_if_hidden_for_crowd[
+        args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd
+      ],
+      args$crowd[
+        !args$crowd %in%
+          args$hide_for_all_crowds_if_hidden_for_crowd[
+            args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd
+          ]
+      ]
     )
 
-
-    kept_cols_list <- rlang::set_names(vector(mode = "list", length = length(args$crowd)), args$crowd)
-    omitted_cols_list <- rlang::set_names(vector(mode = "list", length = length(args$crowd)), args$crowd)
-    kept_indep_cats_list <- rlang::set_names(vector(mode = "list", length = length(args$crowd)), args$crowd)
+    kept_cols_list <- rlang::set_names(
+      vector(mode = "list", length = length(args$crowd)),
+      args$crowd
+    )
+    omitted_cols_list <- rlang::set_names(
+      vector(mode = "list", length = length(args$crowd)),
+      args$crowd
+    )
+    kept_indep_cats_list <- rlang::set_names(
+      vector(mode = "list", length = length(args$crowd)),
+      args$crowd
+    )
 
     for (crwd in names(kept_cols_list)) {
       kept_cols_tmp <-
@@ -546,32 +555,37 @@ makeme <-
         )
     }
 
-
-
     kept_indep_cats_list <-
       lapply(rlang::set_names(names(kept_indep_cats_list)), function(crwd) {
-        lapply(rlang::set_names(names(kept_indep_cats_list[[crwd]])), function(x) {
-          if (is.character(args$hide_for_all_crowds_if_hidden_for_crowd) &&
-            !crwd %in% args$hide_for_all_crowds_if_hidden_for_crowd) {
-            kept_globally <-
-              kept_indep_cats_list[args$hide_for_all_crowds_if_hidden_for_crowd] |>
-              unlist() |>
-              unique()
+        lapply(
+          rlang::set_names(names(kept_indep_cats_list[[crwd]])),
+          function(x) {
+            if (
+              is.character(args$hide_for_all_crowds_if_hidden_for_crowd) &&
+                !crwd %in% args$hide_for_all_crowds_if_hidden_for_crowd
+            ) {
+              kept_globally <-
+                kept_indep_cats_list[
+                  args$hide_for_all_crowds_if_hidden_for_crowd
+                ] |>
+                unlist() |>
+                unique()
 
-            kept_indep_cats_list[[crwd]][[x]][
-              kept_indep_cats_list[[crwd]][[x]] %in%
-                kept_globally
-            ]
-          } else {
-            kept_indep_cats_list[[crwd]][[x]]
+              kept_indep_cats_list[[crwd]][[x]][
+                kept_indep_cats_list[[crwd]][[x]] %in%
+                  kept_globally
+              ]
+            } else {
+              kept_indep_cats_list[[crwd]][[x]]
+            }
           }
-        })
+        )
       })
 
-    out <- rlang::set_names(vector(mode = "list", length = length(args$crowd)), args$crowd)
-
-
-
+    out <- rlang::set_names(
+      vector(mode = "list", length = length(args$crowd)),
+      args$crowd
+    )
 
     for (crwd in names(out)) {
       #
@@ -582,22 +596,27 @@ makeme <-
             args$hide_for_all_crowds_if_hidden_for_crowd
           )
         ] |>
-        lapply(FUN = function(x) if ("omitted_vars" %in% names(x)) x["omitted_vars"]) |>
+        lapply(FUN = function(x) {
+          # if ("omitted_vars" %in% names(x)) x["omitted_vars"]
+          x
+        }) |>
         unlist() |>
         unique()
 
-
       dep_crwd <- args$dep[!args$dep %in% omitted_vars_crwd]
-      if (length(dep_crwd) == 0) next
+      if (length(dep_crwd) == 0) {
+        next
+      }
 
       indep_crwd <- args$indep
-      if (length(indep_crwd) == 0) indep_crwd <- NULL
-
-
+      if (length(indep_crwd) == 0) {
+        indep_crwd <- NULL
+      }
 
       subset_data <-
         dplyr::filter(
-          args$data[, # subetting would remove variable labels, filter keeps them
+          args$data[,
+            # subetting would remove variable labels, filter keeps them
             !colnames(args$data) %in% omitted_vars_crwd,
             drop = FALSE
           ],
@@ -612,14 +631,20 @@ makeme <-
       if (isTRUE(args$hide_indep_cat_for_all_crowds_if_hidden_for_crowd)) {
         for (x in indep_crwd) {
           subset_data <-
-            dplyr::filter(subset_data, as.character(subset_data[[x]]) %in%
-              kept_indep_cats_list[[crwd]][[x]])
+            dplyr::filter(
+              subset_data,
+              as.character(subset_data[[x]]) %in%
+                kept_indep_cats_list[[crwd]][[x]]
+            )
         }
       }
 
       if (nrow(subset_data) == 0) {
-        indep_msg <- if (is.character(args$indep)) paste0("indep=", cli::ansi_collapse(args$indep))
-        cli::cli_warn(c("No data left to make you {.arg {args$type}} with dep={.arg {args$dep}}, {.arg {indep_msg}}, crowd={.arg {crwd}}.",
+        indep_msg <- if (is.character(args$indep)) {
+          paste0("indep=", cli::ansi_collapse(args$indep))
+        }
+        cli::cli_warn(c(
+          "No data left to make you {.arg {args$type}} with dep={.arg {args$dep}}, {.arg {indep_msg}}, crowd={.arg {crwd}}.",
           i = "Skipping."
         ))
         next
@@ -628,11 +653,20 @@ makeme <-
       variable_type_dep <-
         lapply(args$dep, function(v) class(subset_data[[v]])) |>
         unlist()
+      variable_type_indep <-
+        lapply(args$indep, function(v) class(subset_data[[v]])) |>
+        unlist()
 
       # Future: switch or S3
-      if (all(variable_type_dep %in% c("integer", "numeric")) &&
-        (all(indep_crwd) %in% c("factor", "ordered", "character") ||
-          length(indep_crwd) == 0)) {
+
+      if (
+        all(variable_type_dep %in% c("integer", "numeric")) &&
+          (all(
+            variable_type_indep %in%
+              c("factor", "ordered", "character")
+          ) ||
+            length(indep_crwd) == 0)
+      ) {
         args$data_summary <-
           summarize_int_cat_data(
             data = subset_data,
@@ -640,7 +674,9 @@ makeme <-
             indep = indep_crwd,
             ...
           )
-      } else if (all(variable_type_dep %in% c("factor", "ordered", "character"))) {
+      } else if (
+        all(variable_type_dep %in% c("factor", "ordered", "character"))
+      ) {
         args$data_summary <-
           summarize_cat_cat_data(
             data = subset_data,
@@ -675,7 +711,10 @@ makeme <-
       args$main_question <-
         as.character(unique(args$data_summary[[".variable_label_prefix"]]))
 
-      check_no_duplicated_label_suffix(data_summary = args$data_summary, error_on_duplicates = args$error_on_duplicates)
+      check_no_duplicated_label_suffix(
+        data_summary = args$data_summary,
+        error_on_duplicates = args$error_on_duplicates
+      )
 
       if (!args$type %in% c("sigtest_table_html")) {
         args$data_summary <-
@@ -683,7 +722,11 @@ makeme <-
             data = args$data_summary,
             indep = indep_crwd,
             showNA = args$showNA,
-            colour_2nd_binary_cat = if (grepl(x = args$type, pattern = "docx")) args$colour_2nd_binary_cat
+            colour_2nd_binary_cat = if (
+              grepl(x = args$type, pattern = "docx")
+            ) {
+              args$colour_2nd_binary_cat
+            }
           )
       }
 
@@ -693,7 +736,8 @@ makeme <-
 
       out[[crwd]] <-
         suppressPackageStartupMessages(
-          rlang::exec(make_content,
+          rlang::exec(
+            make_content,
             type = args_crwd$type,
             !!!args_crwd[!names(args_crwd) %in% c("type")]
           )
@@ -702,7 +746,10 @@ makeme <-
 
     for (crwd in names(out)) {
       if (rlang::is_string(args$translations[[paste0("crowd_", crwd)]])) {
-        names(out)[names(out) == crwd] <- args$translations[[paste0("crowd_", crwd)]]
+        names(out)[names(out) == crwd] <- args$translations[[paste0(
+          "crowd_",
+          crwd
+        )]]
       }
     }
     out <- out[lapply(out, function(x) !is.null(x)) |> unlist()]
@@ -710,7 +757,7 @@ makeme <-
     if (isTRUE(args$simplify_output) && length(out) == 1) {
       out[[1]]
     } else if (length(out) == 0) {
-      NULL
+      invisible(data.frame())
     } else {
       out
     }

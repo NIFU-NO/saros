@@ -4,50 +4,58 @@ make_content.cat_table_html <-
     dots <- rlang::list2(...)
     data_summary <- dots$data_summary
 
-    if (dots$data_label %in% c("percentage", "percentage_bare", "proportion")) {
-      data_label2 <- "count"
-    } else {
-      data_label2 <- "percentage"
-    }
-
-
-
-
     ######### MUST TIDY UP FROM HERE ############
 
     if (length(dots$indep) > 0) {
       indep_label <- get_raw_labels(data = dots$data, col_pos = dots$indep)
-      indep_label <- get_main_question(indep_label,
+      indep_label <- get_main_question(
+        indep_label,
         label_separator = dots$label_separator,
         warn_multiple = TRUE
       )
       indep_label <- unique(indep_label)
-      if (nchar(indep_label) == 0) indep_label <- dots$indep[1] # browser() #cli::cli_warn("Indep {.var {indep_pos}} lacks a label.")
+      if (nchar(indep_label) == 0) indep_label <- dots$indep[1]
     } else {
       indep_label <- character()
     }
-
-    # indep_label <- unname(get_raw_labels(data = dots$data, col_pos = dots$indep))
 
     levels(data_summary[[".category"]])[
       levels(data_summary[[".category"]]) == ""
     ] <- NA_character_
 
     if (dots$showNA == "never") {
-      data_summary[[".category"]] <- forcats::fct_na_level_to_value(data_summary[[".category"]])
-      data_summary <- data_summary[!is.na(data_summary[[".category"]]), , drop = FALSE]
+      data_summary[[
+        ".category"
+      ]] <- forcats::fct_na_level_to_value(data_summary[[".category"]])
+      data_summary <- data_summary[
+        !is.na(data_summary[[".category"]]),
+        ,
+        drop = FALSE
+      ]
       for (ind in dots$indep) {
-        data_summary[[ind]] <- forcats::fct_na_level_to_value(data_summary[[ind]])
-        data_summary <- data_summary[!is.na(data_summary[[ind]]), , drop = FALSE]
+        data_summary[[ind]] <- forcats::fct_na_level_to_value(data_summary[[
+          ind
+        ]])
+        data_summary <- data_summary[
+          !is.na(data_summary[[ind]]),
+          ,
+          drop = FALSE
+        ]
       }
     } else {
-      data_summary[[".category"]] <- forcats::fct_na_value_to_level(data_summary[[".category"]], level = "NA")
+      data_summary[[".category"]] <- forcats::fct_na_value_to_level(
+        data_summary[[".category"]],
+        level = "NA"
+      )
       for (ind in dots$indep) {
-        data_summary[[ind]] <- forcats::fct_na_value_to_level(data_summary[[ind]], level = "NA")
+        data_summary[[ind]] <- forcats::fct_na_value_to_level(
+          data_summary[[ind]],
+          level = "NA"
+        )
       }
     }
     if (nrow(data_summary) == 0) {
-      return()
+      return(data.frame())
     }
 
     cat_lvls <- levels(data_summary[[".category"]])
@@ -59,7 +67,9 @@ make_content.cat_table_html <-
       if (all(!is.na(data_summary[[".variable_label"]]))) {
         ".variable_label"
       } else {
-        cli::cli_warn("No variable labels found for {.var {sort(unique(data_summary[['.variable_name']]))}}. Using variable names.")
+        cli::cli_warn(
+          "No variable labels found for {.var {sort(unique(data_summary[['.variable_name']]))}}. Using variable names."
+        )
 
         ".variable_name"
       }
@@ -74,26 +84,42 @@ make_content.cat_table_html <-
       data_out <-
         data_out |>
         tidyr::pivot_wider(
-          id_cols = tidyselect::all_of(c(col_as_basis, dots$indep, ".count_per_indep_group")),
-          names_from = ".category", values_from = ".data_label",
+          id_cols = tidyselect::all_of(c(
+            col_as_basis,
+            dots$indep,
+            ".count_per_indep_group"
+          )),
+          names_from = ".category",
+          values_from = ".data_label",
           names_expand = TRUE
         )
       new_col_order <-
         c(col_as_basis, dots$indep, cat_lvls, ".count_per_indep_group")
-      # browser()
+
       data_out <-
         data_out |>
         dplyr::relocate(tidyselect::all_of(new_col_order), .after = 1) |>
         dplyr::rename_with(
           .cols = tidyselect::all_of(cat_lvls),
-          .fn = ~ stringi::stri_c(ignore_null = FALSE, .x, if (dots$data_label %in% c("percentage", "percentage_bare")) " (%)" else "")
+          .fn = ~ stringi::stri_c(
+            ignore_null = FALSE,
+            .x,
+            if (dots$data_label %in% c("percentage", "percentage_bare")) {
+              " (%)"
+            } else {
+              ""
+            }
+          )
         ) |>
         dplyr::rename_with(
           .cols = ".count_per_indep_group",
           .fn = function(x) dots$translations$table_heading_N
         )
     } else {
-      data_out <- data_out[, c(col_as_basis, ".category", ".count", ".data_label"), drop = FALSE] |>
+      data_out <- data_out[,
+        c(col_as_basis, dots$indep, ".category", ".data_label", ".count"),
+        drop = FALSE
+      ] |>
         dplyr::rename_with(
           .cols = ".count",
           .fn = function(x) dots$translations$table_heading_N
@@ -103,27 +129,37 @@ make_content.cat_table_html <-
           .fn = function(x) dots$translations$table_heading_data_label
         )
     }
-    # browser()
-    # names(data_out)[names(data_out) == "NA"] <- "NA"
 
-    if (length(dots$indep) > 0 &&
-      is.character(indep_label) &&
-      length(indep_label) == length(dots$indep) &&
-      all(nchar(indep_label) > 0)) {
-      data_out <- dplyr::rename_with(data_out,
+    if (
+      length(dots$indep) > 0 &&
+        is.character(indep_label) &&
+        length(indep_label) == length(dots$indep) &&
+        all(nchar(indep_label) > 0)
+    ) {
+      data_out <- dplyr::rename_with(
+        data_out,
         .cols = tidyselect::all_of(dots$indep),
         .fn = function(x) indep_label
       )
     }
 
-    if (isTRUE(dots$table_main_question_as_header) &&
-      rlang::is_string(dots$main_question) && stringi::stri_length(dots$main_question) > 0) {
-      data_out <- dplyr::rename_with(data_out,
+    if (
+      isTRUE(dots$table_main_question_as_header) &&
+        rlang::is_string(dots$main_question) &&
+        stringi::stri_length(dots$main_question) > 0
+    ) {
+      data_out <- dplyr::rename_with(
+        data_out,
         .cols = col_as_basis,
         .fn = function(x) dots$main_question
       )
     }
-    data_out[[1]] <- if (dplyr::n_distinct(data_out[[1]], na.rm = FALSE) > 1) data_out[[1]]
+    if (
+      isTRUE(dots$hide_axis_text_if_single_variable) &&
+        dplyr::n_distinct(data_out[[1]], na.rm = FALSE) == 1
+    ) {
+      data_out[[1]] <- NULL
+    }
 
     data_out
   }

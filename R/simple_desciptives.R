@@ -1,5 +1,11 @@
-simple_descriptives_int_table <- function(data, y_var, x_var = NULL, na.rm = TRUE) {
-  dplyr::summarize(data,
+simple_descriptives_int_table <- function(
+  data,
+  y_var,
+  x_var = NULL,
+  na.rm = TRUE
+) {
+  dplyr::summarize(
+    data,
     dplyr::across(
       tidyselect::all_of(y_var),
       list(
@@ -19,50 +25,94 @@ simple_descriptives_int_table <- function(data, y_var, x_var = NULL, na.rm = TRU
     .by = tidyselect::all_of(x_var)
   )
 }
+simplest_descriptives_table <- function(data, y_var, x_var = NULL) {
+  dplyr::summarize(
+    data,
+    dplyr::across(
+      tidyselect::all_of(y_var),
+      list(
+        n_valid = ~ sum(!is.na(as.character(.x)), na.rm = TRUE),
+        n = ~ dplyr::n()
+      ),
+      .names = "{.fn}"
+    ),
+    .by = tidyselect::all_of(x_var)
+  )
+}
 
-
-simple_descriptives <- function(data, y_var, x_var = NULL, na.rm = TRUE, max_k = 5,
-                                table_wide = FALSE) {
-  if ((is.numeric(data[[y_var]]) || is.ordered(data[[y_var]])) &&
-    (is.null(x_var) || length(unique(data[[x_var]])) <= max_k)) {
-    if (isTRUE(na.rm) && rlang::is_string(x_var)) data <- data[!is.na(data[[x_var]]), , drop = FALSE]
-
-    data[[y_var]] <- as.numeric(data[[y_var]]) # Ensure ordered variables can be handled
-
-    out <- simple_descriptives_int_table(data, y_var = y_var, x_var = x_var, na.rm = na.rm)
-
-    if (rlang::is_string(x_var) && isTRUE(table_wide)) {
-      return(
-        tidyr::pivot_wider(out,
-          names_from = tidyselect::all_of(x_var),
-          values_from = -tidyselect::all_of(x_var)
-        )
-      )
-    } else {
-      return(out)
-    }
-  } else {
-    if (isTRUE(na.rm) && rlang::is_string(x_var)) data <- data[!is.na(data[[x_var]]), , drop = FALSE]
-
-    out <-
-      data |>
-      dplyr::summarize(
-        dplyr::across(tidyselect::all_of(y_var),
-          list(
-            n_valid = ~ sum(!is.na(as.character(.x)), na.rm = TRUE),
-            n = ~ dplyr::n()
-          ),
-          .names = "{.fn}"
-        ),
-        .by = tidyselect::all_of(x_var)
-      )
-    if (rlang::is_string(x_var) && isTRUE(table_wide)) {
-      return(tidyr::pivot_wider(out,
-        names_from = tidyselect::all_of(x_var),
-        values_from = -tidyselect::all_of(x_var)
-      ))
-    } else {
-      return(out)
-    }
+simple_descriptives <- function(
+  data,
+  y_var,
+  x_var = NULL,
+  na.rm = TRUE,
+  max_k = 5,
+  table_wide = FALSE,
+  label_separator = NULL
+) {
+  if (length(x_var) > 1) {
+    rlang::abort("`x_var` must currently be of length 1 or `NULL`.")
   }
+
+  out <-
+    y_var |>
+    rlang::set_names() |>
+    lapply(function(yvar) {
+      is_integerish <- is.numeric(data[[yvar]]) || is.ordered(data[[yvar]])
+      yvar_label <- get_raw_labels(data, col_pos = yvar)
+      yvar_label_prefix <- get_main_question(
+        yvar_label,
+        label_separator = label_separator
+      )
+      yvar_label <-
+        keep_subitem(
+          yvar_label,
+          label_separator = label_separator,
+          ordered = FALSE
+        )
+      yvar_variable_position <- which(names(data) == yvar)
+      if (is.ordered(data[[yvar]])) {
+        data[[yvar]] <- as.numeric(data[[yvar]])
+      }
+      if (
+        rlang::is_string(x_var) &&
+          (length(unique(data[[x_var]])) > max_k || yvar == x_var)
+      ) {
+        x_var <- NULL
+      }
+
+      if (isTRUE(na.rm) && rlang::is_string(x_var) && x_var %in% names(data)) {
+        data <- data[!is.na(data[[x_var]]), , drop = FALSE]
+      }
+
+      if (is_integerish) {
+        out <- simple_descriptives_int_table(
+          data,
+          y_var = yvar,
+          x_var = x_var,
+          na.rm = na.rm
+        )
+      } else {
+        out <- simplest_descriptives_table(
+          data,
+          y_var = yvar,
+          x_var = x_var
+        )
+      }
+      out$.variable_position <- yvar_variable_position
+      out$.variable_label <- yvar_label
+      out$.variable_label_prefix <- yvar_label_prefix
+      out
+    }) |>
+    dplyr::bind_rows(.id = ".variable_name")
+
+  if (!rlang::is_string(x_var) || isFALSE(table_wide)) {
+    return(out)
+  }
+  return(
+    tidyr::pivot_wider(
+      out,
+      names_from = tidyselect::all_of(x_var),
+      values_from = -tidyselect::all_of(x_var)
+    )
+  )
 }

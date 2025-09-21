@@ -20,12 +20,18 @@ is_string <- function(x) {
 #' @keywords internal
 get_raw_labels <-
   function(data, col_pos = NULL, return_as_list = FALSE) {
-    if(is.null(col_pos)) col_pos <- colnames(data)
-    out <- lapply(X = stats::setNames(col_pos, nm=col_pos),
-                  FUN = function(.x) {
-                    y <- attr(data[[.x]], "label")
-                    if(is_string(y)) y else NA_character_
-                  })
-    if(isFALSE(return_as_list)) out <- unlist(out)
+    if (is.null(col_pos)) {
+      col_pos <- colnames(data)
+    }
+    out <- lapply(
+      X = stats::setNames(col_pos, nm = col_pos),
+      FUN = function(.x) {
+        y <- attr(data[[.x]], "label")
+        if (is_string(y)) y else NA_character_
+      }
+    )
+    if (isFALSE(return_as_list)) {
+      out <- unlist(out)
+    }
     out
   }

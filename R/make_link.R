@@ -50,14 +50,15 @@
 #' @examples
 #' make_link(mtcars, folder = tempdir())
 make_link <- function(
-    data,
-    folder = NULL,
-    file_prefix = NULL,
-    file_suffix = ".csv",
-    save_fn = utils::write.csv,
-    link_prefix = "[download figure data](",
-    link_suffix = ")",
-    ...) {
+  data,
+  folder = NULL,
+  file_prefix = NULL,
+  file_suffix = ".csv",
+  save_fn = utils::write.csv,
+  link_prefix = "[download figure data](",
+  link_suffix = ")",
+  ...
+) {
   if (is.null(data)) {
     cli::cli_warn("{.arg data} should not be NULL. Returning NULL.")
     return(NULL)
@@ -84,15 +85,16 @@ make_link <- function(
 #'
 #' @export
 make_link.list <- function(
-    data,
-    ...,
-    folder = NULL,
-    file_prefix = NULL,
-    file_suffix = ".csv",
-    save_fn = utils::write.csv,
-    link_prefix = "[download figure data](",
-    link_suffix = ")",
-    separator_list_items = ". ") {
+  data,
+  ...,
+  folder = NULL,
+  file_prefix = NULL,
+  file_suffix = ".csv",
+  save_fn = utils::write.csv,
+  link_prefix = "[download figure data](",
+  link_suffix = ")",
+  separator_list_items = ". "
+) {
   # Capture all arguments, including those in `...`
   args <- match.call(expand.dots = TRUE)
 
@@ -127,14 +129,15 @@ make_link.list <- function(
 #' @examples
 #' make_link(mtcars, folder = tempdir())
 make_link.default <- function(
-    data,
-    ...,
-    folder = NULL,
-    file_prefix = NULL,
-    file_suffix = ".csv",
-    save_fn = utils::write.csv,
-    link_prefix = "[download figure data](",
-    link_suffix = ")") {
+  data,
+  ...,
+  folder = NULL,
+  file_prefix = NULL,
+  file_suffix = ".csv",
+  save_fn = utils::write.csv,
+  link_prefix = "[download figure data](",
+  link_suffix = ")"
+) {
   args <-
     check_options(
       call = match.call(),
@@ -143,16 +146,18 @@ make_link.default <- function(
       default_values = formals(make_link.default)
     )
 
-  if (!rlang::is_string(args$folder)) args$folder <- "."
-  if (!rlang::is_string(args$file_prefix)) args$file_prefix <- ""
+  if (!rlang::is_string(args$folder)) {
+    args$folder <- "."
+  }
+  if (!rlang::is_string(args$file_prefix)) {
+    args$file_prefix <- ""
+  }
   if (!fs::dir_exists(args$folder)) {
-    cli::cli_warn("The folder '{args$folder}' does not exist. Attempting to create it.")
+    cli::cli_warn(
+      "The folder '{args$folder}' does not exist. Attempting to create it."
+    )
     fs::dir_create(args$folder)
   }
-
-
-
-
 
   path <- fs::path(
     args$folder,
@@ -161,7 +166,6 @@ make_link.default <- function(
 
   # save_fn <- args$save_fn
 
-
   tryCatch(
     {
       if (!file.exists(path)) {
@@ -169,8 +173,12 @@ make_link.default <- function(
       }
       I(paste0(args$link_prefix, path, args$link_suffix))
     },
-    error = function(cnd) { # ={data}
-      cli::cli_warn(c(x = "Function {rlang::call_name(quote(safe_fn()))} failed with arguments {.arg path}={path}, {.arg data} is {.obj_type_friendly {data}}."),
+    error = function(cnd) {
+      # ={data}
+      cli::cli_warn(
+        c(
+          x = "Function {rlang::call_name(quote(safe_fn()))} failed with arguments {.arg path}={path}, {.arg data} is {.obj_type_friendly {data}}."
+        ),
         parent = cnd
       )
     }

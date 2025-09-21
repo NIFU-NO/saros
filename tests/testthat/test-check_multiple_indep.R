@@ -1,5 +1,4 @@
 testthat::test_that("check_multiple_indep", {
-
   data <- data.frame(a = 1:5, b = 6:10, c = 11:15, d = 16:20, e = 21:25)
 
   # Test 1: One column provided for 'indep', expect no error
@@ -21,6 +20,6 @@ testthat::test_that("check_multiple_indep", {
 
   # Test 4: Select no column, expect no error
   testthat::expect_no_error(
-    object = saros:::check_multiple_indep(data, NULL))
-
+    object = saros:::check_multiple_indep(data, NULL)
+  )
 })
