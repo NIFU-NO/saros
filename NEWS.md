@@ -6,7 +6,8 @@
 -   Updated documentation reference from `ggplot2::theme_set()` to `ggplot2::set_theme()` due to ggplot 4.0.0.
 -   Fix: Corrected double NA check logic in `check_bool()` function - removed redundant condition that made validation always pass for NA values
 -   Fix: Improved NULL and NA handling in `glue_together_range()` to prevent edge case failures with empty or invalid data ranges
-
+-   Fix: Resolved issue #464 - `makeme()` failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts
+-   Fix: Improved robustness of `check_no_duplicated_label_suffix()` to handle empty data frames and missing columns gracefully
 -   Dev: Added VS Code configuration for improved development experience
 
 # saros 1.5.4
