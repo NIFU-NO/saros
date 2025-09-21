@@ -1,12 +1,14 @@
-estimate_categories_per_line <- function(figure_width_cm = 12,
-                                         max_chars_cats = 20, # Maximum characters across the categories
-                                         legend_key_chars = 5,
-                                         legend_location = "plot",
-                                         x_axis_label_width = 25,
-                                         strip_width = 25,
-                                         font_size = 7,
-                                         margin_cm = 0,
-                                         conversion_font_size_to_char_width_in_cm = .035) {
+estimate_categories_per_line <- function(
+  figure_width_cm = 12,
+  max_chars_cats = 20, # Maximum characters across the categories
+  legend_key_chars = 5,
+  legend_location = "plot",
+  x_axis_label_width = 25,
+  strip_width = 25,
+  font_size = 7,
+  margin_cm = 0,
+  conversion_font_size_to_char_width_in_cm = .035
+) {
   # Calculate the width of one character in cm, assuming a monospace font approximation
   char_width_cm <- font_size * conversion_font_size_to_char_width_in_cm
 
@@ -35,18 +37,19 @@ get_max_lines <- function(max_chars_per_unit, total_width_available) {
 }
 
 estimate_legend_height <- function(
-    n_cats_y,
-    n_legend_lines = NULL,
-    max_chars_cats_y,
-    multiplier_per_legend_line = 1,
-    figure_width_in_cm = 14,
-    font_size = 7,
-    legend_key_chars_equivalence = 5,
-    legend_location = "plot",
-    x_axis_label_width = 20,
-    strip_width = 20,
-    margin_in_cm = 0,
-    conversion_font_size_to_char_width_in_cm = .035) {
+  n_cats_y,
+  n_legend_lines = NULL,
+  max_chars_cats_y,
+  multiplier_per_legend_line = 1,
+  figure_width_in_cm = 14,
+  font_size = 7,
+  legend_key_chars_equivalence = 5,
+  legend_location = "plot",
+  x_axis_label_width = 20,
+  strip_width = 20,
+  margin_in_cm = 0,
+  conversion_font_size_to_char_width_in_cm = .035
+) {
   ##
   if (is.null(n_legend_lines)) {
     categories_per_line <-
@@ -61,18 +64,22 @@ estimate_legend_height <- function(
         margin_cm = margin_in_cm,
         conversion_font_size_to_char_width_in_cm = conversion_font_size_to_char_width_in_cm
       )
-    n_legend_lines <- get_max_lines(n_cats_y, max(c(categories_per_line, 1), na.rm = TRUE))
+    n_legend_lines <- get_max_lines(
+      n_cats_y,
+      max(c(categories_per_line, 1), na.rm = TRUE)
+    )
   }
   n_legend_lines * multiplier_per_legend_line
 }
 
 
-combine_figure_heights <- function(panel_height,
-                                   legend_height,
-                                   multiplier_per_plot = 1,
-                                   fixed_constant = 0) {
-  (panel_height + legend_height) * multiplier_per_plot +
-    fixed_constant
+combine_figure_heights <- function(
+  panel_height,
+  legend_height,
+  multiplier_per_plot = 1,
+  fixed_constant = 0
+) {
+  (panel_height + legend_height) * multiplier_per_plot + fixed_constant
 }
 
 
@@ -140,37 +147,39 @@ combine_figure_heights <- function(panel_height,
 #'   figure_width_in_cm = 16
 #' )
 fig_height_h_barchart <- # Returns a numeric value
-  function(n_y,
-           n_cats_y,
-           max_chars_labels_y = 20,
-           max_chars_cats_y = 20,
-           n_x = NULL,
-           n_cats_x = NULL,
-           max_chars_labels_x = NULL,
-           max_chars_cats_x = NULL,
-           freq = FALSE,
-           x_axis_label_width = 20,
-           strip_width = 20,
-           strip_angle = 0,
-           main_font_size = 7,
-           legend_location = c("plot", "panel"),
-           n_legend_lines = NULL,
-           legend_key_chars_equivalence = 5,
-           multiplier_per_horizontal_line = 1,
-           multiplier_per_vertical_letter = 1,
-           multiplier_per_facet = 1,
-           multiplier_per_bar = 1,
-           multiplier_per_legend_line = 1,
-           multiplier_per_plot = 1,
-           fixed_constant = 0,
-           margin_in_cm = 0,
-           figure_width_in_cm = 14,
-           max = 12,
-           min = 2,
-           hide_axis_text_if_single_variable = FALSE,
-           add_n_to_dep_label = FALSE,
-           add_n_to_indep_label = FALSE,
-           showNA = c("ifany", "never", "always")) {
+  function(
+    n_y,
+    n_cats_y,
+    max_chars_labels_y = 20,
+    max_chars_cats_y = 20,
+    n_x = NULL,
+    n_cats_x = NULL,
+    max_chars_labels_x = NULL,
+    max_chars_cats_x = NULL,
+    freq = FALSE,
+    x_axis_label_width = 20,
+    strip_width = 20,
+    strip_angle = 0,
+    main_font_size = 7,
+    legend_location = c("plot", "panel"),
+    n_legend_lines = NULL,
+    legend_key_chars_equivalence = 5,
+    multiplier_per_horizontal_line = 1,
+    multiplier_per_vertical_letter = 1,
+    multiplier_per_facet = 1,
+    multiplier_per_bar = 1,
+    multiplier_per_legend_line = 1,
+    multiplier_per_plot = 1,
+    fixed_constant = 0,
+    margin_in_cm = 0,
+    figure_width_in_cm = 14,
+    max = 12,
+    min = 2,
+    hide_axis_text_if_single_variable = FALSE,
+    add_n_to_dep_label = FALSE,
+    add_n_to_indep_label = FALSE,
+    showNA = c("ifany", "never", "always")
+  ) {
     ######
 
     args <- check_options(
@@ -237,12 +246,8 @@ fig_height_h_barchart <- # Returns a numeric value
     check_bool(add_n_to_dep_label)
     check_bool(add_n_to_indep_label)
 
-
-
     multiplier_per_horizontal_line <-
       multiplier_per_horizontal_line * main_font_size / 72.27 * 2.54
-
-
 
     ################
     # Legend height
@@ -262,8 +267,7 @@ fig_height_h_barchart <- # Returns a numeric value
         margin_in_cm = margin_in_cm,
         conversion_font_size_to_char_width_in_cm = .035
       ) *
-        multiplier_per_horizontal_line
-
+      multiplier_per_horizontal_line
 
     ################
     # Y-axis height
@@ -273,7 +277,6 @@ fig_height_h_barchart <- # Returns a numeric value
     # B: No indep, other cases
     # C: Single indep, single dep, hide_axis_text_if_single_variable = TRUE
     # D: Single indep, other cases
-
 
     if (isFALSE(freq)) {
       n_cats_y <- 1
@@ -288,7 +291,6 @@ fig_height_h_barchart <- # Returns a numeric value
         max_chars_labels_y + add_n_to_dep_label * 10
       }
 
-
     # Univariates
     if (is.null(n_x) || n_x == 0) {
       max_lines_y <- get_max_lines(
@@ -298,8 +300,8 @@ fig_height_h_barchart <- # Returns a numeric value
 
       max_lines_y_per_facet <-
         max_lines_y *
-          n_y *
-          n_cats_y # To account for freq-plots. unsure if valid in bivariate plots
+        n_y *
+        n_cats_y # To account for freq-plots. unsure if valid in bivariate plots
 
       n_facets <- 1
       max_lines_x_per_facet <- 0
@@ -307,7 +309,9 @@ fig_height_h_barchart <- # Returns a numeric value
     }
     # Bivariates
     if (!is.null(n_x) && n_x > 1) {
-      cli::cli_abort("This function only supports a single {.arg n_x} for now, not {n_x}.")
+      cli::cli_abort(
+        "This function only supports a single {.arg n_x} for now, not {n_x}."
+      )
     }
     if (!is.null(n_x) && n_x == 1) {
       max_lines_y <- get_max_lines(
@@ -316,20 +320,21 @@ fig_height_h_barchart <- # Returns a numeric value
       )
       max_lines_y_per_facet <-
         max_lines_y *
-          n_cats_y # To account for freq-plots. unsure if valid in bivariate plots
+        n_cats_y # To account for freq-plots. unsure if valid in bivariate plots
 
       n_facets <- n_y
 
-      if (strip_angle >= 45 && strip_angle <= 135) { # vertical strip height (one strip)
+      if (strip_angle >= 45 && strip_angle <= 135) {
+        # vertical strip height (one strip)
         height_per_strip <-
           max_chars_labels_y * # Incorrect, should really be the longest line in the split variable labels
-            multiplier_per_vertical_letter
-      } else if (strip_angle < 45 || strip_angle > 135) { # horizontal strip height (one strip)
+          multiplier_per_vertical_letter
+      } else if (strip_angle < 45 || strip_angle > 135) {
+        # horizontal strip height (one strip)
         height_per_strip <-
           max_lines_y *
-            multiplier_per_horizontal_line
+          multiplier_per_horizontal_line
       }
-
 
       max_lines_x_per_bar <- get_max_lines(
         max_chars_per_unit = max_chars_cats_x + add_n_to_indep_label * 10,
@@ -337,20 +342,18 @@ fig_height_h_barchart <- # Returns a numeric value
       )
       max_lines_x_per_facet <-
         max_lines_x_per_bar *
-          max(c(n_cats_x, 1), na.rm = TRUE)
+        max(c(n_cats_x, 1), na.rm = TRUE)
     }
 
     height_per_facet <-
       max(c(max_lines_y_per_facet, max_lines_x_per_facet), na.rm = TRUE) *
-        multiplier_per_horizontal_line *
-        multiplier_per_bar
-
+      multiplier_per_horizontal_line *
+      multiplier_per_bar
 
     panel_height <-
       max(c(height_per_facet, height_per_strip), na.rm = TRUE) *
-        n_facets *
-        multiplier_per_facet
-
+      n_facets *
+      multiplier_per_facet
 
     ### Put it all together
     plot_height <-
@@ -360,7 +363,10 @@ fig_height_h_barchart <- # Returns a numeric value
         multiplier_per_plot = multiplier_per_plot,
         fixed_constant = fixed_constant
       )
-    plot_height <- max(c(min(c(plot_height, max), na.rm = TRUE), min), na.rm = TRUE)
+    plot_height <- max(
+      c(min(c(plot_height, max), na.rm = TRUE), min),
+      na.rm = TRUE
+    )
     # plot_height <- plot_height / 2.54
     round(plot_height, digits = 2)
   }
@@ -379,38 +385,44 @@ fig_height_h_barchart <- # Returns a numeric value
 #' @examples
 #' fig_height_h_barchart2(makeme(data = ex_survey, dep = b_1:b_3, indep = x1_sex))
 fig_height_h_barchart2 <- # Returns a numeric value
-  function(ggobj,
-           main_font_size = 7,
-           strip_angle = 0,
-           freq = FALSE,
-           x_axis_label_width = 20,
-           strip_width = 20,
-           legend_location = c("plot", "panel"),
-           n_legend_lines = NULL,
-           showNA = c("ifany", "never", "always"),
-           legend_key_chars_equivalence = 5,
-           multiplier_per_horizontal_line = NULL,
-           multiplier_per_vertical_letter = 1,
-           multiplier_per_facet = 1,
-           multiplier_per_legend_line = 1,
-           fixed_constant = 0,
-           figure_width_in_cm = 14,
-           margin_in_cm = 0,
-           max = 8,
-           min = 1) {
+  function(
+    ggobj,
+    main_font_size = 7,
+    strip_angle = 0,
+    freq = FALSE,
+    x_axis_label_width = 20,
+    strip_width = 20,
+    legend_location = c("plot", "panel"),
+    n_legend_lines = NULL,
+    showNA = c("ifany", "never", "always"),
+    legend_key_chars_equivalence = 5,
+    multiplier_per_horizontal_line = NULL,
+    multiplier_per_vertical_letter = 1,
+    multiplier_per_facet = 1,
+    multiplier_per_legend_line = 1,
+    fixed_constant = 0,
+    figure_width_in_cm = 14,
+    margin_in_cm = 0,
+    max = 8,
+    min = 1
+  ) {
     data <- ggobj$data
     # gg <- ggobj
 
-
-
     if (!(inherits(data, "data.frame") && nrow(data) > 0)) {
-      cli::cli_warn("{.arg ggobj} must be a ggplot2-object with a nrow>0 data in it. Returning {.arg min}: {.val {min}}.")
+      cli::cli_warn(
+        "{.arg ggobj} must be a ggplot2-object with a nrow>0 data in it. Returning {.arg min}: {.val {min}}."
+      )
       return(min)
     }
-    indep_vars <- colnames(data)[!colnames(data) %in% .saros.env$summary_data_sort2]
+    indep_vars <- colnames(data)[
+      !colnames(data) %in% .saros.env$summary_data_sort2
+    ]
 
     if (length(indep_vars) > 1) {
-      cli::cli_abort("{.arg fig_height_h_barchart2} only supports a single indep variable.")
+      cli::cli_abort(
+        "{.arg fig_height_h_barchart2} only supports a single indep variable."
+      )
     }
     if (length(indep_vars) == 1) {
       # browser()
@@ -456,14 +468,23 @@ fig_height_h_barchart2 <- # Returns a numeric value
     n_y <- dplyr::n_distinct(data$.variable_name)
     n_cats_y <- dplyr::n_distinct(data$.category)
     max_chars_cats_y <- max(nchar(as.character(data$.category)), na.rm = TRUE)
-    max_chars_labels_y <- max(nchar(as.character(data$.variable_label)), na.rm = TRUE)
+    max_chars_labels_y <- max(
+      nchar(as.character(data$.variable_label)),
+      na.rm = TRUE
+    )
     n_x <- if (length(indep_vars) == 1) 1
-    n_cats_x <- if (length(indep_vars) == 1) dplyr::n_distinct(data[[indep_vars]])
-    max_chars_cats_x <- if (length(indep_vars) == 1) max(nchar(as.character(data[[indep_vars]])), na.rm = TRUE)
-    max_chars_labels_x <- if (length(indep_vars) == 1) nchar(as.character(attr(data[[indep_vars]], "label")))
-    if (length(max_chars_labels_x) == 0) max_chars_labels_x <- 0
-
-
+    n_cats_x <- if (length(indep_vars) == 1) {
+      dplyr::n_distinct(data[[indep_vars]])
+    }
+    max_chars_cats_x <- if (length(indep_vars) == 1) {
+      max(nchar(as.character(data[[indep_vars]])), na.rm = TRUE)
+    }
+    max_chars_labels_x <- if (length(indep_vars) == 1) {
+      nchar(as.character(attr(data[[indep_vars]], "label")))
+    }
+    if (length(max_chars_labels_x) == 0) {
+      max_chars_labels_x <- 0
+    }
 
     fig_height_h_barchart(
       n_y = n_y,

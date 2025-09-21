@@ -19,3 +19,6 @@ data-raw/goodpractice
 ^CODE_OF_CONDUCT\.md$
 ^notes$
 ^vignettes/*_files$
+^\.vscode$
+^[.]?air[.]toml$
+\.copilot-instructions\.md

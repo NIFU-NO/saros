@@ -11,8 +11,10 @@ make_content.cat_freq_plot_docx <-
       dots$colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
     }
 
-    indep_vars <- colnames(data)[!colnames(data) %in%
-      .saros.env$summary_data_sort2]
+    indep_vars <- colnames(data)[
+      !colnames(data) %in%
+        .saros.env$summary_data_sort2
+    ]
 
     # hide_axis_text <-
     #  isTRUE(dots$hide_axis_text_if_single_variable) &&
@@ -38,7 +40,10 @@ make_content.cat_freq_plot_docx <-
         }
       )
 
-    fp_text_settings <- fp_text_settings[seq_len(dplyr::n_distinct(data[[".category"]], na.rm = TRUE))]
+    fp_text_settings <- fp_text_settings[seq_len(dplyr::n_distinct(
+      data[[".category"]],
+      na.rm = TRUE
+    ))]
 
     blank_border <- officer::fp_border(style = "none")
 
@@ -46,7 +51,11 @@ make_content.cat_freq_plot_docx <-
       font.size = dots$main_font_size,
       font.family = dots$font_family
     )
-    x <- if (length(indep_vars) == 1 && isFALSE(dots$inverse)) indep_vars else ".variable_label"
+    x <- if (length(indep_vars) == 1 && isFALSE(dots$inverse)) {
+      indep_vars
+    } else {
+      ".variable_label"
+    }
 
     m <- mschart::ms_barchart(
       data = data,
@@ -82,7 +91,9 @@ make_content.cat_freq_plot_docx <-
     # }
     m <- mschart::chart_data_fill(x = m, values = dots$colour_palette)
     m <- mschart::chart_data_stroke(x = m, values = dots$colour_palette)
-    if (length(fp_text_settings) > 0) m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
+    if (length(fp_text_settings) > 0) {
+      m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
+    }
     m <- mschart::chart_labels(x = m, ylab = NULL, xlab = NULL, title = NULL)
     m <- mschart::chart_ax_x(x = m, major_tick_mark = "none")
     if (dots$data_label %in% c("percentage", "percentage_bare")) {
@@ -99,12 +110,10 @@ make_content.cat_freq_plot_docx <-
       grid_minor_line_y = blank_border
     )
 
-
     docx_file <- use_docx(docx_template = dots$docx_template)
 
     docx_dims <-
       get_docx_dims(docx_file)
-
 
     docx_file <-
       mschart::body_add_chart(

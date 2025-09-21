@@ -68,9 +68,24 @@ testthat::test_that("get_argument_value returns explicitly passed arguments", {
     defaults_env <- new.env()
     formals_list <- formals(test_func)
     list(
-      a_value = saros:::get_argument_value("a", call, defaults_env, formals_list),
-      b_value = saros:::get_argument_value("b", call, defaults_env, formals_list),
-      c_value = saros:::get_argument_value("c", call, defaults_env, formals_list)
+      a_value = saros:::get_argument_value(
+        "a",
+        call,
+        defaults_env,
+        formals_list
+      ),
+      b_value = saros:::get_argument_value(
+        "b",
+        call,
+        defaults_env,
+        formals_list
+      ),
+      c_value = saros:::get_argument_value(
+        "c",
+        call,
+        defaults_env,
+        formals_list
+      )
     )
   }
 
@@ -86,9 +101,24 @@ testthat::test_that("get_argument_value returns defaults_env values if argument 
     defaults_env <- list(a = 100, b = 200)
     formals_list <- formals(test_func)
     list(
-      a_value = saros:::get_argument_value("a", call, defaults_env, formals_list),
-      b_value = saros:::get_argument_value("b", call, defaults_env, formals_list),
-      c_value = saros:::get_argument_value("c", call, defaults_env, formals_list)
+      a_value = saros:::get_argument_value(
+        "a",
+        call,
+        defaults_env,
+        formals_list
+      ),
+      b_value = saros:::get_argument_value(
+        "b",
+        call,
+        defaults_env,
+        formals_list
+      ),
+      c_value = saros:::get_argument_value(
+        "c",
+        call,
+        defaults_env,
+        formals_list
+      )
     )
   }
 
@@ -104,9 +134,24 @@ testthat::test_that("get_argument_value returns formals_list values if neither e
     defaults_env <- list()
     formals_list <- formals(test_func)
     list(
-      a_value = saros:::get_argument_value("a", call, defaults_env, formals_list),
-      b_value = saros:::get_argument_value("b", call, defaults_env, formals_list),
-      c_value = saros:::get_argument_value("c", call, defaults_env, formals_list)
+      a_value = saros:::get_argument_value(
+        "a",
+        call,
+        defaults_env,
+        formals_list
+      ),
+      b_value = saros:::get_argument_value(
+        "b",
+        call,
+        defaults_env,
+        formals_list
+      ),
+      c_value = saros:::get_argument_value(
+        "c",
+        call,
+        defaults_env,
+        formals_list
+      )
     )
   }
 
@@ -122,9 +167,24 @@ testthat::test_that("get_argument_value prioritizes explicit over defaults_env a
     defaults_env <- list(a = 100, b = 200)
     formals_list <- formals(test_func)
     list(
-      a_value = saros:::get_argument_value("a", call, defaults_env, formals_list),
-      b_value = saros:::get_argument_value("b", call, defaults_env, formals_list),
-      c_value = saros:::get_argument_value("c", call, defaults_env, formals_list)
+      a_value = saros:::get_argument_value(
+        "a",
+        call,
+        defaults_env,
+        formals_list
+      ),
+      b_value = saros:::get_argument_value(
+        "b",
+        call,
+        defaults_env,
+        formals_list
+      ),
+      c_value = saros:::get_argument_value(
+        "c",
+        call,
+        defaults_env,
+        formals_list
+      )
     )
   }
 
@@ -133,4 +193,3 @@ testthat::test_that("get_argument_value prioritizes explicit over defaults_env a
   testthat::expect_equal(result$b_value, 200)
   testthat::expect_equal(result$c_value, 3)
 })
-

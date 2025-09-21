@@ -1,7 +1,9 @@
-check_options <- function(call,
-                          defaults_env = global_settings_get(),
-                          default_values = formals(makeme),
-                          ignore_args = .saros.env$ignore_args) {
+check_options <- function(
+  call,
+  defaults_env = global_settings_get(),
+  default_values = formals(makeme),
+  ignore_args = .saros.env$ignore_args
+) {
   # Get all parent environments up to global
   parent_envs <- rev(sys.frames())
 

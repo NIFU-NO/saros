@@ -15,6 +15,11 @@
 #' make_link(my_plot, folder=tempdir(), file_suffix = ".png",
 #'           save_fn = ggsaver, width = 16, height = 16, units = "cm")
 ggsaver <- function(plot, filename, ...) {
-  suppressMessages(ggplot2::ggsave(filename = filename, plot = plot,
-                  dpi = "retina", create.dir = TRUE, ...))
+  suppressMessages(ggplot2::ggsave(
+    filename = filename,
+    plot = plot,
+    dpi = "retina",
+    create.dir = TRUE,
+    ...
+  ))
 }

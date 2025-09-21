@@ -1,7 +1,8 @@
 glue_together_range <- function(
-    n,
-    glue_template_1,
-    glue_template_2) {
+  n,
+  glue_template_1,
+  glue_template_2
+) {
   if (is.null(n)) {
     return("")
   }
@@ -40,9 +41,16 @@ glue_together_range <- function(
 #'
 #' @return Always a string.
 #' @keywords internal
-n_rng <- function(data, dep, indep = NULL, crowd = "all",
-                  mesos_var = NULL, mesos_group = NULL,
-                  glue_template_1 = "{n}", glue_template_2 = "[{n[1]}-{n[2]}]") {
+n_rng <- function(
+  data,
+  dep,
+  indep = NULL,
+  crowd = "all",
+  mesos_var = NULL,
+  mesos_group = NULL,
+  glue_template_1 = "{n}",
+  glue_template_2 = "[{n[1]}-{n[2]}]"
+) {
   # Should always return a string, no matter the inputs
   # args <- check_options(call = match.call(),
   #                       ignore_args = .saros.env$ignore_args,
@@ -54,31 +62,42 @@ n_rng <- function(data, dep, indep = NULL, crowd = "all",
   indeps <- as.character(unique(indep))
   indeps <- indeps[!is.na(indeps)]
 
-  data <- data[makeme_keep_rows(
-    data = data,
-    crwd = crowd,
-    mesos_var = mesos_var,
-    mesos_group = mesos_group
-  ), , drop = FALSE]
+  data <- data[
+    makeme_keep_rows(
+      data = data,
+      crwd = crowd,
+      mesos_var = mesos_var,
+      mesos_group = mesos_group
+    ),
+    ,
+    drop = FALSE
+  ]
 
   n <-
     lapply(deps, function(d) {
       if (length(indeps) > 0) {
         lapply(indeps, function(i) {
           out <-
-            dplyr::filter(data, dplyr::if_all(
-              .cols = tidyselect::all_of(c(d, i)),
-              .fns = ~ !is.na(.x)
-            )) |>
+            dplyr::filter(
+              data,
+              dplyr::if_all(
+                .cols = tidyselect::all_of(c(d, i)),
+                .fns = ~ !is.na(.x)
+              )
+            ) |>
             nrow()
           return(out)
-        }) |> unlist()
+        }) |>
+          unlist()
       } else {
         out <-
-          dplyr::filter(data, dplyr::if_all(
-            .cols = tidyselect::all_of(c(d)),
-            .fns = ~ !is.na(.x)
-          )) |>
+          dplyr::filter(
+            data,
+            dplyr::if_all(
+              .cols = tidyselect::all_of(c(d)),
+              .fns = ~ !is.na(.x)
+            )
+          ) |>
           nrow()
         return(out)
       }
@@ -86,7 +105,8 @@ n_rng <- function(data, dep, indep = NULL, crowd = "all",
     unlist()
 
   glue_together_range(
-    n = n, glue_template_1 = glue_template_1,
+    n = n,
+    glue_template_1 = glue_template_1,
     glue_template_2 = glue_template_2
   )
 }
@@ -99,14 +119,19 @@ n_rng <- function(data, dep, indep = NULL, crowd = "all",
 #' @export
 #'
 #' @examples n_range(data = ex_survey, dep = b_1:b_3, indep = x1_sex)
-n_range <- function(data, dep, indep = NULL, mesos_var = NULL, mesos_group = NULL,
-                    glue_template_1 = "{n}", glue_template_2 = "[{n[1]}-{n[2]}]") {
+n_range <- function(
+  data,
+  dep,
+  indep = NULL,
+  mesos_var = NULL,
+  mesos_group = NULL,
+  glue_template_1 = "{n}",
+  glue_template_2 = "[{n[1]}-{n[2]}]"
+) {
   dep_enq <- rlang::enquo(arg = dep)
   dep_pos <- tidyselect::eval_select(dep_enq, data = data)
   indep_enq <- rlang::enquo(arg = indep)
   indep_pos <- tidyselect::eval_select(indep_enq, data = data)
-  mesos_var_enq <- rlang::enquo(arg = mesos_var)
-  mesos_var_pos <- tidyselect::eval_select(mesos_var_enq, data = data)
 
   args <- check_options(
     call = match.call(),
@@ -130,8 +155,6 @@ n_range <- function(data, dep, indep = NULL, mesos_var = NULL, mesos_group = NUL
 }
 
 
-
-
 #' Obtain range of N for a given `ggobj`.
 #'
 #'
@@ -141,8 +164,11 @@ n_range <- function(data, dep, indep = NULL, mesos_var = NULL, mesos_group = NUL
 #'
 #' @return Always a string.
 #' @keywords internal
-n_rng2 <- function(ggobj,
-                   glue_template_1 = "{n}", glue_template_2 = "[{n[1]}-{n[2]}]") {
+n_rng2 <- function(
+  ggobj,
+  glue_template_1 = "{n}",
+  glue_template_2 = "[{n[1]}-{n[2]}]"
+) {
   if (!ggplot2::is.ggplot(ggobj)) {
     cli::cli_warn("{.arg ggobj} must be a ggplot2-object, returning NULL.")
     return(NULL)
@@ -152,7 +178,8 @@ n_rng2 <- function(ggobj,
   n <- unique(range(data$.count_per_indep_group, na.rm = TRUE))
 
   glue_together_range(
-    n = n, glue_template_1 = glue_template_1,
+    n = n,
+    glue_template_1 = glue_template_1,
     glue_template_2 = glue_template_2
   )
 }
@@ -164,8 +191,11 @@ n_rng2 <- function(ggobj,
 #' @export
 #' @examples
 #' n_range2(makeme(data = ex_survey, dep = b_1:b_3))
-n_range2 <- function(ggobj,
-                     glue_template_1 = "{n}", glue_template_2 = "[{n[1]}-{n[2]}]") {
+n_range2 <- function(
+  ggobj,
+  glue_template_1 = "{n}",
+  glue_template_2 = "[{n[1]}-{n[2]}]"
+) {
   args <- check_options(
     call = match.call(),
     ignore_args = .saros.env$ignore_args,

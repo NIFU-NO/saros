@@ -16,15 +16,16 @@
 #' @export
 #'
 embed_cat_prop_plot <-
-  function(data,
-           ...,
-           dep = tidyselect::everything(),
-           indep = NULL,
-           colour_palette = NULL,
-           mesos_group = NULL,
-           html_interactive = TRUE,
-           inverse = FALSE) {
-
+  function(
+    data,
+    ...,
+    dep = tidyselect::everything(),
+    indep = NULL,
+    colour_palette = NULL,
+    mesos_group = NULL,
+    html_interactive = TRUE,
+    inverse = FALSE
+  ) {
     dots <- rlang::list2(...)
 
     lifecycle::deprecate_soft(
@@ -36,8 +37,8 @@ embed_cat_prop_plot <-
     makeme(
       data = data,
       type = "cat_prop_plot_html",
-      !!!dots)
-
+      !!!dots
+    )
   }
 
 
@@ -51,14 +52,14 @@ embed_cat_prop_plot <-
 #'
 #' @export
 embed_cat_table <-
-  function(data,
-           ...,
-           dep = tidyselect::everything(),
-           indep = NULL,
-           mesos_group = NULL) {
-
+  function(
+    data,
+    ...,
+    dep = tidyselect::everything(),
+    indep = NULL,
+    mesos_group = NULL
+  ) {
     dots <- rlang::list2(...)
-
 
     lifecycle::deprecate_soft(
       when = "1.1.0",
@@ -69,7 +70,8 @@ embed_cat_table <-
     makeme(
       data = data,
       type = "cat_table_html",
-      !!!dots)
+      !!!dots
+    )
   }
 
 
@@ -87,9 +89,8 @@ embed_chr_table_html <-
     data,
     dep,
     ...,
-    mesos_group = NULL) {
-
-
+    mesos_group = NULL
+  ) {
     dots <- rlang::list2(...)
 
     lifecycle::deprecate_soft(
@@ -101,5 +102,6 @@ embed_chr_table_html <-
     makeme(
       data = data,
       type = "chr_table_html",
-      !!!dots)
-}
+      !!!dots
+    )
+  }
