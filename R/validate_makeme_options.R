@@ -113,6 +113,9 @@ validate_makeme_options <- function(params) {
       data_label = list(fun = function(x) {
         is.character(x) && any(env$data_label == x[1])
       }),
+      data_label_position = list(fun = function(x) {
+        is.character(x) && any(env$data_label_position == x[1])
+      }),
       showNA = list(fun = function(x) {
         is.character(x) && any(env$showNA == x[1])
       }),
@@ -142,6 +145,7 @@ validate_makeme_options <- function(params) {
   params$type <- params$type[1]
   params$showNA <- params$showNA[1]
   params$data_label <- params$data_label[1]
+  params$data_label_position <- params$data_label_position[1]
 
   if (
     any(c("target", "others") %in% params$crowd) &&
