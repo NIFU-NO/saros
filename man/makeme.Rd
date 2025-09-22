@@ -34,6 +34,7 @@ makeme(
   showNA = c("ifany", "always", "never"),
   data_label = c("percentage_bare", "percentage", "proportion", "count", "mean",
     "median"),
+  data_label_position = c("center", "bottom", "top", "above"),
   html_interactive = TRUE,
   hide_axis_text_if_single_variable = TRUE,
   hide_label_if_prop_below = 0.01,
@@ -251,6 +252,13 @@ Choose whether to show NA categories in the results.}
 \verb{scalar<character>} // \emph{default:} \code{"proportion"} (\code{optional})
 
 One of "proportion", "percentage", "percentage_bare", "count", "mean", or "median".}
+
+\item{data_label_position}{\emph{Data label position}
+
+\verb{scalar<character>} // \emph{default:} \code{"center"} (\code{optional})
+
+Position of data labels on bars. One of "center" (middle of bar), "bottom" (bottom but inside bar),
+"top" (top but inside bar), or "above" (above bar outside).}
 
 \item{html_interactive}{\emph{Toggle interactive plot}
 

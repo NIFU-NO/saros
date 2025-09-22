@@ -24,6 +24,11 @@ make_content.cat_plot_html <-
     } else {
       ".variable_name"
     }
+    stat_col <- stringi::stri_c(
+      ".",
+      dots$data_label,
+      ignore_null = TRUE
+    )
 
     indep_vars <- colnames(data)[
       !colnames(data) %in%
@@ -42,6 +47,9 @@ make_content.cat_plot_html <-
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in%
       c("percentage", "percentage_bare", "proportion")
+    if (prop_family) {
+      stat_col <- ".proportion"
+    }
 
     x_axis_var <- dep_var
     facet_var <- character()
@@ -143,13 +151,7 @@ make_content.cat_plot_html <-
       p_data |>
       ggplot2::ggplot(
         mapping = ggplot2::aes(
-          y = .data[[
-            if (prop_family) {
-              ".proportion"
-            } else {
-              stringi::stri_c(".", dots$data_label, ignore_null = TRUE)
-            }
-          ]],
+          y = .data[[stat_col]],
           x = .data[[x_axis_var]],
           fill = .data$.category,
           group = .data$.category,
@@ -171,17 +173,51 @@ make_content.cat_plot_html <-
       ggiraph::geom_text_interactive(
         mapping = ggplot2::aes(
           y = if (prop_family) {
-            .data[[".proportion"]]
+            .data[[stat_col]]
           } else {
-            .data[[stringi::stri_c(".", dots$data_label, ignore_null = TRUE)]] *
-              .5
+            if (dots$data_label_position == "center") {
+              .data[[stat_col]] * 0.5 # Middle of bar
+            } else if (dots$data_label_position == "bottom") {
+              pmax(.data[[stat_col]] * 0.05, max(.data[[stat_col]]) * 0.01) # Near bottom
+            } else if (dots$data_label_position == "top") {
+              .data[[stat_col]] * 0.9 # Near top but inside
+            } else if (dots$data_label_position == "above") {
+              .data[[stat_col]] * 1.05 # Above bar
+            } else {
+              .data[[stat_col]] * 0.5 # Default to center
+            }
           },
           colour = ggplot2::after_scale(x = hex_bw(.data$fill))
         ),
         position = if (prop_family) {
-          ggplot2::position_stack(vjust = 0.5, reverse = TRUE)
+          if (dots$data_label_position == "center") {
+            ggplot2::position_stack(vjust = 0.5, reverse = TRUE)
+          } else if (dots$data_label_position == "bottom") {
+            ggplot2::position_stack(vjust = 0.1, reverse = TRUE)
+          } else if (dots$data_label_position == "top") {
+            ggplot2::position_stack(vjust = 0.9, reverse = TRUE)
+          } else if (dots$data_label_position == "above") {
+            ggplot2::position_stack(vjust = 1.1, reverse = TRUE)
+          } else {
+            ggplot2::position_stack(vjust = 0.5, reverse = TRUE) # Default
+          }
         } else {
-          ggplot2::position_dodge(width = .9)
+          ggplot2::position_dodge(width = 0.9, reverse = FALSE)
+        },
+        hjust = if (prop_family) {
+          0
+        } else {
+          if (dots$data_label_position == "center") {
+            0.5
+          } else if (dots$data_label_position == "bottom") {
+            0.1
+          } else if (dots$data_label_position == "top") {
+            0.9
+          } else if (dots$data_label_position == "above") {
+            1.1
+          } else {
+            0.5
+          }
         },
         na.rm = TRUE,
         show.legend = FALSE

@@ -33,6 +33,13 @@
 #'
 #'   One of "proportion", "percentage", "percentage_bare", "count", "mean", or "median".
 #'
+#' @param data_label_position *Data label position*
+#'
+#'   `scalar<character>` // *default:* `"center"` (`optional`)
+#'
+#'   Position of data labels on bars. One of "center" (middle of bar), "bottom" (bottom but inside bar),
+#'   "top" (top but inside bar), or "above" (above bar outside).
+#'
 #' @param simplify_output
 #'
 #'   `scalar<logical>` // *default:* `TRUE`
@@ -431,6 +438,7 @@ makeme <-
       "mean",
       "median"
     ),
+    data_label_position = c("center", "bottom", "top", "above"),
     html_interactive = TRUE,
     hide_axis_text_if_single_variable = TRUE,
     hide_label_if_prop_below = .01,
@@ -522,6 +530,7 @@ makeme <-
 
     args$showNA <- args$showNA[1]
     args$data_label <- args$data_label[1]
+    args$data_label_position <- args$data_label_position[1]
     args$type <- eval(args$type)[1]
 
     validate_makeme_options(params = args)
