@@ -365,8 +365,9 @@ used across multiple variables.</p></dd>
 <p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
 <p>Sort output (and collapse if requested). When using <code>indep</code>-argument,
 sorting differs between ordered factors and unordered factors: Ordering
-of ordered factors is always respected in output. Unordered factors will be
-reordered by <code>sort_by</code>. Currently, this works best for a single <code>dep</code>.</p>
+of ordered factors is always respected in output (their levels define
+the base order). Unordered factors will be reordered by <code>sort_by</code>.
+Currently, this works best for a single <code>dep</code>.</p>
 <dl><dt>NULL</dt>
 <dd><p>No sorting.</p></dd>
 
@@ -410,8 +411,10 @@ reordered by <code>sort_by</code>. Currently, this works best for a single <code
 <dt id="arg-descend">descend<a class="anchor" aria-label="anchor" href="#arg-descend"></a></dt>
 <dd><p><em>Sorting order</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>Reverse sorting of <code>sort_by</code> in figures and tables. See <code>arrange_section_by</code>
-for sorting of report sections.</p></dd>
+<p>Reverse sorting of <code>sort_by</code> in figures and tables. Works with both
+ordered and unordered factors - for ordered factors, it reverses the
+display order while preserving the inherent level ordering.
+See <code>arrange_section_by</code> for sorting of report sections.</p></dd>
 
 
 <dt id="arg-labels-always-at-top-labels-always-at-bottom">labels_always_at_top, labels_always_at_bottom<a class="anchor" aria-label="anchor" href="#arg-labels-always-at-top-labels-always-at-bottom"></a></dt>
