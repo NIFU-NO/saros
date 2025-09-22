@@ -67,8 +67,9 @@ Whether to include totals in the output.}
 
 Sort output (and collapse if requested). When using \code{indep}-argument,
 sorting differs between ordered factors and unordered factors: Ordering
-of ordered factors is always respected in output. Unordered factors will be
-reordered by \code{sort_by}. Currently, this works best for a single \code{dep}.
+of ordered factors is always respected in output (their levels define
+the base order). Unordered factors will be reordered by \code{sort_by}.
+Currently, this works best for a single \code{dep}.
 
 \describe{
 \item{NULL}{No sorting.}
@@ -158,8 +159,10 @@ Separator for main question from sub-question.}
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
-Reverse sorting of \code{sort_by} in figures and tables. See \code{arrange_section_by}
-for sorting of report sections.}
+Reverse sorting of \code{sort_by} in figures and tables. Works with both
+ordered and unordered factors - for ordered factors, it reverses the
+display order while preserving the inherent level ordering.
+See \code{arrange_section_by} for sorting of report sections.}
 
 \item{labels_always_at_top, labels_always_at_bottom}{\emph{Top/bottom variables}
 

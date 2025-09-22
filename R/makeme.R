@@ -278,8 +278,9 @@
 #'
 #'   Sort output (and collapse if requested). When using `indep`-argument,
 #'   sorting differs between ordered factors and unordered factors: Ordering
-#'   of ordered factors is always respected in output. Unordered factors will be
-#'   reordered by `sort_by`. Currently, this works best for a single `dep`.
+#'   of ordered factors is always respected in output (their levels define
+#'   the base order). Unordered factors will be reordered by `sort_by`.
+#'   Currently, this works best for a single `dep`.
 #'
 #' \describe{
 #' \item{NULL}{No sorting.}
@@ -300,8 +301,10 @@
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
 #'
-#'   Reverse sorting of `sort_by` in figures and tables. See `arrange_section_by`
-#'   for sorting of report sections.
+#'   Reverse sorting of `sort_by` in figures and tables. Works with both
+#'   ordered and unordered factors - for ordered factors, it reverses the
+#'   display order while preserving the inherent level ordering.
+#'   See `arrange_section_by` for sorting of report sections.
 #'
 #' @param table_main_question_as_header *Table main question as header*
 #'

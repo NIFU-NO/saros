@@ -7,6 +7,19 @@ testthat::test_that("post_process_makeme_data reverses factor levels for indepen
   )
 })
 
+testthat::test_that("post_process_makeme_data preserves ordered factor levels for independent variable", {
+  data <- data.frame(
+    indep1 = factor(c("A", "B", "C"), ordered = TRUE),
+    .category = c(1, 2, 3)
+  )
+  result <- saros:::post_process_makeme_data(data, indep = "indep1")
+  testthat::expect_equal(
+    levels(result$indep1),
+    levels(factor(c("A", "B", "C"), ordered = TRUE))
+  )
+  testthat::expect_true(is.ordered(result$indep1))
+})
+
 testthat::test_that("post_process_makeme_data does not reverse factor levels if no independent variable", {
   data <- data.frame(.category = c(1, 2, 3))
   result <- saros:::post_process_makeme_data(data)
