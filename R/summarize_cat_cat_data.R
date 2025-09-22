@@ -300,51 +300,87 @@ sort_data <- function(
   labels_always_at_top = NULL,
   translations = eval(formals(makeme)$translations),
   indep_names = character(0),
+  dep_vars_ordered = FALSE, # Add parameter to indicate if dep vars are ordered
+  dep_variable_order = NULL, # Original variable order for ordered factors
   call = rlang::caller_env()
 ) {
-  if (is.null(sort_by)) {
-    return(dplyr::arrange(
+  # If dependent variables are ordered factors, ignore sort_by and descend
+  if (is.null(sort_by) || dep_vars_ordered) {
+    # Just arrange by variable position and category position
+    data_summary <- dplyr::arrange(
       data_summary,
       as.integer(.data$.variable_label),
       as.integer(.data$.category)
-    ))
-  }
-
-  if (all(sort_by %in% names(data_summary))) {
-    # E.g. .variabel_name, .variable_label, x1_sex
-
-    sort_col <- sort_by
-  } else if (
-    (length(sort_by) == 1 &&
-      sort_by %in% .saros.env$summary_data_sort1) || # E.g. .top, .upper, .mid_upper, c("A bit", "A lot")
-      all(sort_by %in% unique(data_summary$.category))
-  ) {
-    sort_col <- c(
-      ".sum_value",
-      indep_names[
-        lapply(indep_names, function(indep_name) {
-          is.ordered(data_summary[[indep_name]])
-        }) |>
-          unlist()
-      ],
-      ".category"
     )
-  }
-  #### descend IS CURRENTLY GLOBAL ACROSS ALL VARIABLES:
 
-  if (isTRUE(descend)) {
-    data_summary <-
-      dplyr::arrange(
-        data_summary,
-        dplyr::across(tidyselect::all_of(sort_col), dplyr::desc)
+    # For ordered factors, preserve the original variable order completely
+    if (dep_vars_ordered && !is.null(dep_variable_order)) {
+      # Get variable labels in the order they appear in the data
+      var_label_mapping <- unique(data_summary[,
+        c(".variable_name", ".variable_label"),
+        drop = FALSE
+      ])
+
+      # Create the desired order based on the original dep order
+      desired_labels <- sapply(dep_variable_order, function(var_name) {
+        label_row <- var_label_mapping[
+          var_label_mapping$.variable_name == var_name,
+        ]
+        if (nrow(label_row) > 0) {
+          as.character(label_row$.variable_label[1])
+        } else {
+          var_name # fallback to variable name
+        }
+      })
+
+      # Set factor levels in the original input order
+      data_summary$.variable_label <- factor(
+        data_summary$.variable_label,
+        levels = desired_labels
       )
+
+      return(data_summary)
+    }
+
+    # For the NULL sort_by case with unordered factors, continue with level setting
+    uniques <- as.character(unique(data_summary$.variable_label))
   } else {
-    data_summary <-
-      dplyr::arrange(data_summary, dplyr::pick(tidyselect::all_of(sort_col))) # Incorrect
+    # Apply sorting for unordered factors
+    if (all(sort_by %in% names(data_summary))) {
+      sort_col <- sort_by
+    } else if (
+      (length(sort_by) == 1 &&
+        sort_by %in% .saros.env$summary_data_sort1) ||
+        all(sort_by %in% unique(data_summary$.category))
+    ) {
+      sort_col <- c(
+        ".sum_value",
+        indep_names[
+          lapply(indep_names, function(indep_name) {
+            is.ordered(data_summary[[indep_name]])
+          }) |>
+            unlist()
+        ],
+        ".category"
+      )
+    }
+
+    # Apply sorting
+    if (isTRUE(descend)) {
+      data_summary <-
+        dplyr::arrange(
+          data_summary,
+          dplyr::across(tidyselect::all_of(sort_col), dplyr::desc)
+        )
+    } else {
+      data_summary <-
+        dplyr::arrange(data_summary, dplyr::pick(tidyselect::all_of(sort_col)))
+    }
+
+    uniques <- as.character(unique(data_summary$.variable_label))
   }
 
-  uniques <- as.character(unique(data_summary$.variable_label))
-
+  # For ordered dependent variables, don't modify the factor levels at all
   if (!all(is.na(data_summary$.variable_label))) {
     data_summary$.variable_label <- forcats::fct_relevel(
       data_summary$.variable_label,
@@ -372,22 +408,40 @@ sort_data <- function(
 
   if (length(indep_names) > 0) {
     for (indep_name in indep_names) {
+      # Always reverse unordered factors (original behavior)
+      # Only preserve ordered factor levels (the fix for #372)
       if (is.factor(data_summary[[indep_name]])) {
-        uniques <- rev(levels(data_summary[[indep_name]]))
+        if (is.ordered(data_summary[[indep_name]])) {
+          # For ordered factors, preserve their natural level order
+          # The descend parameter will handle sorting in the main sort logic
+          # Don't reverse the levels here
+        } else {
+          # For unordered factors, keep the original reversing behavior
+          uniques <- rev(levels(data_summary[[indep_name]]))
+          data_summary[[indep_name]] <- forcats::fct_relevel(
+            data_summary[[indep_name]],
+            uniques
+          )
+        }
       } else {
+        # For non-factor variables, keep original behavior
         uniques <- rev(as.character(unique(data_summary[[indep_name]])))
+        data_summary[[indep_name]] <- forcats::fct_relevel(
+          data_summary[[indep_name]],
+          uniques
+        )
       }
-      data_summary[[indep_name]] <- forcats::fct_relevel(
-        data_summary[[indep_name]],
-        uniques
-      )
+
+      # Handle crowd_others translation for both ordered and unordered factors
       if (
-        any(levels(data_summary[[indep_name]]) %in% translations$crowd_others)
+        is.factor(data_summary[[indep_name]]) &&
+          any(levels(data_summary[[indep_name]]) %in% translations$crowd_others)
       ) {
+        current_levels <- levels(data_summary[[indep_name]])
         data_summary[[indep_name]] <- forcats::fct_relevel(
           data_summary[[indep_name]],
           translations$crowd_others,
-          after = length(uniques)
+          after = length(current_levels)
         )
       }
     }
@@ -457,6 +511,25 @@ summarize_cat_cat_data <-
       return()
     }
 
+    # Check if all dependent variables are ordered factors
+    # This determines whether sort_by and descend should be ignored
+    dep_vars_ordered <- FALSE
+    dep_variable_order <- NULL # Store original order for ordered factors
+    if (length(dep) > 0 && inherits(data, "data.frame")) {
+      dep_vars_ordered <- all(sapply(dep, function(var_name) {
+        if (var_name %in% colnames(data)) {
+          is.factor(data[[var_name]]) && is.ordered(data[[var_name]])
+        } else {
+          FALSE
+        }
+      }))
+
+      # If all deps are ordered, store the original variable order
+      if (dep_vars_ordered) {
+        dep_variable_order <- dep
+      }
+    }
+
     cross_table_output <-
       crosstable(
         data,
@@ -520,6 +593,8 @@ summarize_cat_cat_data <-
         indep_names = indep,
         sort_by = sort_by,
         descend = descend,
+        dep_vars_ordered = dep_vars_ordered,
+        dep_variable_order = dep_variable_order,
         labels_always_at_bottom = labels_always_at_bottom,
         labels_always_at_top = labels_always_at_top,
         translations = translations

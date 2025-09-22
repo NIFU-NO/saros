@@ -5,7 +5,10 @@ post_process_makeme_data <- function(
   colour_2nd_binary_cat = NULL
 ) {
   if (length(indep) > 0) {
-    data[[indep]] <- forcats::fct_rev(data[[indep]])
+    # Only reverse unordered factors, preserve ordered factor levels
+    if (!is.ordered(data[[indep]])) {
+      data[[indep]] <- forcats::fct_rev(data[[indep]])
+    }
   }
 
   if (

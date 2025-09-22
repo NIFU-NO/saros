@@ -448,3 +448,85 @@ testthat::test_that("crosstable srvyr gives same output as regular tbl with 2 in
   # testthat::expect_equal(object = dplyr::pull(x_srv, .data[[".sum_value"]]),
   #                        expected = dplyr::pull(x, .data[[".sum_value"]]))
 })
+
+testthat::test_that("summarize_cat_cat_data preserves ordered factor levels", {
+  # Create test data with ordered factors
+  test_data <- data.frame(
+    dep_ordered = factor(
+      c("Low", "Medium", "High", "Low", "Medium", "High"),
+      levels = c("Low", "Medium", "High"),
+      ordered = TRUE
+    ),
+    indep_ordered = factor(
+      c("First", "First", "First", "Second", "Second", "Second"),
+      levels = c("First", "Second"),
+      ordered = TRUE
+    )
+  )
+
+  result <- saros:::summarize_cat_cat_data(
+    data = test_data,
+    dep = "dep_ordered",
+    indep = "indep_ordered",
+    sort_by = NULL,
+    descend = FALSE
+  )
+
+  # Check that ordered factors maintain their levels
+  testthat::expect_true(is.ordered(result$indep_ordered))
+  testthat::expect_equal(levels(result$indep_ordered), c("First", "Second"))
+  testthat::expect_equal(levels(result$.category), c("Low", "Medium", "High"))
+})
+
+testthat::test_that("summarize_cat_cat_data descend works with ordered factors", {
+  # Create test data with ordered factors
+  test_data <- data.frame(
+    dep_ordered = factor(
+      rep(c("Low", "Medium", "High"), each = 5),
+      levels = c("Low", "Medium", "High"),
+      ordered = TRUE
+    ),
+    indep_ordered = factor(
+      rep(c("First", "Second"), length.out = 15),
+      levels = c("First", "Second"),
+      ordered = TRUE
+    )
+  )
+
+  # Test with descend = TRUE
+  result_desc <- saros:::summarize_cat_cat_data(
+    data = test_data,
+    dep = "dep_ordered",
+    indep = "indep_ordered",
+    sort_by = NULL,
+    descend = TRUE
+  )
+
+  # Test with descend = FALSE
+  result_asc <- saros:::summarize_cat_cat_data(
+    data = test_data,
+    dep = "dep_ordered",
+    indep = "indep_ordered",
+    sort_by = NULL,
+    descend = FALSE
+  )
+
+  # Check that ordered factors are preserved in both cases
+  testthat::expect_true(is.ordered(result_desc$indep_ordered))
+  testthat::expect_true(is.ordered(result_asc$indep_ordered))
+
+  # Check that the original level order is maintained (not reversed like unordered factors)
+  testthat::expect_equal(
+    levels(result_desc$indep_ordered),
+    c("First", "Second")
+  )
+  testthat::expect_equal(levels(result_asc$indep_ordered), c("First", "Second"))
+  testthat::expect_equal(
+    levels(result_desc$.category),
+    c("Low", "Medium", "High")
+  )
+  testthat::expect_equal(
+    levels(result_asc$.category),
+    c("Low", "Medium", "High")
+  )
+})
