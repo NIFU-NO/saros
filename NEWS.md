@@ -1,6 +1,7 @@
 # saros 1.5.5
 -   Using `air` for consistent code formatting
 -   Feature: makeme() has new output type = "int_plot_html" for interactive interval plots with violin and box plots
+-   Feature: Added support for `data_label = "mean"` and `data_label = "median"` in `makeme()` for `type = "cat_*_html"` outputs (addresses issue #460)
 -   Major change: `makeme()` returns an empty data.frame instead of `NULL` if not plot or table can be created, simplifying downstream code (e.g. `gt::gt()` fails if served `NULL`).
 -   Enhancement: Completely rewrote the `.spread` algorithm in `subset_vector()` for better spread maximization using evenly spaced positions
 -   Updated documentation reference from `ggplot2::theme_set()` to `ggplot2::set_theme()` due to ggplot 4.0.0.

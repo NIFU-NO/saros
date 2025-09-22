@@ -187,7 +187,27 @@ crosstable_calculate_means_svy <- function(data, indep) {
     .count_per_indep_group = srvyr::survey_total(na.rm = TRUE)
   )
   summary_mean <- srvyr::ungroup(summary_mean)
-  return(srvyr::as_tibble(summary_mean))
+  srvyr::as_tibble(summary_mean)
+}
+
+
+# Helper function: Calculate median values for tbl_svy
+crosstable_calculate_medians_svy <- function(data, indep) {
+  summary_median <- srvyr::group_by(
+    data,
+    srvyr::across(tidyselect::all_of(indep))
+  )
+  summary_median <- srvyr::summarize(
+    summary_median,
+    .median = srvyr::survey_median(
+      suppressWarnings(as.numeric(.data$.category)),
+      na.rm = TRUE
+    ),
+    .count_per_dep = NA_integer_, # Placeholder
+    .count_per_indep_group = srvyr::survey_total(na.rm = TRUE)
+  )
+  summary_median <- srvyr::ungroup(summary_median)
+  srvyr::as_tibble(summary_median)
 }
 
 # Helper function: Calculate proportions for tbl_svy
@@ -267,6 +287,7 @@ crosstable_process_dep_svy <- function(
   fct_lvls <- if (is.factor(col)) levels(col) else sort(unique(col))
 
   summary_mean <- crosstable_calculate_means_svy(out, indep)
+  summary_median <- crosstable_calculate_medians_svy(out, indep)
   summary_prop <- crosstable_calculate_proportions_svy(
     out,
     dep_var,
@@ -274,7 +295,12 @@ crosstable_process_dep_svy <- function(
     indep
   )
 
-  merged_output <- crosstable_merge_summaries(summary_prop, summary_mean, indep)
+  merged_output <- crosstable_merge_summaries(
+    summary_prop,
+    summary_mean,
+    summary_median,
+    indep
+  )
   crosstable_finalize_variable_output(
     merged_output,
     dep_var,

@@ -12,7 +12,8 @@ summarize_cat_cat_data(
   showNA = c("ifany", "always", "never"),
   totals = FALSE,
   sort_by = ".upper",
-  data_label = c("percentage_bare", "percentage", "proportion", "count"),
+  data_label = c("percentage_bare", "percentage", "proportion", "count", "mean",
+    "median"),
   digits = 0,
   add_n_to_dep_label = FALSE,
   add_n_to_indep_label = FALSE,
@@ -181,7 +182,7 @@ Both the absolute and relative folderpaths are required, as strings.}
 \value{
 Dataset with the columns: \code{.variable_name}, \code{.variable_label}, \code{.category},
 \code{.count}, \code{.count_se}, \code{.count_per_dep}, \code{.count_per_indep_group}, \code{.proportion}, \code{.proportion_se},
-\code{.mean}, \code{.mean_se}, indep-variable(s), \code{.data_label}, \code{.comb_categories}, \code{.sum_value},
+\code{.mean}, \code{.mean_se}, \code{.median}, \code{.median_se}, indep-variable(s), \code{.data_label}, \code{.comb_categories}, \code{.sum_value},
 \code{.variable_label_prefix}
 }
 \description{

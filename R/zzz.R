@@ -28,6 +28,8 @@ if (!exists(".saros.env")) {
       ".proportion_se",
       ".mean",
       ".mean_se",
+      ".median",
+      ".median_se",
       ".data_label",
       ".comb_categories",
       ".sum_value",

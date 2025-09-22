@@ -23,8 +23,12 @@ mutate_data_label <-
     prop_family <- any(
       c("percentage", "percentage_bare", "proportion") == data_label
     )
+    stat_family <- any(c("mean", "median") == data_label)
+
     stat_col <- if (prop_family) {
       ".proportion"
+    } else if (stat_family) {
+      stringi::stri_c(ignore_null = TRUE, ".", data_label)
     } else {
       stringi::stri_c(ignore_null = TRUE, ".", data_label)
     }
@@ -403,7 +407,7 @@ sort_data <- function(
 #' @keywords internal
 #' @return Dataset with the columns: `.variable_name`, `.variable_label`, `.category`,
 #'   `.count`, `.count_se`, `.count_per_dep`, `.count_per_indep_group`, `.proportion`, `.proportion_se`,
-#'   `.mean`, `.mean_se`, indep-variable(s), `.data_label`, `.comb_categories`, `.sum_value`,
+#'   `.mean`, `.mean_se`, `.median`, `.median_se`, indep-variable(s), `.data_label`, `.comb_categories`, `.sum_value`,
 #'   `.variable_label_prefix`
 #'
 summarize_cat_cat_data <-
@@ -415,7 +419,14 @@ summarize_cat_cat_data <-
     showNA = c("ifany", "always", "never"),
     totals = FALSE,
     sort_by = ".upper",
-    data_label = c("percentage_bare", "percentage", "proportion", "count"),
+    data_label = c(
+      "percentage_bare",
+      "percentage",
+      "proportion",
+      "count",
+      "mean",
+      "median"
+    ),
     digits = 0,
     add_n_to_dep_label = FALSE,
     add_n_to_indep_label = FALSE,

@@ -423,7 +423,14 @@ makeme <-
     label_separator = " - ",
     error_on_duplicates = TRUE,
     showNA = c("ifany", "always", "never"),
-    data_label = c("percentage_bare", "percentage", "proportion", "count"),
+    data_label = c(
+      "percentage_bare",
+      "percentage",
+      "proportion",
+      "count",
+      "mean",
+      "median"
+    ),
     html_interactive = TRUE,
     hide_axis_text_if_single_variable = TRUE,
     hide_label_if_prop_below = .01,
@@ -492,7 +499,7 @@ makeme <-
     args$data <- data # reinsert after check_options
     args$dep <- names(dep_pos)
     args$indep <- names(indep_pos)
-    
+
     # Remove indep variables from dep to prevent overlap conflicts
     if (length(args$indep) > 0 && length(args$dep) > 0) {
       overlapping_vars <- intersect(args$dep, args$indep)
@@ -502,7 +509,7 @@ makeme <-
           "i" = "Automatically excluding them from dep to prevent conflicts."
         ))
         args$dep <- setdiff(args$dep, args$indep)
-        
+
         # Check if we have any dep variables left
         if (length(args$dep) == 0) {
           cli::cli_abort(c(
@@ -512,7 +519,7 @@ makeme <-
         }
       }
     }
-    
+
     args$showNA <- args$showNA[1]
     args$data_label <- args$data_label[1]
     args$type <- eval(args$type)[1]
