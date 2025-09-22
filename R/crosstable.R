@@ -257,7 +257,6 @@
 #             summary_prop$.count_se <- NA_real_
 #             summary_prop$.proportion_se <- NA_real_
 #             summary_prop$.mean_se <- NA_real_
-#             summary_prop$.median_se <- NA_real_
 
 #             if (length(indep) > 0) {
 #               out <- dplyr::left_join(
@@ -298,8 +297,7 @@
 #               .proportion_se = NA_real_,
 #               .mean = NA_real_,
 #               .mean_se = NA_real_,
-#               .median = NA_real_,
-#               .median_se = NA_real_
+#               .median = NA_real_
 #             )
 #             out[, indep] <- NA_character_
 #           }
@@ -324,7 +322,6 @@
 #           ".mean",
 #           ".mean_se",
 #           ".median",
-#           ".median_se",
 #           # ".mean_base",
 #           indep
 #         )

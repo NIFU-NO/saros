@@ -425,7 +425,6 @@ fig_height_h_barchart2 <- # Returns a numeric value
       )
     }
     if (length(indep_vars) == 1) {
-      # browser()
       data[[indep_vars]] <-
         stringi::stri_replace_all_regex(
           str = as.character(data[[indep_vars]]),

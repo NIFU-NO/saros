@@ -135,7 +135,6 @@ crosstable_calculate_proportions <- function(
   # Summaries per dep variable (e.g. b_1, b_2)
   summary_prop[[".count_per_dep"]] <- sum(summary_prop$.count, na.rm = TRUE)
 
-  #browser()
   # Summaries per indep group (e.g. males, females)
   grouped_count <- tryCatch(
     stats::aggregate(
@@ -169,7 +168,6 @@ crosstable_calculate_proportions <- function(
   summary_prop$.count_per_indep_group_se <- NA_real_
   summary_prop$.proportion_se <- NA_real_
   summary_prop$.mean_se <- NA_real_
-  summary_prop$.median_se <- NA_real_
   summary_prop
 }
 
@@ -273,8 +271,7 @@ crosstable_empty_output <- function(dep_var, indep, data) {
     .proportion_se = NA_real_,
     .mean = NA_real_,
     .mean_se = NA_real_,
-    .median = NA_real_,
-    .median_se = NA_real_
+    .median = NA_real_
   )
   out[, indep] <- NA_character_
   return(out)
@@ -305,7 +302,6 @@ crosstable_finalize_output <- function(output, indep, indep_labels, dep_cols) {
         ".mean",
         ".mean_se",
         ".median",
-        ".median_se",
         indep
       ),
       drop = FALSE

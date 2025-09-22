@@ -407,7 +407,7 @@ sort_data <- function(
 #' @keywords internal
 #' @return Dataset with the columns: `.variable_name`, `.variable_label`, `.category`,
 #'   `.count`, `.count_se`, `.count_per_dep`, `.count_per_indep_group`, `.proportion`, `.proportion_se`,
-#'   `.mean`, `.mean_se`, `.median`, `.median_se`, indep-variable(s), `.data_label`, `.comb_categories`, `.sum_value`,
+#'   `.mean`, `.mean_se`, `.median`, indep-variable(s), `.data_label`, `.comb_categories`, `.sum_value`,
 #'   `.variable_label_prefix`
 #'
 summarize_cat_cat_data <-

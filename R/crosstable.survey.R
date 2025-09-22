@@ -168,7 +168,7 @@ crosstable_prepare_data_svy <- function(data, dep_var, indep, showNA) {
       )
     }
   }
-  return(out)
+  out
 }
 
 # Helper function: Calculate mean values for tbl_svy
@@ -262,7 +262,7 @@ crosstable_calculate_proportions_svy <- function(
     )
   )
 
-  return(summary_prop)
+  summary_prop
 }
 
 
@@ -286,20 +286,20 @@ crosstable_process_dep_svy <- function(
   col <- srvyr::pull(out, .data$.category)
   fct_lvls <- if (is.factor(col)) levels(col) else sort(unique(col))
 
-  summary_mean <- crosstable_calculate_means_svy(out, indep)
-  summary_median <- crosstable_calculate_medians_svy(out, indep)
+  summary_mean <- crosstable_calculate_means_svy(data = out, indep = indep)
+  summary_median <- crosstable_calculate_medians_svy(data = out, indep = indep)
   summary_prop <- crosstable_calculate_proportions_svy(
-    out,
-    dep_var,
-    fct_lvls,
-    indep
+    data = out,
+    dep_var = dep_var,
+    fct_lvls = fct_lvls,
+    indep = indep
   )
 
   merged_output <- crosstable_merge_summaries(
-    summary_prop,
-    summary_mean,
-    summary_median,
-    indep
+    summary_prop = summary_prop,
+    summary_mean = summary_mean,
+    summary_median = summary_median,
+    indep = indep
   )
   crosstable_finalize_variable_output(
     merged_output,
@@ -356,5 +356,5 @@ crosstable.tbl_svy <- function(
 
   # Finalize and arrange output
   result <- crosstable_finalize_output(output, indep, indep_labels, dep_cols)
-  return(result)
+  result
 }
