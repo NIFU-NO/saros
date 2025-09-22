@@ -173,7 +173,8 @@ make_content.cat_plot_html <-
           y = if (prop_family) {
             .data[[".proportion"]]
           } else {
-            .data[[".count"]] * .5
+            .data[[stringi::stri_c(".", dots$data_label, ignore_null = TRUE)]] *
+              .5
           },
           colour = ggplot2::after_scale(x = hex_bw(.data$fill))
         ),

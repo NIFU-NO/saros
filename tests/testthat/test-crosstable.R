@@ -9,7 +9,7 @@ testthat::test_that("crosstable", {
         showNA = "ifany"
       )
   })
-  testthat::expect_equal(dim(x), c(9, 14))
+  testthat::expect_equal(dim(x), c(9, 15))
   testthat::expect_equal(
     object = x |>
       dplyr::filter(.variable_name == "b_1", .category == "A bit") |>
@@ -27,7 +27,7 @@ testthat::test_that("crosstable", {
         showNA = "ifany"
       )
   })
-  testthat::expect_equal(dim(x), c(18, 15))
+  testthat::expect_equal(dim(x), c(18, 16))
   testthat::expect_equal(
     object = x |>
       dplyr::filter(
@@ -58,7 +58,7 @@ testthat::test_that("crosstable works with explicit NA level", {
         showNA = "ifany"
       )
   })
-  testthat::expect_equal(dim(x), c(34, 15))
+  testthat::expect_equal(dim(x), c(34, 16))
 })
 
 
@@ -82,5 +82,5 @@ testthat::test_that("crosstable works with dep and indep having nothing in commo
         showNA = "never"
       )
   })
-  testthat::expect_equal(dim(x), c(1, 15))
+  testthat::expect_equal(dim(x), c(1, 16))
 })

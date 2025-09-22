@@ -92,6 +92,23 @@ crosstable_calculate_means <- function(data, indep) {
   )
 }
 
+# Helper function: Calculate median values
+crosstable_calculate_medians <- function(data, indep) {
+  data$.median <- suppressWarnings(as.numeric(data$.category))
+  tryCatch(
+    stats::aggregate(
+      .median ~ .,
+      data = data[, c(indep, ".median"), drop = FALSE],
+      FUN = stats::median,
+      na.rm = TRUE
+    ),
+    error = function(e) {
+      cols <- c(indep, ".median")
+      data.frame(matrix(NA, ncol = length(cols), dimnames = list(NULL, cols)))
+    }
+  )
+}
+
 # Helper function: Calculate proportions
 crosstable_calculate_proportions <- function(
   data,
@@ -118,7 +135,6 @@ crosstable_calculate_proportions <- function(
   # Summaries per dep variable (e.g. b_1, b_2)
   summary_prop[[".count_per_dep"]] <- sum(summary_prop$.count, na.rm = TRUE)
 
-  #browser()
   # Summaries per indep group (e.g. males, females)
   grouped_count <- tryCatch(
     stats::aggregate(
@@ -152,20 +168,32 @@ crosstable_calculate_proportions <- function(
   summary_prop$.count_per_indep_group_se <- NA_real_
   summary_prop$.proportion_se <- NA_real_
   summary_prop$.mean_se <- NA_real_
-  return(summary_prop)
+  summary_prop
 }
 
 # Helper function: Merge summaries
-crosstable_merge_summaries <- function(summary_prop, summary_mean, indep) {
+crosstable_merge_summaries <- function(
+  summary_prop,
+  summary_mean,
+  summary_median,
+  indep
+) {
   if (length(indep) > 0) {
     common_cols <- intersect(colnames(summary_prop), colnames(summary_mean))
     if (length(common_cols) == 0) {
       cli::cli_abort("Internal error in `crosstable_merge_summaries`")
     }
-    dplyr::left_join(summary_prop, summary_mean, by = common_cols)
+    out <- dplyr::left_join(summary_prop, summary_mean, by = common_cols)
+    common_cols <- intersect(colnames(out), colnames(summary_median))
+    out <- dplyr::left_join(out, summary_median, by = common_cols)
   } else {
-    cbind(summary_prop, summary_mean)
+    out <- cbind(
+      summary_prop,
+      summary_mean,
+      summary_median[, ".median", drop = FALSE]
+    )
   }
+  out
 }
 
 # Helper function: Finalize variable output
@@ -174,7 +202,7 @@ crosstable_finalize_variable_output <- function(out, dep_var, data) {
   out$.variable_position <- match(dep_var, colnames(data))
   out$.variable_label <- unname(get_raw_labels(data = data, col_pos = dep_var))
 
-  return(out)
+  out
 }
 
 
@@ -192,17 +220,30 @@ crosstable_process_dep <- function(data, dep_var, indep, showNA, call) {
   }
 
   #out <- out[rlang::inject(order(!!!out[, c(indep, ".category"), drop = FALSE])), , drop = FALSE]
-  summary_mean <- crosstable_calculate_means(out, indep)
+  summary_mean <- crosstable_calculate_means(data = out, indep = indep)
   summary_prop <- crosstable_calculate_proportions(
-    out,
-    dep_var,
-    fct_lvls,
-    indep,
-    showNA
+    data = out,
+    dep_var = dep_var,
+    fct_lvls = fct_lvls,
+    indep = indep,
+    showNA = showNA
+  )
+  summary_median <- crosstable_calculate_medians(
+    data = out,
+    indep = indep
   )
 
-  merged_output <- crosstable_merge_summaries(summary_prop, summary_mean, indep)
-  crosstable_finalize_variable_output(merged_output, dep_var, data)
+  merged_output <- crosstable_merge_summaries(
+    summary_prop = summary_prop,
+    summary_mean = summary_mean,
+    summary_median = summary_median,
+    indep = indep
+  )
+  crosstable_finalize_variable_output(
+    out = merged_output,
+    dep_var = dep_var,
+    data = data
+  )
 }
 
 
@@ -229,7 +270,8 @@ crosstable_empty_output <- function(dep_var, indep, data) {
     .proportion = NA_real_,
     .proportion_se = NA_real_,
     .mean = NA_real_,
-    .mean_se = NA_real_
+    .mean_se = NA_real_,
+    .median = NA_real_
   )
   out[, indep] <- NA_character_
   return(out)
@@ -259,6 +301,7 @@ crosstable_finalize_output <- function(output, indep, indep_labels, dep_cols) {
         ".proportion_se",
         ".mean",
         ".mean_se",
+        ".median",
         indep
       ),
       drop = FALSE
