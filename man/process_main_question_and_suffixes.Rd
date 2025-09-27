@@ -19,3 +19,4 @@ List with processed data, main_question, and updated col_basis
 \description{
 Handle label separation and suffix extraction for table functions
 }
+\keyword{internal}

@@ -15,3 +15,4 @@ Character vector of processed labels
 \description{
 Process independent variable labels with consistent logic across table functions
 }
+\keyword{internal}

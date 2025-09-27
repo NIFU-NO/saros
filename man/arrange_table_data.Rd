@@ -19,3 +19,4 @@ Arranged data frame
 \description{
 Standard data arrangement for table functions
 }
+\keyword{internal}

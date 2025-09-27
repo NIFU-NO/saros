@@ -38,3 +38,4 @@ Processed data frame
 \description{
 Apply column selection, renaming, and independent variable handling
 }
+\keyword{internal}

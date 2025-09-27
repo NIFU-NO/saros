@@ -17,3 +17,4 @@ Processed data frame
 \description{
 Handle NA categories based on showNA parameter for categorical tables
 }
+\keyword{internal}

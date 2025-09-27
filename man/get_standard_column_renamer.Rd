@@ -23,3 +23,4 @@ Function for renaming columns
 \description{
 Standardized column renaming logic for table functions
 }
+\keyword{internal}

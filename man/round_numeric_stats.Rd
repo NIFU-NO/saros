@@ -17,3 +17,4 @@ Data frame with rounded numeric columns
 \description{
 Apply rounding to numeric statistical columns
 }
+\keyword{internal}

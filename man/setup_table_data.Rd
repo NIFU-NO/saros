@@ -15,3 +15,4 @@ List with data and should_return flag
 \description{
 Common setup logic for table functions including data extraction and early return
 }
+\keyword{internal}

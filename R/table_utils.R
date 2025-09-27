@@ -7,6 +7,7 @@
 #'
 #' @param dots List from rlang::list2(...)
 #' @return List with data and should_return flag
+#' @keywords internal
 setup_table_data <- function(dots) {
   out <- dots$data_summary
 
@@ -24,6 +25,7 @@ setup_table_data <- function(dots) {
 #' @param data Data frame with .category column
 #' @param dots List with showNA and indep settings
 #' @return Processed data frame
+#' @keywords internal
 process_categorical_na <- function(data, dots) {
   # Handle empty category levels
   levels(data[[".category"]])[
@@ -59,6 +61,7 @@ process_categorical_na <- function(data, dots) {
 #'
 #' @param dots List from rlang::list2(...)
 #' @return Character vector of processed labels
+#' @keywords internal
 get_indep_labels <- function(dots) {
   if (length(dots$indep) == 0) {
     return(character())
@@ -85,6 +88,7 @@ get_indep_labels <- function(dots) {
 #'
 #' @param data_summary Data frame with variable information
 #' @return String indicating column to use as basis
+#' @keywords internal
 determine_variable_basis <- function(data_summary) {
   if (all(!is.na(data_summary[[".variable_label"]]))) {
     ".variable_label"
@@ -104,6 +108,7 @@ determine_variable_basis <- function(data_summary) {
 #' @param dots List from rlang::list2(...)
 #' @param col_basis Current column basis (.variable_label or .variable_name)
 #' @return List with processed data, main_question, and updated col_basis
+#' @keywords internal
 process_main_question_and_suffixes <- function(data, dots, col_basis) {
   main_question <- ""
 
@@ -150,6 +155,7 @@ process_main_question_and_suffixes <- function(data, dots, col_basis) {
 #' @param use_header Whether to use main question as header
 #' @param column_mappings Named list of additional column mappings
 #' @return Function for renaming columns
+#' @keywords internal
 get_standard_column_renamer <- function(
   main_question = "",
   use_header = FALSE,
@@ -206,6 +212,7 @@ get_standard_column_renamer <- function(
 #' @param data Data frame to process
 #' @param digits Number of decimal places
 #' @return Data frame with rounded numeric columns
+#' @keywords internal
 round_numeric_stats <- function(data, digits) {
   numeric_cols <- c(
     # Original column names
@@ -245,6 +252,7 @@ round_numeric_stats <- function(data, digits) {
 #' @param col_basis Column to use as primary sort
 #' @param indep_vars Independent variable columns
 #' @return Arranged data frame
+#' @keywords internal
 arrange_table_data <- function(data, col_basis, indep_vars = NULL) {
   data |>
     dplyr::arrange(
@@ -266,6 +274,7 @@ arrange_table_data <- function(data, col_basis, indep_vars = NULL) {
 #' @param stat_columns Statistical columns to include
 #' @param column_mappings Additional column mappings
 #' @return Processed data frame
+#' @keywords internal
 process_table_data <- function(
   data,
   col_basis,
