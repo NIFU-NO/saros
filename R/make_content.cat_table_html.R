@@ -4,88 +4,37 @@ make_content.cat_table_html <-
     dots <- rlang::list2(...)
     data_summary <- dots$data_summary
 
-    ######### MUST TIDY UP FROM HERE ############
-
-    if (length(dots$indep) > 0) {
-      indep_label <- get_raw_labels(data = dots$data, col_pos = dots$indep)
-      indep_label <- get_main_question(
-        indep_label,
-        label_separator = dots$label_separator,
-        warn_multiple = TRUE
-      )
-      indep_label <- unique(indep_label)
-      if (nchar(indep_label) == 0) indep_label <- dots$indep[1]
-    } else {
-      indep_label <- character()
-    }
-
-    levels(data_summary[[".category"]])[
-      levels(data_summary[[".category"]]) == ""
-    ] <- NA_character_
-
-    if (dots$showNA == "never") {
-      data_summary[[
-        ".category"
-      ]] <- forcats::fct_na_level_to_value(data_summary[[".category"]])
-      data_summary <- data_summary[
-        !is.na(data_summary[[".category"]]),
-        ,
-        drop = FALSE
-      ]
-      for (ind in dots$indep) {
-        data_summary[[ind]] <- forcats::fct_na_level_to_value(data_summary[[
-          ind
-        ]])
-        data_summary <- data_summary[
-          !is.na(data_summary[[ind]]),
-          ,
-          drop = FALSE
-        ]
-      }
-    } else {
-      data_summary[[".category"]] <- forcats::fct_na_value_to_level(
-        data_summary[[".category"]],
-        level = "NA"
-      )
-      for (ind in dots$indep) {
-        data_summary[[ind]] <- forcats::fct_na_value_to_level(
-          data_summary[[ind]],
-          level = "NA"
-        )
-      }
-    }
-    if (nrow(data_summary) == 0) {
-      return(data.frame())
-    }
+    # Setup data and early exit if empty
+    if (nrow(data_summary) == 0) return(data.frame())
+    
+    # Get independent variable labels
+    indep_label <- get_indep_labels(dots)
+    
+    # Process categorical NA handling
+    data_summary <- process_categorical_na(data_summary, dots)
+    
+    # Exit again if data was filtered out
+    if (nrow(data_summary) == 0) return(data.frame())
 
     cat_lvls <- levels(data_summary[[".category"]])
 
     if (length(indep_label) == 1 && length(dots$indep) == 0) {
       cli::cli_abort("Something wrong in function.")
     }
-    col_as_basis <-
-      if (all(!is.na(data_summary[[".variable_label"]]))) {
-        ".variable_label"
-      } else {
-        cli::cli_warn(
-          "No variable labels found for {.var {sort(unique(data_summary[['.variable_name']]))}}. Using variable names."
-        )
+    
+    # Determine column basis
+    col_basis <- determine_variable_basis(data_summary)
 
-        ".variable_name"
-      }
-
-    data_out <-
-      data_summary |>
-      dplyr::arrange(
-        as.integer(factor(.data[[col_as_basis]])),
-        if (length(dots$indep) > 0) as.integer(.data[[dots$indep]])
-      )
+    # Arrange data
+    data_out <- arrange_table_data(data_summary, col_basis, dots$indep)
+    
     if (length(cat_lvls) <= dots$n_categories_limit) {
+      # Wide table format
       data_out <-
         data_out |>
         tidyr::pivot_wider(
           id_cols = tidyselect::all_of(c(
-            col_as_basis,
+            col_basis,
             dots$indep,
             ".count_per_indep_group"
           )),
@@ -94,7 +43,7 @@ make_content.cat_table_html <-
           names_expand = TRUE
         )
       new_col_order <-
-        c(col_as_basis, dots$indep, cat_lvls, ".count_per_indep_group")
+        c(col_basis, dots$indep, cat_lvls, ".count_per_indep_group")
 
       data_out <-
         data_out |>
@@ -116,8 +65,9 @@ make_content.cat_table_html <-
           .fn = function(x) dots$translations$table_heading_N
         )
     } else {
+      # Long table format
       data_out <- data_out[,
-        c(col_as_basis, dots$indep, ".category", ".data_label", ".count"),
+        c(col_basis, dots$indep, ".category", ".data_label", ".count"),
         drop = FALSE
       ] |>
         dplyr::rename_with(
@@ -130,6 +80,7 @@ make_content.cat_table_html <-
         )
     }
 
+    # Handle independent variable labels
     if (
       length(dots$indep) > 0 &&
         is.character(indep_label) &&
@@ -143,6 +94,7 @@ make_content.cat_table_html <-
       )
     }
 
+    # Handle main question as header
     if (
       isTRUE(dots$table_main_question_as_header) &&
         rlang::is_string(dots$main_question) &&
@@ -150,10 +102,12 @@ make_content.cat_table_html <-
     ) {
       data_out <- dplyr::rename_with(
         data_out,
-        .cols = col_as_basis,
+        .cols = col_basis,
         .fn = function(x) dots$main_question
       )
     }
+    
+    # Hide axis text if single variable
     if (
       isTRUE(dots$hide_axis_text_if_single_variable) &&
         dplyr::n_distinct(data_out[[1]], na.rm = FALSE) == 1
