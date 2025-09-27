@@ -172,9 +172,12 @@ process_crowd_data <- function(
 # Helper function: Generate output for a crowd
 generate_crowd_output <- function(args, subset_data, dep_crwd, indep_crwd) {
   args <- summarize_data_by_type(args, subset_data, dep_crwd, indep_crwd)
-  args$main_question <- as.character(unique(args$data_summary[[
-    ".variable_label_prefix"
-  ]]))
+  args$main_question <- get_main_question(
+    as.character(unique(args$data_summary[[
+      ".variable_label_prefix"
+    ]])),
+    label_separator = args$label_separator
+  )
 
   if (!args$type %in% c("sigtest_table_html")) {
     args$data_summary <- post_process_makeme_data(
