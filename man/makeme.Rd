@@ -454,6 +454,11 @@ makeme(
 )
 makeme(
   data = ex_survey,
+  dep = c_1:c_2, indep = x1_sex,
+  type = "int_table_html"
+)
+makeme(
+  data = ex_survey,
   dep = b_1:b_3,
   crowd = c("target", "others", "all"),
   mesos_var = "f_uni",

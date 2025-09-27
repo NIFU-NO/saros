@@ -389,6 +389,11 @@
 #' )
 #' makeme(
 #'   data = ex_survey,
+#'   dep = c_1:c_2, indep = x1_sex,
+#'   type = "int_table_html"
+#' )
+#' makeme(
+#'   data = ex_survey,
 #'   dep = b_1:b_3,
 #'   crowd = c("target", "others", "all"),
 #'   mesos_var = "f_uni",
@@ -751,14 +756,17 @@ makeme <-
       }
 
       args$main_question <-
-        as.character(unique(args$data_summary[[".variable_label_prefix"]]))
+        get_main_question(
+          as.character(unique(args$data_summary[[".variable_label_prefix"]])),
+          label_separator = args$label_separator
+        )
 
       check_no_duplicated_label_suffix(
         data_summary = args$data_summary,
         error_on_duplicates = args$error_on_duplicates
       )
 
-      if (!args$type %in% c("sigtest_table_html")) {
+      if (!args$type %in% c("sigtest_table_html", "int_table_html")) {
         args$data_summary <-
           post_process_makeme_data(
             data = args$data_summary,
