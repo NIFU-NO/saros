@@ -2,207 +2,55 @@
 make_content.int_table_html <-
   function(...) {
     dots <- rlang::list2(...)
-    out <- dots$data_summary
 
-    if (nrow(out) == 0) {
-      return(data.frame())
+    # Setup data with common helper
+    setup_result <- setup_table_data(dots)
+    if (setup_result$should_return) {
+      return(setup_result$data)
     }
+    out <- setup_result$data
 
-    # Helper function to round numeric statistics
-    round_numeric_stats <- function(data, digits) {
-      numeric_cols <- c(
-        ".mean",
-        ".mean_se",
-        ".median",
-        "mean",
-        "sd",
-        "median",
-        "mad",
-        "iqr",
-        "min",
-        "max",
-        "Mean",
-        "Mean_SE",
-        "Median",
-        "SD",
-        "MAD",
-        "IQR",
-        "Min",
-        "Max"
-      )
-      for (col in intersect(numeric_cols, colnames(data))) {
-        data[[col]] <- round(data[[col]], digits = digits)
-      }
-      data
-    }
+    # Get independent variable labels
+    indep_label <- get_indep_labels(dots)
 
-    # Helper function for column renaming
-    get_col_renaming_fn <- function(main_question, use_header) {
-      function(col) {
-        if (
-          col %in%
-            c(".variable_label", ".variable_label_suffix", ".variable_name")
-        ) {
-          if (use_header && nchar(main_question) > 0) {
-            main_question
-          } else {
-            ".variable_label"
-          }
-        } else if (col == "n") {
-          "N"
-        } else if (col == "n_valid") {
-          "N_valid"
-        } else if (col == "n_miss") {
-          "N_missing"
-        } else if (col == ".count") {
-          "N"
-        } else if (col == ".mean") {
-          "Mean"
-        } else if (col == ".mean_se") {
-          "Mean_SE"
-        } else if (col == ".median") {
-          "Median"
-        } else if (col == "mean") {
-          "Mean"
-        } else if (col == "sd") {
-          "SD"
-        } else if (col == "median") {
-          "Median"
-        } else if (col == "mad") {
-          "MAD"
-        } else if (col == "iqr") {
-          "IQR"
-        } else if (col == "min") {
-          "Min"
-        } else if (col == "max") {
-          "Max"
-        } else {
-          col
-        }
-      }
-    }
+    # Determine variable column basis
+    col_as_basis <- determine_variable_basis(out)
 
-    # Helper function to process data (select, rename, handle conflicts)
-    process_data <- function(
-      data,
-      col_basis,
-      indep_label,
-      main_question,
-      use_header
-    ) {
-      # Select relevant columns
-      stat_cols <- c(
-        "n",
-        "n_valid",
-        "n_miss",
-        ".count",
-        ".mean",
-        ".mean_se",
-        ".median",
-        "mean",
-        "sd",
-        "median",
-        "mad",
-        "iqr",
-        "min",
-        "max"
-      )
-      output_cols <- c(
-        col_basis,
-        dots$indep,
-        intersect(stat_cols, colnames(data))
-      )
-      data <- data[, output_cols, drop = FALSE]
-
-      # Rename columns
-      colnames(data) <- vapply(
-        colnames(data),
-        get_col_renaming_fn(main_question, use_header),
-        character(1)
-      )
-
-      # Handle independent variable naming conflicts
-      if (
-        length(dots$indep) > 0 &&
-          length(indep_label) > 0 &&
-          nchar(indep_label[1]) > 0
-      ) {
-        final_indep_name <- if (indep_label[1] == colnames(data)[1]) {
-          paste0(indep_label[1], " (indep)")
-        } else {
-          indep_label[1]
-        }
-        data <- dplyr::rename_with(
-          data,
-          .cols = tidyselect::all_of(dots$indep),
-          .fn = ~final_indep_name
-        )
-      }
-      data
-    }
-
-    # Determine which variable column to use (label or name)
-    col_as_basis <-
-      if (all(!is.na(out[[".variable_label"]]))) {
-        ".variable_label"
-      } else {
-        cli::cli_warn(
-          "No variable labels found for {.var {sort(unique(out[['.variable_name']]))}}. Using variable names."
-        )
-        ".variable_name"
-      }
-
-    # Handle independent variable labels if present
-    indep_label <- character()
-    if (length(dots$indep) > 0) {
-      indep_label <- get_raw_labels(data = dots$data, col_pos = dots$indep)
-      indep_label <- get_main_question(
-        indep_label,
-        label_separator = dots$label_separator,
-        warn_multiple = TRUE
-      )
-      indep_label <- unique(indep_label)
-      if (nchar(indep_label) == 0) indep_label <- dots$indep[1]
-    }
-
-    main_question <- ""
-    if (
-      !is.null(dots$label_separator) &&
-        nchar(dots$label_separator) > 0 &&
-        col_as_basis == ".variable_label"
-    ) {
-      main_question <- if (
-        !is.null(dots$main_question) && nchar(dots$main_question) > 0
-      ) {
-        dots$main_question
-      } else if (".variable_label_prefix" %in% colnames(out)) {
-        as.character(unique(out[[".variable_label_prefix"]]))[1]
-      } else {
-        ""
-      }
-
-      if (nchar(main_question) > 0) {
-        out[[".variable_label_suffix"]] <- keep_subitem(
-          fct = out[[".variable_label"]],
-          label_separator = dots$label_separator,
-          ordered = is.ordered(out[[".variable_label"]]),
-          call = rlang::caller_env()
-        )
-        col_as_basis <- ".variable_label_suffix"
-      }
-    }
+    # Process main question and extract suffixes
+    processing_result <- process_main_question_and_suffixes(
+      out,
+      dots,
+      col_as_basis
+    )
+    out <- processing_result$data
+    main_question <- processing_result$main_question
+    col_as_basis <- processing_result$col_basis
 
     # Process main data
     data_out <- out |>
-      dplyr::arrange(
-        as.integer(factor(.data[[col_as_basis]])),
-        if (length(dots$indep) > 0) as.integer(factor(.data[[dots$indep[1]]]))
-      ) |>
-      process_data(
-        col_as_basis,
-        indep_label,
-        main_question,
-        dots$table_main_question_as_header
+      arrange_table_data(col_as_basis, dots$indep) |>
+      process_table_data(
+        col_basis = col_as_basis,
+        indep_vars = dots$indep,
+        indep_label = indep_label,
+        main_question = main_question,
+        use_header = dots$table_main_question_as_header,
+        stat_columns = c(
+          "n",
+          "n_valid",
+          "n_miss",
+          ".count",
+          ".mean",
+          ".mean_se",
+          ".median",
+          "mean",
+          "sd",
+          "median",
+          "mad",
+          "iqr",
+          "min",
+          "max"
+        )
       )
 
     # Add totals if requested
@@ -222,13 +70,31 @@ make_content.int_table_html <-
         )
       }
 
-      totals_processed <- process_data(
+      totals_processed <- process_table_data(
         totals_data,
-        col_as_basis,
-        indep_label,
-        main_question,
-        dots$table_main_question_as_header
+        col_basis = col_as_basis,
+        indep_vars = dots$indep,
+        indep_label = indep_label,
+        main_question = main_question,
+        use_header = dots$table_main_question_as_header,
+        stat_columns = c(
+          "n",
+          "n_valid",
+          "n_miss",
+          ".count",
+          ".mean",
+          ".mean_se",
+          ".median",
+          "mean",
+          "sd",
+          "median",
+          "mad",
+          "iqr",
+          "min",
+          "max"
+        )
       )
+
       data_out <- rbind(
         as.data.frame(data_out),
         as.data.frame(totals_processed)
