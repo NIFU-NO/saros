@@ -15,8 +15,19 @@ check_sort_by <- function(x, sort_by = NULL, call = rlang::caller_env()) {
   ) {
     return()
   }
+  # Error on empty character vector first
+  if (is.character(sort_by) && length(sort_by) == 0) {
+    cli::cli_abort(
+      c(
+        x = "Invalid {.arg sort_by}: empty character vector",
+        i = "{.arg sort_by} cannot be an empty character vector."
+      ),
+      call = call
+    )
+  }
   if (
     is.character(sort_by) &&
+      length(sort_by) > 0 &&
       all(sort_by %in% categories_in_data)
   ) {
     return()
