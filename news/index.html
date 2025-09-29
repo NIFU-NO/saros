@@ -59,7 +59,13 @@
 <li>Fix: Improved NULL and NA handling in <code>glue_together_range()</code> to prevent edge case failures with empty or invalid data ranges</li>
 <li>Fix: Resolved issue <a href="https://github.com/NIFU-NO/saros/issues/464" class="external-link">#464</a> - <code><a href="../reference/makeme.html">makeme()</a></code> failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts</li>
 <li>Fix: Improved robustness of <code>check_no_duplicated_label_suffix()</code> to handle empty data frames and missing columns gracefully</li>
+<li>Fix: Enhanced <code>check_sort_by()</code> validation to properly handle empty character vectors with clear error messages</li>
+<li>Fix: Improved <code>keep_subitem()</code> to handle character inputs and use factor levels for better NA handling</li>
+<li>Fix: Simplified <code><a href="../reference/arrange_table_data.html">arrange_table_data()</a></code> sorting logic for better reliability</li>
+<li>Dev: Added comprehensive test coverage for utility validation functions</li>
 <li>Dev: Added VS Code configuration for improved development experience</li>
+<li>Dev: Added <code>survey</code> package to Suggests for enhanced testing capabilities</li>
+<li>Dev: Updated build ignore patterns for coverage reports and library files</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.4" id="saros-154">saros 1.5.4<a class="anchor" aria-label="anchor" href="#saros-154"></a></h2><p class="text-muted">CRAN release: 2025-06-04</p>
