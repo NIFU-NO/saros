@@ -256,8 +256,8 @@ round_numeric_stats <- function(data, digits) {
 arrange_table_data <- function(data, col_basis, indep_vars = NULL) {
   data |>
     dplyr::arrange(
-      as.integer(factor(.data[[col_basis]])),
-      if (length(indep_vars) > 0) as.integer(factor(.data[[indep_vars[1]]]))
+      .data[[col_basis]],
+      if (length(indep_vars) > 0) .data[[indep_vars[1]]]
     )
 }
 

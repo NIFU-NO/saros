@@ -22,3 +22,5 @@ data-raw/goodpractice
 ^\.vscode$
 ^[.]?air[.]toml$
 \.copilot-instructions\.md
+coverage_report\.html
+lib

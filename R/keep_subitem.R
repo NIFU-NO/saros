@@ -4,11 +4,18 @@ keep_subitem <- function(
   ordered = TRUE,
   call = rlang::caller_env()
 ) {
-  lvls <- unique(as.character(fct)) # The items (including main question)
+  # Convert character to factor if needed
+  if (is.character(fct)) {
+    fct <- factor(fct)
+  }
+  
+  # Use factor levels, not unique values, to handle NA correctly
+  fct_levels <- levels(fct)
+  
   lbls <-
     if (!is.null(label_separator)) {
       stringi::stri_replace(
-        str = lvls,
+        str = fct_levels,
         regex = stringi::stri_c(
           ignore_null = TRUE,
           "^(.*)",
@@ -19,12 +26,12 @@ keep_subitem <- function(
         dot_all = TRUE
       )
     } else {
-      lvls
+      fct_levels
     }
 
   factor(
     x = fct,
-    levels = lvls,
+    levels = fct_levels,
     labels = lbls,
     ordered = ordered
   )

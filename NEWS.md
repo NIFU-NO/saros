@@ -11,7 +11,13 @@
 -   Fix: Improved NULL and NA handling in `glue_together_range()` to prevent edge case failures with empty or invalid data ranges
 -   Fix: Resolved issue #464 - `makeme()` failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts
 -   Fix: Improved robustness of `check_no_duplicated_label_suffix()` to handle empty data frames and missing columns gracefully
+-   Fix: Enhanced `check_sort_by()` validation to properly handle empty character vectors with clear error messages
+-   Fix: Improved `keep_subitem()` to handle character inputs and use factor levels for better NA handling
+-   Fix: Simplified `arrange_table_data()` sorting logic for better reliability
+-   Dev: Added comprehensive test coverage for utility validation functions
 -   Dev: Added VS Code configuration for improved development experience
+-   Dev: Added `survey` package to Suggests for enhanced testing capabilities
+-   Dev: Updated build ignore patterns for coverage reports and library files
 
 # saros 1.5.4
 -   Fix: Corrected error introduced in 1.5.3
