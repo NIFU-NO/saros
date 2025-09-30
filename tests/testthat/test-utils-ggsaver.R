@@ -1,0 +1,108 @@
+test_that("ggsaver saves ggplot objects", {
+  skip_if_not_installed("ggplot2")
+
+  # Create a simple plot
+  library(ggplot2)
+  plot <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
+
+  # Create temporary file
+  temp_file <- tempfile(fileext = ".png")
+
+  # Test ggsaver function
+  expect_no_error(ggsaver(plot, temp_file, width = 5, height = 4))
+
+  # Check file was created
+  expect_true(file.exists(temp_file))
+
+  # Clean up
+  if (file.exists(temp_file)) unlink(temp_file)
+})
+
+test_that("ggsaver handles different file formats", {
+  skip_if_not_installed("ggplot2")
+
+  library(ggplot2)
+  plot <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
+
+  # Test PNG
+  temp_png <- tempfile(fileext = ".png")
+  expect_no_error(ggsaver(plot, temp_png, width = 5, height = 4))
+  expect_true(file.exists(temp_png))
+
+  # Test PDF
+  temp_pdf <- tempfile(fileext = ".pdf")
+  expect_no_error(ggsaver(plot, temp_pdf, width = 5, height = 4))
+  expect_true(file.exists(temp_pdf))
+
+  # Test SVG only if svglite is available
+  skip_if_not_installed("svglite")
+  temp_svg <- tempfile(fileext = ".svg")
+  expect_no_error(ggsaver(plot, temp_svg, width = 5, height = 4))
+  expect_true(file.exists(temp_svg))
+
+  # Clean up
+  unlink(c(temp_png, temp_pdf, temp_svg))
+})
+
+test_that("ggsaver creates directories", {
+  skip_if_not_installed("ggplot2")
+
+  library(ggplot2)
+  plot <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
+
+  # Create path with non-existent directory
+  temp_dir <- file.path(tempdir(), "test_subdir")
+  temp_file <- file.path(temp_dir, "test_plot.png")
+
+  # Ensure directory doesn't exist initially
+  if (dir.exists(temp_dir)) {
+    unlink(temp_dir, recursive = TRUE)
+  }
+  expect_false(dir.exists(temp_dir))
+
+  # Test ggsaver creates directory
+  expect_no_error(ggsaver(plot, temp_file, width = 5, height = 4))
+  expect_true(dir.exists(temp_dir))
+  expect_true(file.exists(temp_file))
+
+  # Clean up
+  unlink(temp_dir, recursive = TRUE)
+})
+
+test_that("ggsaver forwards additional arguments", {
+  skip_if_not_installed("ggplot2")
+
+  library(ggplot2)
+  plot <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
+
+  temp_file <- tempfile(fileext = ".png")
+
+  # Test with additional arguments (avoid dpi since ggsaver sets it)
+  expect_no_error(ggsaver(
+    plot,
+    temp_file,
+    width = 10,
+    height = 8,
+    units = "cm"
+  ))
+
+  expect_true(file.exists(temp_file))
+
+  # Clean up
+  unlink(temp_file)
+})
+
+test_that("ggsaver suppresses messages", {
+  skip_if_not_installed("ggplot2")
+
+  library(ggplot2)
+  plot <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
+
+  temp_file <- tempfile(fileext = ".png")
+
+  # Should not produce any messages
+  expect_silent(ggsaver(plot, temp_file, width = 5, height = 4))
+
+  # Clean up
+  unlink(temp_file)
+})
