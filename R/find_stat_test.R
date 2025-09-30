@@ -41,8 +41,8 @@ find_test2 <- function(y, x = NULL) {
   result <- data.frame(
     .bi_test = NA_character_,
     .p_value = NA_real_,
-    y_type = NA_character_,
-    x_type = NA_character_
+    y_type = y_type,
+    x_type = if (is.null(x)) NA_character_ else x_type
   )
 
   if (is.null(x)) {
@@ -185,8 +185,8 @@ find_test2 <- function(y, x = NULL) {
     }
   }
 
-  # Return the name of the test and the p-value
-  cbind(result, y_type = y_type, x_type = x_type)
+  # Return the result dataframe
+  result
 }
 
 # find_stat_config <-
