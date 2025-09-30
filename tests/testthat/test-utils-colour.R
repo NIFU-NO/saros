@@ -114,7 +114,7 @@ test_that("get_remaining_colours handles insufficient colours", {
 
 test_that("get_remaining_colours handles ordinal option", {
   # This function uses the internal subset_vector function
-  
+
   user_colors <- c("#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff")
 
   # Test if ordinal = TRUE uses spread algorithm
