@@ -698,11 +698,15 @@ makeme <-
       }
 
       variable_type_dep <-
-        lapply(args$dep, function(v) class(subset_data[[v]])) |>
+        lapply(dep_crwd, function(v) class(subset_data[[v]])) |>
         unlist()
       variable_type_indep <-
-        lapply(args$indep, function(v) class(subset_data[[v]])) |>
-        unlist()
+        if (length(indep_crwd) > 0) {
+          lapply(indep_crwd, function(v) class(subset_data[[v]])) |>
+            unlist()
+        } else {
+          character(0)
+        }
 
       # Future: switch or S3
 
