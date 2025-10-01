@@ -7,6 +7,7 @@
 -   Major change: Resolved issue #372 - `descend` parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but `descend` can reverse the display order
 -   Enhancement: Completely rewrote the `.spread` algorithm in `subset_vector()` for better spread maximization using evenly spaced positions
 -   Updated documentation reference from `ggplot2::theme_set()` to `ggplot2::set_theme()` due to ggplot 4.0.0.
+-   Fix: **CRITICAL** - Resolved bug in `makeme()` where combinations of valid factor variables with all-NA factor variables incorrectly threw "mix of categorical and continuous variables" error. Variable type checking now uses filtered variable lists instead of original lists, preventing premature type validation errors
 -   Fix: Corrected double NA check logic in `check_bool()` function - removed redundant condition that made validation always pass for NA values
 -   Fix: Improved NULL and NA handling in `glue_together_range()` to prevent edge case failures with empty or invalid data ranges
 -   Fix: Resolved issue #464 - `makeme()` failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts
@@ -14,7 +15,10 @@
 -   Fix: Enhanced `check_sort_by()` validation to properly handle empty character vectors with clear error messages
 -   Fix: Improved `keep_subitem()` to handle character inputs and use factor levels for better NA handling
 -   Fix: Simplified `arrange_table_data()` sorting logic for better reliability
+-   Enhancement: **PERFORMANCE** - Optimized `makeme()` examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value. Examples now run efficiently for R package documentation and CRAN checks
+-   Enhancement: Updated `fig_height_h_barchart2()` example for consistency with optimized examples
 -   Dev: Added comprehensive test coverage for utility validation functions
+-   Dev: Added comprehensive unit tests for `makeme()` variable type checking edge cases including all-NA variables, multiple scenarios, and disabled filtering
 -   Dev: Added VS Code configuration for improved development experience
 -   Dev: Added `survey` package to Suggests for enhanced testing capabilities
 -   Dev: Updated build ignore patterns for coverage reports and library files

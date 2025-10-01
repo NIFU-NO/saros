@@ -431,7 +431,7 @@ This function allows embedding of interactive or static plots based on various t
 \examples{
 makeme(
   data = ex_survey,
-  dep = b_1:b_3
+  dep = b_1:b_2
 )
 makeme(
   data = ex_survey,
@@ -441,11 +441,6 @@ makeme(
   data = ex_survey,
   dep = b_1:b_3, indep = c(x1_sex, x2_human),
   type = "sigtest_table_html"
-)
-makeme(
-  data = ex_survey,
-  dep = b_1, indep = x1_sex,
-  type = "cat_prop_plot_docx"
 )
 makeme(
   data = ex_survey,
@@ -459,8 +454,8 @@ makeme(
 )
 makeme(
   data = ex_survey,
-  dep = b_1:b_3,
-  crowd = c("target", "others", "all"),
+  dep = b_1:b_2,
+  crowd = c("target", "others"),
   mesos_var = "f_uni",
   mesos_group = "Uni of A"
 )

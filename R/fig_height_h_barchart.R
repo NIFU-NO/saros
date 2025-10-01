@@ -383,7 +383,7 @@ fig_height_h_barchart <- # Returns a numeric value
 #' @export
 #'
 #' @examples
-#' fig_height_h_barchart2(makeme(data = ex_survey, dep = b_1:b_3, indep = x1_sex))
+#' fig_height_h_barchart2(makeme(data = ex_survey, dep = b_1:b_2, indep = x1_sex))
 fig_height_h_barchart2 <- # Returns a numeric value
   function(
     ggobj,
