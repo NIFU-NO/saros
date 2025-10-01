@@ -55,6 +55,7 @@
 <li>Major change: Resolved issue <a href="https://github.com/NIFU-NO/saros/issues/372" class="external-link">#372</a> - <code>descend</code> parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but <code>descend</code> can reverse the display order</li>
 <li>Enhancement: Completely rewrote the <code>.spread</code> algorithm in <code><a href="../reference/subset_vector.html">subset_vector()</a></code> for better spread maximization using evenly spaced positions</li>
 <li>Updated documentation reference from <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::theme_set()</a></code> to <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::set_theme()</a></code> due to ggplot 4.0.0.</li>
+<li>Fix: <strong>CRITICAL</strong> - Resolved bug in <code><a href="../reference/makeme.html">makeme()</a></code> where combinations of valid factor variables with all-NA factor variables incorrectly threw “mix of categorical and continuous variables” error. Variable type checking now uses filtered variable lists instead of original lists, preventing premature type validation errors</li>
 <li>Fix: Corrected double NA check logic in <code>check_bool()</code> function - removed redundant condition that made validation always pass for NA values</li>
 <li>Fix: Improved NULL and NA handling in <code>glue_together_range()</code> to prevent edge case failures with empty or invalid data ranges</li>
 <li>Fix: Resolved issue <a href="https://github.com/NIFU-NO/saros/issues/464" class="external-link">#464</a> - <code><a href="../reference/makeme.html">makeme()</a></code> failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts</li>
@@ -62,7 +63,10 @@
 <li>Fix: Enhanced <code>check_sort_by()</code> validation to properly handle empty character vectors with clear error messages</li>
 <li>Fix: Improved <code>keep_subitem()</code> to handle character inputs and use factor levels for better NA handling</li>
 <li>Fix: Simplified <code><a href="../reference/arrange_table_data.html">arrange_table_data()</a></code> sorting logic for better reliability</li>
+<li>Enhancement: <strong>PERFORMANCE</strong> - Optimized <code><a href="../reference/makeme.html">makeme()</a></code> examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value. Examples now run efficiently for R package documentation and CRAN checks</li>
+<li>Enhancement: Updated <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> example for consistency with optimized examples</li>
 <li>Dev: Added comprehensive test coverage for utility validation functions</li>
+<li>Dev: Added comprehensive unit tests for <code><a href="../reference/makeme.html">makeme()</a></code> variable type checking edge cases including all-NA variables, multiple scenarios, and disabled filtering</li>
 <li>Dev: Added VS Code configuration for improved development experience</li>
 <li>Dev: Added <code>survey</code> package to Suggests for enhanced testing capabilities</li>
 <li>Dev: Updated build ignore patterns for coverage reports and library files</li>
