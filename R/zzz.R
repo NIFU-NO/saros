@@ -99,3 +99,9 @@ if (!exists(".saros.env")) {
     }
   }
 }
+
+.onUnload <- function(libpath) {
+  # Clean up global options
+  options(saros = NULL)
+  invisible()
+}
