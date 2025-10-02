@@ -1,8 +1,9 @@
-# saros 1.5.5
+# saros 1.6.0
 -   Using `air` for consistent code formatting
 -   Feature: makeme() has new output type = "int_plot_html" for interactive interval plots with violin and box plots
 -   Feature: Added support for `data_label = "mean"` and `data_label = "median"` in `makeme()` for `type = "cat_*_html"` outputs (addresses issue #460)
 -   Feature: Added `data_label_position` argument to `makeme()` allowing data labels to be positioned at "center", "bottom", "top", or "above" bars in categorical plots (addresses issue #365)
+-   Feature: Added `.onUnload()` function to clean up global options when package is unloaded, preventing option pollution in user's R session
 -   Major change: `makeme()` returns an empty data.frame instead of `NULL` if not plot or table can be created, simplifying downstream code (e.g. `gt::gt()` fails if served `NULL`).
 -   Major change: Resolved issue #372 - `descend` parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but `descend` can reverse the display order
 -   Enhancement: Completely rewrote the `.spread` algorithm in `subset_vector()` for better spread maximization using evenly spaced positions
