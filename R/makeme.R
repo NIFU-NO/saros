@@ -512,24 +512,7 @@ makeme <-
     args$indep <- names(indep_pos)
 
     # Remove indep variables from dep to prevent overlap conflicts
-    if (length(args$indep) > 0 && length(args$dep) > 0) {
-      overlapping_vars <- intersect(args$dep, args$indep)
-      if (length(overlapping_vars) > 0) {
-        cli::cli_inform(c(
-          "i" = "Variables {.var {overlapping_vars}} were selected for both dep and indep.",
-          "i" = "Automatically excluding them from dep to prevent conflicts."
-        ))
-        args$dep <- setdiff(args$dep, args$indep)
-
-        # Check if we have any dep variables left
-        if (length(args$dep) == 0) {
-          cli::cli_abort(c(
-            "x" = "After removing overlapping variables, no dependent variables remain.",
-            "i" = "Please adjust your dep selection to exclude indep variables, e.g., {.code dep = c(where(~is.factor(.x)), -{args$indep})}"
-          ))
-        }
-      }
-    }
+    args$dep <- resolve_variable_overlaps(args$dep, args$indep)
 
     args$showNA <- args$showNA[1]
     args$data_label <- args$data_label[1]

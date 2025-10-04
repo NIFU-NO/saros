@@ -1,3 +1,39 @@
+test_that("resolve_variable_overlaps removes overlapping variables from dep", {
+  dep <- c("var1", "var2", "var3")
+  indep <- c("var2", "var4")
+
+  # Test that overlapping variable is removed from dep
+  result <- resolve_variable_overlaps(dep, indep)
+  expect_equal(result, c("var1", "var3"))
+
+  # Test with no overlaps
+  dep_no_overlap <- c("var1", "var3")
+  indep_no_overlap <- c("var2", "var4")
+  result_no_overlap <- resolve_variable_overlaps(
+    dep_no_overlap,
+    indep_no_overlap
+  )
+  expect_equal(result_no_overlap, dep_no_overlap)
+
+  # Test with empty indep
+  result_empty_indep <- resolve_variable_overlaps(dep, character(0))
+  expect_equal(result_empty_indep, dep)
+
+  # Test with empty dep
+  result_empty_dep <- resolve_variable_overlaps(character(0), indep)
+  expect_equal(result_empty_dep, character(0))
+})
+
+test_that("resolve_variable_overlaps throws error when all dep variables are removed", {
+  dep <- c("var1", "var2")
+  indep <- c("var1", "var2", "var3")
+
+  expect_error(
+    resolve_variable_overlaps(dep, indep),
+    "After removing overlapping variables, no dependent variables remain"
+  )
+})
+
 test_that("evaluate_variable_selection works with basic inputs", {
   data <- data.frame(
     x = 1:5,

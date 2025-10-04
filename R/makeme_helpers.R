@@ -7,6 +7,29 @@ evaluate_variable_selection <- function(data, dep, indep) {
   list(dep_pos = dep_pos, indep_pos = indep_pos)
 }
 
+# Helper function: Resolve variable overlaps between dep and indep
+resolve_variable_overlaps <- function(dep, indep) {
+  if (length(indep) > 0 && length(dep) > 0) {
+    overlapping_vars <- intersect(dep, indep)
+    if (length(overlapping_vars) > 0) {
+      cli::cli_inform(c(
+        "i" = "Variables {.var {overlapping_vars}} were selected for both dep and indep.",
+        "i" = "Automatically excluding them from dep to prevent conflicts."
+      ))
+      dep <- setdiff(dep, indep)
+
+      # Check if we have any dep variables left
+      if (length(dep) == 0) {
+        cli::cli_abort(c(
+          "x" = "After removing overlapping variables, no dependent variables remain.",
+          "i" = "Please adjust your dep selection to exclude indep variables, e.g., {.code dep = c(where(~is.factor(.x)), -{indep})}"
+        ))
+      }
+    }
+  }
+  dep
+}
+
 # Helper function: Validate and initialize arguments
 initialize_arguments <- function(data, dep_pos, indep_pos, args) {
   args$data <- data
