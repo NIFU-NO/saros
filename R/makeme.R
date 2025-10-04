@@ -507,316 +507,36 @@ makeme <-
       default_values = formals(makeme)
     )
 
-    args$data <- data # reinsert after check_options
-    args$dep <- names(dep_pos)
-    args$indep <- names(indep_pos)
-
-    # Remove indep variables from dep to prevent overlap conflicts
-    if (length(args$indep) > 0 && length(args$dep) > 0) {
-      overlapping_vars <- intersect(args$dep, args$indep)
-      if (length(overlapping_vars) > 0) {
-        cli::cli_inform(c(
-          "i" = "Variables {.var {overlapping_vars}} were selected for both dep and indep.",
-          "i" = "Automatically excluding them from dep to prevent conflicts."
-        ))
-        args$dep <- setdiff(args$dep, args$indep)
-
-        # Check if we have any dep variables left
-        if (length(args$dep) == 0) {
-          cli::cli_abort(c(
-            "x" = "After removing overlapping variables, no dependent variables remain.",
-            "i" = "Please adjust your dep selection to exclude indep variables, e.g., {.code dep = c(where(~is.factor(.x)), -{args$indep})}"
-          ))
-        }
-      }
-    }
-
-    args$showNA <- args$showNA[1]
-    args$data_label <- args$data_label[1]
-    args$data_label_position <- args$data_label_position[1]
-    args$type <- eval(args$type)[1]
-
-    validate_makeme_options(params = args)
-
-    if (args$type %in% c("chr_table_html") && length(args$dep) > 1) {
-      cli::cli_abort(c(
-        "x" = "`type = 'chr_table_html'` only supports a single dependent variable.",
-        "i" = "You supplied {length(args$dep)} dependent variables."
-      ))
-    }
-    if (!args$type %in% c("sigtest_table_html", "chr_table_html")) {
-      check_multiple_indep(data, indep = {{ indep }})
-      check_category_pairs(data = data, cols_pos = c(dep_pos))
-    }
-
-    # Set hide_for_all_crowds_if_hidden_for_crowd first to get its excluded variables early
-    # This only happens if hide_for_all_crowds_if_hidden_for_crowd are in the set of crowd.
-    args$crowd <- c(
-      args$hide_for_all_crowds_if_hidden_for_crowd[
-        args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd
-      ],
-      args$crowd[
-        !args$crowd %in%
-          args$hide_for_all_crowds_if_hidden_for_crowd[
-            args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd
-          ]
-      ]
+    # Setup and validate arguments
+    args <- setup_and_validate_makeme_args(
+      args,
+      data,
+      dep_pos,
+      indep_pos,
+      {{ indep }}
     )
 
-    kept_cols_list <- rlang::set_names(
-      vector(mode = "list", length = length(args$crowd)),
-      args$crowd
-    )
-    omitted_cols_list <- rlang::set_names(
-      vector(mode = "list", length = length(args$crowd)),
-      args$crowd
-    )
-    kept_indep_cats_list <- rlang::set_names(
-      vector(mode = "list", length = length(args$crowd)),
-      args$crowd
-    )
+    # Initialize crowd-based filtering
+    crowd_filtering <- initialize_crowd_filtering(args$crowd, args)
+    kept_cols_list <- crowd_filtering$kept_cols_list
+    omitted_cols_list <- crowd_filtering$omitted_cols_list
+    kept_indep_cats_list <- crowd_filtering$kept_indep_cats_list
 
-    for (crwd in names(kept_cols_list)) {
-      kept_cols_tmp <-
-        keep_cols(
-          data = args$data,
-          dep = args$dep,
-          indep = args$indep,
-          crowd = crwd,
-          mesos_var = args$mesos_var,
-          mesos_group = args$mesos_group,
-          hide_for_crowd_if_all_na = args$hide_for_crowd_if_all_na, # 1
-          hide_for_crowd_if_valid_n_below = args$hide_for_crowd_if_valid_n_below, # 2
-          hide_for_crowd_if_category_k_below = args$hide_for_crowd_if_category_k_below, # 3
-          hide_for_crowd_if_category_n_below = args$hide_for_crowd_if_category_n_below, # 4
-          hide_for_crowd_if_cell_n_below = args$hide_for_crowd_if_cell_n_below # , # 5
-          # hide_for_all_crowds_if_hidden_for_crowd_vars = omitted_vars
-        )
-      omitted_cols_list[[crwd]] <- kept_cols_tmp[["omitted_vars"]]
-
-      kept_indep_cats_list[[crwd]] <-
-        keep_indep_cats(
-          data = kept_cols_tmp[["data"]],
-          indep = args$indep
-        )
-    }
-
-    kept_indep_cats_list <-
-      lapply(rlang::set_names(names(kept_indep_cats_list)), function(crwd) {
-        lapply(
-          rlang::set_names(names(kept_indep_cats_list[[crwd]])),
-          function(x) {
-            if (
-              is.character(args$hide_for_all_crowds_if_hidden_for_crowd) &&
-                !crwd %in% args$hide_for_all_crowds_if_hidden_for_crowd
-            ) {
-              kept_globally <-
-                kept_indep_cats_list[
-                  args$hide_for_all_crowds_if_hidden_for_crowd
-                ] |>
-                unlist() |>
-                unique()
-
-              kept_indep_cats_list[[crwd]][[x]][
-                kept_indep_cats_list[[crwd]][[x]] %in%
-                  kept_globally
-              ]
-            } else {
-              kept_indep_cats_list[[crwd]][[x]]
-            }
-          }
-        )
-      })
-
-    out <- rlang::set_names(
-      vector(mode = "list", length = length(args$crowd)),
-      args$crowd
+    # Process global independent category hiding logic
+    kept_indep_cats_list <- process_global_indep_categories(
+      kept_indep_cats_list,
+      args$hide_for_all_crowds_if_hidden_for_crowd
     )
 
-    for (crwd in names(out)) {
-      #
-      omitted_vars_crwd <-
-        omitted_cols_list[
-          c(
-            crwd,
-            args$hide_for_all_crowds_if_hidden_for_crowd
-          )
-        ] |>
-        lapply(FUN = function(x) {
-          # if ("omitted_vars" %in% names(x)) x["omitted_vars"]
-          x
-        }) |>
-        unlist() |>
-        unique()
-
-      dep_crwd <- args$dep[!args$dep %in% omitted_vars_crwd]
-      if (length(dep_crwd) == 0) {
-        next
-      }
-
-      indep_crwd <- args$indep
-      if (length(indep_crwd) == 0) {
-        indep_crwd <- NULL
-      }
-
-      subset_data <-
-        dplyr::filter(
-          args$data[,
-            # subetting would remove variable labels, filter keeps them
-            !colnames(args$data) %in% omitted_vars_crwd,
-            drop = FALSE
-          ],
-          makeme_keep_rows(
-            data = data,
-            crwd = crwd,
-            mesos_var = mesos_var,
-            mesos_group = mesos_group
-          )
-        )
-
-      if (isTRUE(args$hide_indep_cat_for_all_crowds_if_hidden_for_crowd)) {
-        for (x in indep_crwd) {
-          subset_data <-
-            dplyr::filter(
-              subset_data,
-              as.character(subset_data[[x]]) %in%
-                kept_indep_cats_list[[crwd]][[x]]
-            )
-        }
-      }
-
-      if (nrow(subset_data) == 0) {
-        indep_msg <- if (is.character(args$indep)) {
-          paste0("indep=", cli::ansi_collapse(args$indep))
-        }
-
-        cli::cli_warn(c(
-          "No data left to make you {.arg {args$type}} with dep={.arg {args$dep}}, {.arg {indep_msg}}, crowd={.arg {crwd}}.",
-          i = "Skipping."
-        ))
-        next
-        indep_msg
-      }
-
-      variable_type_dep <-
-        lapply(dep_crwd, function(v) class(subset_data[[v]])) |>
-        unlist()
-      variable_type_indep <-
-        if (length(indep_crwd) > 0) {
-          lapply(indep_crwd, function(v) class(subset_data[[v]])) |>
-            unlist()
-        } else {
-          character(0)
-        }
-
-      # Future: switch or S3
-
-      if (
-        all(variable_type_dep %in% c("integer", "numeric")) &&
-          (all(
-            variable_type_indep %in%
-              c("factor", "ordered", "character")
-          ) ||
-            length(indep_crwd) == 0)
-      ) {
-        args$data_summary <-
-          summarize_int_cat_data(
-            data = subset_data,
-            dep = dep_crwd,
-            indep = indep_crwd,
-            ...
-          )
-      } else if (
-        all(variable_type_dep %in% c("factor", "ordered", "character"))
-      ) {
-        args$data_summary <-
-          summarize_cat_cat_data(
-            data = subset_data,
-            dep = dep_crwd,
-            indep = indep_crwd,
-            ...,
-            label_separator = args$label_separator,
-            showNA = args$showNA,
-            totals = args$totals,
-            sort_by = args$sort_by,
-            descend = args$descend,
-            data_label = args$data_label,
-            digits = args$digits,
-            add_n_to_dep_label = args$add_n_to_dep_label,
-            add_n_to_indep_label = args$add_n_to_indep_label,
-            add_n_to_label = args$add_n_to_label,
-            add_n_to_category = args$add_n_to_category,
-            hide_label_if_prop_below = args$hide_label_if_prop_below,
-            data_label_decimal_symbol = args$data_label_decimal_symbol,
-            categories_treated_as_na = args$categories_treated_as_na,
-            labels_always_at_bottom = args$labels_always_at_bottom,
-            labels_always_at_top = args$labels_always_at_top,
-            translations = args$translations
-          )
-      } else {
-        cli::cli_abort(c(
-          "You have provided a mix of categorical and continuous variables.",
-          "I do not know what to do with that!"
-        ))
-      }
-
-      args$main_question <-
-        get_main_question(
-          as.character(unique(args$data_summary[[".variable_label_prefix"]])),
-          label_separator = args$label_separator
-        )
-
-      check_no_duplicated_label_suffix(
-        data_summary = args$data_summary,
-        error_on_duplicates = args$error_on_duplicates
-      )
-
-      if (
-        !args$type %in%
-          c("sigtest_table_html", "int_table_html", "chr_table_html")
-      ) {
-        args$data_summary <-
-          post_process_makeme_data(
-            data = args$data_summary,
-            indep = indep_crwd,
-            showNA = args$showNA,
-            colour_2nd_binary_cat = if (
-              grepl(x = args$type, pattern = "docx")
-            ) {
-              args$colour_2nd_binary_cat
-            }
-          )
-      }
-
-      args_crwd <- args
-      args_crwd$dep <- dep_crwd
-      args_crwd$indep <- indep_crwd
-
-      out[[crwd]] <-
-        suppressPackageStartupMessages(
-          rlang::exec(
-            make_content,
-            type = args_crwd$type,
-            !!!args_crwd[!names(args_crwd) %in% c("type")]
-          )
-        )
-    }
-
-    for (crwd in names(out)) {
-      if (rlang::is_string(args$translations[[paste0("crowd_", crwd)]])) {
-        names(out)[names(out) == crwd] <- args$translations[[paste0(
-          "crowd_",
-          crwd
-        )]]
-      }
-    }
-    out <- out[lapply(out, function(x) !is.null(x)) |> unlist()]
-
-    if (isTRUE(args$simplify_output) && length(out) == 1) {
-      out[[1]]
-    } else if (length(out) == 0) {
-      invisible(data.frame())
-    } else {
-      out
-    }
+    # Process all crowds and generate final output
+    out <- process_all_crowds(
+      args,
+      omitted_cols_list,
+      kept_indep_cats_list,
+      data,
+      mesos_var,
+      mesos_group,
+      ...
+    )
+    process_output_results(out, args)
   }

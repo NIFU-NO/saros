@@ -4,9 +4,20 @@ validate_makeme_options <- function(params) {
     cli::cli_abort("{.arg {unwanted_args}} are not recognized valid arguments.")
   }
 
+  # Safely evaluate defaults for makeme() formals.
+  # Some formals (e.g. data, dep, indep, ...) have no default value; attempting
+  # to eval() those symbols causes an error. We treat missing/unevaluable
+  # defaults as NULL which is then overridden by supplied params or validated
+  # downstream.
+  fm <- formals(makeme)[!names(formals(makeme)) %in% .saros.env$ignore_args]
   env <- lapply(
-    formals(makeme)[!names(formals(makeme)) %in% .saros.env$ignore_args],
-    eval
+    fm,
+    function(x) {
+      tryCatch(
+        eval(x, envir = parent.frame()),
+        error = function(.) NULL
+      )
+    }
   )
   check_and_set_default <- function(target, param_name, validation_fun) {
     if (!validation_fun(target[[param_name]])) {
