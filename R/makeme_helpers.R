@@ -30,6 +30,34 @@ resolve_variable_overlaps <- function(dep, indep) {
   dep
 }
 
+# Helper function: Normalize multi-choice arguments to single values
+normalize_makeme_arguments <- function(args) {
+  args$showNA <- args$showNA[1]
+  args$data_label <- args$data_label[1]
+  args$data_label_position <- args$data_label_position[1]
+  args$type <- eval(args$type)[1]
+  args
+}
+
+# Helper function: Perform type-specific validation checks
+validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
+  # chr_table_html only supports single dependent variable
+  if (args$type %in% c("chr_table_html") && length(args$dep) > 1) {
+    cli::cli_abort(c(
+      "x" = "`type = 'chr_table_html'` only supports a single dependent variable.",
+      "i" = "You supplied {length(args$dep)} dependent variables."
+    ))
+  }
+
+  # Some types require additional validation checks
+  if (!args$type %in% c("sigtest_table_html", "chr_table_html")) {
+    check_multiple_indep(data, indep = {{ indep }})
+    check_category_pairs(data = data, cols_pos = c(dep_pos))
+  }
+
+  invisible(TRUE)
+}
+
 # Helper function: Validate and initialize arguments
 initialize_arguments <- function(data, dep_pos, indep_pos, args) {
   args$data <- data

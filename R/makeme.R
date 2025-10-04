@@ -514,23 +514,13 @@ makeme <-
     # Remove indep variables from dep to prevent overlap conflicts
     args$dep <- resolve_variable_overlaps(args$dep, args$indep)
 
-    args$showNA <- args$showNA[1]
-    args$data_label <- args$data_label[1]
-    args$data_label_position <- args$data_label_position[1]
-    args$type <- eval(args$type)[1]
+    # Normalize multi-choice arguments to single values
+    args <- normalize_makeme_arguments(args)
 
     validate_makeme_options(params = args)
 
-    if (args$type %in% c("chr_table_html") && length(args$dep) > 1) {
-      cli::cli_abort(c(
-        "x" = "`type = 'chr_table_html'` only supports a single dependent variable.",
-        "i" = "You supplied {length(args$dep)} dependent variables."
-      ))
-    }
-    if (!args$type %in% c("sigtest_table_html", "chr_table_html")) {
-      check_multiple_indep(data, indep = {{ indep }})
-      check_category_pairs(data = data, cols_pos = c(dep_pos))
-    }
+    # Perform type-specific validation checks
+    validate_type_specific_constraints(args, data, {{ indep }}, dep_pos)
 
     # Set hide_for_all_crowds_if_hidden_for_crowd first to get its excluded variables early
     # This only happens if hide_for_all_crowds_if_hidden_for_crowd are in the set of crowd.

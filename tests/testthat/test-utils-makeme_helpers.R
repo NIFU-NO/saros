@@ -1,3 +1,43 @@
+test_that("normalize_makeme_arguments properly normalizes multi-choice args", {
+  args <- list(
+    showNA = c("ifany", "always", "never"),
+    data_label = c("percentage", "proportion", "count"),
+    data_label_position = c("center", "bottom", "top"),
+    type = c("cat_plot_html", "int_plot_html")
+  )
+
+  result <- normalize_makeme_arguments(args)
+
+  expect_equal(result$showNA, "ifany")
+  expect_equal(result$data_label, "percentage")
+  expect_equal(result$data_label_position, "center")
+  expect_equal(result$type, "cat_plot_html")
+})
+
+test_that("validate_type_specific_constraints enforces chr_table_html constraints", {
+  args_valid <- list(type = "chr_table_html", dep = "single_var")
+  args_invalid <- list(type = "chr_table_html", dep = c("var1", "var2"))
+
+  # Should not error with single dep
+  expect_invisible(validate_type_specific_constraints(
+    args_valid,
+    data.frame(x = 1),
+    NULL,
+    c(x = 1)
+  ))
+
+  # Should error with multiple dep variables
+  expect_error(
+    validate_type_specific_constraints(
+      args_invalid,
+      data.frame(x = 1, y = 2),
+      NULL,
+      c(x = 1, y = 2)
+    ),
+    "chr_table_html.*only supports a single dependent variable"
+  )
+})
+
 test_that("resolve_variable_overlaps removes overlapping variables from dep", {
   dep <- c("var1", "var2", "var3")
   indep <- c("var2", "var4")
