@@ -482,3 +482,83 @@ test_that("helper functions perform basic operations correctly", {
   result_normalized <- normalize_makeme_arguments(args_single_choice)
   expect_equal(result_normalized$type, "cat_table_html")
 })
+
+test_that("setup_and_validate_makeme_args performs complete setup", {
+  # Create test data and basic arguments
+  test_data <- data.frame(
+    x = factor(c("A", "B", "A")),
+    y = c(1, 2, 3),
+    stringsAsFactors = FALSE
+  )
+
+  dep_pos <- c(x = 1)
+  indep_pos <- integer(0)
+
+  # Provide a minimal, valid argument set expected by validation.
+  args_basic <- list(
+    type = "cat_table_html",
+    crowd = "all",
+    showNA = "ifany",
+    data_label = "percentage",
+    data_label_position = "center",
+    sort_by = ".upper",
+    require_common_categories = TRUE,
+    simplify_output = TRUE,
+    hide_for_crowd_if_all_na = TRUE,
+    hide_for_crowd_if_valid_n_below = 0,
+    hide_for_crowd_if_category_k_below = 2,
+    hide_for_crowd_if_category_n_below = 0,
+    hide_for_crowd_if_cell_n_below = 0,
+    hide_for_all_crowds_if_hidden_for_crowd = NULL,
+    hide_indep_cat_for_all_crowds_if_hidden_for_crowd = FALSE,
+    add_n_to_dep_label = FALSE,
+    add_n_to_indep_label = FALSE,
+    add_n_to_label = FALSE,
+    add_n_to_category = FALSE,
+    totals = FALSE,
+    categories_treated_as_na = NULL,
+    label_separator = " - ",
+    error_on_duplicates = TRUE,
+    html_interactive = TRUE,
+    hide_axis_text_if_single_variable = TRUE,
+    hide_label_if_prop_below = 0.01,
+    inverse = FALSE,
+    vertical = FALSE,
+    digits = 0,
+    data_label_decimal_symbol = ".",
+    x_axis_label_width = 25,
+    strip_width = 25,
+    descend = TRUE,
+    labels_always_at_top = NULL,
+    labels_always_at_bottom = NULL,
+    table_wide = TRUE,
+    table_main_question_as_header = FALSE,
+    n_categories_limit = 12,
+    translations = list(),
+    plot_height = 15,
+    colour_palette = NULL,
+    colour_2nd_binary_cat = "#ffffff",
+    colour_na = "grey",
+    label_font_size = 6,
+    main_font_size = 6,
+    strip_font_size = 6,
+    legend_font_size = 6,
+    font_family = "sans",
+    path = NULL,
+    docx_template = NULL
+  )
+
+  result_setup <- setup_and_validate_makeme_args(
+    args_basic,
+    test_data,
+    dep_pos,
+    indep_pos,
+    NULL
+  )
+
+  expect_equal(result_setup$dep, "x")
+  expect_true(is.null(result_setup$indep) || length(result_setup$indep) == 0)
+  expect_equal(result_setup$type, "cat_table_html")
+  expect_contains(names(result_setup), "data")
+  expect_equal(result_setup$crowd, "all")
+})
