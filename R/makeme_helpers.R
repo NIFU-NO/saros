@@ -179,7 +179,15 @@ generate_crowd_output <- function(args, subset_data, dep_crwd, indep_crwd) {
     label_separator = args$label_separator
   )
 
-  if (!args$type %in% c("sigtest_table_html")) {
+  if (
+    !args$type %in%
+      c(
+        "sigtest_table_html",
+        "int_table_html",
+        "int_plot_html",
+        "chr_table_html"
+      )
+  ) {
     args$data_summary <- post_process_makeme_data(
       data = args$data_summary,
       indep = indep_crwd,

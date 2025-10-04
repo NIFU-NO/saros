@@ -538,7 +538,13 @@ makeme <-
 
     validate_makeme_options(params = args)
 
-    if (!args$type %in% c("sigtest_table_html")) {
+    if (args$type %in% c("chr_table_html") && length(args$dep) > 1) {
+      cli::cli_abort(c(
+        "x" = "`type = 'chr_table_html'` only supports a single dependent variable.",
+        "i" = "You supplied {length(args$dep)} dependent variables."
+      ))
+    }
+    if (!args$type %in% c("sigtest_table_html", "chr_table_html")) {
       check_multiple_indep(data, indep = {{ indep }})
       check_category_pairs(data = data, cols_pos = c(dep_pos))
     }
@@ -765,7 +771,10 @@ makeme <-
         error_on_duplicates = args$error_on_duplicates
       )
 
-      if (!args$type %in% c("sigtest_table_html", "int_table_html")) {
+      if (
+        !args$type %in%
+          c("sigtest_table_html", "int_table_html", "chr_table_html")
+      ) {
         args$data_summary <-
           post_process_makeme_data(
             data = args$data_summary,

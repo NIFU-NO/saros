@@ -10,6 +10,10 @@ get_main_question <-
     if (length(x) == 0) {
       return("")
     }
+    if (!rlang::is_string(label_separator) && length(x) == 1) {
+      return(x)
+    }
+
     if (!(is.character(x) || is.factor(x) || is.ordered(x))) {
       cli::cli_abort(
         c(
@@ -45,7 +49,7 @@ get_main_question <-
       cli::cli_warn(
         c(
           x = "No main question found.",
-          i = "Check your {.arg label_separator}."
+          i = "Check your {.arg label_separator} ({.val {label_separator}})."
         ),
         call = call
       )
