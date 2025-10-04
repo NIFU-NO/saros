@@ -522,84 +522,22 @@ makeme <-
     # Perform type-specific validation checks
     validate_type_specific_constraints(args, data, {{ indep }}, dep_pos)
 
-    # Set hide_for_all_crowds_if_hidden_for_crowd first to get its excluded variables early
-    # This only happens if hide_for_all_crowds_if_hidden_for_crowd are in the set of crowd.
-    args$crowd <- c(
-      args$hide_for_all_crowds_if_hidden_for_crowd[
-        args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd
-      ],
-      args$crowd[
-        !args$crowd %in%
-          args$hide_for_all_crowds_if_hidden_for_crowd[
-            args$hide_for_all_crowds_if_hidden_for_crowd %in% args$crowd
-          ]
-      ]
+    # Reorder crowd array and initialize crowd-based filtering
+    args$crowd <- reorder_crowd_array(
+      args$crowd,
+      args$hide_for_all_crowds_if_hidden_for_crowd
     )
 
-    kept_cols_list <- rlang::set_names(
-      vector(mode = "list", length = length(args$crowd)),
-      args$crowd
+    crowd_filtering <- initialize_crowd_filtering(args$crowd, args)
+    kept_cols_list <- crowd_filtering$kept_cols_list
+    omitted_cols_list <- crowd_filtering$omitted_cols_list
+    kept_indep_cats_list <- crowd_filtering$kept_indep_cats_list
+
+    # Process global independent category hiding logic
+    kept_indep_cats_list <- process_global_indep_categories(
+      kept_indep_cats_list,
+      args$hide_for_all_crowds_if_hidden_for_crowd
     )
-    omitted_cols_list <- rlang::set_names(
-      vector(mode = "list", length = length(args$crowd)),
-      args$crowd
-    )
-    kept_indep_cats_list <- rlang::set_names(
-      vector(mode = "list", length = length(args$crowd)),
-      args$crowd
-    )
-
-    for (crwd in names(kept_cols_list)) {
-      kept_cols_tmp <-
-        keep_cols(
-          data = args$data,
-          dep = args$dep,
-          indep = args$indep,
-          crowd = crwd,
-          mesos_var = args$mesos_var,
-          mesos_group = args$mesos_group,
-          hide_for_crowd_if_all_na = args$hide_for_crowd_if_all_na, # 1
-          hide_for_crowd_if_valid_n_below = args$hide_for_crowd_if_valid_n_below, # 2
-          hide_for_crowd_if_category_k_below = args$hide_for_crowd_if_category_k_below, # 3
-          hide_for_crowd_if_category_n_below = args$hide_for_crowd_if_category_n_below, # 4
-          hide_for_crowd_if_cell_n_below = args$hide_for_crowd_if_cell_n_below # , # 5
-          # hide_for_all_crowds_if_hidden_for_crowd_vars = omitted_vars
-        )
-      omitted_cols_list[[crwd]] <- kept_cols_tmp[["omitted_vars"]]
-
-      kept_indep_cats_list[[crwd]] <-
-        keep_indep_cats(
-          data = kept_cols_tmp[["data"]],
-          indep = args$indep
-        )
-    }
-
-    kept_indep_cats_list <-
-      lapply(rlang::set_names(names(kept_indep_cats_list)), function(crwd) {
-        lapply(
-          rlang::set_names(names(kept_indep_cats_list[[crwd]])),
-          function(x) {
-            if (
-              is.character(args$hide_for_all_crowds_if_hidden_for_crowd) &&
-                !crwd %in% args$hide_for_all_crowds_if_hidden_for_crowd
-            ) {
-              kept_globally <-
-                kept_indep_cats_list[
-                  args$hide_for_all_crowds_if_hidden_for_crowd
-                ] |>
-                unlist() |>
-                unique()
-
-              kept_indep_cats_list[[crwd]][[x]][
-                kept_indep_cats_list[[crwd]][[x]] %in%
-                  kept_globally
-              ]
-            } else {
-              kept_indep_cats_list[[crwd]][[x]]
-            }
-          }
-        )
-      })
 
     out <- rlang::set_names(
       vector(mode = "list", length = length(args$crowd)),

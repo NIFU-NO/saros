@@ -127,6 +127,104 @@ generate_data_summary <- function(
   }
 }
 
+# Helper function: Reorder crowd array based on hide_for_all_crowds_if_hidden_for_crowd
+reorder_crowd_array <- function(
+  crowd,
+  hide_for_all_crowds_if_hidden_for_crowd
+) {
+  # Set hide_for_all_crowds_if_hidden_for_crowd first to get its excluded variables early
+  # This only happens if hide_for_all_crowds_if_hidden_for_crowd are in the set of crowd.
+  c(
+    hide_for_all_crowds_if_hidden_for_crowd[
+      hide_for_all_crowds_if_hidden_for_crowd %in% crowd
+    ],
+    crowd[
+      !crowd %in%
+        hide_for_all_crowds_if_hidden_for_crowd[
+          hide_for_all_crowds_if_hidden_for_crowd %in% crowd
+        ]
+    ]
+  )
+}
+
+# Helper function: Initialize crowd-based filtering data structures
+initialize_crowd_filtering <- function(crowd, args) {
+  kept_cols_list <- rlang::set_names(
+    vector(mode = "list", length = length(crowd)),
+    crowd
+  )
+  omitted_cols_list <- rlang::set_names(
+    vector(mode = "list", length = length(crowd)),
+    crowd
+  )
+  kept_indep_cats_list <- rlang::set_names(
+    vector(mode = "list", length = length(crowd)),
+    crowd
+  )
+
+  for (crwd in names(kept_cols_list)) {
+    kept_cols_tmp <-
+      keep_cols(
+        data = args$data,
+        dep = args$dep,
+        indep = args$indep,
+        crowd = crwd,
+        mesos_var = args$mesos_var,
+        mesos_group = args$mesos_group,
+        hide_for_crowd_if_all_na = args$hide_for_crowd_if_all_na,
+        hide_for_crowd_if_valid_n_below = args$hide_for_crowd_if_valid_n_below,
+        hide_for_crowd_if_category_k_below = args$hide_for_crowd_if_category_k_below,
+        hide_for_crowd_if_category_n_below = args$hide_for_crowd_if_category_n_below,
+        hide_for_crowd_if_cell_n_below = args$hide_for_crowd_if_cell_n_below
+      )
+    omitted_cols_list[[crwd]] <- kept_cols_tmp[["omitted_vars"]]
+
+    kept_indep_cats_list[[crwd]] <-
+      keep_indep_cats(
+        data = kept_cols_tmp[["data"]],
+        indep = args$indep
+      )
+  }
+
+  list(
+    kept_cols_list = kept_cols_list,
+    omitted_cols_list = omitted_cols_list,
+    kept_indep_cats_list = kept_indep_cats_list
+  )
+}
+
+# Helper function: Process kept_indep_cats_list for global hiding logic
+process_global_indep_categories <- function(
+  kept_indep_cats_list,
+  hide_for_all_crowds_if_hidden_for_crowd
+) {
+  lapply(rlang::set_names(names(kept_indep_cats_list)), function(crwd) {
+    lapply(
+      rlang::set_names(names(kept_indep_cats_list[[crwd]])),
+      function(x) {
+        if (
+          is.character(hide_for_all_crowds_if_hidden_for_crowd) &&
+            !crwd %in% hide_for_all_crowds_if_hidden_for_crowd
+        ) {
+          kept_globally <-
+            kept_indep_cats_list[
+              hide_for_all_crowds_if_hidden_for_crowd
+            ] |>
+            unlist() |>
+            unique()
+
+          kept_indep_cats_list[[crwd]][[x]][
+            kept_indep_cats_list[[crwd]][[x]] %in%
+              kept_globally
+          ]
+        } else {
+          kept_indep_cats_list[[crwd]][[x]]
+        }
+      }
+    )
+  })
+}
+
 # Helper function: Validate and initialize arguments
 initialize_arguments <- function(data, dep_pos, indep_pos, args) {
   args$data <- data
