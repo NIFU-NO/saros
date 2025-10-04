@@ -507,27 +507,16 @@ makeme <-
       default_values = formals(makeme)
     )
 
-    args$data <- data # reinsert after check_options
-    args$dep <- names(dep_pos)
-    args$indep <- names(indep_pos)
-
-    # Remove indep variables from dep to prevent overlap conflicts
-    args$dep <- resolve_variable_overlaps(args$dep, args$indep)
-
-    # Normalize multi-choice arguments to single values
-    args <- normalize_makeme_arguments(args)
-
-    validate_makeme_options(params = args)
-
-    # Perform type-specific validation checks
-    validate_type_specific_constraints(args, data, {{ indep }}, dep_pos)
-
-    # Reorder crowd array and initialize crowd-based filtering
-    args$crowd <- reorder_crowd_array(
-      args$crowd,
-      args$hide_for_all_crowds_if_hidden_for_crowd
+    # Setup and validate arguments
+    args <- setup_and_validate_makeme_args(
+      args,
+      data,
+      dep_pos,
+      indep_pos,
+      {{ indep }}
     )
 
+    # Initialize crowd-based filtering
     crowd_filtering <- initialize_crowd_filtering(args$crowd, args)
     kept_cols_list <- crowd_filtering$kept_cols_list
     omitted_cols_list <- crowd_filtering$omitted_cols_list
@@ -539,25 +528,15 @@ makeme <-
       args$hide_for_all_crowds_if_hidden_for_crowd
     )
 
-    out <- rlang::set_names(
-      vector(mode = "list", length = length(args$crowd)),
-      args$crowd
+    # Process all crowds and generate final output
+    out <- process_all_crowds(
+      args,
+      omitted_cols_list,
+      kept_indep_cats_list,
+      data,
+      mesos_var,
+      mesos_group,
+      ...
     )
-
-    # Process each crowd
-    for (crwd in names(out)) {
-      out[[crwd]] <- process_crowd_data(
-        crwd,
-        args,
-        omitted_cols_list,
-        kept_indep_cats_list,
-        data,
-        mesos_var,
-        mesos_group,
-        ...
-      )
-    }
-
-    # Process and return final output
     process_output_results(out, args)
   }
