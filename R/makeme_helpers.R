@@ -429,6 +429,147 @@ generate_crowd_output <- function(args, subset_data, dep_crwd, indep_crwd) {
   )
 }
 
+# Helper function: Process data for a single crowd
+process_crowd_data <- function(
+  crwd,
+  args,
+  omitted_cols_list,
+  kept_indep_cats_list,
+  data,
+  mesos_var,
+  mesos_group,
+  ...
+) {
+  # Calculate omitted variables for this crowd
+  omitted_vars_crwd <- omitted_cols_list[
+    c(crwd, args$hide_for_all_crowds_if_hidden_for_crowd)
+  ] |>
+    lapply(FUN = function(x) x) |>
+    unlist() |>
+    unique()
+
+  # Get variables for this crowd
+  dep_crwd <- args$dep[!args$dep %in% omitted_vars_crwd]
+  if (length(dep_crwd) == 0) {
+    return(NULL) # Skip this crowd if no dep variables remain
+  }
+
+  indep_crwd <- args$indep
+  if (length(indep_crwd) == 0) {
+    indep_crwd <- NULL
+  }
+
+  # Create subset data for this crowd
+  subset_data <- dplyr::filter(
+    args$data[, !colnames(args$data) %in% omitted_vars_crwd, drop = FALSE],
+    makeme_keep_rows(
+      data = data,
+      crwd = crwd,
+      mesos_var = mesos_var,
+      mesos_group = mesos_group
+    )
+  )
+
+  # Apply indep category filtering if needed
+  if (isTRUE(args$hide_indep_cat_for_all_crowds_if_hidden_for_crowd)) {
+    for (x in indep_crwd) {
+      subset_data <- dplyr::filter(
+        subset_data,
+        as.character(subset_data[[x]]) %in% kept_indep_cats_list[[crwd]][[x]]
+      )
+    }
+  }
+
+  # Check if we have data left
+  if (nrow(subset_data) == 0) {
+    indep_msg <- if (is.character(args$indep)) {
+      paste0("indep=", cli::ansi_collapse(args$indep))
+    }
+
+    cli::cli_warn(c(
+      "No data left to make you {.arg {args$type}} with dep={.arg {args$dep}}, {.arg {indep_msg}}, crowd={.arg {crwd}}.",
+      i = "Skipping."
+    ))
+    return(NULL)
+  }
+
+  # Detect variable types and generate data summary
+  variable_types <- detect_variable_types(subset_data, dep_crwd, indep_crwd)
+  args$data_summary <- generate_data_summary(
+    variable_types,
+    subset_data,
+    dep_crwd,
+    indep_crwd,
+    args,
+    ...
+  )
+
+  # Set main question
+  args$main_question <- get_main_question(
+    as.character(unique(args$data_summary[[".variable_label_prefix"]])),
+    label_separator = args$label_separator
+  )
+
+  # Check for duplicated label suffixes
+  check_no_duplicated_label_suffix(
+    data_summary = args$data_summary,
+    error_on_duplicates = args$error_on_duplicates
+  )
+
+  # Post-process data summary if needed
+  if (
+    !args$type %in% c("sigtest_table_html", "int_table_html", "chr_table_html")
+  ) {
+    args$data_summary <- post_process_makeme_data(
+      data = args$data_summary,
+      indep = indep_crwd,
+      showNA = args$showNA,
+      colour_2nd_binary_cat = if (grepl(x = args$type, pattern = "docx")) {
+        args$colour_2nd_binary_cat
+      }
+    )
+  }
+
+  # Prepare arguments for this crowd
+  args_crwd <- args
+  args_crwd$dep <- dep_crwd
+  args_crwd$indep <- indep_crwd
+
+  # Generate final output
+  suppressPackageStartupMessages(
+    rlang::exec(
+      make_content,
+      type = args_crwd$type,
+      !!!args_crwd[!names(args_crwd) %in% c("type")]
+    )
+  )
+}
+
+# Helper function: Process output results and apply transformations
+process_output_results <- function(out, args) {
+  # Rename crowds based on translations
+  for (crwd in names(out)) {
+    if (rlang::is_string(args$translations[[paste0("crowd_", crwd)]])) {
+      names(out)[names(out) == crwd] <- args$translations[[paste0(
+        "crowd_",
+        crwd
+      )]]
+    }
+  }
+
+  # Remove NULL results
+  out <- out[!sapply(out, is.null)]
+
+  # Simplify output if requested
+  if (isTRUE(args$simplify_output) && length(out) == 1) {
+    out[[1]]
+  } else if (length(out) == 0) {
+    invisible(data.frame())
+  } else {
+    out
+  }
+}
+
 # Helper function: Rename crowd outputs
 rename_crowd_outputs <- function(out, translations) {
   for (crwd in names(out)) {

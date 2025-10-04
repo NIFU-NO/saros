@@ -544,139 +544,20 @@ makeme <-
       args$crowd
     )
 
+    # Process each crowd
     for (crwd in names(out)) {
-      #
-      omitted_vars_crwd <-
-        omitted_cols_list[
-          c(
-            crwd,
-            args$hide_for_all_crowds_if_hidden_for_crowd
-          )
-        ] |>
-        lapply(FUN = function(x) {
-          # if ("omitted_vars" %in% names(x)) x["omitted_vars"]
-          x
-        }) |>
-        unlist() |>
-        unique()
-
-      dep_crwd <- args$dep[!args$dep %in% omitted_vars_crwd]
-      if (length(dep_crwd) == 0) {
-        next
-      }
-
-      indep_crwd <- args$indep
-      if (length(indep_crwd) == 0) {
-        indep_crwd <- NULL
-      }
-
-      subset_data <-
-        dplyr::filter(
-          args$data[,
-            # subetting would remove variable labels, filter keeps them
-            !colnames(args$data) %in% omitted_vars_crwd,
-            drop = FALSE
-          ],
-          makeme_keep_rows(
-            data = data,
-            crwd = crwd,
-            mesos_var = mesos_var,
-            mesos_group = mesos_group
-          )
-        )
-
-      if (isTRUE(args$hide_indep_cat_for_all_crowds_if_hidden_for_crowd)) {
-        for (x in indep_crwd) {
-          subset_data <-
-            dplyr::filter(
-              subset_data,
-              as.character(subset_data[[x]]) %in%
-                kept_indep_cats_list[[crwd]][[x]]
-            )
-        }
-      }
-
-      if (nrow(subset_data) == 0) {
-        indep_msg <- if (is.character(args$indep)) {
-          paste0("indep=", cli::ansi_collapse(args$indep))
-        }
-
-        cli::cli_warn(c(
-          "No data left to make you {.arg {args$type}} with dep={.arg {args$dep}}, {.arg {indep_msg}}, crowd={.arg {crwd}}.",
-          i = "Skipping."
-        ))
-        next
-        indep_msg
-      }
-
-      # Detect variable types and generate appropriate data summary
-      variable_types <- detect_variable_types(subset_data, dep_crwd, indep_crwd)
-      args$data_summary <- generate_data_summary(
-        variable_types,
-        subset_data,
-        dep_crwd,
-        indep_crwd,
+      out[[crwd]] <- process_crowd_data(
+        crwd,
         args,
+        omitted_cols_list,
+        kept_indep_cats_list,
+        data,
+        mesos_var,
+        mesos_group,
         ...
       )
-
-      args$main_question <-
-        get_main_question(
-          as.character(unique(args$data_summary[[".variable_label_prefix"]])),
-          label_separator = args$label_separator
-        )
-
-      check_no_duplicated_label_suffix(
-        data_summary = args$data_summary,
-        error_on_duplicates = args$error_on_duplicates
-      )
-
-      if (
-        !args$type %in%
-          c("sigtest_table_html", "int_table_html", "chr_table_html")
-      ) {
-        args$data_summary <-
-          post_process_makeme_data(
-            data = args$data_summary,
-            indep = indep_crwd,
-            showNA = args$showNA,
-            colour_2nd_binary_cat = if (
-              grepl(x = args$type, pattern = "docx")
-            ) {
-              args$colour_2nd_binary_cat
-            }
-          )
-      }
-
-      args_crwd <- args
-      args_crwd$dep <- dep_crwd
-      args_crwd$indep <- indep_crwd
-
-      out[[crwd]] <-
-        suppressPackageStartupMessages(
-          rlang::exec(
-            make_content,
-            type = args_crwd$type,
-            !!!args_crwd[!names(args_crwd) %in% c("type")]
-          )
-        )
     }
 
-    for (crwd in names(out)) {
-      if (rlang::is_string(args$translations[[paste0("crowd_", crwd)]])) {
-        names(out)[names(out) == crwd] <- args$translations[[paste0(
-          "crowd_",
-          crwd
-        )]]
-      }
-    }
-    out <- out[lapply(out, function(x) !is.null(x)) |> unlist()]
-
-    if (isTRUE(args$simplify_output) && length(out) == 1) {
-      out[[1]]
-    } else if (length(out) == 0) {
-      invisible(data.frame())
-    } else {
-      out
-    }
+    # Process and return final output
+    process_output_results(out, args)
   }
