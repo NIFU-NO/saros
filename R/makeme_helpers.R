@@ -58,6 +58,75 @@ validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
   invisible(TRUE)
 }
 
+# Helper function: Detect variable types for dep and indep variables
+detect_variable_types <- function(subset_data, dep_crwd, indep_crwd) {
+  variable_type_dep <- lapply(dep_crwd, function(v) class(subset_data[[v]])) |>
+    unlist()
+  variable_type_indep <- if (length(indep_crwd) > 0) {
+    lapply(indep_crwd, function(v) class(subset_data[[v]])) |> unlist()
+  } else {
+    character(0)
+  }
+
+  list(
+    dep = variable_type_dep,
+    indep = variable_type_indep
+  )
+}
+
+# Helper function: Generate appropriate data summary based on variable types
+generate_data_summary <- function(
+  variable_types,
+  subset_data,
+  dep_crwd,
+  indep_crwd,
+  args,
+  ...
+) {
+  # Future: switch or S3
+  if (
+    all(variable_types$dep %in% c("integer", "numeric")) &&
+      (all(variable_types$indep %in% c("factor", "ordered", "character")) ||
+        length(indep_crwd) == 0)
+  ) {
+    summarize_int_cat_data(
+      data = subset_data,
+      dep = dep_crwd,
+      indep = indep_crwd,
+      ...
+    )
+  } else if (all(variable_types$dep %in% c("factor", "ordered", "character"))) {
+    summarize_cat_cat_data(
+      data = subset_data,
+      dep = dep_crwd,
+      indep = indep_crwd,
+      ...,
+      label_separator = args$label_separator,
+      showNA = args$showNA,
+      totals = args$totals,
+      sort_by = args$sort_by,
+      descend = args$descend,
+      data_label = args$data_label,
+      digits = args$digits,
+      add_n_to_dep_label = args$add_n_to_dep_label,
+      add_n_to_indep_label = args$add_n_to_indep_label,
+      add_n_to_label = args$add_n_to_label,
+      add_n_to_category = args$add_n_to_category,
+      hide_label_if_prop_below = args$hide_label_if_prop_below,
+      data_label_decimal_symbol = args$data_label_decimal_symbol,
+      categories_treated_as_na = args$categories_treated_as_na,
+      labels_always_at_bottom = args$labels_always_at_bottom,
+      labels_always_at_top = args$labels_always_at_top,
+      translations = args$translations
+    )
+  } else {
+    cli::cli_abort(c(
+      "You have provided a mix of categorical and continuous variables.",
+      "I do not know what to do with that!"
+    ))
+  }
+}
+
 # Helper function: Validate and initialize arguments
 initialize_arguments <- function(data, dep_pos, indep_pos, args) {
   args$data <- data
