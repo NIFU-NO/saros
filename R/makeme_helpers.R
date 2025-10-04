@@ -325,8 +325,8 @@ summarize_data_by_type <- function(
   args
 }
 
-# Helper function: Filter and process data for each crowd
-process_crowd_data <- function(
+# Helper function: Filter and prepare data for a specific crowd
+filter_crowd_data <- function(
   data,
   args,
   crwd,

@@ -427,3 +427,58 @@ test_that("initialize_arguments handles NULL and missing values", {
   expect_null(result$indep) # The function returns NULL, not character(0)
   expect_null(result$data_label)
 })
+
+test_that("process_output_results handles crowd renaming and simplification", {
+  # Test crowd renaming
+  out_list <- list(target = data.frame(x = 1), others = data.frame(y = 2))
+  args_with_translations <- list(
+    translations = list(
+      crowd_target = "Target Group",
+      crowd_others = "Other Groups"
+    ),
+    simplify_output = FALSE
+  )
+
+  result_renamed <- process_output_results(out_list, args_with_translations)
+  expect_named(result_renamed, c("Target Group", "Other Groups"))
+
+  # Test output simplification
+  out_single <- list(all = data.frame(x = 1:3))
+  args_simplify <- list(
+    translations = list(),
+    simplify_output = TRUE
+  )
+
+  result_simplified <- process_output_results(out_single, args_simplify)
+  expect_true(is.data.frame(result_simplified))
+  expect_equal(nrow(result_simplified), 3)
+
+  # Test empty output handling
+  out_empty <- list()
+  args_empty <- list(
+    translations = list(),
+    simplify_output = TRUE
+  )
+
+  result_empty <- process_output_results(out_empty, args_empty)
+  expect_true(is.data.frame(result_empty))
+  expect_equal(nrow(result_empty), 0)
+})
+
+test_that("helper functions perform basic operations correctly", {
+  # Test process_output_results with empty simplification
+  out_empty <- list()
+  args_simple <- list(
+    translations = list(),
+    simplify_output = TRUE
+  )
+
+  result_simple <- process_output_results(out_empty, args_simple)
+  expect_true(is.data.frame(result_simple))
+  expect_equal(nrow(result_simple), 0)
+
+  # Test normalize_makeme_arguments with single choice
+  args_single_choice <- list(type = "cat_table_html")
+  result_normalized <- normalize_makeme_arguments(args_single_choice)
+  expect_equal(result_normalized$type, "cat_table_html")
+})
