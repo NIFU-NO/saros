@@ -1,4 +1,17 @@
-# Helper function: Evaluate variable selection
+#' Evaluate Variable Selection
+#'
+#' Internal helper function that evaluates tidyselect expressions for dependent 
+#' and independent variables, returning their column positions in the data frame.
+#'
+#' @param data A data frame containing the variables to be selected
+#' @param dep Quosure or tidyselect expression for dependent variables
+#' @param indep Quosure or tidyselect expression for independent variables
+#'
+#' @return A list with two named elements:
+#'   - `dep_pos`: Named integer vector of column positions for dependent variables
+#'   - `indep_pos`: Named integer vector of column positions for independent variables
+#'
+#' @keywords internal
 evaluate_variable_selection <- function(data, dep, indep) {
   dep_enq <- rlang::enquo(arg = dep)
   dep_pos <- tidyselect::eval_select(dep_enq, data = data)
@@ -7,7 +20,24 @@ evaluate_variable_selection <- function(data, dep, indep) {
   list(dep_pos = dep_pos, indep_pos = indep_pos)
 }
 
-# Helper function: Resolve variable overlaps between dep and indep
+#' Resolve Variable Overlaps Between Dependent and Independent Variables
+#'
+#' Internal helper function that handles cases where variables are selected for 
+#' both dependent and independent roles. Automatically removes overlapping variables 
+#' from the dependent list and provides user feedback.
+#'
+#' @param dep Character vector of dependent variable names
+#' @param indep Character vector of independent variable names
+#'
+#' @return Character vector of dependent variable names with overlaps removed
+#'
+#' @details
+#' If overlapping variables are found:
+#' - Informs user about the overlap via cli::cli_inform()
+#' - Removes overlapping variables from dep vector
+#' - Throws error if no dependent variables remain after removal
+#'
+#' @keywords internal
 resolve_variable_overlaps <- function(dep, indep) {
   if (length(indep) > 0 && length(dep) > 0) {
     overlapping_vars <- intersect(dep, indep)
@@ -30,7 +60,20 @@ resolve_variable_overlaps <- function(dep, indep) {
   dep
 }
 
-# Helper function: Normalize multi-choice arguments to single values
+#' Normalize Multi-Choice Arguments to Single Values
+#'
+#' Internal helper function that ensures makeme arguments that might be vectors
+#' are normalized to single values by taking the first element.
+#'
+#' @param args List of makeme function arguments
+#'
+#' @return Modified args list with normalized single-value arguments:
+#'   - `showNA`: First element of showNA vector
+#'   - `data_label`: First element of data_label vector  
+#'   - `data_label_position`: First element of data_label_position vector
+#'   - `type`: First element of evaluated type expression
+#'
+#' @keywords internal
 normalize_makeme_arguments <- function(args) {
   args$showNA <- args$showNA[1]
   args$data_label <- args$data_label[1]
@@ -39,7 +82,23 @@ normalize_makeme_arguments <- function(args) {
   args
 }
 
-# Helper function: Perform type-specific validation checks
+#' Perform Type-Specific Validation Checks
+#'
+#' Internal helper function that validates arguments based on the specific 
+#' output type requested. Different types have different constraints.
+#'
+#' @param args List of makeme function arguments
+#' @param data Data frame being analyzed
+#' @param indep Character vector of independent variable names
+#' @param dep_pos Named integer vector of dependent variable positions
+#'
+#' @return NULL (function used for side effects - validation errors)
+#'
+#' @details
+#' Current type-specific validations:
+#' - `chr_table_html`: Requires exactly one dependent variable
+#'
+#' @keywords internal
 validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
   # chr_table_html only supports single dependent variable
   if (args$type %in% c("chr_table_html") && length(args$dep) > 1) {
@@ -58,7 +117,20 @@ validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
   invisible(TRUE)
 }
 
-# Helper function: Detect variable types for dep and indep variables
+#' Detect Variable Types for Dependent and Independent Variables
+#'
+#' Internal helper function that examines the class of variables in the subset 
+#' data to determine their types (factor, numeric, character, etc.).
+#'
+#' @param subset_data Data frame subset containing the relevant variables
+#' @param dep_crwd Character vector of dependent variable names for current crowd
+#' @param indep_crwd Character vector of independent variable names for current crowd
+#'
+#' @return List with two elements:
+#'   - `dep`: Character vector of classes for dependent variables
+#'   - `indep`: Character vector of classes for independent variables (empty if none)
+#'
+#' @keywords internal
 detect_variable_types <- function(subset_data, dep_crwd, indep_crwd) {
   variable_type_dep <- lapply(dep_crwd, function(v) class(subset_data[[v]])) |>
     unlist()
