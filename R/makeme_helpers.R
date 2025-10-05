@@ -146,7 +146,24 @@ detect_variable_types <- function(subset_data, dep_crwd, indep_crwd) {
   )
 }
 
-# Helper function: Generate appropriate data summary based on variable types
+#' Generate Appropriate Data Summary Based on Variable Types
+#'
+#' Internal helper function that routes to the appropriate data summarization 
+#' function based on the detected variable types (categorical vs continuous).
+#'
+#' @param variable_types List with dep and indep variable type information
+#' @param subset_data Data frame subset for the current crowd
+#' @param dep_crwd Character vector of dependent variable names for current crowd
+#' @param indep_crwd Character vector of independent variable names for current crowd
+#' @param args List of makeme function arguments
+#' @param ... Additional arguments passed to summarization functions
+#'
+#' @return Data summary object (type depends on variable types):
+#'   - For integer/numeric dep + factor/character indep: calls summarize_int_cat_data()
+#'   - For factor/character dep: calls summarize_cat_cat_data()
+#'   - For mixed types: throws error
+#'
+#' @keywords internal
 generate_data_summary <- function(
   variable_types,
   subset_data,
@@ -199,7 +216,21 @@ generate_data_summary <- function(
   }
 }
 
-# Helper function: Reorder crowd array based on hide_for_all_crowds_if_hidden_for_crowd
+#' Reorder Crowd Array Based on Hide Settings
+#'
+#' Internal helper function that reorders the crowd array to prioritize crowds
+#' specified in hide_for_all_crowds_if_hidden_for_crowd, ensuring they are
+#' processed first to determine variable exclusions early.
+#'
+#' @param crowd Character vector of crowd identifiers
+#' @param hide_for_all_crowds_if_hidden_for_crowd Character vector of crowd identifiers
+#'   that should be processed first to determine global exclusions
+#'
+#' @return Character vector with reordered crowd identifiers:
+#'   - Priority crowds first (those in hide_for_all_crowds_if_hidden_for_crowd)
+#'   - Remaining crowds after
+#'
+#' @keywords internal
 reorder_crowd_array <- function(
   crowd,
   hide_for_all_crowds_if_hidden_for_crowd
@@ -219,7 +250,25 @@ reorder_crowd_array <- function(
   )
 }
 
-# Helper function: Initialize crowd-based filtering data structures
+#' Initialize Crowd-Based Filtering Data Structures
+#'
+#' Internal helper function that sets up the data structures needed for 
+#' crowd-based filtering and processing of variables and categories.
+#'
+#' @param crowd Character vector of crowd identifiers
+#' @param args List of makeme function arguments
+#'
+#' @return List with three named elements:
+#'   - `kept_cols_list`: Named list of kept column information for each crowd
+#'   - `omitted_cols_list`: Named list of omitted variables for each crowd
+#'   - `kept_indep_cats_list`: Named list of kept independent categories for each crowd
+#'
+#' @details
+#' For each crowd, this function calls keep_cols() and keep_indep_cats() to
+#' determine which variables and categories should be retained based on the
+#' various hiding criteria (NA values, sample sizes, etc.).
+#'
+#' @keywords internal
 initialize_crowd_filtering <- function(crowd, args) {
   kept_cols_list <- rlang::set_names(
     vector(mode = "list", length = length(crowd)),
@@ -265,7 +314,21 @@ initialize_crowd_filtering <- function(crowd, args) {
   )
 }
 
-# Helper function: Process kept_indep_cats_list for global hiding logic
+#' Process Independent Categories for Global Hiding Logic
+#'
+#' Internal helper function that applies global hiding logic to independent 
+#' variable categories based on the hide_for_all_crowds_if_hidden_for_crowd setting.
+#'
+#' @param kept_indep_cats_list Named list of kept independent categories for each crowd
+#' @param hide_for_all_crowds_if_hidden_for_crowd Character vector of crowd identifiers
+#'   that determine global category exclusions
+#'
+#' @return Modified kept_indep_cats_list with global hiding logic applied:
+#'   - For crowds not in hide_for_all_crowds_if_hidden_for_crowd: only categories
+#'     that were kept in the priority crowds are retained
+#'   - For priority crowds: original category lists are preserved
+#'
+#' @keywords internal
 process_global_indep_categories <- function(
   kept_indep_cats_list,
   hide_for_all_crowds_if_hidden_for_crowd
@@ -297,7 +360,23 @@ process_global_indep_categories <- function(
   })
 }
 
-# Helper function: Validate and initialize arguments
+#' Validate and Initialize Arguments
+#'
+#' Internal helper function that finalizes the arguments list by adding 
+#' resolved variable names and normalizing multi-value arguments.
+#'
+#' @param data Data frame being analyzed
+#' @param dep_pos Named integer vector of dependent variable positions
+#' @param indep_pos Named integer vector of independent variable positions  
+#' @param args List of makeme function arguments
+#'
+#' @return Modified args list with additional elements:
+#'   - `data`: The input data frame
+#'   - `dep`: Character vector of dependent variable names (from dep_pos)
+#'   - `indep`: Character vector of independent variable names (from indep_pos)
+#'   - Normalized single-value arguments (showNA, data_label, type)
+#'
+#' @keywords internal
 initialize_arguments <- function(data, dep_pos, indep_pos, args) {
   args$data <- data
   args$dep <- names(dep_pos)
