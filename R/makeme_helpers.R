@@ -387,7 +387,19 @@ initialize_arguments <- function(data, dep_pos, indep_pos, args) {
   args
 }
 
-# Helper function: Process crowd settings
+#' Process Crowd Settings
+#'
+#' Internal helper function that reorders the crowd array to ensure priority
+#' crowds (specified in hide_for_all_crowds_if_hidden_for_crowd) are processed first.
+#'
+#' @param args List of makeme function arguments
+#'
+#' @return Modified args list with reordered crowd vector:
+#'   - Priority crowds (in hide_for_all_crowds_if_hidden_for_crowd) first
+#'   - Remaining crowds after
+#'   - This ensures global hiding logic is applied correctly
+#'
+#' @keywords internal
 process_crowd_settings <- function(args) {
   args$crowd <- c(
     args$hide_for_all_crowds_if_hidden_for_crowd[
@@ -403,7 +415,19 @@ process_crowd_settings <- function(args) {
   args
 }
 
-# Helper function: Handle kept and omitted columns for crowds
+#' Handle Kept and Omitted Columns for Crowds
+#'
+#' Internal helper function that processes the kept and omitted column information
+#' for crowd-based filtering and applies global hiding logic.
+#'
+#' @param args List of makeme function arguments
+#' @param kept_cols_list Named list of kept column information for each crowd
+#' @param omitted_cols_list Named list of omitted variables for each crowd
+#'
+#' @return List containing processed crowd column information with global
+#'   hiding logic applied based on hide_for_all_crowds_if_hidden_for_crowd settings
+#'
+#' @keywords internal
 handle_crowd_columns <- function(
   args,
   kept_cols_list,
@@ -697,7 +721,25 @@ process_crowd_data <- function(
 }
 
 # Helper function: Process output results and apply transformations
-# Helper function: Setup and validate makeme arguments
+#' Setup and Validate Makeme Arguments
+#'
+#' Internal helper function that performs final argument setup and validation
+#' before processing. Consolidates variable resolution, normalization, and validation.
+#'
+#' @param args List of makeme function arguments
+#' @param data Data frame being analyzed
+#' @param dep_pos Named integer vector of dependent variable positions
+#' @param indep_pos Named integer vector of independent variable positions
+#' @param indep Independent variable selection (for validation)
+#'
+#' @return Modified and validated args list ready for processing:
+#'   - Variable names resolved from positions
+#'   - Overlaps between dep and indep resolved
+#'   - Multi-choice arguments normalized
+#'   - All validation checks passed
+#'   - Crowd array reordered for optimal processing
+#'
+#' @keywords internal
 setup_and_validate_makeme_args <- function(
   args,
   data,
@@ -729,7 +771,25 @@ setup_and_validate_makeme_args <- function(
   args
 }
 
-# Helper function: Process all crowds and generate output
+#' Process All Crowds and Generate Output
+#'
+#' Internal helper function that iterates through all crowd identifiers
+#' and generates the appropriate output for each crowd.
+#'
+#' @param args Validated list of makeme function arguments
+#' @param omitted_cols_list Named list of omitted variables for each crowd
+#' @param kept_indep_cats_list Named list of kept independent categories for each crowd
+#' @param data Data frame being analyzed
+#' @param mesos_var Mesos-level grouping variable
+#' @param mesos_group Specific mesos group identifier
+#' @param ... Additional arguments passed to process_crowd_data
+#'
+#' @return Named list of crowd outputs:
+#'   - Each element corresponds to one crowd identifier
+#'   - Content depends on the specific makeme type requested
+#'   - May contain plots, tables, or other analysis objects
+#'
+#' @keywords internal
 process_all_crowds <- function(
   args,
   omitted_cols_list,
@@ -761,6 +821,22 @@ process_all_crowds <- function(
   out
 }
 
+#' Process Output Results
+#'
+#' Internal helper function that performs final processing of makeme output,
+#' including crowd renaming, NULL removal, and output simplification.
+#'
+#' @param out Named list of crowd outputs from process_all_crowds
+#' @param args List of makeme function arguments (for translations and simplify_output)
+#'
+#' @return Processed output in final form:
+#'   - Crowds renamed according to translations if provided
+#'   - NULL results removed
+#'   - Single element extracted if simplify_output=TRUE and length=1
+#'   - Empty data.frame returned if no valid results
+#'   - Otherwise returns the full named list
+#'
+#' @keywords internal
 process_output_results <- function(out, args) {
   # Rename crowds based on translations
   for (crwd in names(out)) {
@@ -785,7 +861,20 @@ process_output_results <- function(out, args) {
   }
 }
 
-# Helper function: Rename crowd outputs
+#' Rename Crowd Outputs
+#'
+#' Internal helper function that renames crowd identifiers in the output
+#' based on provided translations.
+#'
+#' @param out Named list of crowd outputs
+#' @param translations Named list of translation mappings for crowd identifiers
+#'
+#' @return Modified out list with crowd names translated:
+#'   - Names changed according to translations["crowd_<crwd>"]
+#'   - Only string translations are applied
+#'   - Untranslated crowds retain original names
+#'
+#' @keywords internal
 rename_crowd_outputs <- function(out, translations) {
   for (crwd in names(out)) {
     if (rlang::is_string(translations[[paste0("crowd_", crwd)]])) {
