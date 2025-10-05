@@ -37,7 +37,7 @@ get_main_question <-
         dot_all = TRUE
       ) |>
       unique()
-    if (length(x) > 1L && isTRUE(warn_multiple)) {
+    if (length(x) > 1L && isTRUE(warn_multiple) && !is.null(label_separator)) {
       cli::cli_warn(
         c(
           x = "There are multiple main questions for these variables.",

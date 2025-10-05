@@ -640,13 +640,9 @@ generate_crowd_output <- function(args, subset_data, dep_crwd, indep_crwd) {
         "chr_table_html"
       )
   ) {
-    args$data_summary <- post_process_makeme_data(
+    args$data_summary <- process_indep_factor_levels(
       data = args$data_summary,
-      indep = indep_crwd,
-      showNA = args$showNA,
-      colour_2nd_binary_cat = if (grepl(x = args$type, pattern = "docx")) {
-        args$colour_2nd_binary_cat
-      }
+      indep = indep_crwd
     )
   }
 
@@ -779,15 +775,17 @@ process_crowd_data <- function(
 
   # Post-process data summary if needed
   if (
-    !args$type %in% c("sigtest_table_html", "int_table_html", "chr_table_html")
+    !args$type %in%
+      c(
+        "sigtest_table_html",
+        "int_table_html",
+        "int_plot_html",
+        "chr_table_html"
+      )
   ) {
-    args$data_summary <- post_process_makeme_data(
+    args$data_summary <- process_indep_factor_levels(
       data = args$data_summary,
-      indep = indep_crwd,
-      showNA = args$showNA,
-      colour_2nd_binary_cat = if (grepl(x = args$type, pattern = "docx")) {
-        args$colour_2nd_binary_cat
-      }
+      indep = indep_crwd
     )
   }
 

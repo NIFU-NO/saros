@@ -6,12 +6,15 @@
 -   Feature: Added `.onUnload()` function to clean up global options when package is unloaded, preventing option pollution in user's R session
 -   Feature: Enhanced `chr_table_html` to support multiple independent variables for displaying background context with open-ended text responses. Now allows researchers to show demographic or other contextual information alongside character survey responses
 -   Refactor: Modularized tabular I/O functionality - renamed `pretty_tabular.R` to `tabular_write.R` and extracted `tabular_read()` function into separate file. 
+-   Refactor: Split `post_process_makeme_data()` into focused single-responsibility functions: `process_indep_factor_levels()` for general factor reversal and `process_binary_category_colors()` for cat_plot_html-specific binary category processing. Improves architectural clarity and maintainability
 -   Major change: `makeme()` returns an empty data.frame instead of `NULL` if not plot or table can be created, simplifying downstream code (e.g. `gt::gt()` fails if served `NULL`).
 -   Major change: Resolved issue #372 - `descend` parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but `descend` can reverse the display order
 -   Refactor: Substantially modularized internal implementation of `makeme()` into focused helper functions (argument setup, crowd processing, output assembly, validation). Improves readability, testability (+ new helper tests), and robustness without changing public API (closes #368)
 -   Enhancement: Completely rewrote the `.spread` algorithm in `subset_vector()` for better spread maximization using evenly spaced positions
 -   Updated documentation reference from `ggplot2::theme_set()` to `ggplot2::set_theme()` due to ggplot 4.0.0.
 -   Fix: **CRITICAL** - Resolved bug in `makeme()` where combinations of valid factor variables with all-NA factor variables incorrectly threw "mix of categorical and continuous variables" error. Variable type checking now uses filtered variable lists instead of original lists, preventing premature type validation errors
+-   Fix: Resolved faceting issue in `int_plot_html` where `label_separator = NULL` with independent variables caused violin/boxplot and label geoms to appear in separate facets due to inconsistent string wrapping between main plot data and descriptive statistics
+-   Fix: Removed unnecessary "multiple main questions" warning when using `label_separator = NULL`, as having different main questions is expected behavior in this context
 -   Fix: Corrected double NA check logic in `check_bool()` function - removed redundant condition that made validation always pass for NA values
 -   Fix: Improved NULL and NA handling in `glue_together_range()` to prevent edge case failures with empty or invalid data ranges
 -   Fix: Resolved issue #464 - `makeme()` failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts
@@ -21,6 +24,8 @@
 -   Fix: Simplified `arrange_table_data()` sorting logic for better reliability
 -   Enhancement: **PERFORMANCE** - Optimized `makeme()` examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value. Examples now run efficiently for R package documentation and CRAN checks
 -   Enhancement: Updated `fig_height_h_barchart2()` example for consistency with optimized examples
+-   Dev: Added comprehensive test coverage for `makeme()` helper functions with full roxygen2 documentation and @keywords internal annotation for internal API clarity
+-   Dev: Added comprehensive visual regression testing for `int_plot_html` using vdiffr snapshot tests covering various scenarios including multiple variables, independent variables, inverse layouts, and error handling
 -   Dev: Added comprehensive test coverage for utility validation functions
 -   Dev: Added comprehensive unit tests for `makeme()` variable type checking edge cases including all-NA variables, multiple scenarios, and disabled filtering
 -   Dev: Added VS Code configuration for improved development experience
