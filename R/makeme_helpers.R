@@ -1,6 +1,6 @@
 #' Evaluate Variable Selection
 #'
-#' Internal helper function that evaluates tidyselect expressions for dependent 
+#' Internal helper function that evaluates tidyselect expressions for dependent
 #' and independent variables, returning their column positions in the data frame.
 #'
 #' @param data A data frame containing the variables to be selected
@@ -22,8 +22,8 @@ evaluate_variable_selection <- function(data, dep, indep) {
 
 #' Resolve Variable Overlaps Between Dependent and Independent Variables
 #'
-#' Internal helper function that handles cases where variables are selected for 
-#' both dependent and independent roles. Automatically removes overlapping variables 
+#' Internal helper function that handles cases where variables are selected for
+#' both dependent and independent roles. Automatically removes overlapping variables
 #' from the dependent list and provides user feedback.
 #'
 #' @param dep Character vector of dependent variable names
@@ -69,7 +69,7 @@ resolve_variable_overlaps <- function(dep, indep) {
 #'
 #' @return Modified args list with normalized single-value arguments:
 #'   - `showNA`: First element of showNA vector
-#'   - `data_label`: First element of data_label vector  
+#'   - `data_label`: First element of data_label vector
 #'   - `data_label_position`: First element of data_label_position vector
 #'   - `type`: First element of evaluated type expression
 #'
@@ -84,7 +84,7 @@ normalize_makeme_arguments <- function(args) {
 
 #' Perform Type-Specific Validation Checks
 #'
-#' Internal helper function that validates arguments based on the specific 
+#' Internal helper function that validates arguments based on the specific
 #' output type requested. Different types have different constraints.
 #'
 #' @param args List of makeme function arguments
@@ -119,7 +119,7 @@ validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
 
 #' Detect Variable Types for Dependent and Independent Variables
 #'
-#' Internal helper function that examines the class of variables in the subset 
+#' Internal helper function that examines the class of variables in the subset
 #' data to determine their types (factor, numeric, character, etc.).
 #'
 #' @param subset_data Data frame subset containing the relevant variables
@@ -148,7 +148,7 @@ detect_variable_types <- function(subset_data, dep_crwd, indep_crwd) {
 
 #' Generate Appropriate Data Summary Based on Variable Types
 #'
-#' Internal helper function that routes to the appropriate data summarization 
+#' Internal helper function that routes to the appropriate data summarization
 #' function based on the detected variable types (categorical vs continuous).
 #'
 #' @param variable_types List with dep and indep variable type information
@@ -252,7 +252,7 @@ reorder_crowd_array <- function(
 
 #' Initialize Crowd-Based Filtering Data Structures
 #'
-#' Internal helper function that sets up the data structures needed for 
+#' Internal helper function that sets up the data structures needed for
 #' crowd-based filtering and processing of variables and categories.
 #'
 #' @param crowd Character vector of crowd identifiers
@@ -316,7 +316,7 @@ initialize_crowd_filtering <- function(crowd, args) {
 
 #' Process Independent Categories for Global Hiding Logic
 #'
-#' Internal helper function that applies global hiding logic to independent 
+#' Internal helper function that applies global hiding logic to independent
 #' variable categories based on the hide_for_all_crowds_if_hidden_for_crowd setting.
 #'
 #' @param kept_indep_cats_list Named list of kept independent categories for each crowd
@@ -362,12 +362,12 @@ process_global_indep_categories <- function(
 
 #' Validate and Initialize Arguments
 #'
-#' Internal helper function that finalizes the arguments list by adding 
+#' Internal helper function that finalizes the arguments list by adding
 #' resolved variable names and normalizing multi-value arguments.
 #'
 #' @param data Data frame being analyzed
 #' @param dep_pos Named integer vector of dependent variable positions
-#' @param indep_pos Named integer vector of independent variable positions  
+#' @param indep_pos Named integer vector of independent variable positions
 #' @param args List of makeme function arguments
 #'
 #' @return Modified args list with additional elements:
@@ -870,7 +870,7 @@ process_output_results <- function(out, args) {
 #' @param translations Named list of translation mappings for crowd identifiers
 #'
 #' @return Modified out list with crowd names translated:
-#'   - Names changed according to translations["crowd_<crwd>"]
+#'   - Names changed according to translations with crowd prefix pattern
 #'   - Only string translations are applied
 #'   - Untranslated crowds retain original names
 #'

@@ -12,12 +12,16 @@ Kristiania
 Lifecycle
 Likert
 MERCHANTABILITY
+Makeme
+Mesos
 Mockup
+Modularized
 NIFU
 NONINFRINGEMENT
 ORCID
 Pandoc's
 QMD
+Quosure
 RColorBrewer
 RMarkdown
 RStudio
@@ -29,12 +33,14 @@ Silge’s
 SurveyXact
 Tidyselect
 YAML
+args
 barchart
 bugfixes
 callout
 chapter’
 chisq
 chr
+cli
 colour
 colours
 conv
@@ -70,6 +76,7 @@ mesos
 modularized
 pkgdown
 png
+pos
 qmd
 rdocx
 recode
@@ -82,6 +89,7 @@ sigtest
 srvyr
 stackoverflow
 sublicense
+summarization
 templating
 testability
 theming
