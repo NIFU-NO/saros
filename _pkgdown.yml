@@ -25,6 +25,11 @@ reference:
   - make_link.default
   - make_link.list
   - ggsaver
+- title: Read and write tabular data
+  desc: Functions for reading and writing data frames to various file formats
+  contents:
+  - tabular_read
+  - tabular_write
 - title: "Advanced Palette-Retrieving ggiraph::girafe wrapper"
   contents:
   - girafe

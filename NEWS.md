@@ -5,6 +5,7 @@
 -   Feature: Added `data_label_position` argument to `makeme()` allowing data labels to be positioned at "center", "bottom", "top", or "above" bars in categorical plots (addresses issue #365)
 -   Feature: Added `.onUnload()` function to clean up global options when package is unloaded, preventing option pollution in user's R session
 -   Feature: Enhanced `chr_table_html` to support multiple independent variables for displaying background context with open-ended text responses. Now allows researchers to show demographic or other contextual information alongside character survey responses
+-   Refactor: Modularized tabular I/O functionality - renamed `pretty_tabular.R` to `tabular_write.R` and extracted `tabular_read()` function into separate file. 
 -   Major change: `makeme()` returns an empty data.frame instead of `NULL` if not plot or table can be created, simplifying downstream code (e.g. `gt::gt()` fails if served `NULL`).
 -   Major change: Resolved issue #372 - `descend` parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but `descend` can reverse the display order
 -   Refactor: Substantially modularized internal implementation of `makeme()` into focused helper functions (argument setup, crowd processing, output assembly, validation). Improves readability, testability (+ new helper tests), and robustness without changing public API (closes #368)
