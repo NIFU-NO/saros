@@ -56,14 +56,13 @@ make_content.int_plot_html <-
       .variable_name = names(dep_labels),
       .variable_label = unname(dep_labels)
     )
-    if (!is.null(dots$label_separator)) {
-      dep_labels[[".variable_label"]] <-
-        keep_subitem(
-          dep_labels[[".variable_label"]],
-          label_separator = dots$label_separator,
-          ordered = FALSE
-        )
-    }
+    # Always apply keep_subitem to ensure consistency with simple_descriptives()
+    dep_labels[[".variable_label"]] <-
+      keep_subitem(
+        dep_labels[[".variable_label"]],
+        label_separator = dots$label_separator,
+        ordered = FALSE
+      )
 
     x_axis_var <- dep_axis_text_var
     facet_var <- character()
@@ -98,6 +97,24 @@ make_content.int_plot_html <-
     ) |>
       add_label_tooltip()
 
+    # Apply same string wrapping to desc_tbl labels as applied to dep_labels
+    if (length(dots$indep) == 1 && isFALSE(dots$inverse)) {
+      # When faceting by variable labels, apply strip_width wrapping
+      desc_tbl[[".variable_label"]] <-
+        strip_wrap_var(
+          desc_tbl[[".variable_label"]],
+          width = dots$strip_width
+        )
+    }
+    if (length(dots$indep) == 1 && isTRUE(dots$inverse)) {
+      # When variable labels are on x-axis, apply x_axis_label_width wrapping
+      desc_tbl[[".variable_label"]] <-
+        strip_wrap_var(
+          desc_tbl[[".variable_label"]],
+          width = dots$x_axis_label_width
+        )
+    }
+
     p_data <-
       dots$data |>
       tidyr::pivot_longer(
@@ -117,12 +134,14 @@ make_content.int_plot_html <-
         )
       ) +
       ggiraph::geom_violin_interactive(
-        scale = "count"
+        scale = "count",
+        na.rm = TRUE
       ) +
       ggiraph::geom_boxplot_interactive(
         staplewidth = .1,
         width = .1,
-        fill = "white"
+        fill = "white",
+        na.rm = TRUE
       ) +
       ggiraph::geom_label_interactive(
         data = desc_tbl,
@@ -134,7 +153,8 @@ make_content.int_plot_html <-
         ),
         vjust = 1.5,
         fill = "white",
-        inherit.aes = FALSE
+        inherit.aes = FALSE,
+        na.rm = TRUE
       ) +
       ggplot2::guides(fill = "none")
 
