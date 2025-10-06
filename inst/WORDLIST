@@ -56,6 +56,7 @@ flexi
 folderpaths
 fp
 funder
+geoms
 ggiraph
 ggobj
 ggplot
@@ -83,6 +84,7 @@ recode
 reproducibility
 reusability
 rlang
+roxygen
 sav
 showNA
 sigtest
@@ -100,5 +102,6 @@ tidyverse
 tsv
 unicode
 ut
+vdiffr
 xlsx
 yaml

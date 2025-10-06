@@ -1,3 +1,85 @@
+# Common utility functions for string and variable processing ----
+
+#' Apply string wrapping to variables (character or factor)
+#'
+#' A utility function that applies string wrapping to both character and factor
+#' variables, preserving factor structure while wrapping the labels.
+#'
+#' @param x Variable to wrap (character or factor)
+#' @param width Maximum width for wrapping
+#'
+#' @return Modified variable with wrapped text
+#' @keywords internal
+strip_wrap_var <- function(x, width = Inf) {
+  if (is.character(x)) {
+    return(string_wrap(x, width = width))
+  }
+  if (is.factor(x)) {
+    levels(x) <- string_wrap(
+      levels(x),
+      width = width
+    )
+    x
+  }
+}
+
+#' Determine display column for dependent variables in int_plot_html
+#'
+#' Checks if the number of dep variables matches the number of labels to determine
+#' whether to use .variable_label or .variable_name for display.
+#'
+#' @param dep_count Number of dependent variables
+#' @param dep_labels Vector of dependency labels
+#'
+#' @return Character string indicating which column to use
+#' @keywords internal
+get_dep_display_column <- function(dep_count, dep_labels) {
+  if (dep_count == length(dep_labels)) {
+    ".variable_label"
+  } else {
+    ".variable_name"
+  }
+}
+
+#' Determine display column based on data availability
+#'
+#' Checks if .variable_label column exists and has non-NA values to determine
+#' whether to use .variable_label or .variable_name for display.
+#'
+#' @param data Data frame containing variable information
+#'
+#' @return Character string indicating which column to use
+#' @keywords internal
+get_data_display_column <- function(data) {
+  if (
+    ".variable_label" %in%
+      colnames(data) &&
+      all(!is.na(data[[".variable_label"]]))
+  ) {
+    ".variable_label"
+  } else {
+    ".variable_name"
+  }
+}
+
+#' Validate single dependent variable requirement
+#'
+#' Common validation pattern for functions that require exactly one dependent variable.
+#'
+#' @param dep Vector of dependent variables
+#' @param function_name Name of the function requiring validation (for error message)
+#'
+#' @return Nothing if valid, throws error if invalid
+#' @keywords internal
+validate_single_dep_var <- function(dep, function_name) {
+  if (length(dep) > 1) {
+    rlang::abort(paste0(
+      function_name,
+      " requires exactly one dependent variable"
+    ))
+  }
+}
+
 #' Given Ordered Integer Vector, Return Requested Set.
 #'
 #' Useful for identifying which categories are to be collected.

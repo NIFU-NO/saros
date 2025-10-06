@@ -27,11 +27,7 @@ make_content.cat_plot_html <-
       colour_2nd_binary_cat = dots$colour_2nd_binary_cat
     )
 
-    dep_var <- if (all(!is.na(data[[".variable_label"]]))) {
-      ".variable_label"
-    } else {
-      ".variable_name"
-    }
+    dep_var <- get_data_display_column(data)
     stat_col <- stringi::stri_c(
       ".",
       dots$data_label,
@@ -268,14 +264,7 @@ make_content.cat_plot_html <-
     ) {
       if (isFALSE(dots$inverse)) {
         lab <- dep_var
-        if (is.factor(p$data[[lab]])) {
-          levels(p$data[[lab]]) <- string_wrap(
-            levels(p$data[[lab]]),
-            width = dots$strip_width
-          )
-        } else {
-          p$data[[lab]] <- string_wrap(p$data[[lab]], width = dots$strip_width)
-        }
+        p$data[[lab]] <- strip_wrap_var(p$data[[lab]], width = dots$strip_width)
 
         p <- p +
           ggiraph::facet_grid_interactive(
@@ -293,17 +282,10 @@ make_content.cat_plot_html <-
           )
       } else if (isTRUE(dots$inverse)) {
         for (lab in indep_vars) {
-          if (is.factor(p$data[[lab]])) {
-            levels(p$data[[lab]]) <- string_wrap(
-              levels(p$data[[lab]]),
-              width = dots$strip_width
-            )
-          } else {
-            p$data[[lab]] <- string_wrap(
-              p$data[[lab]],
-              width = dots$strip_width
-            )
-          }
+          p$data[[lab]] <- strip_wrap_var(
+            p$data[[lab]],
+            width = dots$strip_width
+          )
         }
 
         p <- p +

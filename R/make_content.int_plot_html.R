@@ -1,15 +1,3 @@
-strip_wrap_var <- function(x, width = Inf) {
-  if (is.character(x)) {
-    return(string_wrap(x, width = width))
-  }
-  if (is.factor(x)) {
-    levels(x) <- string_wrap(
-      levels(x),
-      width = width
-    )
-    x
-  }
-}
 add_label_tooltip <- function(
   desc_tbl,
   digits = 2,
@@ -47,11 +35,7 @@ make_content.int_plot_html <-
     dots <- rlang::list2(...)
 
     dep_labels <- get_raw_labels(dots$data, col_pos = dots$dep)
-    dep_axis_text_var <- if (length(dots$dep) == length(dep_labels)) {
-      ".variable_label"
-    } else {
-      ".variable_name"
-    }
+    dep_axis_text_var <- get_dep_display_column(length(dots$dep), dep_labels)
     dep_labels <- data.frame(
       .variable_name = names(dep_labels),
       .variable_label = unname(dep_labels)
