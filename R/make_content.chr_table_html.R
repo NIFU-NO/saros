@@ -14,9 +14,7 @@ make_content.chr_table_html <-
     }
 
     # Extract the dependent variable (character responses)
-    if (length(dep) != 1) {
-      rlang::abort("chr_table_html requires exactly one dependent variable")
-    }
+    validate_single_dep_var(dep, "chr_table_html")
 
     # Get character responses, filter out NA and empty values
     char_responses <- data[[dep]]

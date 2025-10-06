@@ -109,7 +109,7 @@ validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
   }
 
   # Some types require additional validation checks
-  if (!args$type %in% c("sigtest_table_html", "chr_table_html")) {
+  if (!args$type %in% .saros.env$types_skip_multiple_indep_validation) {
     check_multiple_indep(data, indep = {{ indep }})
     check_category_pairs(data = data, cols_pos = c(dep_pos))
   }
@@ -631,15 +631,7 @@ generate_crowd_output <- function(args, subset_data, dep_crwd, indep_crwd) {
     label_separator = args$label_separator
   )
 
-  if (
-    !args$type %in%
-      c(
-        "sigtest_table_html",
-        "int_table_html",
-        "int_plot_html",
-        "chr_table_html"
-      )
-  ) {
+  if (!args$type %in% .saros.env$types_skip_factor_processing) {
     args$data_summary <- process_indep_factor_levels(
       data = args$data_summary,
       indep = indep_crwd
@@ -774,15 +766,7 @@ process_crowd_data <- function(
   )
 
   # Post-process data summary if needed
-  if (
-    !args$type %in%
-      c(
-        "sigtest_table_html",
-        "int_table_html",
-        "int_plot_html",
-        "chr_table_html"
-      )
-  ) {
+  if (!args$type %in% .saros.env$types_skip_factor_processing) {
     args$data_summary <- process_indep_factor_levels(
       data = args$data_summary,
       indep = indep_crwd

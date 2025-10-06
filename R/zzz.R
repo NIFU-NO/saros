@@ -47,6 +47,35 @@ if (!exists(".saros.env")) {
       "median"
     )
 
+  # Makeme output types that skip factor level processing
+  .saros.env$types_skip_factor_processing <<-
+    c(
+      "sigtest_table_html",
+      "int_table_html",
+      "int_plot_html",
+      "chr_table_html"
+    )
+
+  # Makeme output types that skip multiple indep validation
+  .saros.env$types_skip_multiple_indep_validation <<-
+    c(
+      "sigtest_table_html",
+      "chr_table_html"
+    )
+
+  # Common column names used throughout the package
+  .saros.env$col_names <<-
+    list(
+      variable_name = ".variable_name",
+      variable_label = ".variable_label",
+      variable_label_prefix = ".variable_label_prefix",
+      variable_label_suffix = ".variable_label_suffix",
+      category = ".category",
+      count = ".count",
+      proportion = ".proportion",
+      percentage = ".percentage"
+    )
+
   .saros.env$ignore_args <<- c(
     "data",
     "dep",
