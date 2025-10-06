@@ -27,7 +27,9 @@
 <url><loc>https://nifu-no.github.io/saros/reference/generate_data_summary.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_colour_palette.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_colour_set.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/get_data_display_column.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_data_label_opts.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/get_dep_display_column.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_indep_labels.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_makeme_types.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_raw_labels.html</loc></url>
@@ -73,11 +75,13 @@
 <url><loc>https://nifu-no.github.io/saros/reference/saros-package.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/setup_and_validate_makeme_args.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/setup_table_data.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/strip_wrap_var.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/subset_vector.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/summarize_cat_cat_data.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/summarize_data_by_type.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/tabular_read.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/tabular_write.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_single_dep_var.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_type_specific_constraints.html</loc></url>
 </urlset>
 
