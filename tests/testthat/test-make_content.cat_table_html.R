@@ -9,7 +9,7 @@ testthat::test_that("make_content.cat_table_html works", {
     )
   testthat::expect_equal(
     as.character(result$.variable_label[[4]]),
-    "Blue Party (N = 266)"
+    "Red Party (N = 266)"
   )
 })
 

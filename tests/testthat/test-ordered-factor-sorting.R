@@ -34,7 +34,7 @@ testthat::test_that("ordered dependent variables ignore sort_by and descend", {
     data = test_data,
     dep = c("var_first", "var_second", "var_third"),
     indep = "indep",
-    sort_by = ".variable_position",
+    sort_dep_by = ".variable_position",
     descend = FALSE
   )
 
@@ -43,7 +43,7 @@ testthat::test_that("ordered dependent variables ignore sort_by and descend", {
     data = test_data,
     dep = c("var_first", "var_second", "var_third"),
     indep = "indep",
-    sort_by = ".variable_position",
+    sort_dep_by = ".variable_position",
     descend = TRUE
   )
 
@@ -52,7 +52,7 @@ testthat::test_that("ordered dependent variables ignore sort_by and descend", {
     data = test_data,
     dep = c("var_first", "var_second", "var_third"),
     indep = "indep",
-    sort_by = ".top",
+    sort_dep_by = ".top",
     descend = FALSE
   )
 
@@ -61,7 +61,7 @@ testthat::test_that("ordered dependent variables ignore sort_by and descend", {
     data = test_data,
     dep = c("var_first", "var_second", "var_third"),
     indep = "indep",
-    sort_by = ".top",
+    sort_dep_by = ".top",
     descend = TRUE
   )
 
@@ -92,7 +92,7 @@ testthat::test_that("unordered dependent variables respect sort_by and descend",
     data = test_data,
     dep = c("var_first", "var_second", "var_third"),
     indep = "indep",
-    sort_by = ".variable_position",
+    sort_dep_by = ".variable_position",
     descend = FALSE
   )
 
@@ -100,7 +100,7 @@ testthat::test_that("unordered dependent variables respect sort_by and descend",
     data = test_data,
     dep = c("var_first", "var_second", "var_third"),
     indep = "indep",
-    sort_by = ".variable_position",
+    sort_dep_by = ".variable_position",
     descend = TRUE
   )
 
@@ -133,7 +133,7 @@ testthat::test_that("mixed ordered and unordered dependent variables behavior", 
     data = test_data,
     dep = c("var_ordered", "var_unordered"),
     indep = "indep",
-    sort_by = ".variable_position",
+    sort_dep_by = ".variable_position",
     descend = FALSE
   )
 
@@ -141,7 +141,7 @@ testthat::test_that("mixed ordered and unordered dependent variables behavior", 
     data = test_data,
     dep = c("var_ordered", "var_unordered"),
     indep = "indep",
-    sort_by = ".variable_position",
+    sort_dep_by = ".variable_position",
     descend = TRUE
   )
 
@@ -184,7 +184,7 @@ testthat::test_that("data processing layer preserves ordered factor behavior", {
     data = test_data,
     dep = c("var1", "var2"),
     indep = "indep",
-    sort_by = ".variable_position",
+    sort_dep_by = ".variable_position",
     descend = FALSE
   )
 
@@ -192,7 +192,7 @@ testthat::test_that("data processing layer preserves ordered factor behavior", {
     data = test_data,
     dep = c("var1", "var2"),
     indep = "indep",
-    sort_by = ".variable_position",
+    sort_dep_by = ".variable_position",
     descend = TRUE
   )
 
@@ -206,7 +206,7 @@ testthat::test_that("data processing layer preserves ordered factor behavior", {
     data = test_data,
     dep = c("var1", "var2"),
     indep = "indep",
-    sort_by = ".top",
+    sort_dep_by = ".top",
     descend = FALSE
   )
 
@@ -229,7 +229,7 @@ testthat::test_that("regression test: sort_by NULL with ordered factors", {
     data = test_data,
     dep = c("var1", "var2"),
     indep = "indep",
-    sort_by = NULL, # Test NULL case
+    sort_dep_by = NULL, # Test NULL case
     descend = FALSE
   )
 

@@ -344,6 +344,40 @@ sort_data <- function(
 
     # For the NULL sort_by case with unordered factors, continue with level setting
     uniques <- as.character(unique(data_summary$.variable_label))
+  } else if (length(sort_by) == 1 && sort_by == ".variable_position") {
+    # Sort by variable position (original data order)
+    if (".variable_position" %in% names(data_summary)) {
+      if (descend) {
+        data_summary <- dplyr::arrange(
+          data_summary,
+          dplyr::desc(.data$.variable_position),
+          as.integer(.data$.category)
+        )
+      } else {
+        data_summary <- dplyr::arrange(
+          data_summary,
+          .data$.variable_position,
+          as.integer(.data$.category)
+        )
+      }
+    } else {
+      # Fallback: arrange by variable label and category
+      if (descend) {
+        data_summary <- dplyr::arrange(
+          data_summary,
+          dplyr::desc(as.integer(.data$.variable_label)),
+          as.integer(.data$.category)
+        )
+      } else {
+        data_summary <- dplyr::arrange(
+          data_summary,
+          as.integer(.data$.variable_label),
+          as.integer(.data$.category)
+        )
+      }
+    }
+    # Set factor levels to preserve the variable position order (potentially reversed)
+    uniques <- as.character(unique(data_summary$.variable_label))
   } else {
     # Apply sorting for unordered factors
     if (all(sort_by %in% names(data_summary))) {
@@ -473,6 +507,8 @@ summarize_cat_cat_data <-
     showNA = c("ifany", "always", "never"),
     totals = FALSE,
     sort_by = ".upper",
+    sort_dep_by = NULL,
+    sort_indep_by = NULL,
     data_label = c(
       "percentage_bare",
       "percentage",
@@ -498,6 +534,23 @@ summarize_cat_cat_data <-
   ) {
     showNA <- rlang::arg_match(showNA)
     data_label <- rlang::arg_match(data_label)
+
+    # Handle backward compatibility with sort_by parameter
+    # If new parameters are not specified but sort_by is, use sort_by for both
+    if (
+      is.null(sort_dep_by) &&
+        is.null(sort_indep_by) &&
+        !identical(sort_by, ".upper")
+    ) {
+      sort_dep_by <- sort_by
+      sort_indep_by <- sort_by
+    } else {
+      # Use new parameters or defaults
+      if (is.null(sort_dep_by)) {
+        sort_dep_by <- sort_by
+      }
+      if (is.null(sort_indep_by)) sort_indep_by <- NULL
+    }
 
     if (
       !(inherits(data, what = "data.frame") || !inherits(data, what = "survey"))
@@ -540,7 +593,7 @@ summarize_cat_cat_data <-
         translations = translations
       )
 
-    check_sort_by(x = cross_table_output$.category, sort_by = sort_by)
+    check_sort_by(x = cross_table_output$.category, sort_by = sort_dep_by)
 
     fct_unions <- levels(cross_table_output[[".category"]])
 
@@ -553,7 +606,7 @@ summarize_cat_cat_data <-
       ) |>
       category_var_as_fct(fct_unions = fct_unions) |>
       add_collapsed_categories(
-        sort_by = sort_by,
+        sort_by = sort_indep_by,
         categories_treated_as_na = categories_treated_as_na,
         data_label = data_label
       ) |>
@@ -587,11 +640,11 @@ summarize_cat_cat_data <-
       ) |>
       flip_exception_categories(
         categories_treated_as_na = categories_treated_as_na,
-        sort_by = sort_by
+        sort_by = sort_indep_by
       ) |>
       sort_data(
         indep_names = indep,
-        sort_by = sort_by,
+        sort_by = sort_dep_by,
         descend = descend,
         dep_vars_ordered = dep_vars_ordered,
         dep_variable_order = dep_variable_order,

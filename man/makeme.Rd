@@ -44,7 +44,9 @@ makeme(
   data_label_decimal_symbol = ".",
   x_axis_label_width = 25,
   strip_width = 25,
-  sort_by = ".upper",
+  sort_dep_by = ".variable_position",
+  sort_indep_by = NULL,
+  sort_by = NULL,
   descend = TRUE,
   labels_always_at_top = NULL,
   labels_always_at_bottom = NULL,
@@ -308,18 +310,55 @@ Decimal marker, some might prefer a comma ',' or something else entirely.}
 
 Width of the labels used for the categorical column names in x-axis texts and strip texts.}
 
-\item{sort_by}{\emph{What to sort output by}
+\item{sort_dep_by}{\emph{What to sort dependent variables by}
+
+\verb{vector<character>} // \emph{default:} \code{".variable_position"} (\code{optional})
+
+Sort dependent variables in output. When using \code{indep}-argument,
+sorting differs between ordered factors and unordered factors: Ordering
+of ordered factors is always respected in output (their levels define
+the base order). Unordered factors will be reordered by \code{sort_dep_by}.
+
+\describe{
+\item{NULL or ".variable_position"}{Sort by variable position in the supplied data frame (default).}
+\item{".variable_label"}{Sort by the variable labels.}
+\item{".variable_name"}{Sort by the variable names.}
+\item{".top"}{The proportion for the highest category available in the variable.}
+\item{".upper"}{The sum of the proportions for the categories above the middle category.}
+\item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
+\item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
+\item{".lower"}{The sum of the proportions for the categories below the middle category.}
+\item{".bottom"}{The proportions for the lowest category available in the variable.}
+}}
+
+\item{sort_indep_by}{\emph{What to sort independent variable categories by}
 
 \verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
 
-Sort output (and collapse if requested). When using \code{indep}-argument,
-sorting differs between ordered factors and unordered factors: Ordering
-of ordered factors is always respected in output (their levels define
-the base order). Unordered factors will be reordered by \code{sort_by}.
-Currently, this works best for a single \code{dep}.
+Sort independent variable categories in output. When \code{NULL}, preserves the
+original factor level order for the independent variable.
 
 \describe{
-\item{NULL}{No sorting.}
+\item{NULL}{No sorting - preserves original factor level order (default).}
+\item{".top"}{The proportion for the highest category available.}
+\item{".upper"}{The sum of the proportions for the categories above the middle category.}
+\item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
+\item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
+\item{".lower"}{The sum of the proportions for the categories below the middle category.}
+\item{".bottom"}{The proportions for the lowest category available.}
+\item{character()}{Character vector of category labels to sum together.}
+}}
+
+\item{sort_by}{\emph{What to sort output by (legacy)}
+
+\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+
+\strong{DEPRECATED:} Use \code{sort_dep_by} and \code{sort_indep_by} instead for clearer control.
+When specified, this parameter will be used for both dependent and independent sorting.
+If \code{NULL} (default), dependent variables will be sorted by \code{.variable_position}.
+
+\describe{
+\item{NULL}{Uses \code{.variable_position} for dependent variables, no sorting for independent.}
 \item{".top"}{The proportion for the highest category available in the variable.}
 \item{".upper"}{The sum of the proportions for the categories above the middle category.}
 \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
