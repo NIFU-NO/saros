@@ -4,14 +4,38 @@
 		{
 			"label": "Install package",
 			"type": "shell",
-			"command": "C:/Program Files/R/R-4.5.1/bin/x64/R.exe",
+			"command": "R.exe",
 			"args": [
 				"--no-echo",
 				"--no-restore",
 				"-e",
-				"devtools::install()"
+				"'devtools::install()'"
 			],
 			"group": "build"
+		},
+		{
+			"label": "Check package",
+			"type": "shell",
+			"command": "R.exe",
+			"args": [
+				"--no-echo",
+				"--no-restore",
+				"-e",
+				"'devtools::check()'"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Test package",
+			"type": "shell",
+			"command": "R.exe",
+			"args": [
+				"--no-echo",
+				"--no-restore",
+				"-e",
+				"'devtools::test()'"
+			],
+			"group": "test"
 		}
 	]
 }

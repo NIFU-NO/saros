@@ -35,7 +35,11 @@ if (!exists(".saros.env")) {
       ".id",
       ".tooltip",
       ".onclick",
-      ".percentage"
+      ".percentage",
+      # Order columns from centralized sorting system
+      ".dep_order",
+      ".indep_order",
+      ".category_order"
     )
   .saros.env$data_label_opts <<-
     c(

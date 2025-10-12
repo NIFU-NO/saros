@@ -2,7 +2,7 @@
 % Please edit documentation in R/table_utils.R
 \name{arrange_table_data}
 \alias{arrange_table_data}
-\title{Arrange table data}
+\title{Arrange output data by prespecified orders}
 \usage{
 arrange_table_data(data, col_basis, indep_vars = NULL)
 }

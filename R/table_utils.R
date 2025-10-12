@@ -244,7 +244,7 @@ round_numeric_stats <- function(data, digits) {
   data
 }
 
-#' Arrange table data
+#' Arrange output data by prespecified orders
 #'
 #' Standard data arrangement for table functions
 #'
@@ -254,11 +254,35 @@ round_numeric_stats <- function(data, digits) {
 #' @return Arranged data frame
 #' @keywords internal
 arrange_table_data <- function(data, col_basis, indep_vars = NULL) {
-  data |>
-    dplyr::arrange(
-      .data[[col_basis]],
-      if (length(indep_vars) > 0) .data[[indep_vars[1]]]
-    )
+  # Use explicit order columns if available (new centralized sorting)
+  if (".dep_order" %in% names(data)) {
+    # Primary sort by dependent variable order, then category order
+    # Include independent variable order if available
+    data |>
+      dplyr::arrange(
+        .data$.dep_order,
+        if (!is.null(data$.indep_order)) .data$.indep_order,
+        if (!is.null(data$.category_order)) .data$.category_order
+      )
+  } else {
+    # Fallback to original logic for backward compatibility
+    # Preserve factor level order for the primary sort column
+    if (is.factor(data[[col_basis]])) {
+      # For factors, arrange by factor levels (preserves the order set by sorting functions)
+      data |>
+        dplyr::arrange(
+          as.integer(.data[[col_basis]]),
+          if (length(indep_vars) > 0) .data[[indep_vars[1]]]
+        )
+    } else {
+      # For non-factors, use standard sorting
+      data |>
+        dplyr::arrange(
+          .data[[col_basis]],
+          if (length(indep_vars) > 0) .data[[indep_vars[1]]]
+        )
+    }
+  }
 }
 
 #' Process data with standard table operations

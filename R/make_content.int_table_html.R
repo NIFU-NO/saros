@@ -28,7 +28,10 @@ make_content.int_table_html <-
 
     # Process main data
     data_out <- out |>
-      arrange_table_data(col_as_basis, dots$indep) |>
+      arrange_table_data(
+        col_basis = col_as_basis,
+        indep_vars = dots$indep
+      ) |>
       process_table_data(
         col_basis = col_as_basis,
         indep_vars = dots$indep,

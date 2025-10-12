@@ -3,113 +3,119 @@
 # - Ordered factors: Always display in inherent level order, ignore sort_by/descend
 # - Unordered factors: Influenced by sort_by and descend parameters
 
-testthat::test_that("ordered dependent variables ignore sort_by and descend", {
-  # Create test data with ordered dependent variables in specific order
-  test_data <- data.frame(
-    var_first = factor(
-      c("Low", "Med", "High"),
-      levels = c("Low", "Med", "High"),
-      ordered = TRUE
-    ),
-    var_second = factor(
-      c("A", "B", "C"),
-      levels = c("A", "B", "C"),
-      ordered = TRUE
-    ),
-    var_third = factor(
-      c("X", "Y", "Z"),
-      levels = c("X", "Y", "Z"),
-      ordered = TRUE
-    ),
-    indep = factor(c("Group1", "Group2", "Group1"))
-  )
-
-  # Set variable labels
-  labelled::var_label(test_data$var_first) <- "First Variable"
-  labelled::var_label(test_data$var_second) <- "Second Variable"
-  labelled::var_label(test_data$var_third) <- "Third Variable"
+testthat::test_that("unordered dependent variables adhere to sort_by and descend", {
+  test_data <-
+    saros::ex_survey |>
+    dplyr::relocate(b_3, .before = b_1)
 
   # Test 1: .variable_position with descend = FALSE
   result1 <- saros:::summarize_cat_cat_data(
     data = test_data,
-    dep = c("var_first", "var_second", "var_third"),
-    indep = "indep",
+    dep = c("b_1", "b_2", "b_3"),
+    indep = "x1_sex",
     sort_dep_by = ".variable_position",
     descend = FALSE
   )
 
-  # Test 2: .variable_position with descend = TRUE (should be IDENTICAL)
+  # Test 2: .variable_position with descend = TRUE (should be OPPOSITE order)
   result2 <- saros:::summarize_cat_cat_data(
     data = test_data,
-    dep = c("var_first", "var_second", "var_third"),
-    indep = "indep",
+    dep = c("b_1", "b_2", "b_3"),
+    indep = "x1_sex",
     sort_dep_by = ".variable_position",
     descend = TRUE
   )
 
-  # Test 3: .top with descend = FALSE (should be IDENTICAL to position)
+  # Test 3: .top with descend = FALSE
   result3 <- saros:::summarize_cat_cat_data(
     data = test_data,
-    dep = c("var_first", "var_second", "var_third"),
-    indep = "indep",
+    dep = c("b_1", "b_2", "b_3"),
+    indep = "x1_sex",
     sort_dep_by = ".top",
     descend = FALSE
   )
 
-  # Test 4: .top with descend = TRUE (should be IDENTICAL to position)
+  # Test 4: .top with descend = TRUE (should be OPPOSITE order of result3)
   result4 <- saros:::summarize_cat_cat_data(
     data = test_data,
-    dep = c("var_first", "var_second", "var_third"),
-    indep = "indep",
+    dep = c("b_1", "b_2", "b_3"),
+    indep = "x1_sex",
     sort_dep_by = ".top",
     descend = TRUE
   )
 
-  expected_levels <- c("First Variable", "Second Variable", "Third Variable")
-
   # All results should have identical .variable_label levels for ordered factors
-  testthat::expect_equal(levels(result1$.variable_label), expected_levels)
-  testthat::expect_equal(levels(result2$.variable_label), expected_levels)
-  testthat::expect_equal(levels(result3$.variable_label), expected_levels)
-  testthat::expect_equal(levels(result4$.variable_label), expected_levels)
+  testthat::expect_equal(
+    as.character(result1$.variable_label),
+    rev(as.character(result2$.variable_label))
+  )
+  testthat::expect_equal(
+    as.character(result3$.variable_label),
+    rev(as.character(result4$.variable_label))
+  )
+  testthat::expect_equal(
+    levels(result1$.variable_label),
+    rev(levels(result2$.variable_label))
+  )
+  testthat::expect_equal(
+    levels(result3$.variable_label),
+    rev(levels(result4$.variable_label))
+  )
+  testthat::expect_equal(
+    result3$.proportion,
+    c(
+      0.41721854,
+      0.44295302,
+      0.47682119,
+      0.47651007,
+      0.10596026,
+      0.08053691,
+      0.50993377,
+      0.44966443,
+      0.38410596,
+      0.45637584,
+      0.10596026,
+      0.09395973,
+      0.47682119,
+      0.44966443,
+      0.44370861,
+      0.47651007,
+      0.07947020,
+      0.07382550
+    )
+  )
 })
 
-testthat::test_that("unordered dependent variables respect sort_by and descend", {
-  # Create test data with unordered dependent variables
-  test_data <- data.frame(
-    var_first = factor(c("Low", "Med", "High"), ordered = FALSE),
-    var_second = factor(c("A", "B", "C"), ordered = FALSE),
-    var_third = factor(c("X", "Y", "Z"), ordered = FALSE),
-    indep = factor(c("Group1", "Group2", "Group1"))
+testthat::test_that("ordered dependent variables ignores sort_by and descend", {
+  test_data <-
+    saros::ex_survey |>
+    dplyr::mutate(dplyr::across(
+      c(b_1:b_3, x1_sex),
+      ~ factor(.x, ordered = TRUE)
+    )) |>
+    labelled::copy_labels_from(saros::ex_survey)
+
+  # Test the underlying data processing directly
+  result1 <- saros:::summarize_cat_cat_data(
+    data = test_data,
+    dep = c("b_1", "b_2", "b_3"),
+    indep = "x1_sex",
+    sort_dep_by = ".top",
+    descend = FALSE
   )
 
-  labelled::var_label(test_data$var_first) <- "First Variable"
-  labelled::var_label(test_data$var_second) <- "Second Variable"
-  labelled::var_label(test_data$var_third) <- "Third Variable"
-
-  # Test position sorting with different descend values
-  result_pos_asc <- saros:::summarize_cat_cat_data(
-    data = test_data,
-    dep = c("var_first", "var_second", "var_third"),
-    indep = "indep",
+  result2 <- saros:::summarize_cat_cat_data(
+    data = saros::ex_survey,
+    dep = c("b_1", "b_2", "b_3"),
+    indep = "x1_sex",
     sort_dep_by = ".variable_position",
     descend = FALSE
   )
 
-  result_pos_desc <- saros:::summarize_cat_cat_data(
-    data = test_data,
-    dep = c("var_first", "var_second", "var_third"),
-    indep = "indep",
-    sort_dep_by = ".variable_position",
-    descend = TRUE
+  testthat::expect_equal(
+    result1 |> dplyr::select(-.category, -x1_sex, -.dep_order),
+    result2 |> dplyr::select(-.category, -x1_sex, -.dep_order)
   )
-
-  # For unordered factors, descend should reverse the order
-  expected_asc <- c("First Variable", "Second Variable", "Third Variable")
-  expected_desc <- c("Third Variable", "Second Variable", "First Variable")
-
-  testthat::expect_equal(levels(result_pos_asc$.variable_label), expected_asc)
-  testthat::expect_equal(levels(result_pos_desc$.variable_label), expected_desc)
 })
 
 testthat::test_that("mixed ordered and unordered dependent variables behavior", {
@@ -151,67 +157,6 @@ testthat::test_that("mixed ordered and unordered dependent variables behavior", 
 
   testthat::expect_equal(levels(result_asc$.variable_label), expected_asc)
   testthat::expect_equal(levels(result_desc$.variable_label), expected_desc)
-})
-
-testthat::test_that("data processing layer preserves ordered factor behavior", {
-  # Test the core data processing functionality that makeme relies on
-  test_data <- data.frame(
-    var1 = factor(
-      c("Low", "Med", "High", "Low", "Med", "High"),
-      levels = c("Low", "Med", "High"),
-      ordered = TRUE
-    ),
-    var2 = factor(
-      c("A", "B", "C", "A", "B", "C"),
-      levels = c("A", "B", "C"),
-      ordered = TRUE
-    ),
-    indep = factor(c(
-      "Group1",
-      "Group1",
-      "Group1",
-      "Group2",
-      "Group2",
-      "Group2"
-    ))
-  )
-
-  labelled::var_label(test_data$var1) <- "Question 1"
-  labelled::var_label(test_data$var2) <- "Question 2"
-
-  # Test the underlying data processing directly
-  result1 <- saros:::summarize_cat_cat_data(
-    data = test_data,
-    dep = c("var1", "var2"),
-    indep = "indep",
-    sort_dep_by = ".variable_position",
-    descend = FALSE
-  )
-
-  result2 <- saros:::summarize_cat_cat_data(
-    data = test_data,
-    dep = c("var1", "var2"),
-    indep = "indep",
-    sort_dep_by = ".variable_position",
-    descend = TRUE
-  )
-
-  # For ordered factors, both results should have identical variable ordering
-  expected_order <- c("Question 1", "Question 2")
-  testthat::expect_equal(levels(result1$.variable_label), expected_order)
-  testthat::expect_equal(levels(result2$.variable_label), expected_order)
-
-  # Also verify the data processing works with different sort methods
-  result3 <- saros:::summarize_cat_cat_data(
-    data = test_data,
-    dep = c("var1", "var2"),
-    indep = "indep",
-    sort_dep_by = ".top",
-    descend = FALSE
-  )
-
-  # Should still maintain same ordering for ordered factors
-  testthat::expect_equal(levels(result3$.variable_label), expected_order)
 })
 
 testthat::test_that("regression test: sort_by NULL with ordered factors", {

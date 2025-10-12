@@ -304,6 +304,9 @@ sort_data <- function(
   dep_variable_order = NULL, # Original variable order for ordered factors
   call = rlang::caller_env()
 ) {
+  # DEPRECATED: This function is kept for backward compatibility
+  # New code should use add_sorting_order_vars() instead
+
   # If dependent variables are ordered factors, ignore sort_by and descend
   if (is.null(sort_by) || dep_vars_ordered) {
     # Just arrange by variable position and category position
@@ -347,7 +350,7 @@ sort_data <- function(
   } else if (length(sort_by) == 1 && sort_by == ".variable_position") {
     # Sort by variable position (original data order)
     if (".variable_position" %in% names(data_summary)) {
-      if (descend) {
+      if (isTRUE(descend)) {
         data_summary <- dplyr::arrange(
           data_summary,
           dplyr::desc(.data$.variable_position),
@@ -362,7 +365,7 @@ sort_data <- function(
       }
     } else {
       # Fallback: arrange by variable label and category
-      if (descend) {
+      if (isTRUE(descend)) {
         data_summary <- dplyr::arrange(
           data_summary,
           dplyr::desc(as.integer(.data$.variable_label)),
@@ -483,6 +486,85 @@ sort_data <- function(
   data_summary
 }
 
+
+#' Shift labels_always_at
+#'
+#' @param data Dataset
+#' @param labels_always_at Labels to move to bottom or top
+#' @param after Position to move labels to (0 = top, Inf = bottom)
+#' @return Dataset with data$.variable_label adjusted
+#'
+#' @keywords internal
+shift_labels_always_at <- function(
+  data,
+  labels_always_at = NULL,
+  after = Inf
+) {
+  labels_always_at <- labels_always_at[
+    labels_always_at %in% levels(data$.variable_label)
+  ]
+  if (length(labels_always_at) > 0) {
+    data$.variable_label <- forcats::fct_relevel(
+      data$.variable_label,
+      labels_always_at,
+      after = after
+    )
+  }
+  data
+}
+
+#' Apply legacy sorting adjustments for special cases
+#'
+#' @param data Dataset
+#' @param indep_names Independent variable names
+#' @param translations Translation strings
+#' @return Dataset with legacy adjustments applied
+#'
+#' @keywords internal
+apply_legacy_sorting_adjustments <- function(
+  data,
+  indep_names = character(0),
+  translations = list()
+) {
+  # Handle independent variable adjustments
+  if (length(indep_names) == 0) {
+    return(data)
+  }
+  if (!all(indep_names %in% names(data))) {
+    cli::cli_abort(
+      "{.arg indep} contains variables not present in {.arg data}: {setdiff(indep_names, names(data))}."
+    )
+  }
+
+  for (indep_name in indep_names) {
+    # Only if unordered factor, reverse levels
+    # if (is.factor(data[[indep_name]]) && !is.ordered(data[[indep_name]])) {
+    #   # For unordered factors, reverse levels (original behavior)
+    #   current_levels <- levels(data[[indep_name]])
+    #   data[[indep_name]] <- forcats::fct_relevel(
+    #     data[[indep_name]],
+    #     rev(current_levels)
+    #   )
+    # }
+
+    # Handle crowd_others translation
+    if (
+      is.factor(data[[indep_name]]) &&
+        !is.null(translations$crowd_others) &&
+        any(levels(data[[indep_name]]) %in% translations$crowd_others)
+    ) {
+      current_levels <- levels(data[[indep_name]])
+      data[[indep_name]] <- forcats::fct_relevel(
+        data[[indep_name]],
+        translations$crowd_others,
+        after = length(current_levels)
+      )
+    }
+  }
+
+  data
+}
+
 #' Summarize a survey dataset for use in tables and graphs
 #'
 #' @inheritParams makeme
@@ -566,22 +648,19 @@ summarize_cat_cat_data <-
 
     # Check if all dependent variables are ordered factors
     # This determines whether sort_by and descend should be ignored
-    dep_vars_ordered <- FALSE
-    dep_variable_order <- NULL # Store original order for ordered factors
-    if (length(dep) > 0 && inherits(data, "data.frame")) {
-      dep_vars_ordered <- all(sapply(dep, function(var_name) {
-        if (var_name %in% colnames(data)) {
-          is.factor(data[[var_name]]) && is.ordered(data[[var_name]])
-        } else {
-          FALSE
-        }
-      }))
-
-      # If all deps are ordered, store the original variable order
-      if (dep_vars_ordered) {
-        dep_variable_order <- dep
+    # dep_variable_order <- NULL # Store original order for ordered factors
+    dep_vars_ordered <- all(sapply(dep, function(var_name) {
+      if (var_name %in% colnames(data)) {
+        is.factor(data[[var_name]]) && is.ordered(data[[var_name]])
+      } else {
+        FALSE
       }
-    }
+    }))
+
+    # If all deps are ordered, store the original variable order
+    # if (dep_vars_ordered) {
+    #   dep_variable_order <- dep
+    # }
 
     cross_table_output <-
       crosstable(
@@ -642,14 +721,26 @@ summarize_cat_cat_data <-
         categories_treated_as_na = categories_treated_as_na,
         sort_by = sort_indep_by
       ) |>
-      sort_data(
+      # NEW: Apply centralized sorting system
+      add_sorting_order_vars(
+        sort_dep_by = sort_dep_by,
+        sort_indep_by = sort_indep_by,
+        sort_category_by = NULL,
+        descend = descend
+      ) |>
+      # Set factor levels for backward compatibility
+      set_factor_levels_from_order() |>
+      # Respect labels_always_at_bottom and labels_always_at_top
+      shift_labels_always_at(
+        labels_always_at = labels_always_at_bottom,
+        after = Inf
+      ) |>
+      shift_labels_always_at(
+        labels_always_at = labels_always_at_top,
+        after = 0
+      ) |>
+      apply_legacy_sorting_adjustments(
         indep_names = indep,
-        sort_by = sort_dep_by,
-        descend = descend,
-        dep_vars_ordered = dep_vars_ordered,
-        dep_variable_order = dep_variable_order,
-        labels_always_at_bottom = labels_always_at_bottom,
-        labels_always_at_top = labels_always_at_top,
         translations = translations
       )
   }
