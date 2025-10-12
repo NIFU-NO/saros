@@ -9,7 +9,8 @@ add_sorting_order_vars(
   sort_dep_by = ".variable_position",
   sort_indep_by = NULL,
   sort_category_by = NULL,
-  descend = FALSE
+  descend = FALSE,
+  descend_indep = FALSE
 )
 }
 \arguments{

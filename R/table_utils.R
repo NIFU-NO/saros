@@ -261,8 +261,8 @@ arrange_table_data <- function(data, col_basis, indep_vars = NULL) {
     data |>
       dplyr::arrange(
         .data$.dep_order,
-        if (!is.null(data$.indep_order)) .data$.indep_order,
-        if (!is.null(data$.category_order)) .data$.category_order
+        .data$.indep_order,
+        .data$.category_order
       )
   } else {
     # Fallback to original logic for backward compatibility

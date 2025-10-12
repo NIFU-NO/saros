@@ -609,6 +609,7 @@ summarize_cat_cat_data <-
     categories_treated_as_na = NULL,
     label_separator = NULL,
     descend = FALSE,
+    descend_indep = FALSE,
     labels_always_at_bottom = NULL,
     labels_always_at_top = NULL,
     translations = list(),
@@ -726,7 +727,8 @@ summarize_cat_cat_data <-
         sort_dep_by = if (dep_vars_ordered) NULL else sort_dep_by, # Ignore sort_dep_by for ordered factors
         sort_indep_by = sort_indep_by,
         sort_category_by = if (dep_vars_ordered) NULL else sort_dep_by, # Ignore category sorting for ordered factors
-        descend = descend
+        descend = descend,
+        descend_indep = descend_indep
       ) |>
       # Set factor levels for backward compatibility
       set_factor_levels_from_order() |>

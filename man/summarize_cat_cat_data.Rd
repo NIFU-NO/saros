@@ -26,6 +26,7 @@ summarize_cat_cat_data(
   categories_treated_as_na = NULL,
   label_separator = NULL,
   descend = FALSE,
+  descend_indep = FALSE,
   labels_always_at_bottom = NULL,
   labels_always_at_top = NULL,
   translations = list(),
@@ -199,6 +200,15 @@ Separator for main question from sub-question.}
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
 Reverse sorting of \code{sort_by} in figures and tables. Works with both
+ordered and unordered factors - for ordered factors, it reverses the
+display order while preserving the inherent level ordering.
+See \code{arrange_section_by} for sorting of report sections.}
+
+\item{descend_indep}{\emph{Sorting order for independent variables}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Reverse sorting of \code{sort_indep_by} in figures and tables. Works with both
 ordered and unordered factors - for ordered factors, it reverses the
 display order while preserving the inherent level ordering.
 See \code{arrange_section_by} for sorting of report sections.}

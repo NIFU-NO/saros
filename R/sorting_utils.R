@@ -19,11 +19,12 @@ add_sorting_order_vars <- function(
   sort_dep_by = ".variable_position",
   sort_indep_by = NULL,
   sort_category_by = NULL,
-  descend = FALSE
+  descend = FALSE,
+  descend_indep = FALSE
 ) {
   data |>
     add_dep_order(sort_dep_by, descend) |>
-    add_indep_order(sort_indep_by) |>
+    add_indep_order(sort_indep_by, descend_indep) |>
     add_category_order(sort_category_by) |>
     apply_final_arrangement()
 }
@@ -131,29 +132,89 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
 #' @keywords internal
 add_indep_order <- function(
   data,
-  indep_cols = NULL,
   sort_by = NULL,
   descend = FALSE
 ) {
-  # Get independent variable column names (excluding standard columns)
-  indep_cols <- names(data)[!names(data) %in% .saros.env$summary_data_sort2]
-
-  if (is.null(sort_by) || length(indep_cols) == 0) {
-    # No sorting - preserve original order
+  if (is.null(sort_by)) {
+    # Return data with default ordering if no independent sorting requested
     data$.indep_order <- 1
     return(data)
   }
 
-  # For now, implement basic indep ordering
-  # This can be expanded later for specific sorting methods
-  data$.indep_order <- 1
+  # Get the independent variable column
+  indep_col <- get_indep_col_name(data)
+  if (is.null(indep_col)) {
+    # No independent variable column found, return with default ordering
+    data$.indep_order <- 1
+    return(data)
+  }
 
-  data$.indep_order <- descend_if_descending(
-    data$.indep_order,
-    descend = descend
-  )
+  # Apply ascending order column sorting if it's not ".variable_label" (which should remain in existing order)
+  data$.indep_order <- if (
+    length(sort_by) == 1 && sort_by == ".variable_label"
+  ) {
+    # Alphabetical sorting by variable labels
+    indep_labels <- data[[indep_col]]
+    if (descend) {
+      order(-rank(indep_labels)) # Descending alphabetical
+    } else {
+      rank(indep_labels) # Ascending alphabetical
+    }
+  } else if (length(sort_by) == 1 && startsWith(sort_by, ".")) {
+    # Handle special sorting methods (.top, .bottom, .upper, .lower, .count, etc.)
+    if (
+      sort_by %in%
+        c(".top", ".bottom", ".upper", ".lower", ".mid_upper", ".mid_lower")
+    ) {
+      # Proportion-based sorting
+      calculate_indep_proportion_order(data, sort_by, indep_col, descend)
+    } else if (startsWith(sort_by, ".count")) {
+      # Count-based sorting
+      if (sort_by == ".count_per_indep_group") {
+        column_name <- ".count_total_indep"
+      } else {
+        column_name <- ".count"
+      }
+      calculate_indep_column_order(data, column_name, indep_col, descend)
+    } else if (sort_by %in% c(".mean", ".median", ".sum_value")) {
+      # Statistical measures
+      calculate_indep_column_order(data, sort_by, indep_col, descend)
+    } else {
+      # Fallback to 1-based ordering if unrecognized
+      seq_len(nrow(data))
+    }
+  } else {
+    # Category-based sorting or multiple categories
+    if (length(sort_by) == 1 && sort_by %in% levels(data$.category)) {
+      # Single category
+      calculate_indep_category_order(data, sort_by, indep_col, descend)
+    } else if (all(sort_by %in% levels(data$.category))) {
+      # Multiple categories - sum their values
+      calculate_indep_sum_value_order(data, sort_by, indep_col, descend)
+    } else {
+      # Fallback if categories not found
+      seq_len(nrow(data))
+    }
+  }
 
   data
+}
+
+#' Get the name of the independent variable column
+#'
+#' @param data Dataset
+#' @return Character string with column name, or NULL if not found
+#'
+#' @keywords internal
+get_indep_col_name <- function(data) {
+  # Get independent variable column names (excluding standard columns)
+  indep_cols <- names(data)[!names(data) %in% .saros.env$summary_data_sort2]
+  
+  if (length(indep_cols) > 0) {
+    return(indep_cols[1])  # Return first independent column
+  } else {
+    return(NULL)
+  }
 }
 
 #' Add response category ordering (only useful for long format cat-cat tables)
@@ -416,4 +477,230 @@ set_factor_levels_from_order <- function(data) {
   }
 
   data
+}
+
+#' Calculate independent variable ordering based on a specific category value
+#'
+#' @param data Dataset with independent variable columns
+#' @param category_value The category value to sort by (e.g., "Not at all")
+#' @param indep_col Name of the independent variable column
+#' @param descend_indep Logical indicating if sorting should be descending
+#' @return Numeric vector of ordering values
+#'
+#' @keywords internal
+calculate_indep_category_order <- function(
+  data,
+  category_value,
+  indep_col,
+  descend_indep = FALSE
+) {
+  # Filter data to the specific category and calculate order by averaging across dep variables
+  category_summary <- data |>
+    dplyr::filter(.data$.category == category_value) |>
+    dplyr::summarise(
+      avg_proportion = mean(as.numeric(.data$.proportion), na.rm = TRUE),
+      .by = tidyselect::all_of(indep_col)
+    )
+
+  # Apply sorting order
+  if (descend_indep) {
+    category_summary <- category_summary |>
+      dplyr::arrange(dplyr::desc(.data$avg_proportion)) # Descending (highest first)
+  } else {
+    category_summary <- category_summary |>
+      dplyr::arrange(.data$avg_proportion) # Ascending (lowest first)
+  }
+
+  category_summary <- category_summary |>
+    dplyr::mutate(order_rank = dplyr::row_number()) |>
+    dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
+
+  # Join back to original data and extract order ranks
+  data |>
+    dplyr::left_join(
+      category_summary,
+      by = indep_col,
+      relationship = "many-to-one"
+    ) |>
+    dplyr::pull(.data$order_rank)
+}
+
+#' Calculate independent variable ordering based on a specific column value
+#'
+#' @param data Dataset
+#' @param column_name Name of the column to sort by
+#' @param indep_col Name of the independent variable column
+#' @param descend_indep Logical indicating if sorting should be descending
+#' @return Numeric vector of ordering values
+#'
+#' @keywords internal
+calculate_indep_column_order <- function(
+  data,
+  column_name,
+  indep_col,
+  descend_indep = FALSE
+) {
+  # Group by independent variable and calculate summary statistic for ordering
+  summary_order <- data |>
+    dplyr::summarise(
+      order_value = mean(as.numeric(.data[[column_name]]), na.rm = TRUE),
+      .by = tidyselect::all_of(indep_col)
+    )
+
+  # Apply sorting order
+  if (descend_indep) {
+    summary_order <- summary_order |>
+      dplyr::arrange(dplyr::desc(.data$order_value)) # Descending (highest first)
+  } else {
+    summary_order <- summary_order |>
+      dplyr::arrange(.data$order_value) # Ascending (lowest first)
+  }
+
+  summary_order <- summary_order |>
+    dplyr::mutate(order_rank = dplyr::row_number()) |>
+    dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
+
+  # Join back to original data and extract order ranks
+  data |>
+    dplyr::left_join(
+      summary_order,
+      by = indep_col,
+      relationship = "many-to-one"
+    ) |>
+    dplyr::pull(.data$order_rank)
+}
+
+#' Calculate independent variable ordering based on position categories
+#'
+#' @param data Dataset
+#' @param method Either ".upper", ".top", etc.
+#' @param indep_col Name of the independent variable column
+#' @param descend_indep Logical indicating if sorting should be descending
+#' @return Numeric vector of ordering values
+#'
+#' @keywords internal
+calculate_indep_proportion_order <- function(
+  data,
+  method,
+  indep_col,
+  descend_indep = FALSE
+) {
+  # Get the target category based on the method
+  all_categories <- levels(data$.category)
+
+  if (method == ".top") {
+    target_category <- all_categories[length(all_categories)] # Last category
+  } else if (method == ".bottom") {
+    target_category <- all_categories[1] # First category
+  } else if (method %in% c(".upper", ".mid_upper")) {
+    n_cats <- length(all_categories)
+    if (n_cats <= 1) {
+      target_category <- all_categories
+    } else if (method == ".upper") {
+      target_category <- all_categories[ceiling(n_cats / 2):n_cats]
+    } else {
+      # .mid_upper
+      target_category <- all_categories[ceiling(n_cats / 2)]
+    }
+  } else if (method %in% c(".lower", ".mid_lower")) {
+    n_cats <- length(all_categories)
+    if (n_cats <= 1) {
+      target_category <- all_categories
+    } else if (method == ".lower") {
+      target_category <- all_categories[1:floor(n_cats / 2)]
+    } else {
+      # .mid_lower
+      target_category <- all_categories[floor(n_cats / 2)]
+    }
+  } else {
+    # Fallback to top
+    target_category <- all_categories[length(all_categories)]
+  }
+
+  # Calculate order based on proportions for the target category/categories
+  if (length(target_category) == 1) {
+    # Single category - use existing calculate_indep_category_order
+    calculate_indep_category_order(
+      data,
+      target_category,
+      indep_col,
+      descend_indep
+    )
+  } else {
+    # Multiple categories - sum their proportions
+    category_summary <- data |>
+      dplyr::filter(.data$.category %in% target_category) |>
+      dplyr::summarise(
+        sum_proportion = sum(as.numeric(.data$.proportion), na.rm = TRUE),
+        .by = tidyselect::all_of(indep_col)
+      )
+
+    # Apply sorting order
+    if (descend_indep) {
+      category_summary <- category_summary |>
+        dplyr::arrange(dplyr::desc(.data$sum_proportion)) # Descending (highest first)
+    } else {
+      category_summary <- category_summary |>
+        dplyr::arrange(.data$sum_proportion) # Ascending (lowest first)
+    }
+
+    category_summary <- category_summary |>
+      dplyr::mutate(order_rank = dplyr::row_number()) |>
+      dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
+
+    # Join back to original data and extract order ranks
+    data |>
+      dplyr::left_join(
+        category_summary,
+        by = indep_col,
+        relationship = "many-to-one"
+      ) |>
+      dplyr::pull(.data$order_rank)
+  }
+}
+
+#' Calculate independent variable ordering based on multiple category values
+#'
+#' @param data Dataset
+#' @param category_values Vector of category values to sum
+#' @param indep_col Name of the independent variable column
+#' @param descend_indep Logical indicating if sorting should be descending
+#' @return Numeric vector of ordering values
+#'
+#' @keywords internal
+calculate_indep_sum_value_order <- function(
+  data,
+  category_values,
+  indep_col,
+  descend_indep = FALSE
+) {
+  # Filter data to the specified categories and sum their proportions by indep variable
+  category_summary <- data |>
+    dplyr::filter(.data$.category %in% category_values) |>
+    dplyr::summarise(
+      sum_proportion = sum(as.numeric(.data$.proportion), na.rm = TRUE),
+      .by = tidyselect::all_of(indep_col)
+    )
+
+  # Apply sorting order
+  if (descend_indep) {
+    category_summary <- category_summary |>
+      dplyr::arrange(dplyr::desc(.data$sum_proportion)) # Descending (highest first)
+  } else {
+    category_summary <- category_summary |>
+      dplyr::arrange(.data$sum_proportion) # Ascending (lowest first)
+  }
+
+  category_summary <- category_summary |>
+    dplyr::mutate(order_rank = dplyr::row_number()) |>
+    dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
+
+  # Join back to original data and extract order ranks
+  data |>
+    dplyr::left_join(
+      category_summary,
+      by = indep_col,
+      relationship = "many-to-one"
+    ) |>
+    dplyr::pull(.data$order_rank)
 }

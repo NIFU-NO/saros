@@ -343,6 +343,15 @@
 #'   display order while preserving the inherent level ordering.
 #'   See `arrange_section_by` for sorting of report sections.
 #'
+#' @param descend_indep *Sorting order for independent variables*
+#'
+#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'
+#'   Reverse sorting of `sort_indep_by` in figures and tables. Works with both
+#'   ordered and unordered factors - for ordered factors, it reverses the
+#'   display order while preserving the inherent level ordering.
+#'   See `arrange_section_by` for sorting of report sections.
+#'
 #' @param table_main_question_as_header *Table main question as header*
 #'
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
@@ -493,6 +502,7 @@ makeme <-
     sort_indep_by = NULL,
     sort_by = NULL,
     descend = TRUE,
+    descend_indep = FALSE,
     labels_always_at_top = NULL,
     labels_always_at_bottom = NULL,
     # For tables

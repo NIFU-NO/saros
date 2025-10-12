@@ -4,7 +4,7 @@
 \alias{add_indep_order}
 \title{Add independent variable category ordering}
 \usage{
-add_indep_order(data, indep_cols = NULL, sort_by = NULL, descend = FALSE)
+add_indep_order(data, sort_by = NULL, descend = FALSE)
 }
 \arguments{
 \item{data}{Dataset}

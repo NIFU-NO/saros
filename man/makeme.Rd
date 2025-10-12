@@ -48,6 +48,7 @@ makeme(
   sort_indep_by = NULL,
   sort_by = NULL,
   descend = TRUE,
+  descend_indep = FALSE,
   labels_always_at_top = NULL,
   labels_always_at_bottom = NULL,
   table_wide = TRUE,
@@ -377,6 +378,15 @@ If \code{NULL} (default), dependent variables will be sorted by \code{.variable_
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
 Reverse sorting of \code{sort_by} in figures and tables. Works with both
+ordered and unordered factors - for ordered factors, it reverses the
+display order while preserving the inherent level ordering.
+See \code{arrange_section_by} for sorting of report sections.}
+
+\item{descend_indep}{\emph{Sorting order for independent variables}
+
+\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+
+Reverse sorting of \code{sort_indep_by} in figures and tables. Works with both
 ordered and unordered factors - for ordered factors, it reverses the
 display order while preserving the inherent level ordering.
 See \code{arrange_section_by} for sorting of report sections.}
