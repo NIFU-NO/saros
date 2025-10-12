@@ -52,59 +52,68 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
 
   # Calculate base order based on sort method
 
-  data$.dep_order <-
-    dplyr::case_when(
-      all(sort_by %in% ".variable_position") ~
-        {
-          if (".variable_position" %in% names(data)) {
-            data$.variable_position
-          } else {
-            # Fallback: use factor level order
-            as.integer(data$.variable_label)
-          }
-        },
-      all(sort_by %in% ".variable_label") ~
-        {
-          # Alphabetical order by variable labels
-          # Create mapping from variable label to alphabetical rank
-          unique_labels <- unique(data$.variable_label)
-          sorted_labels <- sort(unique_labels)
-          label_to_order <- stats::setNames(
-            seq_along(sorted_labels),
-            sorted_labels
-          )
-
-          # Map each row's variable label to its alphabetical order
-          label_to_order[as.character(data$.variable_label)]
-        },
-      all(sort_by %in% ".variable_name") ~
-        {
-          # Alphabetical order by variable names
-          # Create mapping from variable name to alphabetical rank
-          unique_names <- unique(data$.variable_name)
-          sorted_names <- sort(unique_names)
-          name_to_order <- stats::setNames(
-            seq_along(sorted_names),
-            sorted_names
-          )
-
-          # Map each row's variable name to its alphabetical order
-          name_to_order[as.character(data$.variable_name)]
-        },
-      length(sort_by) == 1 && all(sort_by %in% .saros.env$summary_data_sort1) ~
-        {
-          # Calculate order based on upper category proportions
-          calculate_proportion_order(data, sort_by)
-        },
-      .default = {
-        # Default fallback
-        if (".variable_position" %in% names(data)) {
-          data$.variable_position
-        } else {
-          as.integer(data$.variable_label)
-        }
-      }
+  if (all(sort_by %in% ".variable_position")) {
+    data$.dep_order <- if (".variable_position" %in% names(data)) {
+      data$.variable_position
+    } else {
+      # Fallback: use factor level order
+      as.integer(data$.variable_label)
+    }
+  } else if (all(sort_by %in% ".variable_label")) {
+    # Alphabetical order by variable labels
+    # Create mapping from variable label to alphabetical rank
+    unique_labels <- unique(data$.variable_label)
+    sorted_labels <- sort(unique_labels)
+    label_to_order <- stats::setNames(
+      seq_along(sorted_labels),
+      sorted_labels
     )
+
+    # Map each row's variable label to its alphabetical order
+    data$.dep_order <- label_to_order[as.character(data$.variable_label)]
+  } else if (all(sort_by %in% ".variable_name")) {
+    # Alphabetical order by variable names
+    # Create mapping from variable name to alphabetical rank
+    unique_names <- unique(data$.variable_name)
+    sorted_names <- sort(unique_names)
+    name_to_order <- stats::setNames(
+      seq_along(sorted_names),
+      sorted_names
+    )
+
+    # Map each row's variable name to its alphabetical order
+    data$.dep_order <- name_to_order[as.character(data$.variable_name)]
+  } else if (all(sort_by %in% unique(data$.category))) {
+    # Category-based sorting (e.g., "A bit", "Not at all", etc.)
+    if (length(sort_by) == 1) {
+      # Single category: sort by count values for that specific category
+      data$.dep_order <- calculate_category_order(data, sort_by[1])
+    } else {
+      # Multiple categories: sort by sum of counts for those categories
+      # This uses .sum_value which should be pre-calculated
+      if (".sum_value" %in% names(data)) {
+        data$.dep_order <- calculate_sum_value_order(data)
+      } else {
+        # Fallback: calculate the sum ourselves
+        data$.dep_order <- calculate_multiple_category_order(data, sort_by)
+      }
+    }
+  } else if (all(sort_by %in% names(data))) {
+    # Direct column sorting (e.g., .count, .proportion, .mean, etc.)
+    data$.dep_order <- calculate_column_order(data, sort_by[1])
+  } else if (
+    length(sort_by) == 1 && all(sort_by %in% .saros.env$summary_data_sort1)
+  ) {
+    # Calculate order based on upper category proportions (.upper, .top, .bottom, .lower, .mid_upper, .mid_lower)
+    data$.dep_order <- calculate_proportion_order(data, sort_by)
+  } else {
+    # Default fallback
+    data$.dep_order <- if (".variable_position" %in% names(data)) {
+      data$.variable_position
+    } else {
+      as.integer(data$.variable_label)
+    }
+  }
 
   # Apply descending order if requested
   data$.dep_order <- descend_if_descending(data$.dep_order, descend = descend)
@@ -158,8 +167,15 @@ add_category_order <- function(data, sort_by = NULL) {
   if (is.null(sort_by)) {
     # Use existing factor level order
     data$.category_order <- as.integer(data$.category)
+  } else if (length(sort_by) == 1 && sort_by %in% unique(data$.category)) {
+    # Category-based sorting: put the target category first
+    data$.category_order <- ifelse(
+      data$.category == sort_by,
+      1, # Target category gets priority (first)
+      as.integer(data$.category) + 1 # Other categories follow
+    )
   } else {
-    # Future: implement specific category sorting methods
+    # Default: use existing factor level order
     data$.category_order <- as.integer(data$.category)
   }
 
@@ -185,31 +201,181 @@ apply_final_arrangement <- function(data) {
 #'
 #' @keywords internal
 calculate_proportion_order <- function(data, method) {
-  # This is a simplified implementation
-  # The real logic would calculate proportions per variable and rank them
+  # Get the target category based on the method
+  all_categories <- levels(data$.category)
 
-  # For now, return a placeholder that uses sum_value if available
-  if (".sum_value" %in% names(data)) {
-    # Use existing sum_value calculation
-    data |>
-      dplyr::group_by(.data$.variable_label) |>
-      dplyr::summarise(
-        order_value = mean(.data$.sum_value, na.rm = TRUE),
-        .groups = "drop"
-      ) |>
-      dplyr::arrange(dplyr::desc(.data$order_value)) |>
-      dplyr::mutate(order_rank = dplyr::row_number()) |>
-      dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank"))) |>
-      dplyr::left_join(data, by = ".variable_label") |>
-      dplyr::pull(.data$order_rank)
-  } else {
-    # Fallback to position order
-    if (".variable_position" %in% names(data)) {
-      data$.variable_position
+  if (method == ".top") {
+    target_category <- all_categories[length(all_categories)] # Last category
+  } else if (method == ".bottom") {
+    target_category <- all_categories[1] # First category
+  } else if (method %in% c(".upper", ".mid_upper")) {
+    n_cats <- length(all_categories)
+    if (n_cats <= 1) {
+      target_category <- all_categories
+    } else if (method == ".upper") {
+      target_category <- all_categories[ceiling(n_cats / 2):n_cats]
     } else {
-      as.integer(data$.variable_label)
+      # .mid_upper
+      target_category <- all_categories[ceiling(n_cats / 2)]
     }
+  } else if (method %in% c(".lower", ".mid_lower")) {
+    n_cats <- length(all_categories)
+    if (n_cats <= 1) {
+      target_category <- all_categories
+    } else if (method == ".lower") {
+      target_category <- all_categories[1:floor(n_cats / 2)]
+    } else {
+      # .mid_lower
+      target_category <- all_categories[floor(n_cats / 2)]
+    }
+  } else {
+    cli::cli_abort("Unknown proportion-based sorting method: {method}.")
   }
+
+  # Calculate order based on proportions for the target category/categories
+  if (length(target_category) == 1) {
+    # Single category - aggregate proportions by variable
+    category_summary <-
+      data |>
+      dplyr::filter(.data$.category == target_category) |>
+      dplyr::summarise(
+        avg_proportion = mean(.data$.proportion, na.rm = TRUE),
+        .by = tidyselect::all_of(".variable_name")
+      ) |>
+      dplyr::arrange(.data$avg_proportion) |> # Ascending order (lowest first)
+      dplyr::mutate(order_rank = dplyr::row_number()) |>
+      dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+  } else {
+    # Multiple categories - sum their proportions and aggregate by variable
+    category_summary <- data |>
+      dplyr::filter(.data$.category %in% target_category) |>
+      dplyr::summarise(
+        sum_proportion = sum(.data$.proportion, na.rm = TRUE),
+        .by = tidyselect::all_of(c(".variable_name"))
+      ) |>
+      dplyr::arrange(.data$sum_proportion) |> # Ascending order (lowest first)
+      dplyr::mutate(order_rank = dplyr::row_number()) |>
+      dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+  }
+
+  # Join back to original data and extract order ranks
+  # Use relationship = "many-to-one" since multiple data rows match one summary row
+  data |>
+    dplyr::left_join(
+      category_summary,
+      by = ".variable_name",
+      relationship = "many-to-one"
+    ) |>
+    dplyr::pull(.data$order_rank)
+}
+
+#' Calculate ordering based on multiple category values
+#'
+#' @param data Dataset with .category and .count columns
+#' @param category_values Vector of category values to sum (e.g., c("A bit", "A lot"))
+#' @return Numeric vector of ordering values
+#'
+#' @keywords internal
+calculate_multiple_category_order <- function(data, category_values) {
+  # Filter data to the specified categories and sum their counts by variable
+  category_summary <- data |>
+    dplyr::filter(.data$.category %in% category_values) |>
+    dplyr::summarise(
+      sum_count = sum(.data$.count, na.rm = TRUE),
+      .by = tidyselect::all_of(".variable_label")
+    ) |>
+    dplyr::arrange(.data$sum_count) |> # Ascending order (lowest first)
+    dplyr::mutate(order_rank = dplyr::row_number()) |>
+    dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank")))
+
+  # Join back to original data and extract order ranks
+  # Use relationship = "many-to-one" since multiple data rows match one summary row
+  data |>
+    dplyr::left_join(
+      category_summary,
+      by = ".variable_label",
+      relationship = "many-to-one"
+    ) |>
+    dplyr::pull(.data$order_rank)
+}
+
+#' Calculate ordering based on a specific category value
+#'
+#' @param data Dataset with .category and .count columns
+#' @param category_value The category value to sort by (e.g., "A bit")
+#' @return Numeric vector of ordering values
+#'
+#' @keywords internal
+calculate_category_order <- function(data, category_value) {
+  # Filter data to the specific category and calculate order by .count
+  category_summary <- data |>
+    dplyr::filter(.data$.category == category_value) |>
+    dplyr::select(tidyselect::all_of(c(".variable_label", ".count"))) |>
+    dplyr::arrange(.data$.count) |> # Ascending order (lowest first)
+    dplyr::mutate(order_rank = dplyr::row_number()) |>
+    dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank")))
+
+  # Join back to original data and extract order ranks
+  # Use relationship = "many-to-one" since multiple data rows match one summary row
+  data |>
+    dplyr::left_join(
+      category_summary,
+      by = ".variable_label",
+      relationship = "many-to-one"
+    ) |>
+    dplyr::pull(.data$order_rank)
+}
+
+#' Calculate ordering based on a specific column value
+#'
+#' @param data Dataset
+#' @param column_name Name of the column to sort by
+#' @return Numeric vector of ordering values
+#'
+#' @keywords internal
+calculate_column_order <- function(data, column_name) {
+  # Group by variable and calculate summary statistic for ordering
+  summary_order <- data |>
+    dplyr::summarise(
+      order_value = max(.data[[column_name]], na.rm = TRUE), # Use max instead of mean for .count
+      .by = tidyselect::all_of(".variable_label")
+    ) |>
+    dplyr::arrange(.data$order_value) |> # Ascending order (lowest first)
+    dplyr::mutate(order_rank = dplyr::row_number()) |>
+    dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank")))
+
+  # Join back to original data and extract order ranks
+  # Use relationship = "many-to-one" since multiple data rows match one summary row
+  data |>
+    dplyr::left_join(
+      summary_order,
+      by = ".variable_label",
+      relationship = "many-to-one"
+    ) |>
+    dplyr::pull(.data$order_rank)
+}
+
+#' Calculate ordering based on .sum_value (for category-based sorting)
+#'
+#' @param data Dataset with .sum_value column
+#' @return Numeric vector of ordering values
+#'
+#' @keywords internal
+calculate_sum_value_order <- function(data) {
+  # Use .sum_value for ordering (this is pre-calculated in add_collapsed_categories)
+  summary_order <- data |>
+    dplyr::summarise(
+      order_value = mean(.data$.sum_value, na.rm = TRUE),
+      .by = tidyselect::all_of(".variable_label")
+    ) |>
+    dplyr::arrange(dplyr::desc(.data$order_value)) |>
+    dplyr::mutate(order_rank = dplyr::row_number()) |>
+    dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank")))
+
+  # Join back to original data and extract order ranks
+  data |>
+    dplyr::left_join(summary_order, by = ".variable_label") |>
+    dplyr::pull(.data$order_rank)
 }
 
 #' Set factor levels based on order columns (for backward compatibility)

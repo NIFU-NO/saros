@@ -723,9 +723,9 @@ summarize_cat_cat_data <-
       ) |>
       # NEW: Apply centralized sorting system
       add_sorting_order_vars(
-        sort_dep_by = sort_dep_by,
+        sort_dep_by = if (dep_vars_ordered) NULL else sort_dep_by, # Ignore sort_dep_by for ordered factors
         sort_indep_by = sort_indep_by,
-        sort_category_by = NULL,
+        sort_category_by = if (dep_vars_ordered) NULL else sort_dep_by, # Ignore category sorting for ordered factors
         descend = descend
       ) |>
       # Set factor levels for backward compatibility

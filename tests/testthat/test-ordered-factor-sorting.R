@@ -64,6 +64,12 @@ testthat::test_that("unordered dependent variables adhere to sort_by and descend
   testthat::expect_equal(
     result3$.proportion,
     c(
+      0.47682119,
+      0.44966443,
+      0.44370861,
+      0.47651007,
+      0.07947020,
+      0.07382550,
       0.41721854,
       0.44295302,
       0.47682119,
@@ -75,13 +81,7 @@ testthat::test_that("unordered dependent variables adhere to sort_by and descend
       0.38410596,
       0.45637584,
       0.10596026,
-      0.09395973,
-      0.47682119,
-      0.44966443,
-      0.44370861,
-      0.47651007,
-      0.07947020,
-      0.07382550
+      0.09395973
     )
   )
 })
