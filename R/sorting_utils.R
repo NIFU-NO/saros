@@ -470,7 +470,7 @@ calculate_indep_category_order <- function(
   category_summary <- data |>
     dplyr::filter(.data$.category == category_value) |>
     dplyr::summarise(
-      avg_proportion = mean(as.numeric(.data$.proportion), na.rm = TRUE),
+      avg_proportion = mean(.data$.proportion, na.rm = TRUE),
       .by = tidyselect::all_of(indep_col)
     )
 
@@ -515,7 +515,7 @@ calculate_indep_column_order <- function(
   # Group by independent variable and calculate summary statistic for ordering
   summary_order <- data |>
     dplyr::summarise(
-      order_value = mean(as.numeric(.data[[column_name]]), na.rm = TRUE),
+      order_value = mean(.data[[column_name]], na.rm = TRUE),
       .by = tidyselect::all_of(indep_col)
     )
 
@@ -574,7 +574,7 @@ calculate_indep_proportion_order <- function(
     category_summary <- data |>
       dplyr::filter(.data$.category %in% target_category) |>
       dplyr::summarise(
-        sum_proportion = sum(as.numeric(.data$.proportion), na.rm = TRUE),
+        sum_proportion = sum(.data$.proportion, na.rm = TRUE),
         .by = tidyselect::all_of(indep_col)
       )
 
@@ -621,7 +621,7 @@ calculate_indep_sum_value_order <- function(
   category_summary <- data |>
     dplyr::filter(.data$.category %in% category_values) |>
     dplyr::summarise(
-      sum_proportion = sum(as.numeric(.data$.proportion), na.rm = TRUE),
+      sum_proportion = sum(.data$.proportion, na.rm = TRUE),
       .by = tidyselect::all_of(indep_col)
     )
 
