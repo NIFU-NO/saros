@@ -209,9 +209,9 @@ add_indep_order <- function(
 get_indep_col_name <- function(data) {
   # Get independent variable column names (excluding standard columns)
   indep_cols <- names(data)[!names(data) %in% .saros.env$summary_data_sort2]
-  
+
   if (length(indep_cols) > 0) {
-    return(indep_cols[1])  # Return first independent column
+    return(indep_cols[1]) # Return first independent column
   } else {
     return(NULL)
   }
@@ -263,35 +263,7 @@ apply_final_arrangement <- function(data) {
 #' @keywords internal
 calculate_proportion_order <- function(data, method) {
   # Get the target category based on the method
-  all_categories <- levels(data$.category)
-
-  if (method == ".top") {
-    target_category <- all_categories[length(all_categories)] # Last category
-  } else if (method == ".bottom") {
-    target_category <- all_categories[1] # First category
-  } else if (method %in% c(".upper", ".mid_upper")) {
-    n_cats <- length(all_categories)
-    if (n_cats <= 1) {
-      target_category <- all_categories
-    } else if (method == ".upper") {
-      target_category <- all_categories[ceiling(n_cats / 2):n_cats]
-    } else {
-      # .mid_upper
-      target_category <- all_categories[ceiling(n_cats / 2)]
-    }
-  } else if (method %in% c(".lower", ".mid_lower")) {
-    n_cats <- length(all_categories)
-    if (n_cats <= 1) {
-      target_category <- all_categories
-    } else if (method == ".lower") {
-      target_category <- all_categories[1:floor(n_cats / 2)]
-    } else {
-      # .mid_lower
-      target_category <- all_categories[floor(n_cats / 2)]
-    }
-  } else {
-    cli::cli_abort("Unknown proportion-based sorting method: {method}.")
-  }
+  target_category <- get_target_categories(data, method)
 
   # Calculate order based on proportions for the target category/categories
   if (length(target_category) == 1) {
@@ -586,36 +558,7 @@ calculate_indep_proportion_order <- function(
   descend_indep = FALSE
 ) {
   # Get the target category based on the method
-  all_categories <- levels(data$.category)
-
-  if (method == ".top") {
-    target_category <- all_categories[length(all_categories)] # Last category
-  } else if (method == ".bottom") {
-    target_category <- all_categories[1] # First category
-  } else if (method %in% c(".upper", ".mid_upper")) {
-    n_cats <- length(all_categories)
-    if (n_cats <= 1) {
-      target_category <- all_categories
-    } else if (method == ".upper") {
-      target_category <- all_categories[ceiling(n_cats / 2):n_cats]
-    } else {
-      # .mid_upper
-      target_category <- all_categories[ceiling(n_cats / 2)]
-    }
-  } else if (method %in% c(".lower", ".mid_lower")) {
-    n_cats <- length(all_categories)
-    if (n_cats <= 1) {
-      target_category <- all_categories
-    } else if (method == ".lower") {
-      target_category <- all_categories[1:floor(n_cats / 2)]
-    } else {
-      # .mid_lower
-      target_category <- all_categories[floor(n_cats / 2)]
-    }
-  } else {
-    # Fallback to top
-    target_category <- all_categories[length(all_categories)]
-  }
+  target_category <- get_target_categories(data, method)
 
   # Calculate order based on proportions for the target category/categories
   if (length(target_category) == 1) {
@@ -703,4 +646,18 @@ calculate_indep_sum_value_order <- function(
       relationship = "many-to-one"
     ) |>
     dplyr::pull(.data$order_rank)
+}
+
+#' Get target categories for positional sorting
+#'
+#' Uses subset_vector to determine which categories to include based on
+#' positional methods like .top, .bottom, .upper, .lower, etc.
+#'
+#' @param data Dataset with .category column
+#' @param method Positional method (.top, .bottom, .upper, .lower, etc.)
+#' @return Character vector of target category names
+#' @keywords internal
+get_target_categories <- function(data, method) {
+  all_categories <- levels(data$.category)
+  subset_vector(all_categories, method)
 }
