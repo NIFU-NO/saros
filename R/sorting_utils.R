@@ -37,6 +37,24 @@ descend_if_descending <- function(x, descend) {
   x
 }
 
+#' Apply sorting with optional descending order
+#'
+#' Unified helper to consistently handle ascending/descending sort order
+#' across all sorting functions.
+#'
+#' @param data Dataset to arrange
+#' @param order_col Symbol/name of the column to sort by
+#' @param descend Whether to sort in descending order
+#' @return Arranged dataset
+#' @keywords internal
+arrange_with_order <- function(data, order_col, descend = FALSE) {
+  if (descend) {
+    data |> dplyr::arrange(dplyr::desc({{ order_col }}))
+  } else {
+    data |> dplyr::arrange({{ order_col }})
+  }
+}
+
 #' Add dependent variable ordering
 #'
 #' @param data Dataset
@@ -472,18 +490,8 @@ calculate_indep_category_order <- function(
     dplyr::summarise(
       avg_proportion = mean(.data$.proportion, na.rm = TRUE),
       .by = tidyselect::all_of(indep_col)
-    )
-
-  # Apply sorting order
-  if (descend_indep) {
-    category_summary <- category_summary |>
-      dplyr::arrange(dplyr::desc(.data$avg_proportion)) # Descending (highest first)
-  } else {
-    category_summary <- category_summary |>
-      dplyr::arrange(.data$avg_proportion) # Ascending (lowest first)
-  }
-
-  category_summary <- category_summary |>
+    ) |>
+    arrange_with_order(.data$avg_proportion, descend = descend_indep) |>
     dplyr::mutate(order_rank = dplyr::row_number()) |>
     dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
 
@@ -517,18 +525,8 @@ calculate_indep_column_order <- function(
     dplyr::summarise(
       order_value = mean(.data[[column_name]], na.rm = TRUE),
       .by = tidyselect::all_of(indep_col)
-    )
-
-  # Apply sorting order
-  if (descend_indep) {
-    summary_order <- summary_order |>
-      dplyr::arrange(dplyr::desc(.data$order_value)) # Descending (highest first)
-  } else {
-    summary_order <- summary_order |>
-      dplyr::arrange(.data$order_value) # Ascending (lowest first)
-  }
-
-  summary_order <- summary_order |>
+    ) |>
+    arrange_with_order(.data$order_value, descend = descend_indep) |>
     dplyr::mutate(order_rank = dplyr::row_number()) |>
     dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
 
@@ -576,18 +574,8 @@ calculate_indep_proportion_order <- function(
       dplyr::summarise(
         sum_proportion = sum(.data$.proportion, na.rm = TRUE),
         .by = tidyselect::all_of(indep_col)
-      )
-
-    # Apply sorting order
-    if (descend_indep) {
-      category_summary <- category_summary |>
-        dplyr::arrange(dplyr::desc(.data$sum_proportion)) # Descending (highest first)
-    } else {
-      category_summary <- category_summary |>
-        dplyr::arrange(.data$sum_proportion) # Ascending (lowest first)
-    }
-
-    category_summary <- category_summary |>
+      ) |>
+      arrange_with_order(.data$sum_proportion, descend = descend_indep) |>
       dplyr::mutate(order_rank = dplyr::row_number()) |>
       dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
 
@@ -623,18 +611,8 @@ calculate_indep_sum_value_order <- function(
     dplyr::summarise(
       sum_proportion = sum(.data$.proportion, na.rm = TRUE),
       .by = tidyselect::all_of(indep_col)
-    )
-
-  # Apply sorting order
-  if (descend_indep) {
-    category_summary <- category_summary |>
-      dplyr::arrange(dplyr::desc(.data$sum_proportion)) # Descending (highest first)
-  } else {
-    category_summary <- category_summary |>
-      dplyr::arrange(.data$sum_proportion) # Ascending (lowest first)
-  }
-
-  category_summary <- category_summary |>
+    ) |>
+    arrange_with_order(.data$sum_proportion, descend = descend_indep) |>
     dplyr::mutate(order_rank = dplyr::row_number()) |>
     dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
 
