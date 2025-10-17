@@ -4,10 +4,12 @@
 \alias{calculate_sum_value_order}
 \title{Calculate ordering based on .sum_value (for category-based sorting)}
 \usage{
-calculate_sum_value_order(data)
+calculate_sum_value_order(data, descend = FALSE)
 }
 \arguments{
 \item{data}{Dataset with .sum_value column}
+
+\item{descend}{Logical indicating if sorting should be descending}
 }
 \value{
 Numeric vector of ordering values

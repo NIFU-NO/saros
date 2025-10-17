@@ -4,12 +4,14 @@
 \alias{calculate_column_order}
 \title{Calculate ordering based on a specific column value}
 \usage{
-calculate_column_order(data, column_name)
+calculate_column_order(data, column_name, descend = FALSE)
 }
 \arguments{
 \item{data}{Dataset}
 
 \item{column_name}{Name of the column to sort by}
+
+\item{descend}{Logical indicating if sorting should be descending}
 }
 \value{
 Numeric vector of ordering values

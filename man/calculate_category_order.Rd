@@ -4,12 +4,14 @@
 \alias{calculate_category_order}
 \title{Calculate ordering based on a specific category value}
 \usage{
-calculate_category_order(data, category_value)
+calculate_category_order(data, category_value, descend = FALSE)
 }
 \arguments{
 \item{data}{Dataset with .category and .count columns}
 
 \item{category_value}{The category value to sort by (e.g., "A bit")}
+
+\item{descend}{Logical indicating if sorting should be descending}
 }
 \value{
 Numeric vector of ordering values

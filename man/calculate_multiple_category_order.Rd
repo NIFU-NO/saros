@@ -4,12 +4,14 @@
 \alias{calculate_multiple_category_order}
 \title{Calculate ordering based on multiple category values}
 \usage{
-calculate_multiple_category_order(data, category_values)
+calculate_multiple_category_order(data, category_values, descend = FALSE)
 }
 \arguments{
 \item{data}{Dataset with .category and .count columns}
 
 \item{category_values}{Vector of category values to sum (e.g., c("A bit", "A lot"))}
+
+\item{descend}{Logical indicating if sorting should be descending}
 }
 \value{
 Numeric vector of ordering values

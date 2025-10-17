@@ -4,12 +4,14 @@
 \alias{calculate_proportion_order}
 \title{Calculate proportion-based ordering for dependent variables}
 \usage{
-calculate_proportion_order(data, method)
+calculate_proportion_order(data, method, descend = FALSE)
 }
 \arguments{
 \item{data}{Dataset}
 
 \item{method}{Either ".upper", ".top", etc.}
+
+\item{descend}{Logical indicating if sorting should be descending}
 }
 \value{
 Numeric vector of ordering values
