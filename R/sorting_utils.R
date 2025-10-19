@@ -172,12 +172,6 @@ add_indep_order <- function(
   sort_by = NULL,
   descend = FALSE
 ) {
-  if (is.null(sort_by)) {
-    # Return data with default ordering if no independent sorting requested
-    data$.indep_order <- 1
-    return(data)
-  }
-
   # Get the independent variable column
   indep_col <- get_indep_col_name(data)
   if (is.null(indep_col)) {
@@ -186,10 +180,36 @@ add_indep_order <- function(
     return(data)
   }
 
+  # If the independent variable is an ordered factor, always respect its level
+  # order regardless of sort_by (precedence rule). Only reverse when descend.
+  indep_vals <- data[[indep_col]]
+  if (is.ordered(indep_vals)) {
+    ord <- as.integer(indep_vals)
+    if (isTRUE(descend)) {
+      ord <- rev(ord)
+    }
+    data$.indep_order <- ord
+    return(data)
+  }
+
+  if (is.null(sort_by)) {
+    # Default to factor level order when not specified
+    sort_by <- ".factor_order"
+  }
+
   # Apply ascending order column sorting if it's not ".variable_label" (which should remain in existing order)
-  data$.indep_order <- if (
-    length(sort_by) == 1 && sort_by == ".variable_label"
-  ) {
+  data$.indep_order <- if (length(sort_by) == 1 && sort_by == ".factor_order") {
+    # Respect the factor order of the independent variable
+    if (!is.factor(indep_vals)) {
+      # Preserve first-seen order if not already a factor
+      indep_vals <- factor(indep_vals, levels = unique(indep_vals))
+    }
+    ord <- as.integer(indep_vals)
+    if (isTRUE(descend)) {
+      ord <- rev(ord)
+    }
+    ord
+  } else if (length(sort_by) == 1 && sort_by == ".variable_label") {
     # Alphabetical sorting by variable labels
     indep_labels <- data[[indep_col]]
     if (descend) {
@@ -488,16 +508,23 @@ set_factor_levels_from_order <- function(data) {
 
   # Set category factor levels based on .category_order
   if (".category_order" %in% names(data) && is.factor(data$.category)) {
-    cat_order <-
-      data |>
+    # Preserve full set of category levels to keep unused levels available
+    full_levels <- levels(data$.category)
+
+    present_ordered <- data |>
       dplyr::distinct(.data$.category, .data$.category_order) |>
       dplyr::arrange(.data$.category_order) |>
       dplyr::pull(.data$.category) |>
       as.character()
 
+    # Append any levels not present in the current data at the end,
+    # preserving their original order
+    remaining <- setdiff(full_levels, present_ordered)
+    new_levels <- c(present_ordered, remaining)
+
     data$.category <- factor(
       data$.category,
-      levels = cat_order
+      levels = new_levels
     )
   }
 
@@ -559,7 +586,10 @@ calculate_indep_column_order <- function(
   summary_order <- data |>
     dplyr::summarise(
       # Aggregation rule: for count-like columns use sum across groups; otherwise mean is acceptable
-      order_value = if (identical(column_name, ".count") || identical(column_name, ".count_total_indep")) {
+      order_value = if (
+        identical(column_name, ".count") ||
+          identical(column_name, ".count_total_indep")
+      ) {
         sum(.data[[column_name]], na.rm = TRUE)
       } else {
         mean(.data[[column_name]], na.rm = TRUE)
