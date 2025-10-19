@@ -185,9 +185,7 @@ add_indep_order <- function(
   indep_vals <- data[[indep_col]]
   if (is.ordered(indep_vals)) {
     ord <- as.integer(indep_vals)
-    if (isTRUE(descend)) {
-      ord <- rev(ord)
-    }
+    ord <- descend_if_descending(ord, isTRUE(descend))
     data$.indep_order <- ord
     return(data)
   }
@@ -205,9 +203,7 @@ add_indep_order <- function(
       indep_vals <- factor(indep_vals, levels = unique(indep_vals))
     }
     ord <- as.integer(indep_vals)
-    if (isTRUE(descend)) {
-      ord <- rev(ord)
-    }
+    ord <- descend_if_descending(ord, isTRUE(descend))
     ord
   } else if (length(sort_by) == 1 && sort_by == ".variable_label") {
     # Alphabetical sorting by variable labels
@@ -546,22 +542,25 @@ calculate_indep_category_order <- function(
   indep_col,
   descend_indep = FALSE
 ) {
-  # Filter data to the specific category and calculate order by averaging across dep variables
+  var_col <- ".variable_name"
+  # Filter to the specific category and calculate ordering within each variable
   category_summary <- data |>
     dplyr::filter(.data$.category == category_value) |>
     dplyr::summarise(
       avg_proportion = mean(.data$.proportion, na.rm = TRUE),
-      .by = tidyselect::all_of(indep_col)
+      .by = tidyselect::all_of(c(var_col, indep_col))
     ) |>
+    dplyr::group_by(.data[[var_col]]) |>
     arrange_with_order(.data$avg_proportion, descend = descend_indep) |>
     dplyr::mutate(order_rank = dplyr::row_number()) |>
-    dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
+    dplyr::ungroup() |>
+    dplyr::select(tidyselect::all_of(c(var_col, indep_col, "order_rank")))
 
-  # Join back to original data and extract order ranks
+  # Join back to original data on both variable and indep columns
   data |>
     dplyr::left_join(
       category_summary,
-      by = indep_col,
+      by = c(var_col, indep_col),
       relationship = "many-to-one"
     ) |>
     dplyr::pull(.data$order_rank)
@@ -582,10 +581,10 @@ calculate_indep_column_order <- function(
   indep_col,
   descend_indep = FALSE
 ) {
-  # Group by independent variable and calculate summary statistic for ordering
+  var_col <- ".variable_name"
+  # Group by variable and independent variable to calculate within-variable ordering
   summary_order <- data |>
     dplyr::summarise(
-      # Aggregation rule: for count-like columns use sum across groups; otherwise mean is acceptable
       order_value = if (
         identical(column_name, ".count") ||
           identical(column_name, ".count_total_indep")
@@ -594,17 +593,19 @@ calculate_indep_column_order <- function(
       } else {
         mean(.data[[column_name]], na.rm = TRUE)
       },
-      .by = tidyselect::all_of(indep_col)
+      .by = tidyselect::all_of(c(var_col, indep_col))
     ) |>
+    dplyr::group_by(.data[[var_col]]) |>
     arrange_with_order(.data$order_value, descend = descend_indep) |>
     dplyr::mutate(order_rank = dplyr::row_number()) |>
-    dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
+    dplyr::ungroup() |>
+    dplyr::select(tidyselect::all_of(c(var_col, indep_col, "order_rank")))
 
-  # Join back to original data and extract order ranks
+  # Join back to original data on both variable and indep columns
   data |>
     dplyr::left_join(
       summary_order,
-      by = indep_col,
+      by = c(var_col, indep_col),
       relationship = "many-to-one"
     ) |>
     dplyr::pull(.data$order_rank)
@@ -625,12 +626,12 @@ calculate_indep_proportion_order <- function(
   indep_col,
   descend_indep = FALSE
 ) {
+  var_col <- ".variable_name"
   # Get the target category based on the method
   target_category <- get_target_categories(data, method)
 
   # Calculate order based on proportions for the target category/categories
   if (length(target_category) == 1) {
-    # Single category - use existing calculate_indep_category_order
     calculate_indep_category_order(
       data,
       target_category,
@@ -638,22 +639,24 @@ calculate_indep_proportion_order <- function(
       descend_indep
     )
   } else {
-    # Multiple categories - sum their proportions
+    # Multiple categories - sum their proportions within each variable
     category_summary <- data |>
       dplyr::filter(.data$.category %in% target_category) |>
       dplyr::summarise(
         sum_proportion = sum(.data$.proportion, na.rm = TRUE),
-        .by = tidyselect::all_of(indep_col)
+        .by = tidyselect::all_of(c(var_col, indep_col))
       ) |>
+      dplyr::group_by(.data[[var_col]]) |>
       arrange_with_order(.data$sum_proportion, descend = descend_indep) |>
       dplyr::mutate(order_rank = dplyr::row_number()) |>
-      dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
+      dplyr::ungroup() |>
+      dplyr::select(tidyselect::all_of(c(var_col, indep_col, "order_rank")))
 
-    # Join back to original data and extract order ranks
+    # Join back to original data by variable and indep
     data |>
       dplyr::left_join(
         category_summary,
-        by = indep_col,
+        by = c(var_col, indep_col),
         relationship = "many-to-one"
       ) |>
       dplyr::pull(.data$order_rank)
@@ -675,22 +678,25 @@ calculate_indep_sum_value_order <- function(
   indep_col,
   descend_indep = FALSE
 ) {
-  # Filter data to the specified categories and sum their proportions by indep variable
+  var_col <- ".variable_name"
+  # Sum selected category proportions within each variable and indep
   category_summary <- data |>
     dplyr::filter(.data$.category %in% category_values) |>
     dplyr::summarise(
       sum_proportion = sum(.data$.proportion, na.rm = TRUE),
-      .by = tidyselect::all_of(indep_col)
+      .by = tidyselect::all_of(c(var_col, indep_col))
     ) |>
+    dplyr::group_by(.data[[var_col]]) |>
     arrange_with_order(.data$sum_proportion, descend = descend_indep) |>
     dplyr::mutate(order_rank = dplyr::row_number()) |>
-    dplyr::select(tidyselect::all_of(c(indep_col, "order_rank")))
+    dplyr::ungroup() |>
+    dplyr::select(tidyselect::all_of(c(var_col, indep_col, "order_rank")))
 
-  # Join back to original data and extract order ranks
+  # Join back to original data by variable and indep
   data |>
     dplyr::left_join(
       category_summary,
-      by = indep_col,
+      by = c(var_col, indep_col),
       relationship = "many-to-one"
     ) |>
     dplyr::pull(.data$order_rank)
@@ -706,6 +712,11 @@ calculate_indep_sum_value_order <- function(
 #' @return Character vector of target category names
 #' @keywords internal
 get_target_categories <- function(data, method) {
+  # Use the declared factor level order of .category. The helper subset_vector
+  # distinguishes positional sets:
+  # - .top/.bottom pick the single highest/lowest level
+  # - .upper/.lower pick the half above/below the median (odd/even aware)
+  # - .mid_upper/.mid_lower include the middle level in upper/lower respectively
   all_categories <- levels(data$.category)
   subset_vector(all_categories, method)
 }

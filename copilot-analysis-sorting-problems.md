@@ -8,61 +8,28 @@
 
 This document analyzes the current implementation of `sort_dep_by` and `sort_indep_by` features in the makeme function, identifying improvement areas to ensure all kinds of sorting are possible and correct.
 
-## Key Improvement Areas
+## Status Update (Oct 19, 2025)
 
-### 1. **Inconsistent Use of `subset_vector()` [HIGH PRIORITY]**
+Completed and verified (tests and R CMD check passing):
+- Replaced custom positional logic with `subset_vector()` via `get_target_categories()`
+- Standardized aggregation rules:
+  - `.count` (dep and indep) uses sum across groups
+  - `.count_total_indep` uses sum
+  - `.sum_value` uses sum
+  - Other numeric/statistical columns retain prior semantics (e.g., mean/median where applicable)
+- Removed redundant numeric conversions (`.proportion`, `.count` already numeric)
+- Standardized descending logic for independent-variable sorting via `arrange_with_order()`
 
-**Issue**: The `calculate_proportion_order()` and `calculate_indep_proportion_order()` functions contain duplicated complex logic for determining target categories (`.top`, `.bottom`, `.upper`, `.lower`, etc.)
-
-**Current State**:
-- Both functions manually implement if-else chains to determine which categories to include
-- This logic is already implemented and tested in `subset_vector()` utility function
-- Code duplication makes maintenance harder and increases risk of inconsistencies
-
-**Proposed Solution**:
-- Extract a `get_target_categories()` helper function that uses `subset_vector()`
-- Replace manual if-else logic in both proportion ordering functions
-- Ensures consistency and reduces code duplication
-
-**Impact**: Reduces ~50 lines of duplicated code, improves maintainability
-
----
-
-### 2. **Inconsistent Aggregation Methods [HIGH PRIORITY]**
-
-**Issue**: Different functions use different aggregation approaches without clear documentation:
-- `calculate_column_order()` uses `max()` for dependent variables
-- `calculate_indep_column_order()` uses `mean()` for independent variables
-- Some use `sum()`, others use `mean()` or `max()`
-
-**Questions to Answer**:
-1. Should sorting by `.count` use max, mean, or sum across groups?
-2. Should this be consistent between dep and indep variables?
-3. Should users be able to specify the aggregation method?
-
-**Current Behavior**:
-```r
-# For dependent variables (calculate_column_order)
-aggregated <- data |>
-  dplyr::group_by(.data$.variable_name) |>
-  dplyr::summarise(order_value = max(as.numeric(.data[[column_name]]), na.rm = TRUE))
-
-# For independent variables (calculate_indep_column_order)  
-aggregated <- data |>
-  dplyr::group_by(.data[[indep_col]]) |>
-  dplyr::summarise(order_value = mean(as.numeric(.data[[column_name]]), na.rm = TRUE))
-```
-
-**Proposed Solution**:
-- Document the rationale for each aggregation method
-- Standardize where appropriate
-- Consider making aggregation method configurable if needed
-
-**Impact**: Clarifies expected behavior, ensures consistency
+Pending/partial:
+- Dependent-variable descending logic still uses `descend_if_descending()`; needs migration to `arrange_with_order()` for full consistency
+- Default behavior for `sort_indep_by = NULL` remains implicit; consider explicit `.original` option
+- Validation, documentation, and edge-case tests to be improved
 
 ---
 
-### 3. **Missing Sorting Options [MEDIUM PRIORITY]**
+## Key Improvement Areas (Remaining)
+
+### 1. Missing Sorting Options [MEDIUM PRIORITY]
 
 **Currently Supported**:
 - ✅ Positional: `.top`, `.bottom`, `.upper`, `.lower`, `.mid_upper`, `.mid_lower`
@@ -86,7 +53,7 @@ aggregated <- data |>
 
 ---
 
-### 4. **Default Sorting Behavior Not Clear [MEDIUM PRIORITY]**
+### 2. Default Sorting Behavior Not Clear [MEDIUM PRIORITY]
 
 **Issue**: When `sort_indep_by = NULL`, the behavior is unclear:
 - Current: Uses default ordering (1 for all rows)
@@ -109,75 +76,23 @@ if (is.null(sort_by)) {
 
 ---
 
-### 5. **Character vs Numeric Conversion [MEDIUM PRIORITY]**
-
-**Issue**: Inconsistent handling of numeric conversion:
-- Some functions convert `.proportion` to numeric with `as.numeric()`
-- Proportions stored as character strings with "%" symbols need consistent handling
-- Different columns may require different conversion approaches
-
-**Current State**:
-```r
-# Some functions do this:
-order_value = as.numeric(gsub("%", "", .data[[column_name]]))
-
-# Others do this:
-order_value = as.numeric(.data[[column_name]])
-```
-
-**Proposed Solution**:
-- Create centralized helper function: `as_numeric_safe(x)` that:
-  - Removes "%" if present
-  - Handles NA values appropriately
-  - Provides consistent numeric conversion
-- Use this helper consistently across all ordering functions
-
-**Impact**: Reduces errors, ensures consistency
-
----
-
-### 6. **Descending Logic Confusion [HIGH PRIORITY]**
+### 3. Descending Logic Consistency [HIGH PRIORITY]
 
 **Issue**: The relationship between `descend`/`descend_indep` and actual sort order is implemented inconsistently:
 
-**Current Behavior for Dependent Variables**:
-```r
-# Always arrange ascending first
-data |>
-  dplyr::arrange(.data$order_value) |>
-  dplyr::mutate(order_rank = dplyr::row_number())
+Status:
+- Independent-variable helpers now use `arrange_with_order()` (Option B) consistently
+- Dependent-variable helpers still compute ranks then apply `descend_if_descending()`; migrate to `arrange_with_order()` and remove `descend_if_descending()` afterward
 
-# Then reverse if descend=TRUE
-descend_if_descending(data$.dep_order, descend)
-```
+Proposed actions:
+- Thread `descend` into dep helpers (e.g., `calculate_column_order`, `calculate_proportion_order`, etc.) and use `arrange_with_order()` inside
+- Remove the post-step transform in `add_dep_order()` once all helpers accept `descend`
 
-**Current Behavior for Independent Variables**:
-```r
-# Check descend_indep in each calculate function
-if (descend_indep) {
-  dplyr::arrange(dplyr::desc(.data$order_value))
-} else {
-  dplyr::arrange(.data$order_value)
-}
-```
-
-**Problems**:
-1. Two different approaches for the same logical operation
-2. Harder to understand and maintain
-3. Risk of inconsistent behavior
-
-**Proposed Solution**:
-- Standardize to use ONE approach consistently:
-  - Option A: Always arrange ascending, then apply descend transformation
-  - Option B: Apply descend logic during arrange step
-- Use the same `descend_if_descending()` helper for both dep and indep
-- Document the chosen approach clearly
-
-**Impact**: Simplifies code, reduces confusion, ensures consistency
+Impact: Single, uniform approach reduces cognitive load and chance of drift
 
 ---
 
-### 7. **Error Handling and Validation [MEDIUM PRIORITY]**
+### 4. Error Handling and Validation [MEDIUM PRIORITY]
 
 **Missing Validation**:
 - No check that requested sorting columns exist
@@ -207,7 +122,7 @@ validate_sort_category <- function(data, category_value) {
 
 ---
 
-### 8. **Testing Coverage for Edge Cases [MEDIUM PRIORITY]**
+### 5. Testing Coverage for Edge Cases [MEDIUM PRIORITY]
 
 **Need to Ensure Tests Cover**:
 - ✅ Single dependent variable (no sorting needed)
@@ -228,7 +143,7 @@ validate_sort_category <- function(data, category_value) {
 
 ---
 
-### 9. **Documentation Improvements [LOW PRIORITY]**
+### 6. Documentation Improvements [LOW PRIORITY]
 
 **Needed Documentation**:
 - Clear explanation of what each sorting option does
@@ -248,107 +163,41 @@ validate_sort_category <- function(data, category_value) {
 
 ## Specific Refactoring Recommendations
 
-### Step 1: Extract `get_target_categories()` Helper
+### Updated Steps (focused on remaining work)
 
-```r
-#' Get target categories for positional sorting
-#' 
-#' Uses subset_vector to determine which categories to include based on
-#' positional methods like .top, .bottom, .upper, .lower, etc.
-#'
-#' @param data Dataset with .category column
-#' @param method Positional method (.top, .bottom, etc.)
-#' @return Character vector of target category names
-#' @keywords internal
-get_target_categories <- function(data, method) {
-  all_categories <- levels(data$.category)
-  subset_vector(all_categories, method)
-}
-```
+1) Migrate dependent-variable helpers to `arrange_with_order()`
+- Add `descend` parameter to: `calculate_proportion_order`, `calculate_category_order`, `calculate_multiple_category_order`, `calculate_column_order` (already accepts), and `calculate_sum_value_order` (already accepts)
+- Use `arrange_with_order()` internally instead of fixed ascending
+- Remove `descend_if_descending()` from `add_dep_order()` once all callers migrated
 
-### Step 2: Simplify `calculate_proportion_order()`
+2) Clarify default indep sorting behavior
+- Add explicit `.original` (or `.factor_order`) option to preserve factor-level order
+- Document that `NULL` means "no sorting" (keep incoming order)
 
-Replace the complex if-else logic with:
-```r
-target_categories <- get_target_categories(data, method)
-```
+3) Validation utilities
+- `validate_sort_column(data, column)` and `validate_sort_category(data, value)` as proposed earlier
+- Fail fast with clear cli errors
 
-### Step 3: Simplify `calculate_indep_proportion_order()`
-
-Same approach as Step 2, using the same helper function.
-
-### Step 4: Unify Descending Logic
-
-Consider using a single consistent approach:
-```r
-apply_descending <- function(x, descend) {
-  if (descend) {
-    max(x, na.rm = TRUE) - x + 1
-  } else {
-    x
-  }
-}
-```
-
-### Step 5: Centralize Numeric Conversion
-
-```r
-#' Convert value to numeric, handling common formats
-#' @param x Vector to convert (may contain % symbols, etc.)
-#' @return Numeric vector
-#' @keywords internal
-as_numeric_safe <- function(x) {
-  x_clean <- gsub("%", "", as.character(x))
-  as.numeric(x_clean)
-}
-```
+4) Tests and docs
+- Add regression tests covering ties, NAs, ordered vs unordered factors, and combined dep+indep sorting
+- Expand docs and vignette to document all sorting modes and their interactions
 
 ---
 
 ## Priority Order for Implementation
 
-### Phase 1: Critical Improvements (Do First)
-1. **Use `subset_vector()` in proportion ordering** ⭐ HIGH IMPACT
-   - Reduces duplication
-   - Uses tested code
-   - Easy to implement
+### Updated Priority Order
 
-2. **Standardize descending logic** ⭐ HIGH IMPACT  
-   - Fixes inconsistency
-   - Simplifies maintenance
-   - Moderate effort
+Phase 1:
+1. Standardize descending logic for dependent variables via `arrange_with_order()`; remove `descend_if_descending()`
 
-### Phase 2: Quality Improvements
-3. **Add validation and error handling**
-   - Improves user experience
-   - Easier debugging
-   - Moderate effort
+Phase 2:
+2. Clarify/document default indep sorting (`NULL` vs `.original`)
+3. Add validation helpers and integrate
 
-4. **Centralize numeric conversion**
-   - Reduces errors
-   - Minor effort
-
-5. **Document aggregation methods**
-   - Clarifies behavior
-   - Low effort
-
-### Phase 3: Feature Enhancements
-6. **Clarify default behavior**
-   - Improves API clarity
-   - Low-medium effort
-
-7. **Add more sorting options** (if needed)
-   - Based on user demand
-   - Varies by feature
-
-8. **Improve documentation**
-   - Always valuable
-   - Ongoing effort
-
-### Phase 4: Test Coverage
-9. **Add edge case tests**
-   - Increases reliability
-   - Ongoing effort
+Phase 3:
+4. Edge-case tests for ties/NA/ordered factors and combined sorting
+5. Documentation/vignette updates
 
 ---
 
@@ -377,10 +226,10 @@ After each change:
 
 ## Next Steps
 
-1. ✅ Store this analysis in copilot-analysis-sorting-problems.md
-2. ⏭️ Proceed with Priority 1: Use `subset_vector()` in proportion ordering
-3. Test thoroughly
-4. Continue with remaining priorities based on results
+1. Migrate dep helpers to `arrange_with_order(descend)` and drop `descend_if_descending()`
+2. Add `.original` indep option; document `NULL` semantics
+3. Introduce validation helpers and wire them into sorting entry points
+4. Add edge-case tests and update docs/vignette
 
 ---
 
