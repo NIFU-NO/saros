@@ -415,7 +415,12 @@ calculate_column_order <- function(data, column_name, descend = FALSE) {
   # Group by variable and calculate summary statistic for ordering
   summary_order <- data |>
     dplyr::summarise(
-      order_value = max(.data[[column_name]], na.rm = TRUE), # Use max instead of mean for .count
+      # Aggregation rule: for .count always use sum across groups; otherwise keep previous max behavior
+      order_value = if (identical(column_name, ".count")) {
+        sum(.data[[column_name]], na.rm = TRUE)
+      } else {
+        max(.data[[column_name]], na.rm = TRUE)
+      },
       .by = tidyselect::all_of(".variable_label")
     ) |>
     arrange_with_order(.data$order_value, descend = descend) |> # Asc/Desc order
@@ -444,7 +449,8 @@ calculate_sum_value_order <- function(data, descend = FALSE) {
   # Use .sum_value for ordering (this is pre-calculated in add_collapsed_categories)
   summary_order <- data |>
     dplyr::summarise(
-      order_value = mean(.data$.sum_value, na.rm = TRUE),
+      # Aggregation rule: use sum for sum_value to reflect total contribution
+      order_value = sum(.data$.sum_value, na.rm = TRUE),
       .by = tidyselect::all_of(".variable_label")
     ) |>
     # Default behaviour historically sorted descending; invert flag to preserve API
@@ -552,7 +558,12 @@ calculate_indep_column_order <- function(
   # Group by independent variable and calculate summary statistic for ordering
   summary_order <- data |>
     dplyr::summarise(
-      order_value = mean(.data[[column_name]], na.rm = TRUE),
+      # Aggregation rule: for count-like columns use sum across groups; otherwise mean is acceptable
+      order_value = if (identical(column_name, ".count") || identical(column_name, ".count_total_indep")) {
+        sum(.data[[column_name]], na.rm = TRUE)
+      } else {
+        mean(.data[[column_name]], na.rm = TRUE)
+      },
       .by = tidyselect::all_of(indep_col)
     ) |>
     arrange_with_order(.data$order_value, descend = descend_indep) |>
