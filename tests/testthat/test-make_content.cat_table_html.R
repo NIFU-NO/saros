@@ -14,34 +14,33 @@ testthat::test_that("make_content.cat_table_html works", {
   )
 })
 
-testthat::test_that("make_content.cat_table_html sorts correctly for sort_dep_by='.top'", {
-  saros::ex_survey |>
-    labelled::copy_labels_from(saros::ex_survey) |>
-    saros::makeme(
-      dep = b_1:b_3,
-      sort_dep_by = ".top",
-      label_separator = " - ",
-      type = "cat_table_html",
-      showNA = "never",
-      descend = FALSE
-    ) |>
-    dplyr::pull(`A lot (%)`) |>
-    testthat::expect_equal(expected = c("8", "9", "10"))
-})
+testthat::test_that("make_content.cat_table_html sorts correctly for '.top' and '.proportion'+desc", {
+  # Shared dataset and options
+  data_in <- labelled::copy_labels_from(saros::ex_survey, saros::ex_survey)
 
-testthat::test_that("make_content.cat_table_html sorts correctly for sort_dep_by='.proportion' and descend=TRUE", {
-  saros::ex_survey |>
-    labelled::copy_labels_from(saros::ex_survey) |>
-    saros::makeme(
-      dep = b_1:b_3,
-      sort_dep_by = ".proportion",
-      label_separator = " - ",
-      type = "cat_table_html",
-      showNA = "never",
-      descend = TRUE
-    ) |>
-    dplyr::pull(`A lot (%)`) |>
-    testthat::expect_equal(expected = c("10", "9", "8"))
+  # Case 1: sort_dep_by = .top (asc)
+  out_top <- saros::makeme(
+    data = data_in,
+    dep = b_1:b_3,
+    sort_dep_by = ".top",
+    label_separator = " - ",
+    type = "cat_table_html",
+    showNA = "never",
+    descend = FALSE
+  )
+  testthat::expect_equal(dplyr::pull(out_top, `A lot (%)`), c("8", "9", "10"))
+
+  # Case 2: sort_dep_by = .proportion with descend = TRUE
+  out_prop_desc <- saros::makeme(
+    data = data_in,
+    dep = b_1:b_3,
+    sort_dep_by = ".proportion",
+    label_separator = " - ",
+    type = "cat_table_html",
+    showNA = "never",
+    descend = TRUE
+  )
+  testthat::expect_equal(dplyr::pull(out_prop_desc, `A lot (%)`), c("10", "9", "8"))
 })
 
 testthat::test_that("make_content.cat_table_html works with NA on both dep and indep", {
