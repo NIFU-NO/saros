@@ -1,5 +1,7 @@
 # saros 1.6.0
 -   Sorting: Independent-variable ordering is now computed per dependent variable, allowing indep order to vary per dep; descend_indep now consistently reverses indep order across tables and plots; plots use centralized .indep_order when indep is on the x-axis; ordered indep factors take precedence over sort_indep_by (reversed only when descend_indep=TRUE); legends preserve unused response levels in .category
+-   Sorting: Implemented B1 strategy for direct column-based sorting via whitelists. Allowed keys for dependent variables are now centrally defined and enforced; independent variables use a similar whitelist (including .count_total_indep). This prevents accidental sorting on arbitrary or missing columns and clarifies supported behavior
+-   Refactor: Centralized global constants (sorting whitelists) in `zzz.R` under `.saros.env` for easier maintenance
 -   Fix: Sorting stability for dependent variables with missing/duplicate labels — internal joins for computing `.dep_order` now key by `.variable_name` (unique) instead of `.variable_label`, preventing many-to-one join errors in edge cases while preserving displayed labels
 -   Enhancement: `sort_indep_by` now explicitly defaults to `".factor_order"` and accepts `NULL` (treated as `".factor_order"`). When no independent variable is provided (`indep = NULL`), specifying `sort_indep_by` or `descend_indep` no longer errors; they are simply ignored.
 -   Using `air` for consistent code formatting
