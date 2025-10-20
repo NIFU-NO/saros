@@ -1,62 +1,67 @@
-test_that("sort_dep_by default behavior (.variable_position)", {
-  # Test that default sort_dep_by maintains variable order from data
-  result <- makeme(
-    data = ex_survey,
-    dep = c("p_1", "p_2", "p_3", "p_4"), # Red, Green, Yellow, Blue parties
+test_that("sort_dep_by default/.variable_position + NULL + descend", {
+  deps <- c("p_1", "p_2", "p_3", "p_4")
+
+  # Default behavior (.variable_position)
+  result_default <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1:p_4,
     type = "cat_table_html",
     descend = FALSE,
     showNA = "never"
   )
-
-  # Variables should appear in their original data order (p_1, p_2, p_3, p_4)
-  variable_labels <- as.character(unique(result$.variable_label))
+  variable_labels <- as.character(unique(result_default$.variable_label))
   expect_equal(length(variable_labels), 4)
-
-  # Current actual order: Blue, Yellow, Green, Red
   expect_equal(variable_labels[1], "Red Party")
   expect_equal(variable_labels[2], "Green Party")
   expect_equal(variable_labels[3], "Yellow Party")
   expect_equal(variable_labels[4], "Blue Party")
-})
 
-test_that("sort_dep_by = NULL converts to .variable_position", {
-  # Test that NULL sort_dep_by gives same result as explicit .variable_position
-  result_null <- makeme(
-    data = ex_survey,
-    dep = c("p_1", "p_2", "p_3", "p_4"),
+  # NULL converts to .variable_position
+  result_null <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1:p_4,
     type = "cat_table_html",
     sort_dep_by = NULL,
     showNA = "never"
   )
-
-  result_explicit <- makeme(
-    data = ex_survey,
-    dep = c("p_1", "p_2", "p_3", "p_4"),
+  result_explicit <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1:p_4,
     type = "cat_table_html",
     sort_dep_by = ".variable_position",
     showNA = "never"
   )
-
-  # Variable order should be identical
   expect_equal(
     unique(result_null$.variable_label),
     unique(result_explicit$.variable_label)
   )
+
+  # Descend reverses .variable_position
+  result_desc <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1:p_4,
+    type = "cat_table_html",
+    sort_dep_by = ".variable_position",
+    descend = TRUE,
+    showNA = "never"
+  )
+  labels_desc <- as.character(unique(result_desc$.variable_label))
+  expect_equal(variable_labels, rev(labels_desc))
 })
 
 test_that("sort_dep_by = .variable_label sorts alphabetically", {
   # Test alphabetical sorting by variable labels
-  result_default <- makeme(
-    data = ex_survey,
-    dep = c("p_1", "p_2", "p_3", "p_4"),
+  result_default <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1:p_4,
     type = "cat_table_html",
     showNA = "never",
     descend = FALSE
   )
 
-  result_sorted <- makeme(
-    data = ex_survey,
-    dep = c("p_1", "p_2", "p_3", "p_4"),
+  result_sorted <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1:p_4,
     type = "cat_table_html",
     sort_dep_by = ".variable_label",
     showNA = "never",
@@ -74,17 +79,17 @@ test_that("sort_dep_by = .variable_label sorts alphabetically", {
 
 test_that("sort_dep_by = .variable_name sorts by column names", {
   # Test sorting by variable names (p_1, p_2, p_3, p_4)
-  result_mixed <- makeme(
-    data = ex_survey,
-    dep = c("p_4", "p_1", "p_3", "p_2"), # Mixed order input
+  result_mixed <- saros::makeme(
+    data = saros::ex_survey,
+    dep = tidyselect::all_of(c("p_4", "p_1", "p_3", "p_2")), # Mixed order input
     type = "cat_table_html",
     sort_dep_by = ".variable_name",
     showNA = "never"
   )
 
-  result_ordered <- makeme(
-    data = ex_survey,
-    dep = c("p_1", "p_2", "p_3", "p_4"), # Ordered input
+  result_ordered <- saros::makeme(
+    data = saros::ex_survey,
+    dep = tidyselect::all_of(c("p_1", "p_2", "p_3", "p_4")), # Ordered input
     type = "cat_table_html",
     sort_dep_by = ".variable_name",
     showNA = "never"
@@ -101,10 +106,10 @@ test_that("sort_dep_by = .variable_name sorts by column names", {
 
 test_that("legacy sort_by parameter shows deprecation warning", {
   # Test that sort_by still works but shows deprecation warning
-  expect_warning(
-    result <- makeme(
-      data = ex_survey,
-      dep = c("b_1", "b_2"),
+  testthat::expect_warning(
+    result <- saros::makeme(
+      data = saros::ex_survey,
+      dep = b_1:b_2,
       type = "cat_table_html",
       sort_by = ".variable_position"
     ),
@@ -118,13 +123,13 @@ test_that("legacy sort_by parameter shows deprecation warning", {
 
 test_that("sort_indep_by parameter controls independent variable category order", {
   # Create test data with ordered categories for predictable testing
-  test_data <- ex_survey[1:100, ] # Smaller dataset for focused testing
+  test_data <- saros::ex_survey[1:100, ] # Smaller dataset for focused testing
 
   # Test with sort_indep_by = NULL (should preserve factor levels)
-  result_null <- makeme(
+  result_null <- saros::makeme(
     data = test_data,
-    dep = "b_1",
-    indep = "x1_sex", # Should have "Male" and "Female" categories
+    dep = b_1,
+    indep = x1_sex, # Should have "Male" and "Female" categories
     type = "cat_table_html",
     sort_indep_by = NULL,
     showNA = "never"
@@ -136,8 +141,8 @@ test_that("sort_indep_by parameter controls independent variable category order"
   # Test with sort_indep_by = ".upper" (should sort by proportion)
   result_upper <- makeme(
     data = test_data,
-    dep = "b_1",
-    indep = "x1_sex",
+    dep = b_1,
+    indep = x1_sex,
     type = "cat_table_html",
     sort_indep_by = ".upper",
     showNA = "never"
@@ -150,10 +155,10 @@ test_that("sort_indep_by parameter controls independent variable category order"
 
 test_that("sort_dep_by and sort_indep_by work together", {
   # Test that both parameters can be used simultaneously
-  result <- makeme(
-    data = ex_survey[1:100, ],
-    dep = c("b_1", "b_2"),
-    indep = "x1_sex",
+  result <- saros::makeme(
+    data = saros::ex_survey[1:100, ],
+    dep = b_1:b_2,
+    indep = x1_sex,
     type = "cat_table_html",
     sort_dep_by = ".variable_label",
     sort_indep_by = ".upper",
@@ -170,9 +175,9 @@ test_that("sort_dep_by and sort_indep_by work together", {
 
 test_that("sort_dep_by = .upper sorts by highest category proportion", {
   # Test that .upper sorting works correctly
-  result <- makeme(
-    data = ex_survey,
-    dep = c("b_1", "b_2", "b_3"),
+  result <- saros::makeme(
+    data = saros::ex_survey,
+    dep = b_1:b_3,
     type = "cat_table_html",
     sort_dep_by = ".upper",
     showNA = "never"
@@ -190,9 +195,9 @@ test_that("sort_dep_by = .upper sorts by highest category proportion", {
 test_that("parameter precedence: sort_dep_by overrides legacy sort_by", {
   # When both parameters are specified, sort_dep_by should take precedence
   expect_warning(
-    result <- makeme(
-      data = ex_survey,
-      dep = c("p_1", "p_2", "p_3", "p_4"),
+    result <- saros::makeme(
+      data = saros::ex_survey,
+      dep = p_1:p_4,
       type = "cat_table_html",
       sort_by = ".upper", # legacy parameter
       sort_dep_by = ".variable_position", # should override
@@ -213,9 +218,9 @@ test_that("parameter precedence: sort_dep_by overrides legacy sort_by", {
 
 test_that("summarize_cat_cat_data accepts new parameters directly", {
   # Test the underlying function with new parameters
-  result <- summarize_cat_cat_data(
-    data = ex_survey,
-    dep = c("b_1", "b_2"),
+  result <- saros:::summarize_cat_cat_data(
+    data = saros::ex_survey,
+    dep = paste0("b_", 1:2),
     indep = "x1_sex",
     sort_dep_by = ".variable_position",
     sort_indep_by = NULL,
@@ -235,18 +240,18 @@ test_that("summarize_cat_cat_data accepts new parameters directly", {
 
 test_that("descend parameter works with .variable_position sorting", {
   # Test that descend reverses the variable position order
-  result_asc <- makeme(
-    data = ex_survey,
-    dep = c("p_1", "p_2", "p_3", "p_4"),
+  result_asc <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1:p_4,
     type = "cat_table_html",
     sort_dep_by = ".variable_position",
     descend = FALSE,
     showNA = "never"
   )
 
-  result_desc <- makeme(
-    data = ex_survey,
-    dep = c("p_1", "p_2", "p_3", "p_4"),
+  result_desc <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1:p_4,
     type = "cat_table_html",
     sort_dep_by = ".variable_position",
     descend = TRUE,
