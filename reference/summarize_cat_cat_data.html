@@ -60,6 +60,8 @@
 <span>  showNA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ifany"</span>, <span class="st">"always"</span>, <span class="st">"never"</span><span class="op">)</span>,</span>
 <span>  totals <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sort_by <span class="op">=</span> <span class="st">".upper"</span>,</span>
+<span>  sort_dep_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sort_indep_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  data_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"percentage_bare"</span>, <span class="st">"percentage"</span>, <span class="st">"proportion"</span>, <span class="st">"count"</span>, <span class="st">"mean"</span>,</span>
 <span>    <span class="st">"median"</span><span class="op">)</span>,</span>
 <span>  digits <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -72,6 +74,7 @@
 <span>  categories_treated_as_na <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label_separator <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  descend <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  descend_indep <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  labels_always_at_bottom <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels_always_at_top <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  translations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -114,15 +117,13 @@
 
 
 <dt id="arg-sort-by">sort_by<a class="anchor" aria-label="anchor" href="#arg-sort-by"></a></dt>
-<dd><p><em>What to sort output by</em></p>
+<dd><p><em>What to sort output by (legacy)</em></p>
 <p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Sort output (and collapse if requested). When using <code>indep</code>-argument,
-sorting differs between ordered factors and unordered factors: Ordering
-of ordered factors is always respected in output (their levels define
-the base order). Unordered factors will be reordered by <code>sort_by</code>.
-Currently, this works best for a single <code>dep</code>.</p>
+<p><strong>DEPRECATED:</strong> Use <code>sort_dep_by</code> and <code>sort_indep_by</code> instead for clearer control.
+When specified, this parameter will be used for both dependent and independent sorting.
+If <code>NULL</code> (default), dependent variables will be sorted by <code>.variable_position</code>.</p>
 <dl><dt>NULL</dt>
-<dd><p>No sorting.</p></dd>
+<dd><p>Uses <code>.variable_position</code> for dependent variables, no sorting for independent.</p></dd>
 
 <dt>".top"</dt>
 <dd><p>The proportion for the highest category available in the variable.</p></dd>
@@ -153,6 +154,77 @@ Currently, this works best for a single <code>dep</code>.</p>
 
 <dt>".by_group"</dt>
 <dd><p>The groups of the by argument.</p></dd>
+
+<dt>character()</dt>
+<dd><p>Character vector of category labels to sum together.</p></dd>
+
+
+</dl></dd>
+
+
+<dt id="arg-sort-dep-by">sort_dep_by<a class="anchor" aria-label="anchor" href="#arg-sort-dep-by"></a></dt>
+<dd><p><em>What to sort dependent variables by</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>".variable_position"</code> (<code>optional</code>)</p>
+<p>Sort dependent variables in output. When using <code>indep</code>-argument,
+sorting differs between ordered factors and unordered factors: Ordering
+of ordered factors is always respected in output (their levels define
+the base order). Unordered factors will be reordered by <code>sort_dep_by</code>.</p>
+<dl><dt>NULL or ".variable_position"</dt>
+<dd><p>Sort by variable position in the supplied data frame (default).</p></dd>
+
+<dt>".variable_label"</dt>
+<dd><p>Sort by the variable labels.</p></dd>
+
+<dt>".variable_name"</dt>
+<dd><p>Sort by the variable names.</p></dd>
+
+<dt>".top"</dt>
+<dd><p>The proportion for the highest category available in the variable.</p></dd>
+
+<dt>".upper"</dt>
+<dd><p>The sum of the proportions for the categories above the middle category.</p></dd>
+
+<dt>".mid_upper"</dt>
+<dd><p>The sum of the proportions for the categories including and above the middle category.</p></dd>
+
+<dt>".mid_lower"</dt>
+<dd><p>The sum of the proportions for the categories including and below the middle category.</p></dd>
+
+<dt>".lower"</dt>
+<dd><p>The sum of the proportions for the categories below the middle category.</p></dd>
+
+<dt>".bottom"</dt>
+<dd><p>The proportions for the lowest category available in the variable.</p></dd>
+
+
+</dl></dd>
+
+
+<dt id="arg-sort-indep-by">sort_indep_by<a class="anchor" aria-label="anchor" href="#arg-sort-indep-by"></a></dt>
+<dd><p><em>What to sort independent variable categories by</em></p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
+<p>Sort independent variable categories in output. When <code>NULL</code>, preserves the
+original factor level order for the independent variable.</p>
+<dl><dt>NULL</dt>
+<dd><p>No sorting - preserves original factor level order (default).</p></dd>
+
+<dt>".top"</dt>
+<dd><p>The proportion for the highest category available.</p></dd>
+
+<dt>".upper"</dt>
+<dd><p>The sum of the proportions for the categories above the middle category.</p></dd>
+
+<dt>".mid_upper"</dt>
+<dd><p>The sum of the proportions for the categories including and above the middle category.</p></dd>
+
+<dt>".mid_lower"</dt>
+<dd><p>The sum of the proportions for the categories including and below the middle category.</p></dd>
+
+<dt>".lower"</dt>
+<dd><p>The sum of the proportions for the categories below the middle category.</p></dd>
+
+<dt>".bottom"</dt>
+<dd><p>The proportions for the lowest category available.</p></dd>
 
 <dt>character()</dt>
 <dd><p>Character vector of category labels to sum together.</p></dd>
@@ -234,6 +306,15 @@ Whether it is <code>N</code> or <code>N_valid</code> depends on your <code>showN
 <dd><p><em>Sorting order</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
 <p>Reverse sorting of <code>sort_by</code> in figures and tables. Works with both
+ordered and unordered factors - for ordered factors, it reverses the
+display order while preserving the inherent level ordering.
+See <code>arrange_section_by</code> for sorting of report sections.</p></dd>
+
+
+<dt id="arg-descend-indep">descend_indep<a class="anchor" aria-label="anchor" href="#arg-descend-indep"></a></dt>
+<dd><p><em>Sorting order for independent variables</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>Reverse sorting of <code>sort_indep_by</code> in figures and tables. Works with both
 ordered and unordered factors - for ordered factors, it reverses the
 display order while preserving the inherent level ordering.
 See <code>arrange_section_by</code> for sorting of report sections.</p></dd>
