@@ -457,8 +457,10 @@ test_that("NA values in dependent data do not break sorting", {
   )
 
   expect_true(nrow(r1) == nrow(r2))
+  # With a single dependent variable, switching descend should not affect
+  # the independent row order; verify the indep labels are identical.
   expect_equal(
     as.character(unique(r1[[1]])),
-    rev(as.character(unique(r2[[1]])))
+    as.character(unique(r2[[1]]))
   )
 })
