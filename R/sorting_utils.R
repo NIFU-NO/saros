@@ -29,13 +29,17 @@ add_sorting_order_vars <- function(
     apply_final_arrangement()
 }
 
+
 descend_if_descending <- function(x, descend) {
-  if (descend) {
-    max_x <- max(x, na.rm = TRUE)
-    return(max_x - x + 1)
+  if (isTRUE(descend)) {
+    max_x <- suppressWarnings(max(x, na.rm = TRUE))
+    if (is.finite(max_x)) {
+      return(max_x - x + 1)
+    }
   }
   x
 }
+
 
 #' Apply sorting with optional descending order
 #'
@@ -79,7 +83,12 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
         arrange_with_order(.data$.variable_position, descend = descend) |>
         dplyr::mutate(order_rank = dplyr::row_number()) |>
         dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
-      data <- dplyr::left_join(data, dep_map, by = ".variable_name", relationship = "many-to-one")
+      data <- dplyr::left_join(
+        data,
+        dep_map,
+        by = ".variable_name",
+        relationship = "many-to-one"
+      )
       data$.dep_order <- data$order_rank
       data$order_rank <- NULL
     } else {
@@ -88,7 +97,12 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
         arrange_with_order(.data$.variable_name, descend = descend) |>
         dplyr::mutate(order_rank = dplyr::row_number()) |>
         dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
-      data <- dplyr::left_join(data, dep_map, by = ".variable_name", relationship = "many-to-one")
+      data <- dplyr::left_join(
+        data,
+        dep_map,
+        by = ".variable_name",
+        relationship = "many-to-one"
+      )
       data$.dep_order <- data$order_rank
       data$order_rank <- NULL
     }
@@ -100,7 +114,12 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
       arrange_with_order(.data$.label_chr, descend = descend) |>
       dplyr::mutate(order_rank = dplyr::row_number()) |>
       dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
-    data <- dplyr::left_join(data, dep_map, by = ".variable_name", relationship = "many-to-one")
+    data <- dplyr::left_join(
+      data,
+      dep_map,
+      by = ".variable_name",
+      relationship = "many-to-one"
+    )
     data$.dep_order <- data$order_rank
     data$order_rank <- NULL
   } else if (all(sort_by %in% ".variable_name")) {
@@ -109,8 +128,13 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
       dplyr::distinct(.data$.variable_name) |>
       arrange_with_order(.data$.variable_name, descend = descend) |>
       dplyr::mutate(order_rank = dplyr::row_number()) |>
-  dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
-    data <- dplyr::left_join(data, dep_map, by = ".variable_name", relationship = "many-to-one")
+      dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+    data <- dplyr::left_join(
+      data,
+      dep_map,
+      by = ".variable_name",
+      relationship = "many-to-one"
+    )
     data$.dep_order <- data$order_rank
     data$order_rank <- NULL
   } else if (all(sort_by %in% unique(data$.category))) {
@@ -160,7 +184,12 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
         arrange_with_order(.data$.variable_position, descend = descend) |>
         dplyr::mutate(order_rank = dplyr::row_number()) |>
         dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
-      data <- dplyr::left_join(data, dep_map, by = ".variable_name", relationship = "many-to-one")
+      data <- dplyr::left_join(
+        data,
+        dep_map,
+        by = ".variable_name",
+        relationship = "many-to-one"
+      )
       data$.dep_order <- data$order_rank
       data$order_rank <- NULL
     } else {
@@ -169,7 +198,12 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
         arrange_with_order(.data$.variable_name, descend = descend) |>
         dplyr::mutate(order_rank = dplyr::row_number()) |>
         dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
-      data <- dplyr::left_join(data, dep_map, by = ".variable_name", relationship = "many-to-one")
+      data <- dplyr::left_join(
+        data,
+        dep_map,
+        by = ".variable_name",
+        relationship = "many-to-one"
+      )
       data$.dep_order <- data$order_rank
       data$order_rank <- NULL
     }
