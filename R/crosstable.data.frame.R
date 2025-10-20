@@ -213,7 +213,11 @@ crosstable_process_dep <- function(data, dep_var, indep, showNA, call) {
     return(crosstable_empty_output(dep_var, indep, data = data))
   }
 
-  fct_lvls <- if (is.factor(out[[".category"]])) {
+  # Preserve original factor levels from source data to ensure unused levels
+  # are retained (e.g., for legends), otherwise fall back to observed levels
+  fct_lvls <- if (is.factor(data[[dep_var]])) {
+    levels(data[[dep_var]])
+  } else if (is.factor(out[[".category"]])) {
     levels(out[[".category"]])
   } else {
     sort(unique(out[[".category"]]))

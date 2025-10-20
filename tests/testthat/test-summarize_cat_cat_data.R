@@ -25,7 +25,7 @@ testthat::test_that("summarize_cat_cat_data", {
 
   testthat::expect_equal(
     saros:::summarize_cat_cat_data(
-      data = ex_survey,
+      data = saros::ex_survey,
       dep = paste0("a_", 1:9),
 
       showNA = "never",
@@ -43,7 +43,7 @@ testthat::test_that("summarize_cat_cat_data", {
 
   testthat::expect_equal(
     saros:::summarize_cat_cat_data(
-      data = ex_survey,
+      data = saros::ex_survey,
       dep = paste0("b_", 1:3),
 
       showNA = "never",

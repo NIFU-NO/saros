@@ -415,6 +415,8 @@ fig_height_h_barchart2 <- # Returns a numeric value
       )
       return(min)
     }
+
+    # TODO: Should find a more robust way to identify the indep variable
     indep_vars <- colnames(data)[
       !colnames(data) %in% .saros.env$summary_data_sort2
     ]

@@ -272,18 +272,55 @@
 #'
 #'   Whether to hide label if below this value.
 #'
-#' @param sort_by *What to sort output by*
+#' @param sort_dep_by *What to sort dependent variables by*
+#'
+#'   `vector<character>` // *default:* `".variable_position"` (`optional`)
+#'
+#'   Sort dependent variables in output. When using `indep`-argument,
+#'   sorting differs between ordered factors and unordered factors: Ordering
+#'   of ordered factors is always respected in output (their levels define
+#'   the base order). Unordered factors will be reordered by `sort_dep_by`.
+#'
+#' \describe{
+#' \item{NULL or ".variable_position"}{Sort by variable position in the supplied data frame (default).}
+#' \item{".variable_label"}{Sort by the variable labels.}
+#' \item{".variable_name"}{Sort by the variable names.}
+#' \item{".top"}{The proportion for the highest category available in the variable.}
+#' \item{".upper"}{The sum of the proportions for the categories above the middle category.}
+#' \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
+#' \item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
+#' \item{".lower"}{The sum of the proportions for the categories below the middle category.}
+#' \item{".bottom"}{The proportions for the lowest category available in the variable.}
+#' }
+#'
+#' @param sort_indep_by *What to sort independent variable categories by*
 #'
 #'   `vector<character>` // *default:* `NULL` (`optional`)
 #'
-#'   Sort output (and collapse if requested). When using `indep`-argument,
-#'   sorting differs between ordered factors and unordered factors: Ordering
-#'   of ordered factors is always respected in output (their levels define
-#'   the base order). Unordered factors will be reordered by `sort_by`.
-#'   Currently, this works best for a single `dep`.
+#'   Sort independent variable categories in output. When `NULL`, preserves the
+#'   original factor level order for the independent variable.
 #'
 #' \describe{
-#' \item{NULL}{No sorting.}
+#' \item{NULL}{No sorting - preserves original factor level order (default).}
+#' \item{".top"}{The proportion for the highest category available.}
+#' \item{".upper"}{The sum of the proportions for the categories above the middle category.}
+#' \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
+#' \item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
+#' \item{".lower"}{The sum of the proportions for the categories below the middle category.}
+#' \item{".bottom"}{The proportions for the lowest category available.}
+#' \item{character()}{Character vector of category labels to sum together.}
+#' }
+#'
+#' @param sort_by *What to sort output by (legacy)*
+#'
+#'   `vector<character>` // *default:* `NULL` (`optional`)
+#'
+#'   **DEPRECATED:** Use `sort_dep_by` and `sort_indep_by` instead for clearer control.
+#'   When specified, this parameter will be used for both dependent and independent sorting.
+#'   If `NULL` (default), dependent variables will be sorted by `.variable_position`.
+#'
+#' \describe{
+#' \item{NULL}{Uses `.variable_position` for dependent variables, no sorting for independent.}
 #' \item{".top"}{The proportion for the highest category available in the variable.}
 #' \item{".upper"}{The sum of the proportions for the categories above the middle category.}
 #' \item{".mid_upper"}{The sum of the proportions for the categories including and above the middle category.}
@@ -302,6 +339,15 @@
 #'   `scalar<logical>` // *default:* `FALSE` (`optional`)
 #'
 #'   Reverse sorting of `sort_by` in figures and tables. Works with both
+#'   ordered and unordered factors - for ordered factors, it reverses the
+#'   display order while preserving the inherent level ordering.
+#'   See `arrange_section_by` for sorting of report sections.
+#'
+#' @param descend_indep *Sorting order for independent variables*
+#'
+#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'
+#'   Reverse sorting of `sort_indep_by` in figures and tables. Works with both
 #'   ordered and unordered factors - for ordered factors, it reverses the
 #'   display order while preserving the inherent level ordering.
 #'   See `arrange_section_by` for sorting of report sections.
@@ -452,8 +498,11 @@ makeme <-
     x_axis_label_width = 25,
     strip_width = 25,
     # Sorting
-    sort_by = ".upper",
+    sort_dep_by = ".variable_position",
+    sort_indep_by = NULL,
+    sort_by = NULL,
     descend = TRUE,
+    descend_indep = FALSE,
     labels_always_at_top = NULL,
     labels_always_at_bottom = NULL,
     # For tables
@@ -506,6 +555,28 @@ makeme <-
       defaults_env = global_settings_get(fn_name = "makeme"),
       default_values = formals(makeme)
     )
+
+    # Handle sort_by parameter logic
+    if (!is.null(args$sort_by)) {
+      # If sort_by is specified and the new parameters are defaults, use sort_by for both
+      if (
+        identical(args$sort_dep_by, ".variable_position") &&
+          is.null(args$sort_indep_by)
+      ) {
+        args$sort_dep_by <- args$sort_by
+        args$sort_indep_by <- args$sort_by
+      }
+      # Issue deprecation warning
+      cli::cli_warn(
+        "The 'sort_by' parameter is deprecated. Use 'sort_dep_by' and 'sort_indep_by' instead for clearer control.",
+        call. = FALSE
+      )
+    }
+
+    # Convert NULL to .variable_position for sort_dep_by
+    if (is.null(args$sort_dep_by)) {
+      args$sort_dep_by <- ".variable_position"
+    }
 
     # Setup and validate arguments
     args <- setup_and_validate_makeme_args(

@@ -68,13 +68,28 @@ make_content.cat_plot_html <-
 
     needs_reorder <- !is.ordered(data[[x_axis_var]]) && length(indep_vars) > 0
     if (isTRUE(needs_reorder)) {
-      data[[x_axis_var]] <- reorder_within(
-        x = data[[x_axis_var]],
-        by = ifelse(is.na(data[[".sum_value"]]), 0, data[[".sum_value"]]),
-        within = data[, facet_var, drop = FALSE],
-        fun = mean,
-        na.rm = TRUE
-      )
+      # When the x-axis is the independent variable, leverage centralized
+      # .indep_order (which already respects descend_indep and per-dep logic).
+      if (
+        identical(x_axis_var, indep_vars) && ".indep_order" %in% names(data)
+      ) {
+        data[[x_axis_var]] <- reorder_within(
+          x = data[[x_axis_var]],
+          by = data[[".indep_order"]],
+          within = data[, facet_var, drop = FALSE],
+          fun = mean,
+          na.rm = TRUE
+        )
+      } else {
+        # Fallback: order by .sum_value within each facet (legacy behavior)
+        data[[x_axis_var]] <- reorder_within(
+          x = data[[x_axis_var]],
+          by = ifelse(is.na(data[[".sum_value"]]), 0, data[[".sum_value"]]),
+          within = data[, facet_var, drop = FALSE],
+          fun = mean,
+          na.rm = TRUE
+        )
+      }
     }
     tooltip_glue_specs <-
       c(

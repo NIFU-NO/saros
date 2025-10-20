@@ -5,29 +5,37 @@ make_content.cat_table_html <-
     data_summary <- dots$data_summary
 
     # Setup data and early exit if empty
-    if (nrow(data_summary) == 0) return(data.frame())
-    
+    if (nrow(data_summary) == 0) {
+      return(data.frame())
+    }
+
     # Get independent variable labels
     indep_label <- get_indep_labels(dots)
-    
+
     # Process categorical NA handling
     data_summary <- process_categorical_na(data_summary, dots)
-    
+
     # Exit again if data was filtered out
-    if (nrow(data_summary) == 0) return(data.frame())
+    if (nrow(data_summary) == 0) {
+      return(data.frame())
+    }
 
     cat_lvls <- levels(data_summary[[".category"]])
 
     if (length(indep_label) == 1 && length(dots$indep) == 0) {
       cli::cli_abort("Something wrong in function.")
     }
-    
+
     # Determine column basis
     col_basis <- determine_variable_basis(data_summary)
 
     # Arrange data
-    data_out <- arrange_table_data(data_summary, col_basis, dots$indep)
-    
+    data_out <- arrange_table_data(
+      data = data_summary,
+      col_basis = col_basis,
+      indep_vars = dots$indep
+    )
+
     if (length(cat_lvls) <= dots$n_categories_limit) {
       # Wide table format
       data_out <-
@@ -106,7 +114,7 @@ make_content.cat_table_html <-
         .fn = function(x) dots$main_question
       )
     }
-    
+
     # Hide axis text if single variable
     if (
       isTRUE(dots$hide_axis_text_if_single_variable) &&

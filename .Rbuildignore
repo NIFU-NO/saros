@@ -24,3 +24,4 @@ data-raw/goodpractice
 \.copilot-instructions\.md
 coverage_report\.html
 lib
+copilot-analysis.*\.md
