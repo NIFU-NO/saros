@@ -1,4 +1,4 @@
-test_that("sort_dep_by default/.variable_position + NULL + descend", {
+testthat::test_that("sort_dep_by default/.variable_position + NULL + descend", {
   deps <- c("p_1", "p_2", "p_3", "p_4")
 
   # Default behavior (.variable_position)
@@ -271,4 +271,194 @@ test_that("descend parameter works with .variable_position sorting", {
   # Descending: Blue, Yellow, Green, Red
   expect_equal(labels_desc[1], "Blue Party")
   expect_equal(labels_desc[4], "Red Party")
+})
+
+test_that("independent category-based sorting works (single and multiple categories)", {
+  # Use a subset for speed and determinism
+  data <- saros::ex_survey[1:200, ]
+
+  # Single target category (e.g., "Not at all")
+  res_single <- saros::makeme(
+    data = data,
+    dep = b_1,
+    indep = x1_sex,
+    type = "cat_table_html",
+    sort_indep_by = "Not at all",
+    showNA = "never"
+  )
+  expect_s3_class(res_single, "data.frame")
+  expect_true(nrow(res_single) >= 1)
+  expect_true("Gender" %in% names(res_single))
+
+  # Verify monotonicity of the target category column across indep order
+  target_col <- "Not at all (%)"
+  if (target_col %in% colnames(res_single)) {
+    vals <- suppressWarnings(as.numeric(res_single[[target_col]]))
+    # Should be monotonic (either non-decreasing or non-increasing)
+    expect_true(all(diff(vals) >= 0) || all(diff(vals) <= 0))
+  }
+
+  # Multiple categories combined (e.g., "A bit" + "A lot")
+  res_multi <- saros::makeme(
+    data = data,
+    dep = b_1,
+    indep = x1_sex,
+    type = "cat_table_html",
+    sort_indep_by = c("A bit", "A lot"),
+    showNA = "never"
+  )
+  expect_s3_class(res_multi, "data.frame")
+  expect_true(nrow(res_multi) >= 1)
+  expect_true("Gender" %in% names(res_multi))
+
+  # If both columns present, check monotonicity of their sum
+  cols <- intersect(c("A bit (%)", "A lot (%)"), colnames(res_multi))
+  if (length(cols) == 2) {
+    vals <- rowSums(
+      apply(res_multi[cols], 2, function(x) suppressWarnings(as.numeric(x))),
+      na.rm = TRUE
+    )
+    expect_true(all(diff(vals) >= 0) || all(diff(vals) <= 0))
+  }
+})
+
+test_that("dependent sorting handles ties without error", {
+  # Construct synthetic data where two variables have identical distributions (ties)
+  set.seed(123)
+  n <- 60
+  grp <- factor(rep(c("G1", "G2"), length.out = n), levels = c("G1", "G2"))
+  vals <- rep(c("No", "Yes"), length.out = n)
+  v1 <- factor(vals, levels = c("No", "Yes"))
+  v2 <- factor(vals, levels = c("No", "Yes")) # identical to v1 to force ties
+  tie_data <- data.frame(v1 = v1, v2 = v2, grp = grp)
+  labelled::var_label(tie_data$v1) <- "V1"
+  labelled::var_label(tie_data$v2) <- "V2"
+  labelled::var_label(tie_data$grp) <- "Group"
+
+  res <- saros::makeme(
+    data = tie_data,
+    dep = c(v1, v2),
+    indep = grp,
+    type = "cat_table_html",
+    sort_dep_by = ".upper",
+    showNA = "never"
+  )
+
+  expect_s3_class(res, "data.frame")
+  labs <- unique(as.character(res$.variable_label))
+  expect_setequal(labs, c("V1", "V2"))
+})
+
+test_that("single-category dependent variable works", {
+  # One-level factor shouldn't break sorting
+  single <- factor(rep("Only", 50), levels = "Only")
+  grp <- factor(rep(c("G1", "G2"), 25), levels = c("G1", "G2"))
+  d <- data.frame(single = single, grp = grp)
+  labelled::var_label(d$single) <- "Single"
+  labelled::var_label(d$grp) <- "Group"
+
+  out <- saros::makeme(
+    data = d,
+    dep = single,
+    indep = grp,
+    type = "cat_table_html",
+    showNA = "never",
+    hide_for_crowd_if_category_k_below = 0
+  )
+
+  expect_s3_class(out, "data.frame")
+  expect_true(nrow(out) >= 1)
+  expect_true(any(grepl("Only", colnames(out), fixed = TRUE)))
+})
+
+test_that("dependent sorting by multiple categories reverses with descend", {
+  # Verify combined-category sorting responds to descend flag
+  res_asc <- saros::makeme(
+    data = saros::ex_survey,
+    dep = b_1:b_3,
+    type = "cat_table_html",
+    sort_dep_by = c("A bit", "A lot"),
+    descend = FALSE,
+    showNA = "never"
+  )
+  res_desc <- saros::makeme(
+    data = saros::ex_survey,
+    dep = b_1:b_3,
+    type = "cat_table_html",
+    sort_dep_by = c("A bit", "A lot"),
+    descend = TRUE,
+    showNA = "never"
+  )
+
+  labs_asc <- as.character(unique(res_asc$.variable_label))
+  labs_desc <- as.character(unique(res_desc$.variable_label))
+  expect_equal(labs_asc, rev(labs_desc))
+})
+
+# testthat::test_that("independent sorting by .count_per_indep_group supports descend_indep", {
+#   # Order by total indep-group counts and verify descend_indep reverses
+#   out_asc <- saros::makeme(
+#     data = saros::ex_survey,
+#     dep = b_1:b_2,
+#     indep = x1_sex,
+#     type = "cat_table_html",
+#     sort_indep_by = ".count_per_indep_group",
+#     descend_indep = FALSE,
+#     showNA = "never"
+#   )
+#   out_desc <- saros::makeme(
+#     data = saros::ex_survey,
+#     dep = b_1:b_2,
+#     indep = x1_sex,
+#     type = "cat_table_html",
+#     sort_indep_by = ".count_per_indep_group",
+#     descend_indep = TRUE,
+#     showNA = "never"
+#   )
+
+#   expect_true("Gender" %in% names(out_asc))
+#   expect_true("Gender" %in% names(out_desc))
+
+#   # Compare the order of the indep labels (row order)
+#   rows_asc <- out_asc$Gender
+#   rows_desc <- out_desc$Gender
+#   expect_equal(as.character(rows_asc), rev(as.character(rows_desc)))
+# })
+
+test_that("NA values in dependent data do not break sorting", {
+  # Create a small dataset with NAs in the dependent variable
+  set.seed(42)
+  dep <- factor(
+    sample(c("No", "Yes", NA_character_), size = 100, replace = TRUE),
+    levels = c("No", "Yes")
+  )
+  indep <- factor(sample(c("G1", "G2"), size = 100, replace = TRUE))
+  d <- data.frame(dep = dep, indep = indep)
+  labelled::var_label(d$dep) <- "Dep"
+  labelled::var_label(d$indep) <- "Group"
+
+  r1 <- saros::makeme(
+    data = d,
+    dep = dep,
+    indep = indep,
+    type = "cat_table_html",
+    sort_dep_by = ".upper",
+    descend = FALSE,
+    showNA = "never"
+  )
+  r2 <- saros::makeme(
+    data = d,
+    dep = dep,
+    indep = indep,
+    type = "cat_table_html",
+    sort_dep_by = ".upper",
+    descend = TRUE,
+    showNA = "never"
+  )
+
+  expect_true(nrow(r1) == nrow(r2))
+  expect_equal(
+    as.character(unique(r1[[1]])),
+    rev(as.character(unique(r2[[1]])))
+  )
 })
