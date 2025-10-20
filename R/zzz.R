@@ -41,6 +41,23 @@ if (!exists(".saros.env")) {
       ".indep_order",
       ".category_order"
     )
+  # Whitelists for direct column-based sorting (B1 strategy)
+  .saros.env$allowed_dep_sort_columns <<-
+    c(
+      ".count",
+      ".proportion",
+      ".mean",
+      ".median",
+      ".sum_value"
+    )
+  .saros.env$allowed_indep_sort_columns <<-
+    c(
+      ".count",
+      ".count_total_indep",
+      ".mean",
+      ".median",
+      ".sum_value"
+    )
   .saros.env$data_label_opts <<-
     c(
       "proportion",

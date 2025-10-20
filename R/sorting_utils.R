@@ -6,6 +6,7 @@
 
 #' Apply comprehensive sorting order to survey data
 #'
+# Updated to reference .saros.env for allowed columns
 #' @param data Dataset with survey results
 #' @param sort_dep_by How to sort dependent variables
 #' @param sort_indep_by How to sort independent variable categories
@@ -58,6 +59,7 @@ arrange_with_order <- function(data, order_col, descend = FALSE) {
     data |> dplyr::arrange({{ order_col }})
   }
 }
+
 
 #' Add dependent variable ordering
 #'
@@ -160,8 +162,12 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
         )
       }
     }
-  } else if (all(sort_by %in% names(data))) {
-    # Direct column sorting (e.g., .count, .proportion, .mean, etc.)
+  } else if (
+    length(sort_by) == 1 &&
+      sort_by[1] %in% .saros.env$allowed_dep_sort_columns &&
+      sort_by[1] %in% names(data)
+  ) {
+    # Direct column sorting (whitelisted): .count, .proportion, .mean, .median, .sum_value
     data$.dep_order <- calculate_column_order(
       data,
       sort_by[1],
@@ -281,9 +287,14 @@ add_indep_order <- function(
       } else {
         column_name <- ".count"
       }
-      calculate_indep_column_order(data, column_name, indep_col, descend)
+      # Whitelist: allow only known safe columns for direct indep ordering
+      if (column_name %in% .saros.env$allowed_indep_sort_columns) {
+        calculate_indep_column_order(data, column_name, indep_col, descend)
+      } else {
+        seq_len(nrow(data))
+      }
     } else if (sort_by %in% c(".mean", ".median", ".sum_value")) {
-      # Statistical measures
+      # Statistical measures (whitelisted)
       calculate_indep_column_order(data, sort_by, indep_col, descend)
     } else {
       # Fallback to 1-based ordering if unrecognized

@@ -8,24 +8,7 @@
 
 This document analyzes the current implementation of `sort_dep_by` and `sort_indep_by` features in the makeme function, identifying improvement areas to ensure all kinds of sorting are possible and correct.
 
-## Status Update (Oct 19, 2025)
-
-Completed and verified (tests and R CMD check passing):
-- Replaced custom positional logic with `subset_vector()` via `get_target_categories()`
-- Standardized aggregation rules:
-  - `.count` (dep and indep) uses sum across groups
-  - `.count_total_indep` uses sum
-  - `.sum_value` uses sum
-  - Other numeric/statistical columns retain prior semantics (e.g., mean/median where applicable)
-- Removed redundant numeric conversions (`.proportion`, `.count` already numeric)
-- Standardized descending logic for independent-variable sorting via `arrange_with_order()`
-
-Pending/partial:
-- Dependent-variable descending logic still uses `descend_if_descending()`; needs migration to `arrange_with_order()` for full consistency
-- Default behavior for `sort_indep_by = NULL` remains implicit; consider explicit `.original` option
-- Validation, documentation, and edge-case tests to be improved
-
----
+<!-- Implemented status details removed to keep this document focused on pending work and planning. -->
 
 ## Key Improvement Areas (Remaining)
 
@@ -42,7 +25,6 @@ Pending/partial:
 - ❓ `.count_per_indep_group` - partially implemented but may need testing
 - ❓ Custom sorting by other columns in the data
 - ❓ Sorting by statistical measures (variance, std dev, range, etc.)
-- ❓ Sorting by difference between groups (e.g., gender gap)
 
 **Proposed Solution**:
 - Audit current test coverage to identify which options are fully tested
@@ -53,30 +35,108 @@ Pending/partial:
 
 ---
 
-### 2. Default Sorting Behavior Not Clear [RESOLVED]
+## Options Analysis: Key Improvement Area 1 — “Potentially Missing” (Open)
 
-**Change**:
-- `sort_indep_by` now explicitly defaults to `".factor_order"` in the public API.
-- Passing `NULL` is accepted and treated as `".factor_order"`.
-- If `indep = NULL`, specifying `sort_indep_by` or `descend_indep` is ignored (no errors).
+Goal: Decide scope, API details, and validation/ordering semantics for the missing sorting options before any implementation.
 
-**Impact**: Clear and predictable behavior; avoids errors when indep is not provided.
+Scope candidates (from above):
+- A) .count_per_indep_group (totals-based ordering of independent categories)
+- B) Custom sorting by other columns in the data
+- C) Statistical measures (variance, std dev, range, IQR)
+
+General contract (for all new sort modes):
+- Inputs: dep (one or more categorical variables), optional indep (categorical), sort_dep_by, sort_indep_by, descend/descend_indep
+- Outputs: explicit order columns (.dep_order and/or .indep_order) computed in a single, stable pass using arrange_with_order(); special-case precedence for ordered indep factors remains intact.
+- Error modes: clear cli errors if requested column(s)/measure(s) not available or inapplicable with provided data; NA handling must be defined.
+- Success criteria: deterministic order with documented tie-breaks; compatible with showNA handling; does not alter existing public defaults.
+
+Cross-cutting behaviors to preserve:
+- Ordered indep factors take precedence over sort_indep_by where documented (.factor_order path).
+- descend/descend_indep only change order direction; they do not change the chosen metric.
+- NA handling: exclude NAs from metric computations unless the metric is explicitly about NA share; still show row/column as per showNA setting.
+- Ties: break using (1) .variable_position for deps, factor-level for indep if applicable, else lexical by label, then by name — document this order.
+
+— A) .count_per_indep_group (Open)
+Definition: For each indep category (row), compute total count across all selected deps (or across the dataset when dep is length 1) and order indep by that total.
+
+Design options:
+- A1. Use existing aggregate .count_total_indep if present; otherwise compute a per-indep group total within the indep-ordering stage.
+- A2. Scope of total:
+  - A2a. Sum across all dep variables included in the call (cat_table_html path): ensures row-stable ordering regardless of which dep section is displayed.
+  - A2b. Sum within each dep independently: would vary by dep and is not compatible with a unified row order; reject for tables with multiple deps.
+
+Recommendation: A1 + A2a. Ensure a single per-indep total (row-wise) available wherever indep ordering executes. Name: .count_total_indep. If not available, compute in add_indep_order prerequisites.
+
+Edge cases:
+- indep = NULL: mode is ignored, no error.
+- No dep or a single dep: still compute totals across that single dep’s rows; order is well-defined.
+- All NA in relevant cells: treat NA as zero for totals; document.
+- Ties: break by indep factor order, then label, then name.
+
+Tests to add:
+- Single dep vs multiple deps produce same indep order when using .count_per_indep_group.
+- descend_indep reverses the indep order based on totals.
+- Ties across two indep categories fall back to factor level order.
+
+— B) Custom sorting by other columns (Implement B1 now; keep room for B2 later)
+Definition: Allow sort_dep_by/sort_indep_by to reference arbitrary computed columns (present in the pre-render data).
+
+Design options:
+- B1. Whitelist: only allow a documented set of safe columns (e.g., .count, .proportion, .sum_value, .mean, .median, .count_total_indep, etc.).
+- B2. Open reference: accept any column name string; validate existence and numeric/ordering compatibility.
+
+Recommendation: Implement B1 now (whitelist), because schema differs by path (table vs plot) and arbitrary columns could be missing. Keep room to support B2 later under the hood (no UX exposure yet) once validation and schema guarantees are stronger.
+
+Validation:
+- validate_sort_column(data, column_name) to fail fast if missing.
+- For non-numeric columns, use lexical ordering with a warning unless explicitly allowed (e.g., .variable_label).
+
+Tests to add:
+- Attempt sorting on a missing column -> cli error with helpful message.
+- Sorting on a non-numeric column outside the allowed set -> warning or error per policy.
+
+— C) Statistical measures (variance, std dev, range) (Open)
+Definition: Compute variability metrics across categories or across indep groups to rank deps (typical use) or indep (less typical).
+
+Design options:
+- C1. Per-dep variability across its categories (e.g., range of category proportions), then order deps by that metric.
+- C2. Per-dep variability across indep groups for a target category or combined categories.
+
+Recommendation: Start with C1 because it does not require indep and is interpretable for cat_table_html; explicitly define which measure is computed (range by default; optionally std dev later).
+
+Details:
+- Specify which categories are included (all non-NA) and whether they’re weighted by counts. Initial version: unweighted, on proportions.
+- desc behavior: higher variability first when descend = TRUE.
+
+Tests to add:
+- Synthetic data with known ranges verifies ordering.
+- Ties fall back to label/name tie-breaks.
+
+
+Proposed acceptance criteria (phase 1):
+- Implement A) .count_per_indep_group for indep ordering in cat_table_html path using .count_total_indep with documented tie-breaks; add tests; no change to public defaults.
+- Add validation helpers for missing columns/categories and wire them to fail fast for B–D.
+- Document scope and examples for A) and planned B–D in the vignette; postpone implementation of B–D pending feedback.
+
+Open questions for maintainers (carry over to GH Issues):
+- Should .count_total_indep be materialized upstream (e.g., in summarize_cat_cat_data) to keep ordering helpers pure, or computed on demand inside add_indep_order?
+- For C) and D), do we foresee plot variants requiring the same metrics? If yes, should we add a shared metrics module to avoid duplication?
+- Preferred default target category when none is specified for D)?
+
+Next (planning only; no code yet):
+- Decide A1/A2 materialization location and finalize the whitelist for B1.
+- Draft test skeletons (skipped) to lock expected behavior before implementation.
+---
+
+### 2. Default Sorting Behavior Not Clear
+
+(Implementation details removed; revisit if behavior changes in future.)
 
 ---
 
-### 3. Descending Logic Consistency [RESOLVED]
+### 3. Descending Logic Consistency
 
-Status (Oct 20, 2025):
-- Dependent-variable ordering is now fully unified via `arrange_with_order()` across helpers:
-  - `calculate_proportion_order()`, `calculate_multiple_category_order()`, `calculate_category_order()`, `calculate_column_order()`, and `calculate_sum_value_order()` thread `descend` and sort within the helper.
-  - No post-hoc `descend_if_descending()` is applied for dependent ordering anymore.
-- Independent-variable ordering remains unified; `arrange_with_order()` is used across indep helpers, while `descend_if_descending()` is intentionally retained only for the special `.factor_order`/ordered-factor precedence path.
-
-Impact: Single, uniform approach for descending dependent-variable sorting reduces drift. The indep special-case preserves intended semantics for ordered factors.
-
-Notes:
-- Category-related helpers in `summarize_cat_cat_data()` now use `sort_dep_by` (not `sort_indep_by`), and when all deps are ordered, category collapsing/exception flipping is disabled by passing `sort_by = NULL` to those helpers.
-- Public API: `sort_indep_by` defaults to `.factor_order`; `NULL` is accepted and treated as `.factor_order`. If `indep = NULL`, specifying `sort_indep_by`/`descend_indep` is ignored.
+(Implementation details removed; revisit if behavior changes in future.)
 
 ---
 
@@ -149,81 +209,4 @@ validate_sort_category <- function(data, category_value) {
 
 ---
 
-## Specific Refactoring Recommendations
-
-### Updated Steps (focused on remaining work)
-
-1) Migrate dependent-variable helpers to `arrange_with_order()`
-- Add `descend` parameter to: `calculate_proportion_order`, `calculate_category_order`, `calculate_multiple_category_order`, `calculate_column_order` (already accepts), and `calculate_sum_value_order` (already accepts)
-- Use `arrange_with_order()` internally instead of fixed ascending
-- Remove `descend_if_descending()` from `add_dep_order()` once all callers migrated
-
-2) Clarify default indep sorting behavior
-- Add explicit `.original` (or `.factor_order`) option to preserve factor-level order
-- Document that `NULL` means "no sorting" (keep incoming order)
-
-3) Validation utilities
-- `validate_sort_column(data, column)` and `validate_sort_category(data, value)` as proposed earlier
-- Fail fast with clear cli errors
-
-4) Tests and docs
-- Add regression tests covering ties, NAs, ordered vs unordered factors, and combined dep+indep sorting
-- Expand docs and vignette to document all sorting modes and their interactions
-
----
-
-## Priority Order for Implementation
-
-### Updated Priority Order
-
-Phase 1:
-1. Standardize descending logic for dependent variables via `arrange_with_order()`; remove `descend_if_descending()`
-
-Phase 2:
-2. Clarify/document default indep sorting (`NULL` vs `.original`)
-3. Add validation helpers and integrate
-
-Phase 3:
-4. Edge-case tests for ties/NA/ordered factors and combined sorting
-5. Documentation/vignette updates
-
----
-
-## Implementation Strategy
-
-### Iterative Approach
-- Make ONE small change at a time
-- Test after each change
-- Commit when tests pass
-- Document what changed and why
-
-### Testing Protocol
-After each change:
-1. Run `devtools::test()` to ensure all tests pass
-2. Run `devtools::check()` to catch any new issues
-3. Manually test a few common use cases
-4. Review code for any unintended side effects
-
-### Risk Mitigation
-- Keep changes small and focused
-- Maintain backward compatibility
-- Add tests before refactoring if coverage is insufficient
-- Document any behavior changes
-
----
-
-## Next Steps
-
-1. Migrate dep helpers to `arrange_with_order(descend)` and drop `descend_if_descending()`
-2. Add `.original` indep option; document `NULL` semantics
-3. Introduce validation helpers and wire them into sorting entry points
-4. Add edge-case tests and update docs/vignette
-
----
-
-## Notes
-
-- This analysis is based on the current state of R/sorting_utils.R
-- Some issues may be partially addressed in other parts of the codebase
-- User feedback and actual usage patterns should guide priority of feature additions
-- Maintain focus on reliability and consistency over adding new features
+<!-- Implementation plan sections removed per request; this document now focuses on pending analysis and open options only. -->
