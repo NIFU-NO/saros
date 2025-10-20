@@ -1,5 +1,6 @@
 # saros 1.6.0
 -   Sorting: Independent-variable ordering is now computed per dependent variable, allowing indep order to vary per dep; descend_indep now consistently reverses indep order across tables and plots; plots use centralized .indep_order when indep is on the x-axis; ordered indep factors take precedence over sort_indep_by (reversed only when descend_indep=TRUE); legends preserve unused response levels in .category
+-   Fix: Sorting stability for dependent variables with missing/duplicate labels — internal joins for computing `.dep_order` now key by `.variable_name` (unique) instead of `.variable_label`, preventing many-to-one join errors in edge cases while preserving displayed labels
 -   Using `air` for consistent code formatting
 -   Feature: makeme() has new output type = "int_plot_html" for interactive interval plots with violin and box plots
 -   Feature: Added support for `data_label = "mean"` and `data_label = "median"` in `makeme()` for `type = "cat_*_html"` outputs (addresses issue #460)

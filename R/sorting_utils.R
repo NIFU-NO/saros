@@ -29,13 +29,17 @@ add_sorting_order_vars <- function(
     apply_final_arrangement()
 }
 
+
 descend_if_descending <- function(x, descend) {
-  if (descend) {
-    max_x <- max(x, na.rm = TRUE)
-    return(max_x - x + 1)
+  if (isTRUE(descend)) {
+    max_x <- suppressWarnings(max(x, na.rm = TRUE))
+    if (is.finite(max_x)) {
+      return(max_x - x + 1)
+    }
   }
   x
 }
+
 
 #' Apply sorting with optional descending order
 #'
@@ -72,40 +76,67 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
   # Calculate base order based on sort method
 
   if (all(sort_by %in% ".variable_position")) {
-    data$.dep_order <- if (".variable_position" %in% names(data)) {
-      data$.variable_position
+    # Order by .variable_position (numeric) if available; otherwise by factor level of .variable_label
+    if (".variable_position" %in% names(data)) {
+      dep_map <- data |>
+        dplyr::distinct(.data$.variable_name, .data$.variable_position) |>
+        arrange_with_order(.data$.variable_position, descend = descend) |>
+        dplyr::mutate(order_rank = dplyr::row_number()) |>
+        dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+      data <- dplyr::left_join(
+        data,
+        dep_map,
+        by = ".variable_name",
+        relationship = "many-to-one"
+      )
+      data$.dep_order <- data$order_rank
+      data$order_rank <- NULL
     } else {
-      # Fallback: use factor level order
-      as.integer(data$.variable_label)
+      dep_map <- data |>
+        dplyr::distinct(.data$.variable_name) |>
+        arrange_with_order(.data$.variable_name, descend = descend) |>
+        dplyr::mutate(order_rank = dplyr::row_number()) |>
+        dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+      data <- dplyr::left_join(
+        data,
+        dep_map,
+        by = ".variable_name",
+        relationship = "many-to-one"
+      )
+      data$.dep_order <- data$order_rank
+      data$order_rank <- NULL
     }
-
-    data$.dep_order <- descend_if_descending(data$.dep_order, descend)
   } else if (all(sort_by %in% ".variable_label")) {
-    # Alphabetical order by variable labels
-    # Create mapping from variable label to alphabetical rank
-    unique_labels <- unique(data$.variable_label)
-    sorted_labels <- sort(unique_labels)
-    label_to_order <- stats::setNames(
-      seq_along(sorted_labels),
-      sorted_labels
+    # Alphabetical order by variable labels (character-based)
+    dep_map <- data |>
+      dplyr::distinct(.data$.variable_name, .data$.variable_label) |>
+      dplyr::mutate(.label_chr = as.character(.data$.variable_label)) |>
+      arrange_with_order(.data$.label_chr, descend = descend) |>
+      dplyr::mutate(order_rank = dplyr::row_number()) |>
+      dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+    data <- dplyr::left_join(
+      data,
+      dep_map,
+      by = ".variable_name",
+      relationship = "many-to-one"
     )
-
-    # Map each row's variable label to its alphabetical order
-    data$.dep_order <- label_to_order[as.character(data$.variable_label)]
-    data$.dep_order <- descend_if_descending(data$.dep_order, descend)
+    data$.dep_order <- data$order_rank
+    data$order_rank <- NULL
   } else if (all(sort_by %in% ".variable_name")) {
     # Alphabetical order by variable names
-    # Create mapping from variable name to alphabetical rank
-    unique_names <- unique(data$.variable_name)
-    sorted_names <- sort(unique_names)
-    name_to_order <- stats::setNames(
-      seq_along(sorted_names),
-      sorted_names
+    dep_map <- data |>
+      dplyr::distinct(.data$.variable_name) |>
+      arrange_with_order(.data$.variable_name, descend = descend) |>
+      dplyr::mutate(order_rank = dplyr::row_number()) |>
+      dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+    data <- dplyr::left_join(
+      data,
+      dep_map,
+      by = ".variable_name",
+      relationship = "many-to-one"
     )
-
-    # Map each row's variable name to its alphabetical order
-    data$.dep_order <- name_to_order[as.character(data$.variable_name)]
-    data$.dep_order <- descend_if_descending(data$.dep_order, descend)
+    data$.dep_order <- data$order_rank
+    data$order_rank <- NULL
   } else if (all(sort_by %in% unique(data$.category))) {
     # Category-based sorting (e.g., "A bit", "Not at all", etc.)
     if (length(sort_by) == 1) {
@@ -146,14 +177,36 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
       descend = descend
     )
   } else {
-    # Default fallback
-    data$.dep_order <- if (".variable_position" %in% names(data)) {
-      data$.variable_position
+    # Default fallback: by .variable_position if present, else by factor level order of .variable_label
+    if (".variable_position" %in% names(data)) {
+      dep_map <- data |>
+        dplyr::distinct(.data$.variable_name, .data$.variable_position) |>
+        arrange_with_order(.data$.variable_position, descend = descend) |>
+        dplyr::mutate(order_rank = dplyr::row_number()) |>
+        dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+      data <- dplyr::left_join(
+        data,
+        dep_map,
+        by = ".variable_name",
+        relationship = "many-to-one"
+      )
+      data$.dep_order <- data$order_rank
+      data$order_rank <- NULL
     } else {
-      as.integer(data$.variable_label)
+      dep_map <- data |>
+        dplyr::distinct(.data$.variable_name) |>
+        arrange_with_order(.data$.variable_name, descend = descend) |>
+        dplyr::mutate(order_rank = dplyr::row_number()) |>
+        dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+      data <- dplyr::left_join(
+        data,
+        dep_map,
+        by = ".variable_name",
+        relationship = "many-to-one"
+      )
+      data$.dep_order <- data$order_rank
+      data$order_rank <- NULL
     }
-
-    data$.dep_order <- descend_if_descending(data$.dep_order, descend)
   }
 
   data
@@ -374,18 +427,18 @@ calculate_multiple_category_order <- function(
     dplyr::filter(.data$.category %in% category_values) |>
     dplyr::summarise(
       sum_count = sum(.data$.count, na.rm = TRUE),
-      .by = tidyselect::all_of(".variable_label")
+      .by = tidyselect::all_of(".variable_name")
     ) |>
     arrange_with_order(.data$sum_count, descend = descend) |> # Asc/Desc order
     dplyr::mutate(order_rank = dplyr::row_number()) |>
-    dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank")))
+    dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
 
   # Join back to original data and extract order ranks
   # Use relationship = "many-to-one" since multiple data rows match one summary row
   data |>
     dplyr::left_join(
       category_summary,
-      by = ".variable_label",
+      by = ".variable_name",
       relationship = "many-to-one"
     ) |>
     dplyr::pull(.data$order_rank)
@@ -403,17 +456,17 @@ calculate_category_order <- function(data, category_value, descend = FALSE) {
   # Filter data to the specific category and calculate order by .count
   category_summary <- data |>
     dplyr::filter(.data$.category == category_value) |>
-    dplyr::select(tidyselect::all_of(c(".variable_label", ".count"))) |>
+    dplyr::select(tidyselect::all_of(c(".variable_name", ".count"))) |>
     arrange_with_order(.data$.count, descend = descend) |> # Asc/Desc order
     dplyr::mutate(order_rank = dplyr::row_number()) |>
-    dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank")))
+    dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
 
   # Join back to original data and extract order ranks
   # Use relationship = "many-to-one" since multiple data rows match one summary row
   data |>
     dplyr::left_join(
       category_summary,
-      by = ".variable_label",
+      by = ".variable_name",
       relationship = "many-to-one"
     ) |>
     dplyr::pull(.data$order_rank)
@@ -437,18 +490,18 @@ calculate_column_order <- function(data, column_name, descend = FALSE) {
       } else {
         max(.data[[column_name]], na.rm = TRUE)
       },
-      .by = tidyselect::all_of(".variable_label")
+      .by = tidyselect::all_of(".variable_name")
     ) |>
     arrange_with_order(.data$order_value, descend = descend) |> # Asc/Desc order
     dplyr::mutate(order_rank = dplyr::row_number()) |>
-    dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank")))
+    dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
 
   # Join back to original data and extract order ranks
   # Use relationship = "many-to-one" since multiple data rows match one summary row
   data |>
     dplyr::left_join(
       summary_order,
-      by = ".variable_label",
+      by = ".variable_name",
       relationship = "many-to-one"
     ) |>
     dplyr::pull(.data$order_rank)
@@ -467,16 +520,16 @@ calculate_sum_value_order <- function(data, descend = FALSE) {
     dplyr::summarise(
       # Aggregation rule: use sum for sum_value to reflect total contribution
       order_value = sum(.data$.sum_value, na.rm = TRUE),
-      .by = tidyselect::all_of(".variable_label")
+      .by = tidyselect::all_of(".variable_name")
     ) |>
     # Default behaviour historically sorted descending; invert flag to preserve API
     arrange_with_order(.data$order_value, descend = !descend) |>
     dplyr::mutate(order_rank = dplyr::row_number()) |>
-    dplyr::select(tidyselect::all_of(c(".variable_label", "order_rank")))
+    dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
 
   # Join back to original data and extract order ranks
   data |>
-    dplyr::left_join(summary_order, by = ".variable_label") |>
+    dplyr::left_join(summary_order, by = ".variable_name") |>
     dplyr::pull(.data$order_rank)
 }
 
