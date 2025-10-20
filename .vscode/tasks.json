@@ -168,6 +168,42 @@
 				"'devtools::install(); devtools::test()'"
 			],
 			"group": "test"
+		},
+		{
+			"label": "Install and test package",
+			"type": "shell",
+			"command": "R.exe",
+			"args": [
+				"--no-echo",
+				"--no-restore",
+				"-e",
+				"'devtools::install(); devtools::test()'"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Install and test package",
+			"type": "shell",
+			"command": "R.exe",
+			"args": [
+				"--no-echo",
+				"--no-restore",
+				"-e",
+				"'devtools::install(); devtools::test()'"
+			],
+			"group": "test"
+		},
+		{
+			"label": "Check package",
+			"type": "shell",
+			"command": "R.exe",
+			"args": [
+				"--no-echo",
+				"--no-restore",
+				"-e",
+				"'devtools::check()'"
+			],
+			"group": "build"
 		}
 	]
 }
