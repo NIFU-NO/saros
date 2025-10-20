@@ -45,7 +45,7 @@ makeme(
   x_axis_label_width = 25,
   strip_width = 25,
   sort_dep_by = ".variable_position",
-  sort_indep_by = NULL,
+  sort_indep_by = ".factor_order",
   sort_by = NULL,
   descend = TRUE,
   descend_indep = FALSE,
@@ -334,10 +334,11 @@ the base order). Unordered factors will be reordered by \code{sort_dep_by}.
 
 \item{sort_indep_by}{\emph{What to sort independent variable categories by}
 
-\verb{vector<character>} // \emph{default:} \code{NULL} (\code{optional})
+\verb{vector<character>} // \emph{default:} \code{".factor_order"} (\code{optional})
 
-Sort independent variable categories in output. When \code{NULL}, preserves the
-original factor level order for the independent variable.
+Sort independent variable categories in output. When \code{".factor_order"},
+preserves the original factor level order for the independent variable.
+Passing \code{NULL} is accepted and treated as \code{".factor_order"}.
 
 \describe{
 \item{NULL}{No sorting - preserves original factor level order (default).}

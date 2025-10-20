@@ -17,7 +17,7 @@
 add_sorting_order_vars <- function(
   data,
   sort_dep_by = ".variable_position",
-  sort_indep_by = NULL,
+  sort_indep_by = ".factor_order",
   sort_category_by = NULL,
   descend = FALSE,
   descend_indep = FALSE
@@ -222,7 +222,7 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
 #' @keywords internal
 add_indep_order <- function(
   data,
-  sort_by = NULL,
+  sort_by = ".factor_order",
   descend = FALSE
 ) {
   # Get the independent variable column
@@ -243,8 +243,8 @@ add_indep_order <- function(
     return(data)
   }
 
+  # Accept NULL and treat as factor order
   if (is.null(sort_by)) {
-    # Default to factor level order when not specified
     sort_by <- ".factor_order"
   }
 

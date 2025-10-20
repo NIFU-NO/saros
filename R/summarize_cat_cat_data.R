@@ -590,7 +590,7 @@ summarize_cat_cat_data <-
     totals = FALSE,
     sort_by = ".upper",
     sort_dep_by = NULL,
-    sort_indep_by = NULL,
+    sort_indep_by = ".factor_order",
     data_label = c(
       "percentage_bare",
       "percentage",
@@ -632,7 +632,8 @@ summarize_cat_cat_data <-
       if (is.null(sort_dep_by)) {
         sort_dep_by <- sort_by
       }
-      if (is.null(sort_indep_by)) sort_indep_by <- NULL
+      # Accept NULL and treat as .factor_order for indep
+      if (is.null(sort_indep_by)) sort_indep_by <- ".factor_order"
     }
 
     if (
@@ -686,7 +687,7 @@ summarize_cat_cat_data <-
       ) |>
       category_var_as_fct(fct_unions = fct_unions) |>
       add_collapsed_categories(
-        sort_by = sort_indep_by,
+        sort_by = sort_dep_by,
         categories_treated_as_na = categories_treated_as_na,
         data_label = data_label
       ) |>
@@ -720,7 +721,7 @@ summarize_cat_cat_data <-
       ) |>
       flip_exception_categories(
         categories_treated_as_na = categories_treated_as_na,
-        sort_by = sort_indep_by
+        sort_by = sort_dep_by
       ) |>
       # NEW: Apply centralized sorting system
       add_sorting_order_vars(

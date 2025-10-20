@@ -53,26 +53,14 @@ Pending/partial:
 
 ---
 
-### 2. Default Sorting Behavior Not Clear [MEDIUM PRIORITY]
+### 2. Default Sorting Behavior Not Clear [RESOLVED]
 
-**Issue**: When `sort_indep_by = NULL`, the behavior is unclear:
-- Current: Uses default ordering (1 for all rows)
-- Question: Should independent variables maintain their original factor order or be sorted alphabetically?
+**Change**:
+- `sort_indep_by` now explicitly defaults to `".factor_order"` in the public API.
+- Passing `NULL` is accepted and treated as `".factor_order"`.
+- If `indep = NULL`, specifying `sort_indep_by` or `descend_indep` is ignored (no errors).
 
-**Current Implementation**:
-```r
-if (is.null(sort_by)) {
-  data$.indep_order <- 1L
-  return(data)
-}
-```
-
-**Proposed Solution**:
-- Add explicit `.original` or `.factor_order` option to maintain original factor order
-- Document default behavior clearly
-- Consider whether NULL should mean "no sorting" or "use default ordering"
-
-**Impact**: Clarifies API, improves user experience
+**Impact**: Clear and predictable behavior; avoids errors when indep is not provided.
 
 ---
 

@@ -113,8 +113,10 @@ testthat::test_that("ordered dependent variables ignores sort_by and descend", {
   )
 
   testthat::expect_equal(
-    result1 |> dplyr::select(-.category, -x1_sex, -.dep_order),
-    result2 |> dplyr::select(-.category, -x1_sex, -.dep_order)
+    result1 |>
+      dplyr::select(-tidyselect::all_of(c(".comb_categories", ".sum_value"))),
+    result2 |>
+      dplyr::select(-tidyselect::all_of(c(".comb_categories", ".sum_value")))
   )
 })
 
