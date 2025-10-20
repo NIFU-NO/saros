@@ -61,7 +61,7 @@
 <span>  totals <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  sort_by <span class="op">=</span> <span class="st">".upper"</span>,</span>
 <span>  sort_dep_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  sort_indep_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sort_indep_by <span class="op">=</span> <span class="st">".factor_order"</span>,</span>
 <span>  data_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"percentage_bare"</span>, <span class="st">"percentage"</span>, <span class="st">"proportion"</span>, <span class="st">"count"</span>, <span class="st">"mean"</span>,</span>
 <span>    <span class="st">"median"</span><span class="op">)</span>,</span>
 <span>  digits <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -202,9 +202,10 @@ the base order). Unordered factors will be reordered by <code>sort_dep_by</code>
 
 <dt id="arg-sort-indep-by">sort_indep_by<a class="anchor" aria-label="anchor" href="#arg-sort-indep-by"></a></dt>
 <dd><p><em>What to sort independent variable categories by</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
-<p>Sort independent variable categories in output. When <code>NULL</code>, preserves the
-original factor level order for the independent variable.</p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>".factor_order"</code> (<code>optional</code>)</p>
+<p>Sort independent variable categories in output. When <code>".factor_order"</code>,
+preserves the original factor level order for the independent variable.
+Passing <code>NULL</code> is accepted and treated as <code>".factor_order"</code>.</p>
 <dl><dt>NULL</dt>
 <dd><p>No sorting - preserves original factor level order (default).</p></dd>
 
