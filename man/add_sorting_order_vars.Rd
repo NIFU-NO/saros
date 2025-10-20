@@ -7,7 +7,7 @@
 add_sorting_order_vars(
   data,
   sort_dep_by = ".variable_position",
-  sort_indep_by = NULL,
+  sort_indep_by = ".factor_order",
   sort_category_by = NULL,
   descend = FALSE,
   descend_indep = FALSE

@@ -295,10 +295,11 @@
 #'
 #' @param sort_indep_by *What to sort independent variable categories by*
 #'
-#'   `vector<character>` // *default:* `NULL` (`optional`)
+#'   `vector<character>` // *default:* `".factor_order"` (`optional`)
 #'
-#'   Sort independent variable categories in output. When `NULL`, preserves the
-#'   original factor level order for the independent variable.
+#'   Sort independent variable categories in output. When `".factor_order"`,
+#'   preserves the original factor level order for the independent variable.
+#'   Passing `NULL` is accepted and treated as `".factor_order"`.
 #'
 #' \describe{
 #' \item{NULL}{No sorting - preserves original factor level order (default).}
@@ -499,7 +500,7 @@ makeme <-
     strip_width = 25,
     # Sorting
     sort_dep_by = ".variable_position",
-    sort_indep_by = NULL,
+    sort_indep_by = ".factor_order",
     sort_by = NULL,
     descend = TRUE,
     descend_indep = FALSE,
@@ -561,7 +562,8 @@ makeme <-
       # If sort_by is specified and the new parameters are defaults, use sort_by for both
       if (
         identical(args$sort_dep_by, ".variable_position") &&
-          is.null(args$sort_indep_by)
+          (is.null(args$sort_indep_by) ||
+            identical(args$sort_indep_by, ".factor_order"))
       ) {
         args$sort_dep_by <- args$sort_by
         args$sort_indep_by <- args$sort_by
@@ -576,6 +578,11 @@ makeme <-
     # Convert NULL to .variable_position for sort_dep_by
     if (is.null(args$sort_dep_by)) {
       args$sort_dep_by <- ".variable_position"
+    }
+
+    # Convert NULL to .factor_order for sort_indep_by (explicitly allowed)
+    if (is.null(args$sort_indep_by)) {
+      args$sort_indep_by <- ".factor_order"
     }
 
     # Setup and validate arguments

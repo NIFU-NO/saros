@@ -53,42 +53,30 @@ Pending/partial:
 
 ---
 
-### 2. Default Sorting Behavior Not Clear [MEDIUM PRIORITY]
+### 2. Default Sorting Behavior Not Clear [RESOLVED]
 
-**Issue**: When `sort_indep_by = NULL`, the behavior is unclear:
-- Current: Uses default ordering (1 for all rows)
-- Question: Should independent variables maintain their original factor order or be sorted alphabetically?
+**Change**:
+- `sort_indep_by` now explicitly defaults to `".factor_order"` in the public API.
+- Passing `NULL` is accepted and treated as `".factor_order"`.
+- If `indep = NULL`, specifying `sort_indep_by` or `descend_indep` is ignored (no errors).
 
-**Current Implementation**:
-```r
-if (is.null(sort_by)) {
-  data$.indep_order <- 1L
-  return(data)
-}
-```
-
-**Proposed Solution**:
-- Add explicit `.original` or `.factor_order` option to maintain original factor order
-- Document default behavior clearly
-- Consider whether NULL should mean "no sorting" or "use default ordering"
-
-**Impact**: Clarifies API, improves user experience
+**Impact**: Clear and predictable behavior; avoids errors when indep is not provided.
 
 ---
 
-### 3. Descending Logic Consistency [HIGH PRIORITY]
+### 3. Descending Logic Consistency [RESOLVED]
 
-**Issue**: The relationship between `descend`/`descend_indep` and actual sort order is implemented inconsistently:
+Status (Oct 20, 2025):
+- Dependent-variable ordering is now fully unified via `arrange_with_order()` across helpers:
+  - `calculate_proportion_order()`, `calculate_multiple_category_order()`, `calculate_category_order()`, `calculate_column_order()`, and `calculate_sum_value_order()` thread `descend` and sort within the helper.
+  - No post-hoc `descend_if_descending()` is applied for dependent ordering anymore.
+- Independent-variable ordering remains unified; `arrange_with_order()` is used across indep helpers, while `descend_if_descending()` is intentionally retained only for the special `.factor_order`/ordered-factor precedence path.
 
-Status:
-- Independent-variable helpers now use `arrange_with_order()` (Option B) consistently
-- Dependent-variable helpers still compute ranks then apply `descend_if_descending()`; migrate to `arrange_with_order()` and remove `descend_if_descending()` afterward
+Impact: Single, uniform approach for descending dependent-variable sorting reduces drift. The indep special-case preserves intended semantics for ordered factors.
 
-Proposed actions:
-- Thread `descend` into dep helpers (e.g., `calculate_column_order`, `calculate_proportion_order`, etc.) and use `arrange_with_order()` inside
-- Remove the post-step transform in `add_dep_order()` once all helpers accept `descend`
-
-Impact: Single, uniform approach reduces cognitive load and chance of drift
+Notes:
+- Category-related helpers in `summarize_cat_cat_data()` now use `sort_dep_by` (not `sort_indep_by`), and when all deps are ordered, category collapsing/exception flipping is disabled by passing `sort_by = NULL` to those helpers.
+- Public API: `sort_indep_by` defaults to `.factor_order`; `NULL` is accepted and treated as `.factor_order`. If `indep = NULL`, specifying `sort_indep_by`/`descend_indep` is ignored.
 
 ---
 
