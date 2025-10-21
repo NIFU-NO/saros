@@ -69,21 +69,3 @@ get_docx_height <-
       minimum_height
     ))
   }
-
-
-check_autonum <- function(
-  x,
-  call = rlang::caller_env(),
-  arg = rlang::caller_arg(x)
-) {
-  if (!is.null(x) && !inherits(x, "run_autonum")) {
-    cli::cli_abort(
-      stringi::stri_c(
-        ignore_null = TRUE,
-        "If not NULL, ",
-        err_msg("n object from {.fun officer::run_autonum}")
-      ),
-      call = call
-    )
-  }
-}

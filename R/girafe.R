@@ -11,9 +11,6 @@ custom_palette <- function(
         break
       }
     }
-    # matched_palette <- purrr::detect(palette_codes, function(palette) {
-    #     all(lvls %in% names(palette))
-    # })
 
     if (
       is.null(matched_palette) &&

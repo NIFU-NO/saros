@@ -271,9 +271,6 @@ get_colour_palette <-
         ordered = colour_palette_ordinal,
         factor = colour_palette_nominal
       )
-    # if(is.function(user_colour_set)) {
-    #   return(user_colour_set)
-    # }
 
     categories_treated_as_na <- categories_treated_as_na[
       categories_treated_as_na %in% common_levels

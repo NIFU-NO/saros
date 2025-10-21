@@ -188,18 +188,5 @@ validate_makeme_options <- function(params) {
     }
   }
 
-  # labels_always_at_top_invalid <- params$labels_always_at_top[!params$labels_always_at_top %in% colnames(params$data)]
-  # if (length(labels_always_at_top_invalid) > 0) {
-  #   cli::cli_warn(c("{.arg labels_always_at_top} contains variables not found in {.arg data}:",
-  #     i = "{.val {labels_always_at_top_invalid}}."
-  #   ))
-  # }
-  # labels_always_at_bottom_invalid <- params$labels_always_at_bottom[!params$labels_always_at_bottom %in% colnames(params$data)]
-  # if (length(labels_always_at_bottom_invalid) > 0) {
-  #   cli::cli_warn(c("{.arg labels_always_at_bottom} contains variables not found in {.arg data}:",
-  #     i = "{.val {labels_always_at_bottom_invalid}}."
-  #   ))
-  # }
-
   params
 }
