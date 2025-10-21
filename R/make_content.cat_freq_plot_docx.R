@@ -84,11 +84,7 @@ make_content.cat_freq_plot_docx <-
       x = m,
       dir = if (dots$vertical) "vertical" else "horizontal"
     )
-    # } else {
-    #   m <- mschart::chart_settings(x = m,
-    #                                dir = if(vertical) "vertical" else "horizontal",
-    #                                overlap = 100, gap_width = 50)
-    # }
+
     m <- mschart::chart_data_fill(x = m, values = dots$colour_palette)
     m <- mschart::chart_data_stroke(x = m, values = dots$colour_palette)
     if (length(fp_text_settings) > 0) {
