@@ -41,6 +41,9 @@ reference:
   contents:
   - n_range
   - n_range2
+- title: Convert cat_plot-object to simple conditional text interpretations
+  contents:
+  - txt_from_cat_mesos_plots
 - title: Only relevant when expanding the S3 system with your own functions
   contents: make_content
 - title: Example dataset
