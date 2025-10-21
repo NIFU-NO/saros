@@ -417,10 +417,6 @@
 #' )
 #' makeme(
 #'   data = ex_survey,
-#'   dep = b_1, indep = x1_sex
-#' )
-#' makeme(
-#'   data = ex_survey,
 #'   dep = b_1:b_3, indep = c(x1_sex, x2_human),
 #'   type = "sigtest_table_html"
 #' )
