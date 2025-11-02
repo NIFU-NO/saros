@@ -31,7 +31,7 @@ is_colour <- function(x) {
 #' @keywords internal
 #'
 # hex_bw("#0dadfd")
-hex_bw <- function(hex_code) {
+hex_bw <- function(hex_code, na_colour = "#ffffff") {
   rgb_conv <-
     lapply(grDevices::col2rgb(hex_code), FUN = function(.x) {
       ifelse(
@@ -47,7 +47,7 @@ hex_bw <- function(hex_code) {
 
   hex <- ifelse(rgb_conv > 0.179, "#000000", "#ffffff")
 
-  hex[is.na(hex_code)] <- "#ffffff"
+  hex[is.na(hex_code)] <- na_colour
   hex
 }
 

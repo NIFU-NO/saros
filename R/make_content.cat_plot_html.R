@@ -206,7 +206,9 @@ make_content.cat_plot_html <-
               .data[[stat_col]] * 0.5 # Default to center
             }
           },
-          colour = ggplot2::after_scale(x = hex_bw(.data$fill))
+          colour = ggplot2::after_scale(
+            x = hex_bw(.data$fill, na_colour = dots$colour_na)
+          )
         ),
         position = if (prop_family) {
           if (dots$data_label_position == "center") {
