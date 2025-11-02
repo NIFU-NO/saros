@@ -14,24 +14,54 @@ custom_palette <- function(
 
     if (
       is.null(matched_palette) &&
-        length(palette_codes[[length(palette_codes)]]) >= length(lvls)
+        (length(palette_codes[[length(palette_codes)]]) >= length(lvls) ||
+          !is.null(priority_palette_codes))
     ) {
       # If no match, pick the last vector in list
+      # Allow using priority_palette_codes even if base palette is insufficient
 
-      matched_palette <- priority_palette_codes[
-        names(priority_palette_codes) %in% lvls
-      ] # Will insert e.g. c("Nei" = "black")
+      # First, handle priority_palette_codes - extract both named and unnamed elements
+      if (!is.null(priority_palette_codes)) {
+        # Named elements that match our levels
+        matched_palette <- priority_palette_codes[
+          !is.na(names(priority_palette_codes)) &
+            names(priority_palette_codes) != "" &
+            names(priority_palette_codes) %in% lvls
+        ]
+        # Unnamed elements (NA names or empty string names) are reserved for "NA" category
+        unnamed_idx <- is.na(names(priority_palette_codes)) |
+          names(priority_palette_codes) == ""
+        if (any(unnamed_idx) && "NA" %in% lvls) {
+          na_colors <- priority_palette_codes[unnamed_idx]
+          matched_palette["NA"] <- na_colors[1]
+        }
+      } else {
+        matched_palette <- character(0)
+      }
+
+      # Fill in remaining levels from available_palette
       available_palette <- palette_codes[[length(palette_codes)]]
-      matched_palette <- c(
-        matched_palette,
-        stats::setNames(
-          available_palette[
-            !unname(available_palette) %in% unname(matched_palette)
-          ],
-          lvls[!lvls %in% names(matched_palette)]
-        )
-      )
-      matched_palette <- matched_palette[!is.na(names(matched_palette))]
+      remaining_lvls <- lvls[!lvls %in% names(matched_palette)]
+      if (length(remaining_lvls) > 0) {
+        available_colors <- available_palette[
+          !unname(available_palette) %in% unname(matched_palette)
+        ]
+        # Only use available colors that exist
+        n_colors_needed <- length(remaining_lvls)
+        n_colors_available <- length(available_colors)
+        if (n_colors_available >= n_colors_needed) {
+          matched_palette <- c(
+            matched_palette,
+            stats::setNames(
+              available_colors[seq_along(remaining_lvls)],
+              remaining_lvls
+            )
+          )
+        } else {
+          # Not enough colors - will fall through to generate colors
+          matched_palette <- NULL
+        }
+      }
     }
     if (
       is.null(matched_palette) &&
@@ -49,7 +79,6 @@ guess_legend_ncols <- function(ggobj, char_limit = 100) {
   fill_var <- rlang::as_label(ggobj$mapping$fill)
   if (!is.null(fill_var)) {
     lvls <- as.character(unique(ggobj$data[[fill_var]]))
-    # print(lvls)
     max_chars <- max(nchar(lvls), na.rm = TRUE)
     for (i in 2:15) {
       if ((max_chars + 5) * i >= char_limit) {
@@ -223,7 +252,7 @@ girafe <- function(
   if (is.null(ggobj) || length(ggobj$data) == 0) {
     return(invisible(data.frame()))
   }
-  if (!ggplot2::is.ggplot(ggobj)) {
+  if (!ggplot2::is_ggplot(ggobj)) {
     if (
       is.list(ggobj) && length(ggobj) == 1 && ggplot2::is.ggplot(ggobj[[1]])
     ) {

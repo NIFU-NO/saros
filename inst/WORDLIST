@@ -1,12 +1,12 @@
 Acknowledgements
 Bugfixes
 CMD
+CRAN's
 Codecov
 Colour
 Colours
 Ctrl
 DOCX
-Dev
 Github
 Kristiania
 Lifecycle
@@ -52,6 +52,7 @@ dep
 dep’
 docx
 dta
+ffffff
 flexi
 folderpaths
 fp

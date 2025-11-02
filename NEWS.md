@@ -3,12 +3,15 @@
 ## Breaking Changes
 -   **Major change:** `makeme()` returns an empty data.frame instead of `NULL` when no plot or table can be created, simplifying downstream code (e.g. `gt::gt()` fails if served `NULL`)
 -   **Major change:** Resolved issue #372 - `descend` parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but `descend` can reverse the display order
+-   Enhanced `custom_palette()` to allow `priority_palette_codes` to supplement base palette when insufficient colors are available
+-   Improved color palette handling for explicit NA factor levels when using `showNA = "always"`
 
 ## New Features
 -   **New output type:** `makeme(type = "int_plot_html")` for interactive interval plots with violin and box plots
 -   Added support for `data_label = "mean"` and `data_label = "median"` in `makeme()` for `type = "cat_*_html"` outputs (addresses issue #460)
 -   Added `data_label_position` argument to `makeme()` allowing data labels to be positioned at "center", "bottom", "top", or "above" bars in categorical plots (addresses issue #365)
 -   Enhanced `chr_table_html` to support multiple independent variables for displaying background context with open-ended text responses
+-   Added `na_colour` parameter to `hex_bw()` function to allow customization of text color for NA fills (default: "#ffffff")
 
 ## Sorting Improvements
 -   Independent-variable ordering is now computed per dependent variable, allowing indep order to vary per dep; `descend_indep` now consistently reverses indep order across tables and plots; plots use centralized `.indep_order` when indep is on the x-axis; ordered indep factors take precedence over `sort_indep_by` (reversed only when `descend_indep=TRUE`); legends preserve unused response levels in `.category`
@@ -16,11 +19,9 @@
 -   `sort_indep_by` now explicitly defaults to `".factor_order"` and accepts `NULL` (treated as `".factor_order"`). When no independent variable is provided (`indep = NULL`), specifying `sort_indep_by` or `descend_indep` no longer errors; they are simply ignored
 -   Improved sorting stability for dependent variables with missing/duplicate labels — internal joins for computing `.dep_order` now key by `.variable_name` (unique) instead of `.variable_label`, preventing many-to-one join errors in edge cases while preserving displayed labels
 
-## Critical Fixes
--   **CRITICAL:** Resolved bug in `makeme()` where combinations of valid factor variables with all-NA factor variables incorrectly threw "mix of categorical and continuous variables" error. Variable type checking now uses filtered variable lists instead of original lists, preventing premature type validation errors
--   **CRAN Compliance:** Reduced string lengths in documentation for `girafe()` and `makeme()` functions to meet CRAN's character limit per line requirement
 
 ## Bug Fixes
+-   **CRITICAL:** Resolved bug in `makeme()` where combinations of valid factor variables with all-NA factor variables incorrectly threw "mix of categorical and continuous variables" error. Variable type checking now uses filtered variable lists instead of original lists, preventing premature type validation errors
 -   Resolved faceting issue in `int_plot_html` where `label_separator = NULL` with independent variables caused violin/boxplot and label geoms to appear in separate facets due to inconsistent string wrapping
 -   Removed unnecessary "multiple main questions" warning when using `label_separator = NULL`, as having different main questions is expected behavior
 -   Resolved issue #464 - `makeme()` failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts
@@ -31,6 +32,7 @@
 -   Improved `keep_subitem()` to handle character inputs and use factor levels for better NA handling
 -   Simplified `arrange_table_data()` sorting logic for better reliability
 -   Updated documentation reference from `ggplot2::theme_set()` to `ggplot2::set_theme()` due to ggplot2 4.0.0
+-   Fixed `custom_palette()` in `girafe()` to properly handle unnamed elements in `priority_palette_codes` as colors for "NA" category. Previously, unnamed elements were filtered out, causing NA categories to receive no color assignment (appearing as white fill with white text)
 
 ## Enhancements
 -   **PERFORMANCE:** Optimized `makeme()` examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value
@@ -44,6 +46,7 @@
 -   Modularized tabular I/O functionality - renamed `pretty_tabular.R` to `tabular_write.R` and extracted `tabular_read()` function into separate file
 -   Centralized global constants (sorting whitelists) in `zzz.R` under `.saros.env` for easier maintenance
 -   Using `air` for consistent code formatting
+-   **CRAN Compliance:** Reduced string lengths in documentation for `girafe()` and `makeme()` functions to meet CRAN's character limit per line requirement
 
 ## Development & Testing
 -   Added comprehensive test coverage for `makeme()` helper functions with full roxygen2 documentation and @keywords internal annotation for internal API clarity
