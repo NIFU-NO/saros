@@ -65,16 +65,15 @@ girafe <- function(
       is.null(args$palette_codes))
   ) {
     cli::cli_abort(
-      "{.arg priority_palette_codes} must be NULL or a list of character vectors."
+      "{.arg palette_codes} must be NULL or a list of character vectors."
     )
   }
   if (
-    !((rlang::is_character(args$priority_palette_codes) &&
-      rlang::is_named(args$priority_palette_codes)) ||
+    !((rlang::is_character(args$priority_palette_codes)) ||
       is.null(args$priority_palette_codes))
   ) {
     cli::cli_abort(
-      "{.arg priority_palette_codes} must be a named character vector or NULL."
+      "{.arg priority_palette_codes} must be a character vector (possibly named) or NULL."
     )
   }
   if (!(rlang::is_bool(args$interactive))) {
