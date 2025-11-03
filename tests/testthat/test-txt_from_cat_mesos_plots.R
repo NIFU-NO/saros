@@ -128,7 +128,10 @@ test_that("txt_from_cat_mesos_plots handles flip_to_lowest_categories", {
 test_that("txt_from_cat_mesos_plots returns empty for NULL plots", {
   plots <- list(NULL, NULL)
 
-  result <- saros::txt_from_cat_mesos_plots(plots)
+  result <- testthat::expect_warning(
+    saros::txt_from_cat_mesos_plots(plots),
+    regexp = "elements 1 and 2 do not contain plot data"
+  )
 
   expect_type(result, "character")
   expect_equal(length(result), 0)

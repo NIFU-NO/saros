@@ -11,6 +11,7 @@ txt_from_cat_mesos_plots(
   flip_to_lowest_categories = FALSE,
   digits = 2,
   selected_categories_last_split = " or ",
+  fallback_string = character(),
   glue_str_pos =
     c(paste0("For {var}, the target group has a higher proportion of respondents ",
     "({group_1}) than all others ({group_2}) who answered {selected_categories}."),
@@ -44,6 +45,8 @@ of highest (default FALSE).}
 
 \item{selected_categories_last_split}{Character. Separator for the last item when
 listing multiple categories (default " or ").}
+
+\item{fallback_string}{Character. String to return when validation fails (default \code{character()}).}
 
 \item{glue_str_pos}{Character vector. Templates for positive differences (group_1 > group_2).
 Available placeholders: \code{{var}}, \code{{group_1}}, \code{{group_2}}, \code{{selected_categories}}.}

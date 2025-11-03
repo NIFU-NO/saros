@@ -34,6 +34,7 @@ get_prop_for_highest_categories <- function(
 #' @param digits Integer. Number of decimal places for rounding proportions (default 2).
 #' @param selected_categories_last_split Character. Separator for the last item when
 #'   listing multiple categories (default " or ").
+#' @param fallback_string Character. String to return when validation fails (default `character()`).
 #' @param glue_str_pos Character vector. Templates for positive differences (group_1 > group_2).
 #'   Available placeholders: `{var}`, `{group_1}`, `{group_2}`, `{selected_categories}`.
 #' @param glue_str_neg Character vector. Templates for negative differences (group_2 > group_1).
@@ -87,6 +88,7 @@ txt_from_cat_mesos_plots <- function(
   flip_to_lowest_categories = FALSE,
   digits = 2,
   selected_categories_last_split = " or ",
+  fallback_string = character(),
   glue_str_pos = c(
     paste0(
       "For {var}, the target group has a higher proportion of respondents ",
@@ -116,16 +118,66 @@ txt_from_cat_mesos_plots <- function(
     )
   )
 ) {
+  # Validate plots argument
+  if (!is.list(plots)) {
+    cli::cli_warn(
+      c(
+        "{.arg plots} must be a list, not {.cls {class(plots)}}.",
+        "i" = "Returning {.val {fallback_string}}."
+      )
+    )
+    return(fallback_string)
+  }
+
+  if (length(plots) < 2) {
+    cli::cli_warn(
+      c(
+        "{.arg plots} must contain at least 2 elements, not {length(plots)}.",
+        "i" = "Returning {.val {fallback_string}}."
+      )
+    )
+    return(fallback_string)
+  }
+
+  # Check that each element has a data component
+  has_data <- vapply(
+    plots,
+    function(x) {
+      !is.null(x) && (inherits(x, "data.frame") || !is.null(x$data))
+    },
+    logical(1)
+  )
+
+  if (!all(has_data)) {
+    missing_data <- which(!has_data)
+    cli::cli_warn(
+      c(
+        "{.arg plots} elements {missing_data} do not contain plot data.",
+        "i" = "Each element must be a data frame or have a {.field data} component.",
+        "i" = "Returning {.val {fallback_string}}."
+      )
+    )
+    return(fallback_string)
+  }
+
   if (
     lapply(plots, function(x) !is.null(x)) |>
       unlist() |>
       as.logical() |>
       all()
   ) {
-    dat_1 <-
+    # Extract data - handle both data frames and plot objects with $data
+    dat_1 <- if (inherits(plots[[1]], "data.frame")) {
+      plots[[1]]
+    } else {
       plots[[1]]$data
-    dat_2 <-
+    }
+    
+    dat_2 <- if (inherits(plots[[2]], "data.frame")) {
+      plots[[2]]
+    } else {
       plots[[2]]$data
+    }
 
     selected_categories <-
       dat_1 |>
