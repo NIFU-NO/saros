@@ -1,0 +1,102 @@
+#' Generate Figure Title Suffix with N Range and Optional Download Links
+#'
+#' @description
+#' Creates a formatted suffix for figure titles that includes the sample size (N) range
+#' from a ggplot object. Optionally generates markdown download links for both the
+#' plot data and the plot image.
+#'
+#' @param plot A `ggplot2` object, typically created by [makeme()].
+#' @param save Logical flag. If `TRUE`, generates download links for the plot data (CSV)
+#'   and plot image (PNG). If `FALSE` (default), only returns the N range text.
+#' @param n_equals_string String. Prefix text for the sample size display
+#'   (default: `"N = "`).
+#' @param file_suffixes Character vector. File extensions for the saved plot images
+#'   (default: `".png"`). Should include the dot.
+#' @param link_prefixes Character vector. Markdown link text prefixes for the plot download links
+#'   (default: `"[PNG]("`).
+#' @param save_fns List of functions. Functions to save the plot data and images.
+#' @param sep String. Separator between N range text and download links
+#'   (default: `", "`).
+#'
+#' @return An `AsIs` object (using [I()]) containing a character string with:
+#'   - Sample size range formatted as "\{n_equals_string\}\{range\}"
+#'   - If `save = TRUE`: additional download links for plot data and image, separated by `sep`
+#'   - Empty string if `plot` is not a valid ggplot object or has no data
+#'
+#' @details
+#' This function is particularly useful for adding informative captions to plots in
+#' reports. The N range is calculated using [n_range2()], which extracts the sample
+#' size from the plot data. When `save = TRUE`, the function creates downloadable
+#' files using [make_link()]:
+#' - Plot data as CSV (via `utils::write.csv`)
+#' - Plot image as PNG (via [ggsaver()])
+#'
+#' The function returns an `AsIs` object to prevent automatic character escaping
+#' in markdown/HTML contexts.
+#'
+#' @seealso
+#' - [n_range2()] for extracting N range from ggplot objects
+#' - [make_link()] for creating download links
+#' - [ggsaver()] for saving ggplot objects
+#'
+#' @export
+#'
+#' @examples
+#' # Create a sample plot
+#' plot <- makeme(data = ex_survey, dep = b_1:b_3)
+#'
+#' # Get just the N range text
+#' get_fig_title_suffix_from_ggplot(plot)
+#'
+#' # Custom N prefix
+#' get_fig_title_suffix_from_ggplot(plot, n_equals_string = "Sample size: ")
+#'
+#' \dontrun{
+#' # Generate with download links (saves files to disk)
+#' get_fig_title_suffix_from_ggplot(plot, save = TRUE)
+#'
+#' # Custom separator and link prefix
+#' get_fig_title_suffix_from_ggplot(
+#'   plot,
+#'   save = TRUE,
+#'   sep = " | ",
+#'   link_prefix = "[Download PNG]("
+#' )
+#' }
+get_fig_title_suffix_from_ggplot <- function(
+  plot,
+  save = FALSE,
+  n_equals_string = "N = ",
+  file_suffixes = c(".csv", ".png"),
+  link_prefixes = c("[CSV](", "[PNG]("),
+  save_fns = list(utils::write.csv, saros::ggsaver),
+  sep = ", "
+) {
+  if (!ggplot2::is_ggplot(plot) || length(plot$data) == 0) {
+    return(I(""))
+  }
+  if (length(save_fns) == 1 && rlang::is_function(save_fns)) {
+    save_fns <- list(save_fns)
+  }
+
+  x <- stringi::stri_c(n_equals_string, n_range2(plot))
+  if (isTRUE(save)) {
+    links <- lapply(seq_along(file_suffixes), function(i) {
+      if (file_suffixes[i] %in% c(".png", ".jpg", ".jpeg", ".pdf", ".svg")) {
+        dat <- plot
+      } else {
+        dat <- plot$data
+      }
+      make_link(
+        data = dat,
+        file_suffix = file_suffixes[i],
+        link_prefix = link_prefixes[i],
+        save_fn = save_fns[[i]]
+      )
+    }) |>
+      unlist()
+    I(paste0(c(x, links), collapse = sep))
+  } else {
+    I(x)
+  }
+}
