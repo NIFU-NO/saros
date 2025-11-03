@@ -175,6 +175,15 @@ n_rng2 <- function(
   }
   data <- ggobj$data
 
+  # Validate that the plot was created by makeme()
+  if (!".count_per_indep_group" %in% colnames(data)) {
+    cli::cli_abort(c(
+      "{.arg ggobj} must be created by {.fn makeme}.",
+      "x" = "Column {.code .count_per_indep_group} not found in plot data.",
+      "i" = "This column is added by {.fn makeme} for tracking sample sizes."
+    ))
+  }
+
   n <- unique(range(data$.count_per_indep_group, na.rm = TRUE))
 
   glue_together_range(

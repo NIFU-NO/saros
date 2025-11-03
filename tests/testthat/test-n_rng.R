@@ -50,3 +50,30 @@ testthat::test_that("n_rng handles empty dependent variable list", {
   result <- saros:::n_rng(data, dep = character(0), glue_template_1 = "{n}")
   testthat::expect_equal(result, "")
 })
+
+testthat::test_that("n_range2 validates plot is from makeme", {
+  # Create a ggplot object NOT from makeme
+  library(ggplot2)
+  plot <- ggplot(saros::ex_survey, aes(x = x1_sex)) + geom_bar()
+
+  # Should error because .count_per_indep_group column doesn't exist
+  testthat::expect_error(
+    saros::n_range2(plot),
+    "must be created by.*makeme"
+  )
+
+  testthat::expect_error(
+    saros::n_range2(plot),
+    ".count_per_indep_group.*not found"
+  )
+})
+
+testthat::test_that("n_range2 works with valid makeme plot", {
+  # Create a valid plot from makeme
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  # Should work without error
+  result <- saros::n_range2(plot)
+  testthat::expect_type(result, "character")
+  testthat::expect_true(nchar(result) > 0)
+})
