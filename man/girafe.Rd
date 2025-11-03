@@ -14,6 +14,7 @@ girafe(
   priority_palette_codes = NULL,
   ncol = NULL,
   byrow = TRUE,
+  colour_2nd_binary_cat = NULL,
   checked = NULL,
   not_checked = NULL,
   width_svg = NULL,
@@ -41,6 +42,8 @@ or a static ggplot2-plot.}
 \item{ncol}{Optional integer or NULL.}
 
 \item{byrow}{Whether to display legend keys by row or by column.}
+
+\item{colour_2nd_binary_cat}{Optional string. Color for the second category in binary checkbox plots. When set together with \code{checked} and \code{not_checked}, reverses the category order so that \code{not_checked} appears second and receives this color. Ignored if checkbox criteria are not met.}
 
 \item{checked, not_checked}{Optional string. If specified and the fill categories of the plot matches these, a special plot is returned where not_checked is hidden. Its usefulness comes in plots which are intended for checkbox responses where unchecked is not always a conscious choice.}
 

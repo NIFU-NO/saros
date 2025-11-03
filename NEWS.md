@@ -12,6 +12,11 @@
 -   Added `data_label_position` argument to `makeme()` allowing data labels to be positioned at "center", "bottom", "top", or "above" bars in categorical plots (addresses issue #365)
 -   Enhanced `chr_table_html` to support multiple independent variables for displaying background context with open-ended text responses
 -   Added `na_colour` parameter to `hex_bw()` function to allow customization of text color for NA fills (default: "#ffffff")
+-   Added `colour_2nd_binary_cat` parameter to `girafe()` for checkbox plots - when set with `checked`/`not_checked`, reverses category order so the second category receives the specified color
+
+## Refactoring
+-   Moved `process_binary_category_colors()` logic from `make_content.cat_plot_html()` to `girafe()`, consolidating all color-related logic in one place
+-   Refactored checkbox plot handling in `girafe()` to integrate `colour_2nd_binary_cat` parameter with `convert_to_checkbox_plot()` function
 
 ## Sorting Improvements
 -   Independent-variable ordering is now computed per dependent variable, allowing indep order to vary per dep; `descend_indep` now consistently reverses indep order across tables and plots; plots use centralized `.indep_order` when indep is on the x-axis; ordered indep factors take precedence over `sort_indep_by` (reversed only when `descend_indep=TRUE`); legends preserve unused response levels in `.category`

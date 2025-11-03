@@ -20,13 +20,6 @@ make_content.cat_plot_html <-
       showna_arg_str
     }
 
-    # Process binary category colors for cat_plot_html
-    data <- process_binary_category_colors(
-      data,
-      showNA = dots$showNA,
-      colour_2nd_binary_cat = dots$colour_2nd_binary_cat
-    )
-
     dep_var <- get_data_display_column(data)
     stat_col <- stringi::stri_c(
       ".",

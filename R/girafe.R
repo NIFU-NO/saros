@@ -1,165 +1,3 @@
-custom_palette <- function(
-  palette_codes,
-  fct_levels,
-  priority_palette_codes = NULL
-) {
-  function(n, lvls = fct_levels) {
-    matched_palette <- NULL
-    for (i in seq_along(palette_codes)) {
-      if (all(lvls %in% names(palette_codes[[i]]))) {
-        matched_palette <- palette_codes[[i]]
-        break
-      }
-    }
-
-    if (
-      is.null(matched_palette) &&
-        (length(palette_codes[[length(palette_codes)]]) >= length(lvls) ||
-          !is.null(priority_palette_codes))
-    ) {
-      # If no match, pick the last vector in list
-      # Allow using priority_palette_codes even if base palette is insufficient
-
-      # First, handle priority_palette_codes - extract both named and unnamed elements
-      if (!is.null(priority_palette_codes)) {
-        # Named elements that match our levels
-        matched_palette <- priority_palette_codes[
-          !is.na(names(priority_palette_codes)) &
-            names(priority_palette_codes) != "" &
-            names(priority_palette_codes) %in% lvls
-        ]
-        # Unnamed elements (NA names or empty string names) are reserved for "NA" category
-        unnamed_idx <- is.na(names(priority_palette_codes)) |
-          names(priority_palette_codes) == ""
-        if (any(unnamed_idx) && "NA" %in% lvls) {
-          na_colors <- priority_palette_codes[unnamed_idx]
-          matched_palette["NA"] <- na_colors[1]
-        }
-      } else {
-        matched_palette <- character(0)
-      }
-
-      # Fill in remaining levels from available_palette
-      available_palette <- palette_codes[[length(palette_codes)]]
-      remaining_lvls <- lvls[!lvls %in% names(matched_palette)]
-      if (length(remaining_lvls) > 0) {
-        available_colors <- available_palette[
-          !unname(available_palette) %in% unname(matched_palette)
-        ]
-        # Only use available colors that exist
-        n_colors_needed <- length(remaining_lvls)
-        n_colors_available <- length(available_colors)
-        if (n_colors_available >= n_colors_needed) {
-          matched_palette <- c(
-            matched_palette,
-            stats::setNames(
-              available_colors[seq_along(remaining_lvls)],
-              remaining_lvls
-            )
-          )
-        } else {
-          # Not enough colors - will fall through to generate colors
-          matched_palette <- NULL
-        }
-      }
-    }
-    if (
-      is.null(matched_palette) &&
-        length(palette_codes[[length(palette_codes)]]) < length(lvls)
-    ) {
-      # If no match and insufficient palettes, then generate
-      matched_palette <- scales::hue_pal()(length(lvls))
-    }
-
-    return(matched_palette)
-  }
-}
-
-guess_legend_ncols <- function(ggobj, char_limit = 100) {
-  fill_var <- rlang::as_label(ggobj$mapping$fill)
-  if (!is.null(fill_var)) {
-    lvls <- as.character(unique(ggobj$data[[fill_var]]))
-    max_chars <- max(nchar(lvls), na.rm = TRUE)
-    for (i in 2:15) {
-      if ((max_chars + 5) * i >= char_limit) {
-        return(i - 1)
-      }
-    }
-  }
-  return(NULL)
-}
-
-scale_discrete_special <- function(
-  aesthetics = "fill",
-  palette_codes,
-  lvls = NULL,
-  ncol = NULL,
-  byrow = TRUE,
-  label_wrap_width = 80,
-  priority_palette_codes = NULL,
-  ...
-) {
-  if (is.null(lvls)) {
-    ggiraph::scale_discrete_manual_interactive(
-      aesthetics = aesthetics,
-      name = "",
-      values = palette_codes[[length(palette_codes)]],
-      guide = ggiraph::guide_legend_interactive(
-        title = "",
-        ncol = ncol,
-        byrow = byrow
-      ),
-      labels = ggplot2::label_wrap_gen(
-        width = label_wrap_width,
-        multi_line = TRUE
-      ),
-      ...
-    )
-  } else {
-    ggplot2::discrete_scale(
-      aesthetics = aesthetics,
-      name = "",
-      palette = custom_palette(
-        palette_codes = palette_codes,
-        fct_levels = lvls,
-        priority_palette_codes = priority_palette_codes
-      ),
-      guide = ggiraph::guide_legend_interactive(
-        title = "",
-        ncol = ncol,
-        byrow = byrow
-      ),
-      labels = ggplot2::label_wrap_gen(
-        width = label_wrap_width,
-        multi_line = TRUE
-      ),
-      ...
-    )
-  }
-}
-
-convert_to_checkbox_plot <- function(
-  ggobj,
-  checked = "Selected",
-  not_checked = "Not selected"
-) {
-  ggobj$data <-
-    ggobj$data |>
-    dplyr::mutate(
-      .category = forcats::fct_relevel(
-        .data$.category,
-        .env$checked,
-        .env$not_checked
-      ),
-      .data_label = ifelse(
-        .data$.category == .env$not_checked,
-        "",
-        .data$.data_label
-      )
-    )
-  ggobj
-}
-
 #' Pull global plotting settings before displaying plot
 #'
 #' This function extends [ggiraph::girafe] by allowing colour palettes to be globally specified.
@@ -175,6 +13,7 @@ convert_to_checkbox_plot <- function(
 #' @param ncol Optional integer or NULL.
 #' @param byrow Whether to display legend keys by row or by column.
 #' @param checked,not_checked Optional string. If specified and the fill categories of the plot matches these, a special plot is returned where not_checked is hidden. Its usefulness comes in plots which are intended for checkbox responses where unchecked is not always a conscious choice.
+#' @param colour_2nd_binary_cat Optional string. Color for the second category in binary checkbox plots. When set together with `checked` and `not_checked`, reverses the category order so that `not_checked` appears second and receives this color. Ignored if checkbox criteria are not met.
 #' @param pointsize,height_svg,width_svg See [ggiraph::girafe()].
 #' @return If interactive, only side-effect of generating ggiraph-plot. If interactive=FALSE, returns modified ggobj.
 #' @export
@@ -192,6 +31,7 @@ girafe <- function(
   priority_palette_codes = NULL,
   ncol = NULL,
   byrow = TRUE,
+  colour_2nd_binary_cat = NULL,
   checked = NULL,
   not_checked = NULL,
   width_svg = NULL,
@@ -249,6 +89,12 @@ girafe <- function(
   if (!(rlang::is_string(args$not_checked) || is.null(args$not_checked))) {
     cli::cli_abort("{.arg not_checked} must be a string or NULL.")
   }
+  if (
+    !(rlang::is_string(args$colour_2nd_binary_cat) ||
+      is.null(args$colour_2nd_binary_cat))
+  ) {
+    cli::cli_abort("{.arg colour_2nd_binary_cat} must be a string or NULL.")
+  }
   if (is.null(ggobj) || length(ggobj$data) == 0) {
     return(invisible(data.frame()))
   }
@@ -280,11 +126,17 @@ girafe <- function(
       ggobj <- convert_to_checkbox_plot(
         ggobj,
         checked = args$checked,
-        not_checked = args$not_checked
+        not_checked = args$not_checked,
+        colour_2nd_binary_cat = args$colour_2nd_binary_cat
       )
+      # Update fill_levels to match the new order
+      if (rlang::is_string(args$colour_2nd_binary_cat)) {
+        fill_levels <- c(args$not_checked, args$checked)
+      } else {
+        fill_levels <- c(args$checked, args$not_checked)
+      }
     }
 
-    # lvls <- levels(ggobj$data[[fill_var]])
     ggobj <-
       suppressMessages(
         ggobj +
