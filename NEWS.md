@@ -9,6 +9,8 @@
 ## New Features
 -   **New output type:** `makeme(type = "int_plot_html")` for interactive interval plots with violin and box plots
 -   **New function**: `txt_from_cat_mesos_plots()` to generate textual summaries from two categorical mesos-scale plots, highlighting significant differences in selected categories between groups.
+-   **New function**: `crowd_plots_as_tabset()` to convert a list of ggplot2 objects (typically from `makeme(crowd = ...)`) into Quarto tabsets with automatic height calculation and optional download links. Supports both categorical and interval plots with intelligent auto-detection based on plot layers
+-   **New exported function**: `get_fig_title_suffix_from_ggplot()` generates figure title suffixes with N range and optional download links for plots.
 -   Added support for `data_label = "mean"` and `data_label = "median"` in `makeme()` for `type = "cat_*_html"` outputs (addresses issue #460)
 -   Added `data_label_position` argument to `makeme()` allowing data labels to be positioned at "center", "bottom", "top", or "above" bars in categorical plots (addresses issue #365)
 -   Enhanced `chr_table_html` to support multiple independent variables for displaying background context with open-ended text responses

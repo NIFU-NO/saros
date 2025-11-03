@@ -31,6 +31,7 @@ Sharepoint
 Silge's
 Silge’s
 SurveyXact
+Tabset
 Tidyselect
 YAML
 args
@@ -70,6 +71,7 @@ infixes
 jeg
 kbd
 klipt
+knitr
 labelled
 lifecycle
 maintainer's
@@ -93,6 +95,7 @@ srvyr
 stackoverflow
 sublicense
 summarization
+tabset
 templating
 testability
 theming
