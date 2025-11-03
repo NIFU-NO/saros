@@ -160,84 +160,75 @@ txt_from_cat_mesos_plots <- function(
     return(fallback_string)
   }
 
-  if (
-    lapply(plots, function(x) !is.null(x)) |>
-      unlist() |>
-      as.logical() |>
-      all()
-  ) {
-    # Extract data - handle both data frames and plot objects with $data
-    dat_1 <- if (inherits(plots[[1]], "data.frame")) {
-      plots[[1]]
-    } else {
-      plots[[1]]$data
-    }
-    
-    dat_2 <- if (inherits(plots[[2]], "data.frame")) {
-      plots[[2]]
-    } else {
-      plots[[2]]$data
-    }
-
-    selected_categories <-
-      dat_1 |>
-      dplyr::distinct(.data$.category, .keep_all = TRUE) |>
-      dplyr::filter(
-        .data$.category_order %in%
-          if (isFALSE(flip_to_lowest_categories)) {
-            (max(c(
-              1,
-              max(.data$.category_order) - n_highest_categories + 1
-            )):max(.data$.category_order))
-          } else if (isTRUE(flip_to_lowest_categories)) {
-            min(.data$.category_order):(min(c(
-              max(.data$.category_order),
-              n_highest_categories
-            )))
-          }
-      ) |>
-      dplyr::pull(.data$.category) |>
-      as.character() |>
-      unique()
-
-    out <-
-      unique(as.character(dat_1$.variable_label)) |>
-      lapply(function(var) {
-        list(group_1 = dat_1, group_2 = dat_2) |>
-          lapply(function(.x) {
-            get_prop_for_highest_categories(
-              plot_data = .x,
-              var = var,
-              selected_categories = selected_categories
-            )
-          }) |>
-          dplyr::bind_rows(.id = "group")
-      }) |>
-      dplyr::bind_rows() |>
-      tidyr::pivot_wider(names_from = "group", values_from = "value")
-    out[["txt"]] <- dplyr::case_when(
-      out[[2]] > out[[3]] + min_prop_diff ~
-        sample(glue_str_pos, size = nrow(out), replace = TRUE),
-      out[[3]] > out[[2]] + min_prop_diff ~
-        sample(glue_str_neg, size = nrow(out), replace = TRUE),
-      .default = ""
-    )
-    out[[2]] <- round(out[[2]], digits = digits)
-    out[[3]] <- round(out[[3]], digits = digits)
-
-    out[["selected_categories"]] <- cli::ansi_collapse(
-      selected_categories,
-      sep = "; ",
-      last = selected_categories_last_split,
-      trunc = 10,
-      sep2 = selected_categories_last_split
-    )
-
-    for (i in seq_len(nrow(out))) {
-      out[i, "txt"] <- glue::glue_data(.x = out[i, ], out[i, "txt"][[1]])
-    }
-    stringi::stri_omit_empty_na(out$txt)
+  # Extract data - handle both data frames and plot objects with $data
+  dat_1 <- if (inherits(plots[[1]], "data.frame")) {
+    plots[[1]]
   } else {
-    character()
+    plots[[1]]$data
   }
+
+  dat_2 <- if (inherits(plots[[2]], "data.frame")) {
+    plots[[2]]
+  } else {
+    plots[[2]]$data
+  }
+
+  selected_categories <-
+    dat_1 |>
+    dplyr::distinct(.data$.category, .keep_all = TRUE) |>
+    dplyr::filter(
+      .data$.category_order %in%
+        if (isFALSE(flip_to_lowest_categories)) {
+          (max(c(
+            1,
+            max(.data$.category_order) - n_highest_categories + 1
+          )):max(.data$.category_order))
+        } else if (isTRUE(flip_to_lowest_categories)) {
+          min(.data$.category_order):(min(c(
+            max(.data$.category_order),
+            n_highest_categories
+          )))
+        }
+    ) |>
+    dplyr::pull(.data$.category) |>
+    as.character() |>
+    unique()
+
+  out <-
+    unique(as.character(dat_1$.variable_label)) |>
+    lapply(function(var) {
+      list(group_1 = dat_1, group_2 = dat_2) |>
+        lapply(function(.x) {
+          get_prop_for_highest_categories(
+            plot_data = .x,
+            var = var,
+            selected_categories = selected_categories
+          )
+        }) |>
+        dplyr::bind_rows(.id = "group")
+    }) |>
+    dplyr::bind_rows() |>
+    tidyr::pivot_wider(names_from = "group", values_from = "value")
+  out[["txt"]] <- dplyr::case_when(
+    out[[2]] > out[[3]] + min_prop_diff ~
+      sample(glue_str_pos, size = nrow(out), replace = TRUE),
+    out[[3]] > out[[2]] + min_prop_diff ~
+      sample(glue_str_neg, size = nrow(out), replace = TRUE),
+    .default = ""
+  )
+  out[[2]] <- round(out[[2]], digits = digits)
+  out[[3]] <- round(out[[3]], digits = digits)
+
+  out[["selected_categories"]] <- cli::ansi_collapse(
+    selected_categories,
+    sep = "; ",
+    last = selected_categories_last_split,
+    trunc = 10,
+    sep2 = selected_categories_last_split
+  )
+
+  for (i in seq_len(nrow(out))) {
+    out[i, "txt"] <- glue::glue_data(.x = out[i, ], out[i, "txt"][[1]])
+  }
+  stringi::stri_omit_empty_na(out$txt)
 }
