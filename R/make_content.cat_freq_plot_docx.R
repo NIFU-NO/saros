@@ -34,7 +34,7 @@ make_content.cat_freq_plot_docx <-
         function(color) {
           officer::fp_text(
             font.size = dots$label_font_size,
-            color = hex_bw(color),
+            color = hex_bw(color, na_colour = dots$colour_na),
             font.family = dots$font_family
           )
         }
