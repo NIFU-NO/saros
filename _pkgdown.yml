@@ -33,6 +33,10 @@ reference:
 - title: "Advanced Palette-Retrieving ggiraph::girafe wrapper"
   contents:
   - girafe
+- title: Generate figure captions and Quarto tabsets
+  contents:
+  - get_fig_title_suffix_from_ggplot
+  - crowd_plots_as_tabset
 - title: Compute optimal figure heights for the built-in cat_plot
   contents:
   - fig_height_h_barchart
