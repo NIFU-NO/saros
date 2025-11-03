@@ -99,7 +99,7 @@ girafe <- function(
   }
   if (!ggplot2::is_ggplot(ggobj)) {
     if (
-      is.list(ggobj) && length(ggobj) == 1 && ggplot2::is.ggplot(ggobj[[1]])
+      is.list(ggobj) && length(ggobj) == 1 && ggplot2::is_ggplot(ggobj[[1]])
     ) {
       ggobj <- ggobj[[1]]
     } else {

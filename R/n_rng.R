@@ -169,7 +169,7 @@ n_rng2 <- function(
   glue_template_1 = "{n}",
   glue_template_2 = "[{n[1]}-{n[2]}]"
 ) {
-  if (!ggplot2::is.ggplot(ggobj)) {
+  if (!ggplot2::is_ggplot(ggobj)) {
     cli::cli_warn("{.arg ggobj} must be a ggplot2-object, returning NULL.")
     return(NULL)
   }
