@@ -62,6 +62,7 @@
 <span>  priority_palette_codes <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  byrow <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  colour_2nd_binary_cat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  checked <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  not_checked <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  width_svg <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -110,6 +111,10 @@ or a static ggplot2-plot.</p></dd>
 
 <dt id="arg-byrow">byrow<a class="anchor" aria-label="anchor" href="#arg-byrow"></a></dt>
 <dd><p>Whether to display legend keys by row or by column.</p></dd>
+
+
+<dt id="arg-colour-nd-binary-cat">colour_2nd_binary_cat<a class="anchor" aria-label="anchor" href="#arg-colour-nd-binary-cat"></a></dt>
+<dd><p>Optional string. Color for the second category in binary checkbox plots. When set together with <code>checked</code> and <code>not_checked</code>, reverses the category order so that <code>not_checked</code> appears second and receives this color. Ignored if checkbox criteria are not met.</p></dd>
 
 
 <dt id="arg-checked-not-checked">checked, not_checked<a class="anchor" aria-label="anchor" href="#arg-checked-not-checked"></a></dt>

@@ -53,6 +53,9 @@
 <strong>Major change:</strong> <code><a href="../reference/makeme.html">makeme()</a></code> returns an empty data.frame instead of <code>NULL</code> when no plot or table can be created, simplifying downstream code (e.g. <code>gt::gt()</code> fails if served <code>NULL</code>)</li>
 <li>
 <strong>Major change:</strong> Resolved issue <a href="https://github.com/NIFU-NO/saros/issues/372" class="external-link">#372</a> - <code>descend</code> parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but <code>descend</code> can reverse the display order</li>
+<li>Enhanced <code>custom_palette()</code> to allow <code>priority_palette_codes</code> to supplement base palette when insufficient colors are available</li>
+<li>Improved color palette handling for explicit NA factor levels when using <code>showNA = "always"</code>
+</li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-features-1-6-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-6-0"></a></h3>
@@ -61,6 +64,13 @@
 <li>Added support for <code>data_label = "mean"</code> and <code>data_label = "median"</code> in <code><a href="../reference/makeme.html">makeme()</a></code> for <code>type = "cat_*_html"</code> outputs (addresses issue <a href="https://github.com/NIFU-NO/saros/issues/460" class="external-link">#460</a>)</li>
 <li>Added <code>data_label_position</code> argument to <code><a href="../reference/makeme.html">makeme()</a></code> allowing data labels to be positioned at “center”, “bottom”, “top”, or “above” bars in categorical plots (addresses issue <a href="https://github.com/NIFU-NO/saros/issues/365" class="external-link">#365</a>)</li>
 <li>Enhanced <code>chr_table_html</code> to support multiple independent variables for displaying background context with open-ended text responses</li>
+<li>Added <code>na_colour</code> parameter to <code><a href="../reference/hex_bw.html">hex_bw()</a></code> function to allow customization of text color for NA fills (default: “#ffffff”)</li>
+<li>Added <code>colour_2nd_binary_cat</code> parameter to <code><a href="../reference/girafe.html">girafe()</a></code> for checkbox plots - when set with <code>checked</code>/<code>not_checked</code>, reverses category order so the second category receives the specified color</li>
+</ul></div>
+<div class="section level3">
+<h3 id="refactoring-1-6-0">Refactoring<a class="anchor" aria-label="anchor" href="#refactoring-1-6-0"></a></h3>
+<ul><li>Moved <code><a href="../reference/process_binary_category_colors.html">process_binary_category_colors()</a></code> logic from <code>make_content.cat_plot_html()</code> to <code><a href="../reference/girafe.html">girafe()</a></code>, consolidating all color-related logic in one place</li>
+<li>Refactored checkbox plot handling in <code><a href="../reference/girafe.html">girafe()</a></code> to integrate <code>colour_2nd_binary_cat</code> parameter with <code>convert_to_checkbox_plot()</code> function</li>
 </ul></div>
 <div class="section level3">
 <h3 id="sorting-improvements-1-6-0">Sorting Improvements<a class="anchor" aria-label="anchor" href="#sorting-improvements-1-6-0"></a></h3>
@@ -72,15 +82,10 @@
 <li>Improved sorting stability for dependent variables with missing/duplicate labels — internal joins for computing <code>.dep_order</code> now key by <code>.variable_name</code> (unique) instead of <code>.variable_label</code>, preventing many-to-one join errors in edge cases while preserving displayed labels</li>
 </ul></div>
 <div class="section level3">
-<h3 id="critical-fixes-1-6-0">Critical Fixes<a class="anchor" aria-label="anchor" href="#critical-fixes-1-6-0"></a></h3>
+<h3 id="bug-fixes-1-6-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-0"></a></h3>
 <ul><li>
 <strong>CRITICAL:</strong> Resolved bug in <code><a href="../reference/makeme.html">makeme()</a></code> where combinations of valid factor variables with all-NA factor variables incorrectly threw “mix of categorical and continuous variables” error. Variable type checking now uses filtered variable lists instead of original lists, preventing premature type validation errors</li>
-<li>
-<strong>CRAN Compliance:</strong> Reduced string lengths in documentation for <code><a href="../reference/girafe.html">girafe()</a></code> and <code><a href="../reference/makeme.html">makeme()</a></code> functions to meet CRAN’s character limit per line requirement</li>
-</ul></div>
-<div class="section level3">
-<h3 id="bug-fixes-1-6-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-0"></a></h3>
-<ul><li>Resolved faceting issue in <code>int_plot_html</code> where <code>label_separator = NULL</code> with independent variables caused violin/boxplot and label geoms to appear in separate facets due to inconsistent string wrapping</li>
+<li>Resolved faceting issue in <code>int_plot_html</code> where <code>label_separator = NULL</code> with independent variables caused violin/boxplot and label geoms to appear in separate facets due to inconsistent string wrapping</li>
 <li>Removed unnecessary “multiple main questions” warning when using <code>label_separator = NULL</code>, as having different main questions is expected behavior</li>
 <li>Resolved issue <a href="https://github.com/NIFU-NO/saros/issues/464" class="external-link">#464</a> - <code><a href="../reference/makeme.html">makeme()</a></code> failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts</li>
 <li>Corrected double NA check logic in <code>check_bool()</code> function - removed redundant condition that made validation always pass for NA values</li>
@@ -90,6 +95,7 @@
 <li>Improved <code>keep_subitem()</code> to handle character inputs and use factor levels for better NA handling</li>
 <li>Simplified <code><a href="../reference/arrange_table_data.html">arrange_table_data()</a></code> sorting logic for better reliability</li>
 <li>Updated documentation reference from <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::theme_set()</a></code> to <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::set_theme()</a></code> due to ggplot2 4.0.0</li>
+<li>Fixed <code>custom_palette()</code> in <code><a href="../reference/girafe.html">girafe()</a></code> to properly handle unnamed elements in <code>priority_palette_codes</code> as colors for “NA” category. Previously, unnamed elements were filtered out, causing NA categories to receive no color assignment (appearing as white fill with white text)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="enhancements-1-6-0">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-1-6-0"></a></h3>
@@ -106,6 +112,8 @@
 <li>Modularized tabular I/O functionality - renamed <code>pretty_tabular.R</code> to <code>tabular_write.R</code> and extracted <code><a href="../reference/tabular_read.html">tabular_read()</a></code> function into separate file</li>
 <li>Centralized global constants (sorting whitelists) in <code>zzz.R</code> under <code>.saros.env</code> for easier maintenance</li>
 <li>Using <code>air</code> for consistent code formatting</li>
+<li>
+<strong>CRAN Compliance:</strong> Reduced string lengths in documentation for <code><a href="../reference/girafe.html">girafe()</a></code> and <code><a href="../reference/makeme.html">makeme()</a></code> functions to meet CRAN’s character limit per line requirement</li>
 </ul></div>
 <div class="section level3">
 <h3 id="development--testing-1-6-0">Development &amp; Testing<a class="anchor" aria-label="anchor" href="#development--testing-1-6-0"></a></h3>
