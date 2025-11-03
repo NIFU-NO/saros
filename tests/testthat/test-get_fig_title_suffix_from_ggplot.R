@@ -117,7 +117,9 @@ test_that("get_fig_title_suffix_from_ggplot handles custom link_prefix", {
     result <- saros::get_fig_title_suffix_from_ggplot(
       plot,
       save = TRUE,
-      link_prefixes = "[Download Image]("
+      file_suffixes = c(".csv", ".png"),
+      link_prefixes = c("[CSV](", "[Download Image]("),
+      save_fns = list(utils::write.csv, saros::ggsaver)
     )
 
     expect_s3_class(result, "AsIs")
@@ -166,4 +168,34 @@ test_that("get_fig_title_suffix_from_ggplot returns AsIs class to prevent escapi
   # Check that result is wrapped in I() for AsIs class
   expect_s3_class(result, "AsIs")
   expect_identical(class(result), class(I("")))
+})
+
+test_that("get_fig_title_suffix_from_ggplot validates vector length matching", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  # Mismatched lengths should error
+  expect_error(
+    saros::get_fig_title_suffix_from_ggplot(
+      plot,
+      save = TRUE,
+      file_suffixes = c(".csv", ".png", ".svg"),
+      link_prefixes = c("[CSV](", "[PNG]("),
+      save_fns = list(utils::write.csv, saros::ggsaver)
+    ),
+    "must have equal lengths"
+  )
+
+  expect_error(
+    saros::get_fig_title_suffix_from_ggplot(
+      plot,
+      save = TRUE,
+      file_suffixes = c(".csv", ".png"),
+      link_prefixes = c("[CSV](", "[PNG]("),
+      save_fns = list(utils::write.csv)
+    ),
+    "must have equal lengths"
+  )
 })

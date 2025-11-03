@@ -79,6 +79,23 @@ get_fig_title_suffix_from_ggplot <- function(
     save_fns <- list(save_fns)
   }
 
+  # Validate that vectorized parameters have matching lengths
+  if (isTRUE(save)) {
+    len_suffixes <- length(file_suffixes)
+    len_prefixes <- length(link_prefixes)
+    len_fns <- length(save_fns)
+
+    if (len_suffixes != len_prefixes || len_suffixes != len_fns) {
+      cli::cli_abort(c(
+        "Vectorized parameters must have equal lengths.",
+        "x" = "file_suffixes has length {len_suffixes}",
+        "x" = "link_prefixes has length {len_prefixes}",
+        "x" = "save_fns has length {len_fns}",
+        "i" = "All three must have the same length."
+      ))
+    }
+  }
+
   x <- stringi::stri_c(n_equals_string, n_range2(plot))
   if (isTRUE(save)) {
     links <- lapply(seq_along(file_suffixes), function(i) {
