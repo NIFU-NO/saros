@@ -72,9 +72,15 @@ get_fig_title_suffix_from_ggplot <- function(
   save_fns = list(utils::write.csv, saros::ggsaver),
   sep = ", "
 ) {
-  if (!ggplot2::is_ggplot(plot) || length(plot$data) == 0) {
+  # Validate plot and data
+  if (!ggplot2::is_ggplot(plot)) {
     return(I(""))
   }
+  # Check for NULL, waiver, or zero-row data
+  if (is.null(plot$data) || !is.data.frame(plot$data) || nrow(plot$data) == 0) {
+    return(I(""))
+  }
+
   if (length(save_fns) == 1 && rlang::is_function(save_fns)) {
     save_fns <- list(save_fns)
   }

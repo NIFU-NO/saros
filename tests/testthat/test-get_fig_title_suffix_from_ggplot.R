@@ -45,6 +45,19 @@ test_that("get_fig_title_suffix_from_ggplot returns empty for plot with no data"
   expect_equal(result, I(""))
 })
 
+test_that("get_fig_title_suffix_from_ggplot handles plot with zero rows", {
+  # Create plot with zero-row data frame
+  library(ggplot2)
+  zero_row_plot <- ggplot(
+    data.frame(x = numeric(0), y = numeric(0)),
+    aes(x, y)
+  ) +
+    geom_point()
+
+  result <- saros::get_fig_title_suffix_from_ggplot(zero_row_plot)
+  expect_equal(result, I(""))
+})
+
 test_that("get_fig_title_suffix_from_ggplot handles plots with different N ranges", {
   # Create plot with independent variable (will have range)
   plot_with_indep <- saros::makeme(
