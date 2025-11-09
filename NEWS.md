@@ -17,10 +17,6 @@
 -   Added `na_colour` parameter to `hex_bw()` function to allow customization of text color for NA fills (default: "#ffffff")
 -   Added `colour_2nd_binary_cat` parameter to `girafe()` for checkbox plots - when set with `checked`/`not_checked`, reverses category order so the second category receives the specified color
 
-## Refactoring
--   Moved `process_binary_category_colors()` logic from `make_content.cat_plot_html()` to `girafe()`, consolidating all color-related logic in one place
--   Refactored checkbox plot handling in `girafe()` to integrate `colour_2nd_binary_cat` parameter with `convert_to_checkbox_plot()` function
-
 ## Sorting Improvements
 -   Independent-variable ordering is now computed per dependent variable, allowing indep order to vary per dep; `descend_indep` now consistently reverses indep order across tables and plots; plots use centralized `.indep_order` when indep is on the x-axis; ordered indep factors take precedence over `sort_indep_by` (reversed only when `descend_indep=TRUE`); legends preserve unused response levels in `.category`
 -   Implemented B1 strategy for direct column-based sorting via whitelists. Allowed keys for dependent variables are now centrally defined and enforced; independent variables use a similar whitelist (including `.count_total_indep`). This prevents accidental sorting on arbitrary or missing columns and clarifies supported behavior
@@ -41,20 +37,27 @@
 -   Simplified `arrange_table_data()` sorting logic for better reliability
 -   Updated documentation reference from `ggplot2::theme_set()` to `ggplot2::set_theme()` due to ggplot2 4.0.0
 -   Fixed `custom_palette()` in `girafe()` to properly handle unnamed elements in `priority_palette_codes` as colors for "NA" category. Previously, unnamed elements were filtered out, causing NA categories to receive no color assignment (appearing as white fill with white text)
+-   `n_rng2()` now gracefully handles plots not created by `makeme()` by calculating N from complete cases instead of aborting
+-   Added handling for all-NA and empty `.count_per_indep_group` values, returning "0" with clear warnings instead of producing infinite values
 
-## Enhancements
--   **PERFORMANCE:** Optimized `makeme()` examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value
+## Performance Enhancements
+-   Optimized `makeme()` examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value
 -   Updated `fig_height_h_barchart2()` example for consistency with optimized examples
 -   Completely rewrote the `.spread` algorithm in `subset_vector()` for better spread maximization using evenly spaced positions
 -   Added `.onUnload()` function to clean up global options when package is unloaded, preventing option pollution in user's R session
 
 ## Internal Refactoring
+-   Moved `process_binary_category_colors()` logic from `make_content.cat_plot_html()` to `girafe()`, consolidating all color-related logic in one place
+-   Refactored checkbox plot handling in `girafe()` to integrate `colour_2nd_binary_cat` parameter with `convert_to_checkbox_plot()` function
 -   Substantially modularized internal implementation of `makeme()` into focused helper functions (argument setup, crowd processing, output assembly, validation). Improves readability, testability, and robustness without changing public API (closes #368)
 -   Split `post_process_makeme_data()` into focused single-responsibility functions: `process_indep_factor_levels()` for general factor reversal and `process_binary_category_colors()` for cat_plot_html-specific binary category processing
 -   Modularized tabular I/O functionality - renamed `pretty_tabular.R` to `tabular_write.R` and extracted `tabular_read()` function into separate file
 -   Centralized global constants (sorting whitelists) in `zzz.R` under `.saros.env` for easier maintenance
 -   Using `air` for consistent code formatting
 -   **CRAN Compliance:** Reduced string lengths in documentation for `girafe()` and `makeme()` functions to meet CRAN's character limit per line requirement
+-   Added explicit return statement in `make_content.int_plot_html()` for clarity
+-   Extracted duplicate label wrapping logic into `apply_label_wrapping()` helper function, improving maintainability and consistency
+
 
 ## Development & Testing
 -   Added comprehensive test coverage for `makeme()` helper functions with full roxygen2 documentation and @keywords internal annotation for internal API clarity
