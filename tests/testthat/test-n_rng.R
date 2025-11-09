@@ -56,16 +56,18 @@ testthat::test_that("n_range2 validates plot is from makeme", {
   library(ggplot2)
   plot <- ggplot(saros::ex_survey, aes(x = x1_sex)) + geom_bar()
 
-  # Should error because .count_per_indep_group column doesn't exist
-  testthat::expect_error(
-    saros::n_range2(plot),
-    "must be created by.*makeme"
-  )
+  # Should work without warning - fallback to counting complete cases
+  result <- saros::n_range2(plot)
 
-  testthat::expect_error(
-    saros::n_range2(plot),
-    ".count_per_indep_group.*not found"
-  )
+  # Should return the number of complete rows
+  testthat::expect_type(result, "character")
+  testthat::expect_true(nchar(result) > 0)
+
+  # The count should match the number of complete cases in ex_survey
+  n_complete <- nrow(saros::ex_survey[
+    stats::complete.cases(saros::ex_survey),
+  ])
+  testthat::expect_equal(result, as.character(n_complete))
 })
 
 testthat::test_that("n_range2 works with valid makeme plot", {

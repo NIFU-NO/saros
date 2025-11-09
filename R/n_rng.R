@@ -175,12 +175,16 @@ n_rng2 <- function(
   }
   data <- ggobj$data
 
-  # Validate that the plot was created by makeme()
+  # Check if the plot has the .count_per_indep_group column
+  # (added by makeme() for categorical plots)
   if (!".count_per_indep_group" %in% colnames(data)) {
-    cli::cli_abort(c(
-      "{.arg ggobj} must be created by {.fn makeme}.",
-      "x" = "Column {.code .count_per_indep_group} not found in plot data.",
-      "i" = "This column is added by {.fn makeme} for tracking sample sizes."
+    # Fallback: calculate N from the number of non-NA rows in the data
+    # This works for interval plots and other ggplot objects
+    n <- nrow(data[stats::complete.cases(data), , drop = FALSE])
+    return(glue_together_range(
+      n = n,
+      glue_template_1 = glue_template_1,
+      glue_template_2 = glue_template_2
     ))
   }
 

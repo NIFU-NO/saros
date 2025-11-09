@@ -50,7 +50,7 @@ withr::with_tempdir({
     )
 
     expect_no_error({
-      output <- capture.output({
+      capture.output({
         saros::crowd_plots_as_tabset(
           int_plots,
           plot_type = "int_plot_html",
@@ -59,13 +59,13 @@ withr::with_tempdir({
       })
     })
 
-    # output <- capture.output({
-    #   saros::crowd_plots_as_tabset(
-    #     int_plots,
-    #     plot_type = "int_plot_html",
-    #     save = FALSE
-    #   )
-    # })
+    output <- capture.output({
+      saros::crowd_plots_as_tabset(
+        int_plots,
+        plot_type = "int_plot_html",
+        save = FALSE
+      )
+    })
 
     expect_true(any(grepl("##### Target", output)))
   })
@@ -109,7 +109,7 @@ withr::with_tempdir({
     )
 
     expect_no_error({
-      output <- capture.output({
+      capture.output({
         saros::crowd_plots_as_tabset(
           int_plots,
           plot_type = "auto",
@@ -118,9 +118,9 @@ withr::with_tempdir({
       })
     })
 
-    # output <- capture.output({
-    #   saros::crowd_plots_as_tabset(int_plots, plot_type = "auto", save = FALSE)
-    # })
+    output <- capture.output({
+      saros::crowd_plots_as_tabset(int_plots, plot_type = "auto", save = FALSE)
+    })
 
     # Should use default height for interval plots
     expect_true(any(grepl("##### Target", output)))
