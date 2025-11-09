@@ -1,0 +1,34 @@
+# Handle Kept and Omitted Columns for Crowds
+
+Internal helper function that processes the kept and omitted column
+information for crowd-based filtering and applies global hiding logic.
+
+## Usage
+
+``` r
+handle_crowd_columns(
+  args,
+  kept_cols_list,
+  omitted_cols_list,
+  kept_indep_cats_list
+)
+```
+
+## Arguments
+
+- args:
+
+  List of makeme function arguments
+
+- kept_cols_list:
+
+  Named list of kept column information for each crowd
+
+- omitted_cols_list:
+
+  Named list of omitted variables for each crowd
+
+## Value
+
+List containing processed crowd column information with global hiding
+logic applied based on hide_for_all_crowds_if_hidden_for_crowd settings

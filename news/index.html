@@ -74,11 +74,6 @@
 <li>Added <code>colour_2nd_binary_cat</code> parameter to <code><a href="../reference/girafe.html">girafe()</a></code> for checkbox plots - when set with <code>checked</code>/<code>not_checked</code>, reverses category order so the second category receives the specified color</li>
 </ul></div>
 <div class="section level3">
-<h3 id="refactoring-1-6-0">Refactoring<a class="anchor" aria-label="anchor" href="#refactoring-1-6-0"></a></h3>
-<ul><li>Moved <code><a href="../reference/process_binary_category_colors.html">process_binary_category_colors()</a></code> logic from <code>make_content.cat_plot_html()</code> to <code><a href="../reference/girafe.html">girafe()</a></code>, consolidating all color-related logic in one place</li>
-<li>Refactored checkbox plot handling in <code><a href="../reference/girafe.html">girafe()</a></code> to integrate <code>colour_2nd_binary_cat</code> parameter with <code>convert_to_checkbox_plot()</code> function</li>
-</ul></div>
-<div class="section level3">
 <h3 id="sorting-improvements-1-6-0">Sorting Improvements<a class="anchor" aria-label="anchor" href="#sorting-improvements-1-6-0"></a></h3>
 <ul><li>Independent-variable ordering is now computed per dependent variable, allowing indep order to vary per dep; <code>descend_indep</code> now consistently reverses indep order across tables and plots; plots use centralized <code>.indep_order</code> when indep is on the x-axis; ordered indep factors take precedence over <code>sort_indep_by</code> (reversed only when <code>descend_indep=TRUE</code>); legends preserve unused response levels in <code>.category</code>
 </li>
@@ -102,24 +97,30 @@
 <li>Simplified <code><a href="../reference/arrange_table_data.html">arrange_table_data()</a></code> sorting logic for better reliability</li>
 <li>Updated documentation reference from <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::theme_set()</a></code> to <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::set_theme()</a></code> due to ggplot2 4.0.0</li>
 <li>Fixed <code>custom_palette()</code> in <code><a href="../reference/girafe.html">girafe()</a></code> to properly handle unnamed elements in <code>priority_palette_codes</code> as colors for “NA” category. Previously, unnamed elements were filtered out, causing NA categories to receive no color assignment (appearing as white fill with white text)</li>
+<li>
+<code><a href="../reference/n_rng2.html">n_rng2()</a></code> now gracefully handles plots not created by <code><a href="../reference/makeme.html">makeme()</a></code> by calculating N from complete cases instead of aborting</li>
+<li>Added handling for all-NA and empty <code>.count_per_indep_group</code> values, returning “0” with clear warnings instead of producing infinite values</li>
 </ul></div>
 <div class="section level3">
-<h3 id="enhancements-1-6-0">Enhancements<a class="anchor" aria-label="anchor" href="#enhancements-1-6-0"></a></h3>
-<ul><li>
-<strong>PERFORMANCE:</strong> Optimized <code><a href="../reference/makeme.html">makeme()</a></code> examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value</li>
+<h3 id="performance-enhancements-1-6-0">Performance Enhancements<a class="anchor" aria-label="anchor" href="#performance-enhancements-1-6-0"></a></h3>
+<ul><li>Optimized <code><a href="../reference/makeme.html">makeme()</a></code> examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value</li>
 <li>Updated <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> example for consistency with optimized examples</li>
 <li>Completely rewrote the <code>.spread</code> algorithm in <code><a href="../reference/subset_vector.html">subset_vector()</a></code> for better spread maximization using evenly spaced positions</li>
 <li>Added <code>.onUnload()</code> function to clean up global options when package is unloaded, preventing option pollution in user’s R session</li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-refactoring-1-6-0">Internal Refactoring<a class="anchor" aria-label="anchor" href="#internal-refactoring-1-6-0"></a></h3>
-<ul><li>Substantially modularized internal implementation of <code><a href="../reference/makeme.html">makeme()</a></code> into focused helper functions (argument setup, crowd processing, output assembly, validation). Improves readability, testability, and robustness without changing public API (closes <a href="https://github.com/NIFU-NO/saros/issues/368" class="external-link">#368</a>)</li>
+<ul><li>Moved <code><a href="../reference/process_binary_category_colors.html">process_binary_category_colors()</a></code> logic from <code>make_content.cat_plot_html()</code> to <code><a href="../reference/girafe.html">girafe()</a></code>, consolidating all color-related logic in one place</li>
+<li>Refactored checkbox plot handling in <code><a href="../reference/girafe.html">girafe()</a></code> to integrate <code>colour_2nd_binary_cat</code> parameter with <code>convert_to_checkbox_plot()</code> function</li>
+<li>Substantially modularized internal implementation of <code><a href="../reference/makeme.html">makeme()</a></code> into focused helper functions (argument setup, crowd processing, output assembly, validation). Improves readability, testability, and robustness without changing public API (closes <a href="https://github.com/NIFU-NO/saros/issues/368" class="external-link">#368</a>)</li>
 <li>Split <code><a href="../reference/post_process_makeme_data.html">post_process_makeme_data()</a></code> into focused single-responsibility functions: <code><a href="../reference/process_indep_factor_levels.html">process_indep_factor_levels()</a></code> for general factor reversal and <code><a href="../reference/process_binary_category_colors.html">process_binary_category_colors()</a></code> for cat_plot_html-specific binary category processing</li>
 <li>Modularized tabular I/O functionality - renamed <code>pretty_tabular.R</code> to <code>tabular_write.R</code> and extracted <code><a href="../reference/tabular_read.html">tabular_read()</a></code> function into separate file</li>
 <li>Centralized global constants (sorting whitelists) in <code>zzz.R</code> under <code>.saros.env</code> for easier maintenance</li>
 <li>Using <code>air</code> for consistent code formatting</li>
 <li>
 <strong>CRAN Compliance:</strong> Reduced string lengths in documentation for <code><a href="../reference/girafe.html">girafe()</a></code> and <code><a href="../reference/makeme.html">makeme()</a></code> functions to meet CRAN’s character limit per line requirement</li>
+<li>Added explicit return statement in <code>make_content.int_plot_html()</code> for clarity</li>
+<li>Extracted duplicate label wrapping logic into <code><a href="../reference/apply_label_wrapping.html">apply_label_wrapping()</a></code> helper function, improving maintainability and consistency</li>
 </ul></div>
 <div class="section level3">
 <h3 id="development--testing-1-6-0">Development &amp; Testing<a class="anchor" aria-label="anchor" href="#development--testing-1-6-0"></a></h3>
@@ -254,7 +255,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
