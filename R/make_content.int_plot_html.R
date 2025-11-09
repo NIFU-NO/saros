@@ -153,4 +153,6 @@ make_content.int_plot_html <-
     if (isFALSE(dots$vertical)) {
       out <- out + ggplot2::coord_flip()
     }
+
+    out
   }
