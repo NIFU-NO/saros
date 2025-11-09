@@ -29,6 +29,37 @@ add_label_tooltip <- function(
     )
 }
 
+#' Apply label wrapping based on plot layout
+#'
+#' Helper function to consistently wrap variable labels based on whether
+#' they appear on facet strips or x-axis, and whether inverse layout is used.
+#'
+#' @param data Data frame containing .variable_label column
+#' @param indep_length Number of independent variables (0 or 1)
+#' @param inverse Logical, whether inverse layout is used
+#' @param strip_width Width for facet strip labels
+#' @param x_axis_label_width Width for x-axis labels
+#' @return Data frame with wrapped .variable_label column
+#' @keywords internal
+apply_label_wrapping <- function(
+  data,
+  indep_length,
+  inverse,
+  strip_width,
+  x_axis_label_width
+) {
+  if (indep_length == 1 && isFALSE(inverse)) {
+    # When faceting by variable labels, apply strip_width wrapping
+    data[[".variable_label"]] <-
+      strip_wrap_var(data[[".variable_label"]], width = strip_width)
+  } else if (indep_length == 1 && isTRUE(inverse)) {
+    # When variable labels are on x-axis, apply x_axis_label_width wrapping
+    data[[".variable_label"]] <-
+      strip_wrap_var(data[[".variable_label"]], width = x_axis_label_width)
+  }
+  data
+}
+
 #' @export
 make_content.int_plot_html <-
   function(type, ..., min_value = -Inf, max_value = Inf) {
@@ -55,22 +86,20 @@ make_content.int_plot_html <-
       dots$data[[dots$indep]] <-
         strip_wrap_var(dots$data[[dots$indep]], width = dots$x_axis_label_width)
       facet_var <- dep_axis_text_var
-      dep_labels[[".variable_label"]] <-
-        strip_wrap_var(
-          dep_labels[[".variable_label"]],
-          width = dots$strip_width
-        )
     }
     if (length(dots$indep) == 1 && isTRUE(dots$inverse)) {
       x_axis_var <- dep_axis_text_var
-      dep_labels[[".variable_label"]] <-
-        strip_wrap_var(
-          dep_labels[[".variable_label"]],
-          width = dots$x_axis_label_width
-        )
-
       facet_var <- dots$indep
     }
+
+    # Apply label wrapping to dep_labels
+    dep_labels <- apply_label_wrapping(
+      dep_labels,
+      indep_length = length(dots$indep),
+      inverse = dots$inverse,
+      strip_width = dots$strip_width,
+      x_axis_label_width = dots$x_axis_label_width
+    )
 
     desc_tbl <- simple_descriptives(
       data = dots$data,
@@ -81,23 +110,14 @@ make_content.int_plot_html <-
     ) |>
       add_label_tooltip()
 
-    # Apply same string wrapping to desc_tbl labels as applied to dep_labels
-    if (length(dots$indep) == 1 && isFALSE(dots$inverse)) {
-      # When faceting by variable labels, apply strip_width wrapping
-      desc_tbl[[".variable_label"]] <-
-        strip_wrap_var(
-          desc_tbl[[".variable_label"]],
-          width = dots$strip_width
-        )
-    }
-    if (length(dots$indep) == 1 && isTRUE(dots$inverse)) {
-      # When variable labels are on x-axis, apply x_axis_label_width wrapping
-      desc_tbl[[".variable_label"]] <-
-        strip_wrap_var(
-          desc_tbl[[".variable_label"]],
-          width = dots$x_axis_label_width
-        )
-    }
+    # Apply same label wrapping to desc_tbl
+    desc_tbl <- apply_label_wrapping(
+      desc_tbl,
+      indep_length = length(dots$indep),
+      inverse = dots$inverse,
+      strip_width = dots$strip_width,
+      x_axis_label_width = dots$x_axis_label_width
+    )
 
     p_data <-
       dots$data |>
@@ -153,4 +173,6 @@ make_content.int_plot_html <-
     if (isFALSE(dots$vertical)) {
       out <- out + ggplot2::coord_flip()
     }
+
+    out
   }

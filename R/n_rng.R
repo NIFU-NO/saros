@@ -175,7 +175,33 @@ n_rng2 <- function(
   }
   data <- ggobj$data
 
-  n <- unique(range(data$.count_per_indep_group, na.rm = TRUE))
+  # Check if the plot has the .count_per_indep_group column
+  # (added by makeme() for categorical plots)
+  if (!".count_per_indep_group" %in% colnames(data)) {
+    # Fallback: calculate N from the number of non-NA rows in the data
+    # This works for interval plots and other ggplot objects
+    n <- nrow(data[stats::complete.cases(data), , drop = FALSE])
+    return(glue_together_range(
+      n = n,
+      glue_template_1 = glue_template_1,
+      glue_template_2 = glue_template_2
+    ))
+  }
+
+  n <- suppressWarnings(unique(range(
+    data$.count_per_indep_group,
+    na.rm = TRUE
+  )))
+
+  # Check for infinite values (happens when all values are NA or vector is empty)
+  if (any(is.infinite(n))) {
+    cli::cli_warn(c(
+      "No valid sample sizes found in {.code .count_per_indep_group}.",
+      "i" = "All values are NA or the vector is empty.",
+      "i" = "Returning 0 for N range."
+    ))
+    return("0")
+  }
 
   glue_together_range(
     n = n,

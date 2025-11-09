@@ -50,3 +50,66 @@ testthat::test_that("n_rng handles empty dependent variable list", {
   result <- saros:::n_rng(data, dep = character(0), glue_template_1 = "{n}")
   testthat::expect_equal(result, "")
 })
+
+testthat::test_that("n_range2 validates plot is from makeme", {
+  # Create a ggplot object NOT from makeme
+  library(ggplot2)
+  plot <- ggplot(saros::ex_survey, aes(x = x1_sex)) + geom_bar()
+
+  # Should work without warning - fallback to counting complete cases
+  result <- saros::n_range2(plot)
+
+  # Should return the number of complete rows
+  testthat::expect_type(result, "character")
+  testthat::expect_true(nchar(result) > 0)
+
+  # The count should match the number of complete cases in ex_survey
+  n_complete <- nrow(saros::ex_survey[
+    stats::complete.cases(saros::ex_survey),
+  ])
+  testthat::expect_equal(result, as.character(n_complete))
+})
+
+testthat::test_that("n_range2 works with valid makeme plot", {
+  # Create a valid plot from makeme
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  # Should work without error
+  result <- saros::n_range2(plot)
+  testthat::expect_type(result, "character")
+  testthat::expect_true(nchar(result) > 0)
+})
+
+testthat::test_that("n_range2 handles all-NA .count_per_indep_group", {
+  # Create a makeme plot and manually corrupt the data
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  # Set all .count_per_indep_group values to NA
+  plot$data$.count_per_indep_group <- NA_real_
+
+  # Should warn about no valid sample sizes
+  testthat::expect_warning(
+    result <- saros::n_range2(plot),
+    "No valid sample sizes"
+  )
+
+  # Should return "0"
+  testthat::expect_equal(result, "0")
+})
+
+testthat::test_that("n_range2 handles empty .count_per_indep_group", {
+  # Create a makeme plot and manually set empty vector
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  # Remove all rows (edge case)
+  plot$data <- plot$data[0, , drop = FALSE]
+
+  # Should warn about no valid sample sizes
+  testthat::expect_warning(
+    result <- saros::n_range2(plot),
+    "No valid sample sizes"
+  )
+
+  # Should return "0"
+  testthat::expect_equal(result, "0")
+})

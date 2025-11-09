@@ -171,6 +171,15 @@ crowd_plots_as_tabset <- function(
         return(NULL)
       }
 
+      # Validate that each plot is a ggplot object
+      if (!ggplot2::is_ggplot(plot)) {
+        cli::cli_warn(c(
+          "Plot {.val {.x}} is not a valid ggplot object.",
+          "i" = "Skipping this plot."
+        ))
+        return(NULL)
+      }
+
       # Determine figure height
       if (!is.null(fig_height)) {
         height_code <- sprintf("fig.height = %s", fig_height)
