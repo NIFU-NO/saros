@@ -79,3 +79,37 @@ testthat::test_that("n_range2 works with valid makeme plot", {
   testthat::expect_type(result, "character")
   testthat::expect_true(nchar(result) > 0)
 })
+
+testthat::test_that("n_range2 handles all-NA .count_per_indep_group", {
+  # Create a makeme plot and manually corrupt the data
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  # Set all .count_per_indep_group values to NA
+  plot$data$.count_per_indep_group <- NA_real_
+
+  # Should warn about no valid sample sizes
+  testthat::expect_warning(
+    result <- saros::n_range2(plot),
+    "No valid sample sizes"
+  )
+
+  # Should return "0"
+  testthat::expect_equal(result, "0")
+})
+
+testthat::test_that("n_range2 handles empty .count_per_indep_group", {
+  # Create a makeme plot and manually set empty vector
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  # Remove all rows (edge case)
+  plot$data <- plot$data[0, , drop = FALSE]
+
+  # Should warn about no valid sample sizes
+  testthat::expect_warning(
+    result <- saros::n_range2(plot),
+    "No valid sample sizes"
+  )
+
+  # Should return "0"
+  testthat::expect_equal(result, "0")
+})

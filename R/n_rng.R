@@ -188,7 +188,20 @@ n_rng2 <- function(
     ))
   }
 
-  n <- unique(range(data$.count_per_indep_group, na.rm = TRUE))
+  n <- suppressWarnings(unique(range(
+    data$.count_per_indep_group,
+    na.rm = TRUE
+  )))
+
+  # Check for infinite values (happens when all values are NA or vector is empty)
+  if (any(is.infinite(n))) {
+    cli::cli_warn(c(
+      "No valid sample sizes found in {.code .count_per_indep_group}.",
+      "i" = "All values are NA or the vector is empty.",
+      "i" = "Returning 0 for N range."
+    ))
+    return("0")
+  }
 
   glue_together_range(
     n = n,
