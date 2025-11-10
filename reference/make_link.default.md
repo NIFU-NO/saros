@@ -91,5 +91,5 @@ String.
 
 ``` r
 make_link(mtcars, folder = tempdir())
-#> [1] "[download figure data](/tmp/RtmpCCV6Vj/d0487363db4e6cc64fdb740cb6617fc0.csv)"
+#> [1] "[download figure data](/tmp/Rtmpa0DRGh/d0487363db4e6cc64fdb740cb6617fc0.csv)"
 ```
