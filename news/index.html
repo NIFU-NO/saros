@@ -50,29 +50,34 @@
 <div class="section level3">
 <h3 id="breaking-changes-1-6-0">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-6-0"></a></h3>
 <ul><li>
-<strong>Major change:</strong> <code><a href="../reference/makeme.html">makeme()</a></code> returns an empty data.frame instead of <code>NULL</code> when no plot or table can be created, simplifying downstream code (e.g. <code>gt::gt()</code> fails if served <code>NULL</code>)</li>
-<li>
-<strong>Major change:</strong> Resolved issue <a href="https://github.com/NIFU-NO/saros/issues/372" class="external-link">#372</a> - <code>descend</code> parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but <code>descend</code> can reverse the display order</li>
+<code><a href="../reference/makeme.html">makeme()</a></code> returns an empty data.frame instead of <code>NULL</code> when no plot or table can be created, simplifying downstream code (e.g. <code>gt::gt()</code> fails if served <code>NULL</code>)</li>
+<li>Resolved issue <a href="https://github.com/NIFU-NO/saros/issues/372" class="external-link">#372</a> - <code>descend</code> parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but <code>descend</code> can reverse the display order</li>
 <li>Enhanced <code>custom_palette()</code> to allow <code>priority_palette_codes</code> to supplement base palette when insufficient colors are available</li>
 <li>Improved color palette handling for explicit NA factor levels when using <code>showNA = "always"</code>
 </li>
 </ul></div>
 <div class="section level3">
 <h3 id="new-features-1-6-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-6-0"></a></h3>
+<div class="section level4">
+<h4 id="new-functions-and-output-types-1-6-0">New Functions and Output Types<a class="anchor" aria-label="anchor" href="#new-functions-and-output-types-1-6-0"></a></h4>
 <ul><li>
 <strong>New output type:</strong> <code>makeme(type = "int_plot_html")</code> for interactive interval plots with violin and box plots</li>
 <li>
-<strong>New function</strong>: <code><a href="../reference/txt_from_cat_mesos_plots.html">txt_from_cat_mesos_plots()</a></code> to generate textual summaries from two categorical mesos-scale plots, highlighting significant differences in selected categories between groups.</li>
+<strong>New function</strong>: <code><a href="../reference/txt_from_cat_mesos_plots.html">txt_from_cat_mesos_plots()</a></code> to generate textual summaries from two categorical mesos-scale plots, highlighting significant differences in selected categories between groups. Supports global settings via <code><a href="../reference/global_settings_set.html">global_settings_set()</a></code> (closes <a href="https://github.com/NIFU-NO/saros/issues/506" class="external-link">#506</a>)</li>
 <li>
 <strong>New function</strong>: <code><a href="../reference/crowd_plots_as_tabset.html">crowd_plots_as_tabset()</a></code> to convert a list of ggplot2 objects (typically from <code>makeme(crowd = ...)</code>) into Quarto tabsets with automatic height calculation and optional download links. Supports both categorical and interval plots with intelligent auto-detection based on plot layers</li>
 <li>
-<strong>New exported function</strong>: <code><a href="../reference/get_fig_title_suffix_from_ggplot.html">get_fig_title_suffix_from_ggplot()</a></code> generates figure title suffixes with N range and optional download links for plots.</li>
-<li>Added support for <code>data_label = "mean"</code> and <code>data_label = "median"</code> in <code><a href="../reference/makeme.html">makeme()</a></code> for <code>type = "cat_*_html"</code> outputs (addresses issue <a href="https://github.com/NIFU-NO/saros/issues/460" class="external-link">#460</a>)</li>
+<strong>New exported function</strong>: <code><a href="../reference/get_fig_title_suffix_from_ggplot.html">get_fig_title_suffix_from_ggplot()</a></code> generates figure title suffixes with N range and optional download links for plots</li>
+</ul></div>
+<div class="section level4">
+<h4 id="enhanced-functionality-1-6-0">Enhanced Functionality<a class="anchor" aria-label="anchor" href="#enhanced-functionality-1-6-0"></a></h4>
+<ul><li>Added support for <code>data_label = "mean"</code> and <code>data_label = "median"</code> in <code><a href="../reference/makeme.html">makeme()</a></code> for <code>type = "cat_*_html"</code> outputs (addresses issue <a href="https://github.com/NIFU-NO/saros/issues/460" class="external-link">#460</a>)</li>
 <li>Added <code>data_label_position</code> argument to <code><a href="../reference/makeme.html">makeme()</a></code> allowing data labels to be positioned at “center”, “bottom”, “top”, or “above” bars in categorical plots (addresses issue <a href="https://github.com/NIFU-NO/saros/issues/365" class="external-link">#365</a>)</li>
 <li>Enhanced <code>chr_table_html</code> to support multiple independent variables for displaying background context with open-ended text responses</li>
 <li>Added <code>na_colour</code> parameter to <code><a href="../reference/hex_bw.html">hex_bw()</a></code> function to allow customization of text color for NA fills (default: “#ffffff”)</li>
 <li>Added <code>colour_2nd_binary_cat</code> parameter to <code><a href="../reference/girafe.html">girafe()</a></code> for checkbox plots - when set with <code>checked</code>/<code>not_checked</code>, reverses category order so the second category receives the specified color</li>
 </ul></div>
+</div>
 <div class="section level3">
 <h3 id="sorting-improvements-1-6-0">Sorting Improvements<a class="anchor" aria-label="anchor" href="#sorting-improvements-1-6-0"></a></h3>
 <ul><li>Independent-variable ordering is now computed per dependent variable, allowing indep order to vary per dep; <code>descend_indep</code> now consistently reverses indep order across tables and plots; plots use centralized <code>.indep_order</code> when indep is on the x-axis; ordered indep factors take precedence over <code>sort_indep_by</code> (reversed only when <code>descend_indep=TRUE</code>); legends preserve unused response levels in <code>.category</code>
@@ -83,12 +88,26 @@
 <li>Improved sorting stability for dependent variables with missing/duplicate labels — internal joins for computing <code>.dep_order</code> now key by <code>.variable_name</code> (unique) instead of <code>.variable_label</code>, preventing many-to-one join errors in edge cases while preserving displayed labels</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-1-6-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-0"></a></h3>
+<h3 id="bug-fixes--improvements-1-6-0">Bug Fixes &amp; Improvements<a class="anchor" aria-label="anchor" href="#bug-fixes--improvements-1-6-0"></a></h3>
+<div class="section level4">
+<h4 id="critical-fixes-1-6-0">Critical Fixes<a class="anchor" aria-label="anchor" href="#critical-fixes-1-6-0"></a></h4>
 <ul><li>
 <strong>CRITICAL:</strong> Resolved bug in <code><a href="../reference/makeme.html">makeme()</a></code> where combinations of valid factor variables with all-NA factor variables incorrectly threw “mix of categorical and continuous variables” error. Variable type checking now uses filtered variable lists instead of original lists, preventing premature type validation errors</li>
-<li>Resolved faceting issue in <code>int_plot_html</code> where <code>label_separator = NULL</code> with independent variables caused violin/boxplot and label geoms to appear in separate facets due to inconsistent string wrapping</li>
-<li>Removed unnecessary “multiple main questions” warning when using <code>label_separator = NULL</code>, as having different main questions is expected behavior</li>
 <li>Resolved issue <a href="https://github.com/NIFU-NO/saros/issues/464" class="external-link">#464</a> - <code><a href="../reference/makeme.html">makeme()</a></code> failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts</li>
+</ul></div>
+<div class="section level4">
+<h4 id="robustness-improvements-1-6-0">Robustness Improvements<a class="anchor" aria-label="anchor" href="#robustness-improvements-1-6-0"></a></h4>
+<ul><li>Added vector length validation in <code><a href="../reference/get_fig_title_suffix_from_ggplot.html">get_fig_title_suffix_from_ggplot()</a></code> to prevent subscript-out-of-bounds errors when vectorized parameters have mismatched lengths</li>
+<li>
+<code><a href="../reference/n_rng2.html">n_rng2()</a></code> now gracefully handles plots not created by <code><a href="../reference/makeme.html">makeme()</a></code> by calculating N from complete cases instead of aborting, and properly handles all-NA and empty <code>.count_per_indep_group</code> values by returning “0” with clear warnings instead of producing infinite values</li>
+<li>
+<code><a href="../reference/crowd_plots_as_tabset.html">crowd_plots_as_tabset()</a></code> now validates each plot individually in the loop, preventing invalid objects from causing failures</li>
+<li>Improved empty data frame handling throughout - using <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame()</a></code> and <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow()</a></code> checks instead of <code><a href="https://rdrr.io/r/base/length.html" class="external-link">length()</a></code> for more reliable validation</li>
+</ul></div>
+<div class="section level4">
+<h4 id="other-fixes-1-6-0">Other Fixes<a class="anchor" aria-label="anchor" href="#other-fixes-1-6-0"></a></h4>
+<ul><li>Resolved faceting issue in <code>int_plot_html</code> where <code>label_separator = NULL</code> with independent variables caused violin/boxplot and label geoms to appear in separate facets due to inconsistent string wrapping</li>
+<li>Removed unnecessary “multiple main questions” warning when using <code>label_separator = NULL</code>, as having different main questions is expected behavior</li>
 <li>Corrected double NA check logic in <code>check_bool()</code> function - removed redundant condition that made validation always pass for NA values</li>
 <li>Improved NULL and NA handling in <code>glue_together_range()</code> to prevent edge case failures with empty or invalid data ranges</li>
 <li>Improved robustness of <code>check_no_duplicated_label_suffix()</code> to handle empty data frames and missing columns gracefully</li>
@@ -97,37 +116,36 @@
 <li>Simplified <code><a href="../reference/arrange_table_data.html">arrange_table_data()</a></code> sorting logic for better reliability</li>
 <li>Updated documentation reference from <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::theme_set()</a></code> to <code><a href="https://ggplot2.tidyverse.org/reference/get_theme.html" class="external-link">ggplot2::set_theme()</a></code> due to ggplot2 4.0.0</li>
 <li>Fixed <code>custom_palette()</code> in <code><a href="../reference/girafe.html">girafe()</a></code> to properly handle unnamed elements in <code>priority_palette_codes</code> as colors for “NA” category. Previously, unnamed elements were filtered out, causing NA categories to receive no color assignment (appearing as white fill with white text)</li>
-<li>
-<code><a href="../reference/n_rng2.html">n_rng2()</a></code> now gracefully handles plots not created by <code><a href="../reference/makeme.html">makeme()</a></code> by calculating N from complete cases instead of aborting</li>
-<li>Added handling for all-NA and empty <code>.count_per_indep_group</code> values, returning “0” with clear warnings instead of producing infinite values</li>
 </ul></div>
+</div>
 <div class="section level3">
 <h3 id="performance-enhancements-1-6-0">Performance Enhancements<a class="anchor" aria-label="anchor" href="#performance-enhancements-1-6-0"></a></h3>
 <ul><li>Optimized <code><a href="../reference/makeme.html">makeme()</a></code> examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value</li>
 <li>Updated <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> example for consistency with optimized examples</li>
 <li>Completely rewrote the <code>.spread</code> algorithm in <code><a href="../reference/subset_vector.html">subset_vector()</a></code> for better spread maximization using evenly spaced positions</li>
-<li>Added <code>.onUnload()</code> function to clean up global options when package is unloaded, preventing option pollution in user’s R session</li>
 </ul></div>
 <div class="section level3">
 <h3 id="internal-refactoring-1-6-0">Internal Refactoring<a class="anchor" aria-label="anchor" href="#internal-refactoring-1-6-0"></a></h3>
-<ul><li>Moved <code><a href="../reference/process_binary_category_colors.html">process_binary_category_colors()</a></code> logic from <code>make_content.cat_plot_html()</code> to <code><a href="../reference/girafe.html">girafe()</a></code>, consolidating all color-related logic in one place</li>
-<li>Refactored checkbox plot handling in <code><a href="../reference/girafe.html">girafe()</a></code> to integrate <code>colour_2nd_binary_cat</code> parameter with <code>convert_to_checkbox_plot()</code> function</li>
-<li>Substantially modularized internal implementation of <code><a href="../reference/makeme.html">makeme()</a></code> into focused helper functions (argument setup, crowd processing, output assembly, validation). Improves readability, testability, and robustness without changing public API (closes <a href="https://github.com/NIFU-NO/saros/issues/368" class="external-link">#368</a>)</li>
+<ul><li>Substantially modularized internal implementation of <code><a href="../reference/makeme.html">makeme()</a></code> into focused helper functions (argument setup, crowd processing, output assembly, validation). Improves readability, testability, and robustness without changing public API (closes <a href="https://github.com/NIFU-NO/saros/issues/368" class="external-link">#368</a>)</li>
 <li>Split <code><a href="../reference/post_process_makeme_data.html">post_process_makeme_data()</a></code> into focused single-responsibility functions: <code><a href="../reference/process_indep_factor_levels.html">process_indep_factor_levels()</a></code> for general factor reversal and <code><a href="../reference/process_binary_category_colors.html">process_binary_category_colors()</a></code> for cat_plot_html-specific binary category processing</li>
+<li>Moved <code><a href="../reference/process_binary_category_colors.html">process_binary_category_colors()</a></code> logic from <code>make_content.cat_plot_html()</code> to <code><a href="../reference/girafe.html">girafe()</a></code>, consolidating all color-related logic in one place</li>
+<li>Refactored checkbox plot handling in <code><a href="../reference/girafe.html">girafe()</a></code> to integrate <code>colour_2nd_binary_cat</code> parameter with <code>convert_to_checkbox_plot()</code> function</li>
 <li>Modularized tabular I/O functionality - renamed <code>pretty_tabular.R</code> to <code>tabular_write.R</code> and extracted <code><a href="../reference/tabular_read.html">tabular_read()</a></code> function into separate file</li>
 <li>Centralized global constants (sorting whitelists) in <code>zzz.R</code> under <code>.saros.env</code> for easier maintenance</li>
+<li>Extracted duplicate label wrapping logic into <code><a href="../reference/apply_label_wrapping.html">apply_label_wrapping()</a></code> helper function, improving maintainability and consistency</li>
+<li>Added explicit return statement in <code>make_content.int_plot_html()</code> for clarity</li>
+<li>Added <code>.onUnload()</code> function to clean up global options when package is unloaded, preventing option pollution in user’s R session</li>
 <li>Using <code>air</code> for consistent code formatting</li>
 <li>
 <strong>CRAN Compliance:</strong> Reduced string lengths in documentation for <code><a href="../reference/girafe.html">girafe()</a></code> and <code><a href="../reference/makeme.html">makeme()</a></code> functions to meet CRAN’s character limit per line requirement</li>
-<li>Added explicit return statement in <code>make_content.int_plot_html()</code> for clarity</li>
-<li>Extracted duplicate label wrapping logic into <code><a href="../reference/apply_label_wrapping.html">apply_label_wrapping()</a></code> helper function, improving maintainability and consistency</li>
 </ul></div>
 <div class="section level3">
 <h3 id="development--testing-1-6-0">Development &amp; Testing<a class="anchor" aria-label="anchor" href="#development--testing-1-6-0"></a></h3>
 <ul><li>Added comprehensive test coverage for <code><a href="../reference/makeme.html">makeme()</a></code> helper functions with full roxygen2 documentation and <a href="https://github.com/keywords" class="external-link">@keywords</a> internal annotation for internal API clarity</li>
 <li>Added comprehensive visual regression testing for <code>int_plot_html</code> using vdiffr snapshot tests covering various scenarios</li>
-<li>Added comprehensive test coverage for utility validation functions</li>
-<li>Added comprehensive unit tests for <code><a href="../reference/makeme.html">makeme()</a></code> variable type checking edge cases including all-NA variables</li>
+<li>Added comprehensive test coverage for utility validation functions and edge cases including all-NA variables</li>
+<li>Added test coverage for global settings support in <code><a href="../reference/txt_from_cat_mesos_plots.html">txt_from_cat_mesos_plots()</a></code> with proper cleanup using <code><a href="https://withr.r-lib.org/reference/defer.html" class="external-link">withr::defer()</a></code>
+</li>
 <li>Added VS Code configuration for improved development experience</li>
 <li>Added <code>survey</code> package to Suggests for enhanced testing capabilities</li>
 <li>Updated build ignore patterns for coverage reports and library files</li>
