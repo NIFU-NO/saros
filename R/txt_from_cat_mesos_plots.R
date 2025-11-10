@@ -118,30 +118,40 @@ txt_from_cat_mesos_plots <- function(
     )
   )
 ) {
+  args <- check_options(
+    call = match.call(),
+    ignore_args = .saros.env$ignore_args,
+    defaults_env = global_settings_get(fn_name = "txt_from_cat_mesos_plots"),
+    default_values = formals(txt_from_cat_mesos_plots)
+  )
+
+  # Re-insert plots after check_options (like data in other functions)
+  args$plots <- plots
+
   # Validate plots argument
-  if (!is.list(plots)) {
+  if (!is.list(args$plots)) {
     cli::cli_warn(
       c(
-        "{.arg plots} must be a list, not {.cls {class(plots)}}.",
-        "i" = "Returning {.val {fallback_string}}."
+        "{.arg plots} must be a list, not {.cls {class(args$plots)}}.",
+        "i" = "Returning {.val {args$fallback_string}}."
       )
     )
-    return(fallback_string)
+    return(args$fallback_string)
   }
 
-  if (length(plots) < 2) {
+  if (length(args$plots) < 2) {
     cli::cli_warn(
       c(
-        "{.arg plots} must contain at least 2 elements, not {length(plots)}.",
-        "i" = "Returning {.val {fallback_string}}."
+        "{.arg plots} must contain at least 2 elements, not {length(args$plots)}.",
+        "i" = "Returning {.val {args$fallback_string}}."
       )
     )
-    return(fallback_string)
+    return(args$fallback_string)
   }
 
   # Check that each element has a data component
   has_data <- vapply(
-    plots,
+    args$plots,
     function(x) {
       !is.null(x) && (inherits(x, "data.frame") || !is.null(x$data))
     },
@@ -154,23 +164,23 @@ txt_from_cat_mesos_plots <- function(
       c(
         "{.arg plots} elements {missing_data} do not contain plot data.",
         "i" = "Each element must be a data frame or have a {.field data} component.",
-        "i" = "Returning {.val {fallback_string}}."
+        "i" = "Returning {.val {args$fallback_string}}."
       )
     )
-    return(fallback_string)
+    return(args$fallback_string)
   }
 
   # Extract data - handle both data frames and plot objects with $data
-  dat_1 <- if (inherits(plots[[1]], "data.frame")) {
-    plots[[1]]
+  dat_1 <- if (inherits(args$plots[[1]], "data.frame")) {
+    args$plots[[1]]
   } else {
-    plots[[1]]$data
+    args$plots[[1]]$data
   }
 
-  dat_2 <- if (inherits(plots[[2]], "data.frame")) {
-    plots[[2]]
+  dat_2 <- if (inherits(args$plots[[2]], "data.frame")) {
+    args$plots[[2]]
   } else {
-    plots[[2]]$data
+    args$plots[[2]]$data
   }
 
   selected_categories <-
@@ -178,15 +188,15 @@ txt_from_cat_mesos_plots <- function(
     dplyr::distinct(.data$.category, .keep_all = TRUE) |>
     dplyr::filter(
       .data$.category_order %in%
-        if (isFALSE(flip_to_lowest_categories)) {
+        if (isFALSE(args$flip_to_lowest_categories)) {
           (max(c(
             1,
-            max(.data$.category_order) - n_highest_categories + 1
+            max(.data$.category_order) - args$n_highest_categories + 1
           )):max(.data$.category_order))
-        } else if (isTRUE(flip_to_lowest_categories)) {
+        } else if (isTRUE(args$flip_to_lowest_categories)) {
           min(.data$.category_order):(min(c(
             max(.data$.category_order),
-            n_highest_categories
+            args$n_highest_categories
           )))
         }
     ) |>
@@ -210,21 +220,21 @@ txt_from_cat_mesos_plots <- function(
     dplyr::bind_rows() |>
     tidyr::pivot_wider(names_from = "group", values_from = "value")
   out[["txt"]] <- dplyr::case_when(
-    out[[2]] > out[[3]] + min_prop_diff ~
-      sample(glue_str_pos, size = nrow(out), replace = TRUE),
-    out[[3]] > out[[2]] + min_prop_diff ~
-      sample(glue_str_neg, size = nrow(out), replace = TRUE),
+    out[[2]] > out[[3]] + args$min_prop_diff ~
+      sample(args$glue_str_pos, size = nrow(out), replace = TRUE),
+    out[[3]] > out[[2]] + args$min_prop_diff ~
+      sample(args$glue_str_neg, size = nrow(out), replace = TRUE),
     .default = ""
   )
-  out[[2]] <- round(out[[2]], digits = digits)
-  out[[3]] <- round(out[[3]], digits = digits)
+  out[[2]] <- round(out[[2]], digits = args$digits)
+  out[[3]] <- round(out[[3]], digits = args$digits)
 
   out[["selected_categories"]] <- cli::ansi_collapse(
     selected_categories,
     sep = "; ",
-    last = selected_categories_last_split,
+    last = args$selected_categories_last_split,
     trunc = 10,
-    sep2 = selected_categories_last_split
+    sep2 = args$selected_categories_last_split
   )
 
   for (i in seq_len(nrow(out))) {

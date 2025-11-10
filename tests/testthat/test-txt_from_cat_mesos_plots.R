@@ -283,3 +283,97 @@ test_that("txt_from_cat_mesos_plots handles selected_categories_last_split", {
   expect_type(result_or, "character")
   expect_type(result_and, "character")
 })
+
+test_that("txt_from_cat_mesos_plots respects global settings", {
+  # Ensure cleanup happens even if test fails
+  withr::defer(saros::global_settings_reset())
+
+  # Setup: Create sample data
+  plot_data_1 <- data.frame(
+    .variable_label = "Question",
+    .category = factor(c("Low", "High"), levels = c("Low", "High")),
+    .category_order = 1:2,
+    .proportion = c(0.3, 0.7)
+  )
+
+  plot_data_2 <- data.frame(
+    .variable_label = "Question",
+    .category = factor(c("Low", "High"), levels = c("Low", "High")),
+    .category_order = 1:2,
+    .proportion = c(0.5, 0.5)
+  )
+
+  plots <- list(
+    list(data = plot_data_1),
+    list(data = plot_data_2)
+  )
+
+  # Set global settings
+  saros::global_settings_set(
+    new = list(
+      min_prop_diff = 0.05,
+      digits = 3
+    ),
+    fn_name = "txt_from_cat_mesos_plots",
+    quiet = TRUE
+  )
+
+  # Call without explicit parameters - should use global settings
+  result <- saros::txt_from_cat_mesos_plots(plots)
+
+  # Should detect difference with min_prop_diff = 0.05 (0.7 - 0.5 = 0.2 > 0.05)
+  expect_type(result, "character")
+  expect_true(length(result) >= 1)
+
+  # Reset global settings
+  saros::global_settings_reset()
+
+  # Without global settings and default min_prop_diff = 0.10, should still detect
+  result_default <- saros::txt_from_cat_mesos_plots(plots)
+  expect_type(result_default, "character")
+  expect_true(length(result_default) >= 1)
+})
+
+test_that("explicit arguments override global settings", {
+  # Ensure cleanup happens even if test fails
+  withr::defer(saros::global_settings_reset())
+
+  # Setup: Create sample data with small difference
+  plot_data_1 <- data.frame(
+    .variable_label = "Question",
+    .category = factor(c("Low", "High"), levels = c("Low", "High")),
+    .category_order = 1:2,
+    .proportion = c(0.4, 0.6)
+  )
+
+  plot_data_2 <- data.frame(
+    .variable_label = "Question",
+    .category = factor(c("Low", "High"), levels = c("Low", "High")),
+    .category_order = 1:2,
+    .proportion = c(0.45, 0.55)
+  )
+
+  plots <- list(
+    list(data = plot_data_1),
+    list(data = plot_data_2)
+  )
+
+  # Set global settings with low threshold
+  saros::global_settings_set(
+    new = list(
+      min_prop_diff = 0.01
+    ),
+    fn_name = "txt_from_cat_mesos_plots",
+    quiet = TRUE
+  )
+
+  # Explicit argument should override (difference is 0.05, so 0.5 threshold means no text)
+  result_explicit <- saros::txt_from_cat_mesos_plots(plots, min_prop_diff = 0.5)
+  expect_type(result_explicit, "character")
+  expect_equal(length(result_explicit), 0) # No text due to high threshold
+
+  # Global settings should allow detection (0.05 > 0.01)
+  result_global <- saros::txt_from_cat_mesos_plots(plots)
+  expect_type(result_global, "character")
+  expect_true(length(result_global) >= 1)
+})
