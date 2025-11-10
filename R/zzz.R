@@ -99,6 +99,7 @@ if (!exists(".saros.env")) {
 
   .saros.env$ignore_args <<- c(
     "data",
+    "plots",
     "dep",
     "indep",
     "chapter_overview",
@@ -116,7 +117,8 @@ if (!exists(".saros.env")) {
     n_rng = n_rng,
     n_range = n_range,
     fig_height_h_barchart = fig_height_h_barchart,
-    girafe = girafe
+    girafe = girafe,
+    txt_from_cat_mesos_plots = txt_from_cat_mesos_plots
   )
 
   for (fn_name in names(fn_opt_list)) {
