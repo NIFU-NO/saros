@@ -2,6 +2,8 @@
 
 ## saros 1.6.0
 
+CRAN release: 2025-11-10
+
 ### Breaking Changes
 
 - [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md)
