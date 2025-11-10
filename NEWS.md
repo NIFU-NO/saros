@@ -1,16 +1,20 @@
 # saros 1.6.0
 
 ## Breaking Changes
--   **Major change:** `makeme()` returns an empty data.frame instead of `NULL` when no plot or table can be created, simplifying downstream code (e.g. `gt::gt()` fails if served `NULL`)
--   **Major change:** Resolved issue #372 - `descend` parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but `descend` can reverse the display order
+-   `makeme()` returns an empty data.frame instead of `NULL` when no plot or table can be created, simplifying downstream code (e.g. `gt::gt()` fails if served `NULL`)
+-   Resolved issue #372 - `descend` parameter now works correctly with ordered factors while preserving their inherent level ordering. Ordered factors maintain their natural order as the base, but `descend` can reverse the display order
 -   Enhanced `custom_palette()` to allow `priority_palette_codes` to supplement base palette when insufficient colors are available
 -   Improved color palette handling for explicit NA factor levels when using `showNA = "always"`
 
 ## New Features
+
+### New Functions and Output Types
 -   **New output type:** `makeme(type = "int_plot_html")` for interactive interval plots with violin and box plots
--   **New function**: `txt_from_cat_mesos_plots()` to generate textual summaries from two categorical mesos-scale plots, highlighting significant differences in selected categories between groups.
+-   **New function**: `txt_from_cat_mesos_plots()` to generate textual summaries from two categorical mesos-scale plots, highlighting significant differences in selected categories between groups. Supports global settings via `global_settings_set()` (closes #506)
 -   **New function**: `crowd_plots_as_tabset()` to convert a list of ggplot2 objects (typically from `makeme(crowd = ...)`) into Quarto tabsets with automatic height calculation and optional download links. Supports both categorical and interval plots with intelligent auto-detection based on plot layers
--   **New exported function**: `get_fig_title_suffix_from_ggplot()` generates figure title suffixes with N range and optional download links for plots.
+-   **New exported function**: `get_fig_title_suffix_from_ggplot()` generates figure title suffixes with N range and optional download links for plots
+
+### Enhanced Functionality
 -   Added support for `data_label = "mean"` and `data_label = "median"` in `makeme()` for `type = "cat_*_html"` outputs (addresses issue #460)
 -   Added `data_label_position` argument to `makeme()` allowing data labels to be positioned at "center", "bottom", "top", or "above" bars in categorical plots (addresses issue #365)
 -   Enhanced `chr_table_html` to support multiple independent variables for displaying background context with open-ended text responses
@@ -23,12 +27,21 @@
 -   `sort_indep_by` now explicitly defaults to `".factor_order"` and accepts `NULL` (treated as `".factor_order"`). When no independent variable is provided (`indep = NULL`), specifying `sort_indep_by` or `descend_indep` no longer errors; they are simply ignored
 -   Improved sorting stability for dependent variables with missing/duplicate labels — internal joins for computing `.dep_order` now key by `.variable_name` (unique) instead of `.variable_label`, preventing many-to-one join errors in edge cases while preserving displayed labels
 
+## Bug Fixes & Improvements
 
-## Bug Fixes
+### Critical Fixes
 -   **CRITICAL:** Resolved bug in `makeme()` where combinations of valid factor variables with all-NA factor variables incorrectly threw "mix of categorical and continuous variables" error. Variable type checking now uses filtered variable lists instead of original lists, preventing premature type validation errors
+-   Resolved issue #464 - `makeme()` failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts
+
+### Robustness Improvements
+-   Added vector length validation in `get_fig_title_suffix_from_ggplot()` to prevent subscript-out-of-bounds errors when vectorized parameters have mismatched lengths
+-   `n_rng2()` now gracefully handles plots not created by `makeme()` by calculating N from complete cases instead of aborting, and properly handles all-NA and empty `.count_per_indep_group` values by returning "0" with clear warnings instead of producing infinite values
+-   `crowd_plots_as_tabset()` now validates each plot individually in the loop, preventing invalid objects from causing failures
+-   Improved empty data frame handling throughout - using `is.data.frame()` and `nrow()` checks instead of `length()` for more reliable validation
+
+### Other Fixes
 -   Resolved faceting issue in `int_plot_html` where `label_separator = NULL` with independent variables caused violin/boxplot and label geoms to appear in separate facets due to inconsistent string wrapping
 -   Removed unnecessary "multiple main questions" warning when using `label_separator = NULL`, as having different main questions is expected behavior
--   Resolved issue #464 - `makeme()` failures for sigtest_table when dep and indep variables overlap. Now automatically excludes indep variables from dep selection to prevent conflicts
 -   Corrected double NA check logic in `check_bool()` function - removed redundant condition that made validation always pass for NA values
 -   Improved NULL and NA handling in `glue_together_range()` to prevent edge case failures with empty or invalid data ranges
 -   Improved robustness of `check_no_duplicated_label_suffix()` to handle empty data frames and missing columns gracefully
@@ -37,36 +50,34 @@
 -   Simplified `arrange_table_data()` sorting logic for better reliability
 -   Updated documentation reference from `ggplot2::theme_set()` to `ggplot2::set_theme()` due to ggplot2 4.0.0
 -   Fixed `custom_palette()` in `girafe()` to properly handle unnamed elements in `priority_palette_codes` as colors for "NA" category. Previously, unnamed elements were filtered out, causing NA categories to receive no color assignment (appearing as white fill with white text)
--   `n_rng2()` now gracefully handles plots not created by `makeme()` by calculating N from complete cases instead of aborting
--   Added handling for all-NA and empty `.count_per_indep_group` values, returning "0" with clear warnings instead of producing infinite values
 
 ## Performance Enhancements
 -   Optimized `makeme()` examples for 73.8% faster execution (6.6s → 1.7s total). Reduced variable counts and crowd configurations while maintaining educational value
 -   Updated `fig_height_h_barchart2()` example for consistency with optimized examples
 -   Completely rewrote the `.spread` algorithm in `subset_vector()` for better spread maximization using evenly spaced positions
--   Added `.onUnload()` function to clean up global options when package is unloaded, preventing option pollution in user's R session
 
 ## Internal Refactoring
--   Moved `process_binary_category_colors()` logic from `make_content.cat_plot_html()` to `girafe()`, consolidating all color-related logic in one place
--   Refactored checkbox plot handling in `girafe()` to integrate `colour_2nd_binary_cat` parameter with `convert_to_checkbox_plot()` function
 -   Substantially modularized internal implementation of `makeme()` into focused helper functions (argument setup, crowd processing, output assembly, validation). Improves readability, testability, and robustness without changing public API (closes #368)
 -   Split `post_process_makeme_data()` into focused single-responsibility functions: `process_indep_factor_levels()` for general factor reversal and `process_binary_category_colors()` for cat_plot_html-specific binary category processing
+-   Moved `process_binary_category_colors()` logic from `make_content.cat_plot_html()` to `girafe()`, consolidating all color-related logic in one place
+-   Refactored checkbox plot handling in `girafe()` to integrate `colour_2nd_binary_cat` parameter with `convert_to_checkbox_plot()` function
 -   Modularized tabular I/O functionality - renamed `pretty_tabular.R` to `tabular_write.R` and extracted `tabular_read()` function into separate file
 -   Centralized global constants (sorting whitelists) in `zzz.R` under `.saros.env` for easier maintenance
+-   Extracted duplicate label wrapping logic into `apply_label_wrapping()` helper function, improving maintainability and consistency
+-   Added explicit return statement in `make_content.int_plot_html()` for clarity
+-   Added `.onUnload()` function to clean up global options when package is unloaded, preventing option pollution in user's R session
 -   Using `air` for consistent code formatting
 -   **CRAN Compliance:** Reduced string lengths in documentation for `girafe()` and `makeme()` functions to meet CRAN's character limit per line requirement
--   Added explicit return statement in `make_content.int_plot_html()` for clarity
--   Extracted duplicate label wrapping logic into `apply_label_wrapping()` helper function, improving maintainability and consistency
-
 
 ## Development & Testing
 -   Added comprehensive test coverage for `makeme()` helper functions with full roxygen2 documentation and @keywords internal annotation for internal API clarity
 -   Added comprehensive visual regression testing for `int_plot_html` using vdiffr snapshot tests covering various scenarios
--   Added comprehensive test coverage for utility validation functions
--   Added comprehensive unit tests for `makeme()` variable type checking edge cases including all-NA variables
+-   Added comprehensive test coverage for utility validation functions and edge cases including all-NA variables
+-   Added test coverage for global settings support in `txt_from_cat_mesos_plots()` with proper cleanup using `withr::defer()`
 -   Added VS Code configuration for improved development experience
 -   Added `survey` package to Suggests for enhanced testing capabilities
 -   Updated build ignore patterns for coverage reports and library files
+
 
 # saros 1.5.4
 -   Fix: Corrected error introduced in 1.5.3
