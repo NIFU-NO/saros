@@ -285,6 +285,9 @@ test_that("txt_from_cat_mesos_plots handles selected_categories_last_split", {
 })
 
 test_that("txt_from_cat_mesos_plots respects global settings", {
+  # Ensure cleanup happens even if test fails
+  withr::defer(saros::global_settings_reset())
+
   # Setup: Create sample data
   plot_data_1 <- data.frame(
     .variable_label = "Question",
@@ -332,6 +335,9 @@ test_that("txt_from_cat_mesos_plots respects global settings", {
 })
 
 test_that("explicit arguments override global settings", {
+  # Ensure cleanup happens even if test fails
+  withr::defer(saros::global_settings_reset())
+
   # Setup: Create sample data with small difference
   plot_data_1 <- data.frame(
     .variable_label = "Question",
@@ -370,7 +376,4 @@ test_that("explicit arguments override global settings", {
   result_global <- saros::txt_from_cat_mesos_plots(plots)
   expect_type(result_global, "character")
   expect_true(length(result_global) >= 1)
-
-  # Reset global settings
-  saros::global_settings_reset()
 })
