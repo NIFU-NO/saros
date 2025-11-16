@@ -445,13 +445,17 @@ summarize_cat_cat_data <-
     # Check if all dependent variables are ordered factors
     # This determines whether sort_by and descend should be ignored
     # dep_variable_order <- NULL # Store original order for ordered factors
-    dep_vars_ordered <- all(sapply(dep, function(var_name) {
-      if (var_name %in% colnames(data)) {
-        is.factor(data[[var_name]]) && is.ordered(data[[var_name]])
-      } else {
-        FALSE
-      }
-    }))
+    dep_vars_ordered <- all(vapply(
+      dep,
+      function(var_name) {
+        if (var_name %in% colnames(data)) {
+          is.factor(data[[var_name]]) && is.ordered(data[[var_name]])
+        } else {
+          FALSE
+        }
+      },
+      logical(1)
+    ))
 
     cross_table_output <-
       crosstable(

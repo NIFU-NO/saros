@@ -26,14 +26,15 @@ keep_cols <- function(
   kept_vars <- c()
 
   for (d in dep) {
+    d_char <- as.character(out[[d]])
     keep_1 <-
       isFALSE(hide_for_crowd_if_all_na) ||
-      !all(is.na(as.character(out[[d]])))
+      !all(is.na(d_char))
     keep_2 <-
-      length(!is.na(as.character(out[[d]]))) >= hide_for_crowd_if_valid_n_below
-    x <- as.character(unique(out[[d]]))
+      sum(!is.na(d_char)) >= hide_for_crowd_if_valid_n_below
+    x <- unique(d_char)
     keep_3 <-
-      length(x[!is.na(x)]) >= hide_for_crowd_if_category_k_below
+      sum(!is.na(x)) >= hide_for_crowd_if_category_k_below
     x <- table(out[[d]], useNA = "no")
     x <- x[x > 0]
     keep_4 <-

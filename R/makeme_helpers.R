@@ -132,10 +132,19 @@ validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
 #'
 #' @keywords internal
 detect_variable_types <- function(subset_data, dep_crwd, indep_crwd) {
-  variable_type_dep <- lapply(dep_crwd, function(v) class(subset_data[[v]])) |>
-    unlist()
+  variable_type_dep <- vapply(
+    dep_crwd,
+    function(v) class(subset_data[[v]])[1],
+    character(1),
+    USE.NAMES = FALSE
+  )
   variable_type_indep <- if (length(indep_crwd) > 0) {
-    lapply(indep_crwd, function(v) class(subset_data[[v]])) |> unlist()
+    vapply(
+      indep_crwd,
+      function(v) class(subset_data[[v]])[1],
+      character(1),
+      USE.NAMES = FALSE
+    )
   } else {
     character(0)
   }
@@ -485,8 +494,11 @@ summarize_data_by_type <- function(
   indep_crwd,
   ...
 ) {
-  variable_type_dep <- lapply(args$dep, function(v) class(subset_data[[v]])) |>
-    unlist()
+  variable_type_dep <- vapply(
+    args$dep,
+    function(v) class(subset_data[[v]])[1],
+    character(1)
+  )
   if (all(variable_type_dep %in% c("integer", "numeric"))) {
     args$data_summary <- rlang::exec(summarize_int_cat_data, !!!args)
   } else if (all(variable_type_dep %in% c("factor", "ordered"))) {
@@ -921,7 +933,7 @@ process_output_results <- function(out, args) {
   }
 
   # Remove NULL results
-  out <- out[!sapply(out, is.null)]
+  out <- out[!vapply(out, is.null, logical(1))]
 
   # Simplify output if requested
   if (isTRUE(args$simplify_output) && length(out) == 1) {
