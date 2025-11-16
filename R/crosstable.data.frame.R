@@ -55,7 +55,7 @@ crosstable_prepare_data <- function(data, dep_var, indep, showNA) {
     col <- out$.category
   }
 
-  if (showNA == "always" || (showNA == "ifany" && any(is.na(col)))) {
+  if (showNA == "always" || (showNA == "ifany" && anyNA(col))) {
     out$.category <- forcats::fct_na_value_to_level(f = col, level = "NA")
   } else {
     out <- out[!is.na(out$.category), , drop = FALSE]
@@ -63,7 +63,7 @@ crosstable_prepare_data <- function(data, dep_var, indep, showNA) {
 
   for (indep_var in indep) {
     indep_col <- out[[indep_var]]
-    if (showNA == "always" || (showNA == "ifany" && any(is.na(indep_col)))) {
+    if (showNA == "always" || (showNA == "ifany" && anyNA(indep_col))) {
       out[[indep_var]] <- forcats::fct_na_value_to_level(
         f = indep_col,
         level = "NA"
@@ -160,7 +160,6 @@ crosstable_calculate_proportions <- function(
   summary_prop$.category <- factor(
     x = summary_prop$.category,
     levels = fct_lvls,
-    labels = fct_lvls,
     exclude = character()
   )
   summary_prop$.count_se <- NA_real_
