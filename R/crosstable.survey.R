@@ -9,7 +9,7 @@ crosstable_prepare_data_svy <- function(data, dep_var, indep, showNA) {
     col <- srvyr::pull(out, .data$.category)
   }
 
-  if (showNA == "always" || (showNA == "ifany" && any(is.na(col)))) {
+  if (showNA == "always" || (showNA == "ifany" && anyNA(col))) {
     out <- srvyr::mutate(
       out,
       .category = forcats::fct_na_value_to_level(f = col, level = "NA")
@@ -20,7 +20,7 @@ crosstable_prepare_data_svy <- function(data, dep_var, indep, showNA) {
 
   for (indep_var in indep) {
     indep_col <- srvyr::pull(out, .data[[indep_var]])
-    if (showNA == "always" || (showNA == "ifany" && any(is.na(indep_col)))) {
+    if (showNA == "always" || (showNA == "ifany" && anyNA(indep_col))) {
       out <- srvyr::mutate(
         out,
         srvyr::across(

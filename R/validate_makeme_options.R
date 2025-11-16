@@ -140,7 +140,7 @@ validate_makeme_options <- function(params) {
       # List
       translations = list(fun = function(x) {
         rlang::is_bare_list(x) &&
-          all(unlist(lapply(x, function(.x) is.character(.x))))
+          all(vapply(x, is.character, logical(1)))
       }) ### SHOULD BE MORE SPECIFIC FOR EACH ITEM?
     )
 
