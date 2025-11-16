@@ -13,9 +13,13 @@ get_common_levels <- function(data, col_pos = NULL) {
 
 
 get_common_data_type <- function(data, col_pos = NULL) {
-  x <- unique(unlist(lapply(data[, col_pos, drop = FALSE], function(x) {
-    class(x)[1]
-  })))
+  x <- unique(vapply(
+    data[, col_pos, drop = FALSE],
+    function(x) {
+      class(x)[1]
+    },
+    character(1)
+  ))
   if (length(x) == 1) {
     return(x)
   }

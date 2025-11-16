@@ -61,7 +61,7 @@ girafe <- function(
   }
   if (
     !((rlang::is_list(args$palette_codes) &&
-      all(unlist(lapply(args$palette_codes, is.character)))) ||
+      all(vapply(args$palette_codes, is.character, logical(1)))) ||
       is.null(args$palette_codes))
   ) {
     cli::cli_abort(
