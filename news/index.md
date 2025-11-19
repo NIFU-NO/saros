@@ -1,5 +1,25 @@
 # Changelog
 
+## saros 1.6.1
+
+### Bug Fixes
+
+- Fixed issue [\#511](https://github.com/NIFU-NO/saros/issues/511) where
+  `x_axis_label_width` parameter had no effect in `int_plot_html` when
+  no independent variable was present. The
+  [`apply_label_wrapping()`](https://nifu-no.github.io/saros/reference/apply_label_wrapping.md)
+  function now correctly wraps `.variable_label` when
+  `indep_length == 0`
+- Fixed issue [\#512](https://github.com/NIFU-NO/saros/issues/512) where
+  [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) with
+  multiple crowds produced identical plots instead of crowd-specific
+  filtered data. The
+  [`process_crowd_data()`](https://nifu-no.github.io/saros/reference/process_crowd_data.md)
+  function now correctly passes filtered `subset_data` to
+  [`make_content()`](https://nifu-no.github.io/saros/reference/make_content.md)
+  for each crowd, ensuring each plot displays statistics computed from
+  only that crowd’s data subset
+
 ## saros 1.6.0
 
 CRAN release: 2025-11-10

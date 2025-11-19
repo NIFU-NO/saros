@@ -35,5 +35,5 @@ library(ggplot2)
 my_plot <- ggplot(data=mtcars, aes(x=hp, y=mpg)) + geom_point()
 make_link(my_plot, folder=tempdir(), file_suffix = ".png",
           save_fn = ggsaver, width = 16, height = 16, units = "cm")
-#> [1] "[download figure data](/tmp/RtmpPDmHdd/0987fd0bbc0ad670110fe9f2c784af7f.png)"
+#> [1] "[download figure data](/tmp/RtmpztYu74/ff2d9484839c74a96070f459245bf6c8.png)"
 ```
