@@ -791,6 +791,7 @@ process_crowd_data <- function(
 
   # Prepare arguments for this crowd
   args_crwd <- args
+  args_crwd$data <- subset_data # Use filtered data for this crowd
   args_crwd$dep <- dep_crwd
   args_crwd$indep <- indep_crwd
 
