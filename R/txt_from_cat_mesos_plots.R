@@ -1,17 +1,21 @@
-get_prop_for_highest_categories <- function(
-  plot_data,
-  var,
-  selected_categories
-) {
+get_variable_label_column <- function(data) {
   # Use original variable label if available (when hide_axis_text_if_single_variable = TRUE)
-  var_col <- if (
-    any(colnames(plot_data) == ".variable_label_original") &&
-      all(plot_data$.variable_label == "")
+  if (
+    any(colnames(data) == ".variable_label_original") &&
+      all(data$.variable_label == "")
   ) {
     ".variable_label_original"
   } else {
     ".variable_label"
   }
+}
+
+get_prop_for_highest_categories <- function(
+  plot_data,
+  var,
+  selected_categories
+) {
+  var_col <- get_variable_label_column(plot_data)
 
   data.frame(
     var = var,
@@ -234,14 +238,7 @@ txt_from_cat_mesos_plots <- function(
     unique()
 
   # Use original variable label if available (when hide_axis_text_if_single_variable = TRUE)
-  var_col <- if (
-    any(colnames(dat_1) == ".variable_label_original") &&
-      all(dat_1$.variable_label == "")
-  ) {
-    ".variable_label_original"
-  } else {
-    ".variable_label"
-  }
+  var_col <- get_variable_label_column(dat_1)
 
   out <-
     dat_1[[var_col]] |>
