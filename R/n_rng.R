@@ -179,8 +179,23 @@ n_rng2 <- function(
   # (added by makeme() for categorical plots)
   if (!".count_per_indep_group" %in% colnames(data)) {
     # Fallback: calculate N from the number of non-NA rows in the data
-    # This works for interval plots and other ggplot objects
-    n <- nrow(data[stats::complete.cases(data), , drop = FALSE])
+    # For int_plot_html plots, check .value (and indep if present)
+    if (".value" %in% colnames(data)) {
+      # int_plot_html - check only .value and any indep variable
+      check_cols <- ".value"
+      # Add independent variable if it exists (any column that's not a label or .value)
+      indep_cols <- setdiff(
+        colnames(data),
+        c(".variable_name", ".variable_label", ".value")
+      )
+      if (length(indep_cols) > 0) {
+        check_cols <- c(check_cols, indep_cols)
+      }
+      n <- sum(stats::complete.cases(data[, check_cols, drop = FALSE]))
+    } else {
+      # Other ggplot objects - use all columns
+      n <- nrow(data[stats::complete.cases(data), , drop = FALSE])
+    }
     return(glue_together_range(
       n = n,
       glue_template_1 = glue_template_1,

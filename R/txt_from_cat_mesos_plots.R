@@ -1,13 +1,27 @@
+get_variable_label_column <- function(data) {
+  # Use original variable label if available (when hide_axis_text_if_single_variable = TRUE)
+  if (
+    any(colnames(data) == ".variable_label_original") &&
+      all(data$.variable_label == "")
+  ) {
+    ".variable_label_original"
+  } else {
+    ".variable_label"
+  }
+}
+
 get_prop_for_highest_categories <- function(
   plot_data,
   var,
   selected_categories
 ) {
+  var_col <- get_variable_label_column(plot_data)
+
   data.frame(
     var = var,
     value = plot_data |>
       dplyr::filter(
-        .data$.variable_label == var,
+        .data[[var_col]] == var,
         as.character(.data$.category) %in% selected_categories
       ) |>
       dplyr::pull(.data$.proportion) |>
@@ -35,6 +49,7 @@ get_prop_for_highest_categories <- function(
 #' @param selected_categories_last_split Character. Separator for the last item when
 #'   listing multiple categories (default " or ").
 #' @param fallback_string Character. String to return when validation fails (default `character()`).
+#' @param reverse Logical. If TRUE, reverses the order of the output text summaries (default FALSE).
 #' @param glue_str_pos Character vector. Templates for positive differences (group_1 > group_2).
 #'   Available placeholders: `{var}`, `{group_1}`, `{group_2}`, `{selected_categories}`.
 #' @param glue_str_neg Character vector. Templates for negative differences (group_2 > group_1).
@@ -89,6 +104,7 @@ txt_from_cat_mesos_plots <- function(
   digits = 2,
   selected_categories_last_split = " or ",
   fallback_string = character(),
+  reverse = FALSE,
   glue_str_pos = c(
     paste0(
       "For {var}, the target group has a higher proportion of respondents ",
@@ -183,19 +199,36 @@ txt_from_cat_mesos_plots <- function(
     args$plots[[2]]$data
   }
 
+  # Check if .category_order exists and has non-NA values
+  if (
+    !".category_order" %in% colnames(dat_1) || all(is.na(dat_1$.category_order))
+  ) {
+    cli::cli_warn(
+      c(
+        "{.field .category_order} column is missing or all NA in plot data.",
+        "i" = "Cannot determine category ordering for comparison.",
+        "i" = "Returning {.val {args$fallback_string}}."
+      )
+    )
+    return(args$fallback_string)
+  }
+
   selected_categories <-
     dat_1 |>
     dplyr::distinct(.data$.category, .keep_all = TRUE) |>
     dplyr::filter(
+      !is.na(.data$.category_order),
       .data$.category_order %in%
         if (isFALSE(args$flip_to_lowest_categories)) {
           (max(c(
             1,
-            max(.data$.category_order) - args$n_highest_categories + 1
-          )):max(.data$.category_order))
+            max(.data$.category_order, na.rm = TRUE) -
+              args$n_highest_categories +
+              1
+          )):max(.data$.category_order, na.rm = TRUE))
         } else if (isTRUE(args$flip_to_lowest_categories)) {
-          min(.data$.category_order):(min(c(
-            max(.data$.category_order),
+          min(.data$.category_order, na.rm = TRUE):(min(c(
+            max(.data$.category_order, na.rm = TRUE),
             args$n_highest_categories
           )))
         }
@@ -204,8 +237,13 @@ txt_from_cat_mesos_plots <- function(
     as.character() |>
     unique()
 
+  # Use original variable label if available (when hide_axis_text_if_single_variable = TRUE)
+  var_col <- get_variable_label_column(dat_1)
+
   out <-
-    unique(as.character(dat_1$.variable_label)) |>
+    dat_1[[var_col]] |>
+    as.character() |>
+    unique() |>
     lapply(function(var) {
       list(group_1 = dat_1, group_2 = dat_2) |>
         lapply(function(.x) {
@@ -240,5 +278,9 @@ txt_from_cat_mesos_plots <- function(
   for (i in seq_len(nrow(out))) {
     out[i, "txt"] <- glue::glue_data(.x = out[i, ], out[i, "txt"][[1]])
   }
-  stringi::stri_omit_empty_na(out$txt)
+  out <- stringi::stri_omit_empty_na(out$txt)
+  if (args$reverse) {
+    out <- rev(out)
+  }
+  out
 }

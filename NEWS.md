@@ -3,6 +3,8 @@
 ## Bug Fixes
 -   Fixed issue #511 where `x_axis_label_width` parameter had no effect in `int_plot_html` when no independent variable was present. The `apply_label_wrapping()` function now correctly wraps `.variable_label` when `indep_length == 0`
 -   Fixed issue #512 where `makeme()` with multiple crowds produced identical plots instead of crowd-specific filtered data. The `process_crowd_data()` function now correctly passes filtered `subset_data` to `make_content()` for each crowd, ensuring each plot displays statistics computed from only that crowd's data subset
+-   Fixed `txt_from_cat_mesos_plots()` to handle cases where `.category_order` contains NA values by using `na.rm = TRUE` when calculating max values, preventing "NA/NaN argument" errors
+-   Fixed `n_rng2()` to correctly calculate sample sizes for `int_plot_html` plots by only checking complete cases on relevant variables (`.value` and independent variables) instead of all columns in the dataset. Also modified `make_content.int_plot_html()` to only include necessary columns in the plot object, reducing memory footprint
 
 # saros 1.6.0
 
