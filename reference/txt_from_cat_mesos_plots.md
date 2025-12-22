@@ -16,6 +16,7 @@ txt_from_cat_mesos_plots(
   digits = 2,
   selected_categories_last_split = " or ",
   fallback_string = character(),
+  reverse = FALSE,
   glue_str_pos =
     c(paste0("For {var}, the target group has a higher proportion of respondents ",
     "({group_1}) than all others ({group_2}) who answered {selected_categories}."),
@@ -70,6 +71,11 @@ txt_from_cat_mesos_plots(
 
   Character. String to return when validation fails (default
   [`character()`](https://rdrr.io/r/base/character.html)).
+
+- reverse:
+
+  Logical. If TRUE, reverses the order of the output text summaries
+  (default FALSE).
 
 - glue_str_pos:
 

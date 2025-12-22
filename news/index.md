@@ -19,6 +19,18 @@
   [`make_content()`](https://nifu-no.github.io/saros/reference/make_content.md)
   for each crowd, ensuring each plot displays statistics computed from
   only that crowd’s data subset
+- Fixed
+  [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
+  to handle cases where `.category_order` contains NA values by using
+  `na.rm = TRUE` when calculating max values, preventing “NA/NaN
+  argument” errors
+- Fixed
+  [`n_rng2()`](https://nifu-no.github.io/saros/reference/n_rng2.md) to
+  correctly calculate sample sizes for `int_plot_html` plots by only
+  checking complete cases on relevant variables (`.value` and
+  independent variables) instead of all columns in the dataset. Also
+  modified `make_content.int_plot_html()` to only include necessary
+  columns in the plot object, reducing memory footprint
 
 ## saros 1.6.0
 
