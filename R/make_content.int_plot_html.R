@@ -130,7 +130,13 @@ make_content.int_plot_html <-
         names_to = ".variable_name",
         values_to = ".value"
       ) |>
-      dplyr::left_join(y = dep_labels, by = ".variable_name")
+      dplyr::left_join(y = dep_labels, by = ".variable_name") |>
+      dplyr::select(tidyselect::all_of(c(
+        ".variable_name",
+        ".variable_label",
+        ".value",
+        dots$indep # Include indep variable(s) if present
+      )))
 
     out <-
       p_data |>
