@@ -38,6 +38,8 @@ make_content.cat_plot_html <-
       dplyr::n_distinct(data[[dep_var]], na.rm = TRUE) == 1
 
     if (isTRUE(hide_axis_text)) {
+      # Store original label before hiding for later retrieval
+      data[[".variable_label_original"]] <- data[[dep_var]]
       data[[dep_var]] <- ""
     }
 
