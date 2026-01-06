@@ -37,7 +37,8 @@ Each must contain columns: \code{.variable_label}, \code{.category}, \code{.cate
 between groups to generate text. Differences below this threshold are ignored.}
 
 \item{n_highest_categories}{Integer. Number of top categories to include in the
-comparison (default 1). Categories are selected based on \code{.category_order}.}
+comparison (default 1). Categories are selected based on \code{.category_order}.
+Only applied if the variable has more categories than this value.}
 
 \item{flip_to_lowest_categories}{Logical. If TRUE, compare lowest categories instead
 of highest (default FALSE).}
