@@ -16,6 +16,18 @@
   with `save = NULL` produced cryptic “object ‘caption’ not found”
   error. Added proper validation to ensure `save` parameter is a single
   logical value (TRUE or FALSE)
+- Fixed
+  [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
+  where second group (others) proportions incorrectly became zero.
+  Refactored to process each variable separately, ensuring both groups’
+  proportions are correctly calculated per variable
+- Fixed
+  [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
+  where `n_highest_categories=2` with binary (2-category) variables
+  summed all categories to 1.0, producing uninformative results. Now
+  only applies `n_highest_categories` when the variable has more
+  categories than the threshold, otherwise uses only the single
+  highest/lowest category
 - Fixed issue [\#511](https://github.com/NIFU-NO/saros/issues/511) where
   `x_axis_label_width` parameter had no effect in `int_plot_html` when
   no independent variable was present. The

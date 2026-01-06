@@ -50,7 +50,8 @@ txt_from_cat_mesos_plots(
 - n_highest_categories:
 
   Integer. Number of top categories to include in the comparison
-  (default 1). Categories are selected based on `.category_order`.
+  (default 1). Categories are selected based on `.category_order`. Only
+  applied if the variable has more categories than this value.
 
 - flip_to_lowest_categories:
 
