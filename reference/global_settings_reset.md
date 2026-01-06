@@ -23,5 +23,5 @@ Invisibly returned list of old and new values.
 
 ``` r
 global_settings_reset()
-#> "options('saros')$makeme_defaults" has now been reset to factory defaults.
+#> `options('saros')$makeme_defaults` has now been reset to package defaults.
 ```

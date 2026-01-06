@@ -2,6 +2,13 @@
 
 ## saros 1.6.1
 
+### New Features
+
+- Added `quiet` parameter to
+  [`global_settings_reset()`](https://nifu-no.github.io/saros/reference/global_settings_reset.md)
+  to optionally suppress informational messages when resetting global
+  settings to package defaults
+
 ### Bug Fixes
 
 - Fixed issue [\#511](https://github.com/NIFU-NO/saros/issues/511) where
