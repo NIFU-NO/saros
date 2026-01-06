@@ -142,12 +142,15 @@ test_that("global_settings_reset resets to defaults", {
   # Set some options
   options(saros = list(makeme_defaults = list(digits = 5, color = "red")))
 
-  # Reset should restore to factory defaults
-  expect_message(result <- global_settings_reset(), "reset to factory defaults")
+  # Reset should restore to package defaults
+  expect_message(
+    result <- global_settings_reset(quiet = FALSE),
+    "reset to package defaults"
+  )
 
   # Check that options are reset (not necessarily NULL, but to defaults)
   stored <- global_settings_get("makeme")
-  # The function resets to factory defaults, not NULL
+  # The function resets to package defaults, not NULL
   expect_type(stored, "list")
 
   # Clean up
