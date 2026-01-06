@@ -5,7 +5,7 @@ Reset Global Options for saros-functions
 ## Usage
 
 ``` r
-global_settings_reset(fn_name = "makeme")
+global_settings_reset(fn_name = "makeme", quiet = FALSE)
 ```
 
 ## Arguments
@@ -14,6 +14,10 @@ global_settings_reset(fn_name = "makeme")
 
   String, one of `"make_link"`, `"fig_height_h_barchart"` and
   `"makeme"`.
+
+- quiet:
+
+  Flag. If `FALSE` (default), informs about what has been set.
 
 ## Value
 

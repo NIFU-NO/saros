@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,7 +53,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-6-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-1"></a></h3>
-<ul><li>Fixed issue <a href="https://github.com/NIFU-NO/saros/issues/511" class="external-link">#511</a> where <code>x_axis_label_width</code> parameter had no effect in <code>int_plot_html</code> when no independent variable was present. The <code><a href="../reference/apply_label_wrapping.html">apply_label_wrapping()</a></code> function now correctly wraps <code>.variable_label</code> when <code>indep_length == 0</code>
+<ul><li>Fixed issue <a href="https://github.com/NIFU-NO/saros/issues/518" class="external-link">#518</a> where <code><a href="../reference/crowd_plots_as_tabset.html">crowd_plots_as_tabset()</a></code> with <code>save = NULL</code> produced cryptic “object ‘caption’ not found” error. Added proper validation to ensure <code>save</code> parameter is a single logical value (TRUE or FALSE)</li>
+<li>Fixed issue <a href="https://github.com/NIFU-NO/saros/issues/511" class="external-link">#511</a> where <code>x_axis_label_width</code> parameter had no effect in <code>int_plot_html</code> when no independent variable was present. The <code><a href="../reference/apply_label_wrapping.html">apply_label_wrapping()</a></code> function now correctly wraps <code>.variable_label</code> when <code>indep_length == 0</code>
 </li>
 <li>Fixed issue <a href="https://github.com/NIFU-NO/saros/issues/512" class="external-link">#512</a> where <code><a href="../reference/makeme.html">makeme()</a></code> with multiple crowds produced identical plots instead of crowd-specific filtered data. The <code><a href="../reference/process_crowd_data.html">process_crowd_data()</a></code> function now correctly passes filtered <code>subset_data</code> to <code><a href="../reference/make_content.html">make_content()</a></code> for each crowd, ensuring each plot displays statistics computed from only that crowd’s data subset</li>
 <li>Fixed <code><a href="../reference/txt_from_cat_mesos_plots.html">txt_from_cat_mesos_plots()</a></code> to handle cases where <code>.category_order</code> contains NA values by using <code>na.rm = TRUE</code> when calculating max values, preventing “NA/NaN argument” errors</li>

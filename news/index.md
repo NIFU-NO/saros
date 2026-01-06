@@ -11,6 +11,11 @@
 
 ### Bug Fixes
 
+- Fixed issue [\#518](https://github.com/NIFU-NO/saros/issues/518) where
+  [`crowd_plots_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.md)
+  with `save = NULL` produced cryptic “object ‘caption’ not found”
+  error. Added proper validation to ensure `save` parameter is a single
+  logical value (TRUE or FALSE)
 - Fixed issue [\#511](https://github.com/NIFU-NO/saros/issues/511) where
   `x_axis_label_width` parameter had no effect in `int_plot_html` when
   no independent variable was present. The
