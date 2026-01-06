@@ -5,6 +5,8 @@
 
 ## Bug Fixes
 -   Fixed issue #518 where `crowd_plots_as_tabset()` with `save = NULL` produced cryptic "object 'caption' not found" error. Added proper validation to ensure `save` parameter is a single logical value (TRUE or FALSE)
+-   Fixed `txt_from_cat_mesos_plots()` where second group (others) proportions incorrectly became zero. Refactored to process each variable separately, ensuring both groups' proportions are correctly calculated per variable
+-   Fixed `txt_from_cat_mesos_plots()` where `n_highest_categories=2` with binary (2-category) variables summed all categories to 1.0, producing uninformative results. Now only applies `n_highest_categories` when the variable has more categories than the threshold, otherwise uses only the single highest/lowest category
 -   Fixed issue #511 where `x_axis_label_width` parameter had no effect in `int_plot_html` when no independent variable was present. The `apply_label_wrapping()` function now correctly wraps `.variable_label` when `indep_length == 0`
 -   Fixed issue #512 where `makeme()` with multiple crowds produced identical plots instead of crowd-specific filtered data. The `process_crowd_data()` function now correctly passes filtered `subset_data` to `make_content()` for each crowd, ensuring each plot displays statistics computed from only that crowd's data subset
 -   Fixed `txt_from_cat_mesos_plots()` to handle cases where `.category_order` contains NA values by using `na.rm = TRUE` when calculating max values, preventing "NA/NaN argument" errors

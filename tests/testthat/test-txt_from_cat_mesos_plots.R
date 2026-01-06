@@ -377,3 +377,170 @@ test_that("explicit arguments override global settings", {
   expect_type(result_global, "character")
   expect_true(length(result_global) >= 1)
 })
+
+test_that("txt_from_cat_mesos_plots correctly handles second group proportions", {
+  # Test for issue where second group (others) becomes zero
+  plot_data_1 <- data.frame(
+    .variable_label = rep("Var1", 3),
+    .category = factor(
+      c("Low", "Med", "High"),
+      levels = c("Low", "Med", "High")
+    ),
+    .category_order = 1:3,
+    .proportion = c(0.2, 0.3, 0.5)
+  )
+
+  plot_data_2 <- data.frame(
+    .variable_label = rep("Var1", 3),
+    .category = factor(
+      c("Low", "Med", "High"),
+      levels = c("Low", "Med", "High")
+    ),
+    .category_order = 1:3,
+    .proportion = c(0.15, 0.42, 0.43)
+  )
+
+  plots <- list(
+    list(data = plot_data_1),
+    list(data = plot_data_2)
+  )
+
+  result <- saros::txt_from_cat_mesos_plots(plots, min_prop_diff = 0.01)
+
+  expect_type(result, "character")
+  # The result should contain non-zero values for both groups
+  # Group 1 highest = 0.5, Group 2 highest = 0.43
+  # Check that the text contains both values
+  if (length(result) > 0) {
+    expect_true(any(grepl("0\\.5", result)))
+    expect_true(any(grepl("0\\.43", result)))
+    # Should NOT show group_2 as 0
+    expect_false(any(grepl("\\(0\\)", result)))
+  }
+})
+
+test_that("txt_from_cat_mesos_plots avoids summing all categories for binary variables", {
+  # Test for issue where n_highest_categories=2 with 2 categories sums to 1.0
+  plot_data_1 <- data.frame(
+    .variable_label = "Binary Question",
+    .category = factor(c("No", "Yes"), levels = c("No", "Yes")),
+    .category_order = 1:2,
+    .proportion = c(0.4, 0.6)
+  )
+
+  plot_data_2 <- data.frame(
+    .variable_label = "Binary Question",
+    .category = factor(c("No", "Yes"), levels = c("No", "Yes")),
+    .category_order = 1:2,
+    .proportion = c(0.7, 0.3)
+  )
+
+  plots <- list(
+    list(data = plot_data_1),
+    list(data = plot_data_2)
+  )
+
+  # With n_highest_categories = 2 on a binary variable
+  result <- saros::txt_from_cat_mesos_plots(
+    plots,
+    n_highest_categories = 2,
+    min_prop_diff = 0.05
+  )
+
+  expect_type(result, "character")
+  # Should use only highest category (Yes), not sum of both
+  if (length(result) > 0) {
+    # Group 1 should show 0.6 (Yes only), not 1.0 (Yes + No)
+    expect_true(any(grepl("0\\.6", result)))
+    # Group 2 should show 0.3 (Yes only), not 1.0 (Yes + No)
+    expect_true(any(grepl("0\\.3|0\\.7", result)))
+    # Should NOT show 1.0 (which would be the sum)
+    expect_false(any(grepl("\\(1\\)|\\(1\\.0\\)", result)))
+  }
+})
+
+test_that("txt_from_cat_mesos_plots uses multiple categories when appropriate", {
+  # Test that n_highest_categories=2 works correctly with 4+ categories
+  plot_data_1 <- data.frame(
+    .variable_label = "Four Category Question",
+    .category = factor(
+      c("VeryLow", "Low", "High", "VeryHigh"),
+      levels = c("VeryLow", "Low", "High", "VeryHigh")
+    ),
+    .category_order = 1:4,
+    .proportion = c(0.1, 0.2, 0.3, 0.4)
+  )
+
+  plot_data_2 <- data.frame(
+    .variable_label = "Four Category Question",
+    .category = factor(
+      c("VeryLow", "Low", "High", "VeryHigh"),
+      levels = c("VeryLow", "Low", "High", "VeryHigh")
+    ),
+    .category_order = 1:4,
+    .proportion = c(0.2, 0.3, 0.25, 0.25)
+  )
+
+  plots <- list(
+    list(data = plot_data_1),
+    list(data = plot_data_2)
+  )
+
+  # With n_highest_categories = 2 and 4 categories, should combine High + VeryHigh
+  result <- saros::txt_from_cat_mesos_plots(
+    plots,
+    n_highest_categories = 2,
+    min_prop_diff = 0.05
+  )
+
+  expect_type(result, "character")
+  # Should combine the two highest categories (High + VeryHigh)
+  # Group 1: 0.3 + 0.4 = 0.7
+  # Group 2: 0.25 + 0.25 = 0.5
+  if (length(result) > 0) {
+    expect_true(any(grepl("0\\.7", result)))
+    expect_true(any(grepl("0\\.5", result)))
+  }
+})
+
+test_that("txt_from_cat_mesos_plots handles multiple variables with different category counts", {
+  # Test mixed scenario: one binary variable and one with many categories
+  plot_data_1 <- data.frame(
+    .variable_label = c(rep("Binary", 2), rep("FourCat", 4)),
+    .category = factor(
+      c("No", "Yes", "VeryLow", "Low", "High", "VeryHigh"),
+      levels = c("No", "Yes", "VeryLow", "Low", "High", "VeryHigh")
+    ),
+    .category_order = c(1, 2, 1, 2, 3, 4),
+    .proportion = c(0.4, 0.6, 0.1, 0.2, 0.3, 0.4)
+  )
+
+  plot_data_2 <- data.frame(
+    .variable_label = c(rep("Binary", 2), rep("FourCat", 4)),
+    .category = factor(
+      c("No", "Yes", "VeryLow", "Low", "High", "VeryHigh"),
+      levels = c("No", "Yes", "VeryLow", "Low", "High", "VeryHigh")
+    ),
+    .category_order = c(1, 2, 1, 2, 3, 4),
+    .proportion = c(0.7, 0.3, 0.2, 0.3, 0.25, 0.25)
+  )
+
+  plots <- list(
+    list(data = plot_data_1),
+    list(data = plot_data_2)
+  )
+
+  result <- saros::txt_from_cat_mesos_plots(
+    plots,
+    n_highest_categories = 2,
+    min_prop_diff = 0.05
+  )
+
+  expect_type(result, "character")
+  # For Binary (2 categories), should use only highest (Yes): 0.6 vs 0.3
+  # For FourCat (4 categories), should combine top 2: 0.7 vs 0.5
+  if (length(result) > 0) {
+    # Should contain results for at least one variable
+    expect_true(any(grepl("Binary|FourCat", result)))
+  }
+})

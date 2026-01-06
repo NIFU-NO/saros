@@ -43,6 +43,7 @@ get_prop_for_highest_categories <- function(
 #'   between groups to generate text. Differences below this threshold are ignored.
 #' @param n_highest_categories Integer. Number of top categories to include in the
 #'   comparison (default 1). Categories are selected based on `.category_order`.
+#'   Only applied if the variable has more categories than this value.
 #' @param flip_to_lowest_categories Logical. If TRUE, compare lowest categories instead
 #'   of highest (default FALSE).
 #' @param digits Integer. Number of decimal places for rounding proportions (default 2).
@@ -213,50 +214,90 @@ txt_from_cat_mesos_plots <- function(
     return(args$fallback_string)
   }
 
-  selected_categories <-
-    dat_1 |>
-    dplyr::distinct(.data$.category, .keep_all = TRUE) |>
-    dplyr::filter(
-      !is.na(.data$.category_order),
-      .data$.category_order %in%
-        if (isFALSE(args$flip_to_lowest_categories)) {
-          (max(c(
-            1,
-            max(.data$.category_order, na.rm = TRUE) -
-              args$n_highest_categories +
-              1
-          )):max(.data$.category_order, na.rm = TRUE))
-        } else if (isTRUE(args$flip_to_lowest_categories)) {
-          min(.data$.category_order, na.rm = TRUE):(min(c(
-            max(.data$.category_order, na.rm = TRUE),
-            args$n_highest_categories
-          )))
-        }
-    ) |>
-    dplyr::pull(.data$.category) |>
-    as.character() |>
-    unique()
-
   # Use original variable label if available (when hide_axis_text_if_single_variable = TRUE)
   var_col <- get_variable_label_column(dat_1)
 
-  out <-
-    dat_1[[var_col]] |>
+  # Get unique variables to process
+  unique_vars <- dat_1[[var_col]] |>
     as.character() |>
-    unique() |>
-    lapply(function(var) {
-      list(group_1 = dat_1, group_2 = dat_2) |>
-        lapply(function(.x) {
-          get_prop_for_highest_categories(
-            plot_data = .x,
-            var = var,
-            selected_categories = selected_categories
-          )
-        }) |>
-        dplyr::bind_rows(.id = "group")
-    }) |>
-    dplyr::bind_rows() |>
-    tidyr::pivot_wider(names_from = "group", values_from = "value")
+    unique()
+
+  # Process each variable separately to handle different category counts
+  out <- lapply(unique_vars, function(var) {
+    # Get categories for this specific variable from first dataset
+    var_categories <- dat_1 |>
+      dplyr::filter(.data[[var_col]] == var) |>
+      dplyr::distinct(.data$.category, .keep_all = TRUE) |>
+      dplyr::filter(!is.na(.data$.category_order))
+
+    n_categories <- nrow(var_categories)
+
+    # Only apply n_highest_categories if there are more categories than the threshold
+    # This prevents summing all categories when there are only 2
+    if (n_categories <= args$n_highest_categories) {
+      # For variables with few categories, use only the highest/lowest single category
+      selected_categories <- var_categories |>
+        dplyr::filter(
+          .data$.category_order ==
+            if (isFALSE(args$flip_to_lowest_categories)) {
+              max(.data$.category_order, na.rm = TRUE)
+            } else {
+              min(.data$.category_order, na.rm = TRUE)
+            }
+        ) |>
+        dplyr::pull(.data$.category) |>
+        as.character() |>
+        unique()
+    } else {
+      # For variables with many categories, use n_highest_categories
+      selected_categories <- var_categories |>
+        dplyr::filter(
+          .data$.category_order %in%
+            if (isFALSE(args$flip_to_lowest_categories)) {
+              (max(c(
+                1,
+                max(.data$.category_order, na.rm = TRUE) -
+                  args$n_highest_categories +
+                  1
+              )):max(.data$.category_order, na.rm = TRUE))
+            } else {
+              min(.data$.category_order, na.rm = TRUE):(min(c(
+                max(.data$.category_order, na.rm = TRUE),
+                args$n_highest_categories
+              )))
+            }
+        ) |>
+        dplyr::pull(.data$.category) |>
+        as.character() |>
+        unique()
+    }
+
+    # Get proportions for both groups
+    props <- list(group_1 = dat_1, group_2 = dat_2) |>
+      lapply(function(.x) {
+        get_prop_for_highest_categories(
+          plot_data = .x,
+          var = var,
+          selected_categories = selected_categories
+        )
+      }) |>
+      dplyr::bind_rows(.id = "group") |>
+      tidyr::pivot_wider(names_from = "group", values_from = "value")
+
+    # Add selected categories for this variable
+    props$selected_categories <- cli::ansi_collapse(
+      selected_categories,
+      sep = "; ",
+      last = args$selected_categories_last_split,
+      trunc = 10,
+      sep2 = args$selected_categories_last_split
+    )
+
+    props
+  }) |>
+    dplyr::bind_rows()
+
+  # Generate text based on differences
   out[["txt"]] <- dplyr::case_when(
     out[[2]] > out[[3]] + args$min_prop_diff ~
       sample(args$glue_str_pos, size = nrow(out), replace = TRUE),
@@ -266,14 +307,6 @@ txt_from_cat_mesos_plots <- function(
   )
   out[[2]] <- round(out[[2]], digits = args$digits)
   out[[3]] <- round(out[[3]], digits = args$digits)
-
-  out[["selected_categories"]] <- cli::ansi_collapse(
-    selected_categories,
-    sep = "; ",
-    last = args$selected_categories_last_split,
-    trunc = 10,
-    sep2 = args$selected_categories_last_split
-  )
 
   for (i in seq_len(nrow(out))) {
     out[i, "txt"] <- glue::glue_data(.x = out[i, ], out[i, "txt"][[1]])
