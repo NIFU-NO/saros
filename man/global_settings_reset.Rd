@@ -4,10 +4,12 @@
 \alias{global_settings_reset}
 \title{Reset Global Options for saros-functions}
 \usage{
-global_settings_reset(fn_name = "makeme")
+global_settings_reset(fn_name = "makeme", quiet = FALSE)
 }
 \arguments{
 \item{fn_name}{String, one of \code{"make_link"}, \code{"fig_height_h_barchart"} and \code{"makeme"}.}
+
+\item{quiet}{Flag. If \code{FALSE} (default), informs about what has been set.}
 }
 \value{
 Invisibly returned list of old and new values.

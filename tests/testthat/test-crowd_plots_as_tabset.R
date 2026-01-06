@@ -162,6 +162,31 @@ withr::with_tempdir({
       saros::crowd_plots_as_tabset(list(a = NULL, b = NULL), save = FALSE),
       "All plots.*are NULL"
     )
+
+    # Invalid save parameter (NULL)
+    plots <- list(plot1 = ggplot2::ggplot())
+    expect_error(
+      saros::crowd_plots_as_tabset(plots, save = NULL),
+      "must be a single logical value"
+    )
+
+    # Invalid save parameter (character)
+    expect_error(
+      saros::crowd_plots_as_tabset(plots, save = "yes"),
+      "must be a single logical value"
+    )
+
+    # Invalid save parameter (NA)
+    expect_error(
+      saros::crowd_plots_as_tabset(plots, save = NA),
+      "must be a single logical value"
+    )
+
+    # Invalid save parameter (vector)
+    expect_error(
+      saros::crowd_plots_as_tabset(plots, save = c(TRUE, FALSE)),
+      "must be a single logical value"
+    )
   })
 
   test_that("crowd_plots_as_tabset skips NULL plots in mixed list", {
