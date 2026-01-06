@@ -98,6 +98,13 @@ crowd_plots_as_tabset <- function(
     return(invisible(NULL))
   }
 
+  # Validate save argument is boolean
+  if (!is.logical(save) || length(save) != 1 || is.na(save)) {
+    cli::cli_abort(
+      "{.arg save} must be a single logical value (TRUE or FALSE), not {.obj_type_friendly {save}}."
+    )
+  }
+
   # Filter out NULL plots
   non_null_plots <- !vapply(plot_list, is.null, logical(1))
 
