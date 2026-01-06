@@ -53,7 +53,7 @@ global_settings_set <- function(
 #' @export
 #'
 #' @examples global_settings_reset()
-global_settings_reset <- function(fn_name = "makeme") {
+global_settings_reset <- function(fn_name = "makeme", quiet = FALSE) {
   saros_options <- getOption("saros", list())
   old <- saros_options[[paste0(fn_name, "_defaults")]]
   saros_options[[paste0(fn_name, "_defaults")]] <- .saros.env[[paste0(
@@ -62,7 +62,9 @@ global_settings_reset <- function(fn_name = "makeme") {
   )]]
   options(saros = saros_options)
   msg_part <- paste0("options('saros')$", fn_name, "_defaults")
-  cli::cli_inform("{.val {msg_part}} has now been reset to factory defaults.")
+  if (isFALSE(quiet)) {
+    cli::cli_inform("{.arg {msg_part}} has now been reset to package defaults.")
+  }
   return(invisible(list(
     old = old,
     new = saros_options[[paste0(fn_name, "_defaults")]]

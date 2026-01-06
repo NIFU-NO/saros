@@ -1,5 +1,8 @@
 # saros 1.6.1
 
+## New Features
+-   Added `quiet` parameter to `global_settings_reset()` to optionally suppress informational messages when resetting global settings to package defaults
+
 ## Bug Fixes
 -   Fixed issue #511 where `x_axis_label_width` parameter had no effect in `int_plot_html` when no independent variable was present. The `apply_label_wrapping()` function now correctly wraps `.variable_label` when `indep_length == 0`
 -   Fixed issue #512 where `makeme()` with multiple crowds produced identical plots instead of crowd-specific filtered data. The `process_crowd_data()` function now correctly passes filtered `subset_data` to `make_content()` for each crowd, ensuring each plot displays statistics computed from only that crowd's data subset
