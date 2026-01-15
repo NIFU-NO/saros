@@ -60,25 +60,87 @@ resolve_variable_overlaps <- function(dep, indep) {
   dep
 }
 
+#' Auto-Detect Appropriate Output Type Based on Variable Types
+#'
+#' Internal helper function that determines the most appropriate output type
+#' based on the classes of dependent and independent variables.
+#'
+#' @param data Data frame to analyze
+#' @param dep Character vector of dependent variable names
+#' @param indep Character vector of independent variable names (can be NULL/empty)
+#'
+#' @return Character string with the detected type:
+#'   - `"int_plot_html"` for numeric/integer dependent variables
+#'   - `"cat_plot_html"` for factor/ordered/character dependent variables
+#'
+#' @keywords internal
+auto_detect_makeme_type <- function(data, dep, indep = NULL) {
+  # Detect types of dependent variables
+  dep_types <- vapply(
+    dep,
+    function(v) class(data[[v]])[1],
+    character(1),
+    USE.NAMES = FALSE
+  )
+
+  # Check if all deps are numeric/integer
+  if (all(dep_types %in% c("integer", "numeric", "double"))) {
+    return("int_plot_html")
+  }
+
+  # Check if all deps are categorical
+  if (all(dep_types %in% c("factor", "ordered", "character"))) {
+    return("cat_plot_html")
+  }
+
+  # Mixed types - provide informative error
+  numeric_vars <- dep[dep_types %in% c("integer", "numeric", "double")]
+  categorical_vars <- dep[dep_types %in% c("factor", "ordered", "character")]
+
+  cli::cli_abort(c(
+    "x" = "Cannot auto-detect type: dependent variables have mixed types.",
+    "i" = "Numeric variables: {.val {numeric_vars}}",
+    "i" = "Categorical variables: {.val {categorical_vars}}",
+    "!" = "Please specify {.arg type} explicitly:",
+    " " = "- Use {.code type = 'int_plot_html'} for numeric variables",
+    " " = "- Use {.code type = 'cat_plot_html'} for categorical variables"
+  ))
+}
+
 #' Normalize Multi-Choice Arguments to Single Values
 #'
 #' Internal helper function that ensures makeme arguments that might be vectors
 #' are normalized to single values by taking the first element.
 #'
 #' @param args List of makeme function arguments
+#' @param data Data frame being analyzed (needed for auto type detection)
 #'
 #' @return Modified args list with normalized single-value arguments:
 #'   - `showNA`: First element of showNA vector
 #'   - `data_label`: First element of data_label vector
 #'   - `data_label_position`: First element of data_label_position vector
-#'   - `type`: First element of evaluated type expression
+#'   - `type`: Auto-detected type if "auto", otherwise first element of evaluated type expression
 #'
 #' @keywords internal
-normalize_makeme_arguments <- function(args) {
+normalize_makeme_arguments <- function(args, data = NULL) {
   args$showNA <- args$showNA[1]
   args$data_label <- args$data_label[1]
   args$data_label_position <- args$data_label_position[1]
-  args$type <- eval(args$type)[1]
+
+  # Handle type - auto-detect if "auto"
+  type_value <- eval(args$type)[1]
+  if (identical(type_value, "auto")) {
+    if (is.null(data)) {
+      cli::cli_abort(c(
+        "x" = "Cannot auto-detect type without data.",
+        "i" = "This is an internal error - please report it."
+      ))
+    }
+    args$type <- auto_detect_makeme_type(data, args$dep, args$indep)
+  } else {
+    args$type <- type_value
+  }
+
   args
 }
 
@@ -840,7 +902,7 @@ setup_and_validate_makeme_args <- function(
   args$dep <- resolve_variable_overlaps(args$dep, args$indep)
 
   # Normalize multi-choice arguments to single values
-  args <- normalize_makeme_arguments(args)
+  args <- normalize_makeme_arguments(args, data)
 
   validate_makeme_options(params = args)
 

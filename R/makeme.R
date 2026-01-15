@@ -16,9 +16,14 @@
 #'
 #' @param type *Kind of output*
 #'
-#'   `scalar<character>` // *default:* `"cat_plot_html"` (`optional`)
+#'   `scalar<character>` // *default:* `"auto"` (`optional`)
 #'
-#' For a list of registered types in your session, use `get_makeme_types()`.
+#'   The type of output to generate. Use `"auto"` (default) to automatically
+#'   detect the appropriate type based on your dependent variables:
+#'   - Numeric/integer variables → `"int_plot_html"`
+#'   - Factor/character variables → `"cat_plot_html"`
+#'
+#'   For a list of all registered types in your session, use `get_makeme_types()`.
 #'
 #' @param categories_treated_as_na *NA categories*
 #'
@@ -443,6 +448,7 @@ makeme <-
     dep = tidyselect::everything(),
     indep = NULL,
     type = c(
+      "auto",
       "cat_plot_html",
       "int_plot_html",
       "cat_table_html",
