@@ -2,7 +2,11 @@
 
 ## New Features
 -   Added `quiet` parameter to `global_settings_reset()` to optionally suppress informational messages when resetting global settings to package defaults
--   **Addressed issue #510**: `makeme()` now defaults to `type = "auto"` which intelligently detects the appropriate output type based on dependent variable classes (numeric -> `int_plot_html`, factor/character -> `cat_plot_html`). This eliminates the uninformative "arguments must have same length" error when accidentally providing numeric variables without specifying `type = "int_plot_html"`. Mixed variable types produce a clear error message suggesting the correct type to use
+-   **Addressed issue #510**: `makeme()` now defaults to `type = "auto"` which intelligently detects the appropriate output type based on dependent variable classes:
+    -   Numeric variables -> `int_plot_html`
+    -   Single character variable -> `chr_table_html`
+    -   Factor/ordered or multiple character variables -> `cat_plot_html`
+    -   This eliminates the uninformative "arguments must have same length" error when accidentally providing numeric variables without specifying type. Mixed variable types produce a clear error message suggesting the correct type to use
 
 ## Bug Fixes
 -   Fixed issue #518 where `crowd_plots_as_tabset()` with `save = NULL` produced cryptic "object 'caption' not found" error. Added proper validation to ensure `save` parameter is a single logical value (TRUE or FALSE)

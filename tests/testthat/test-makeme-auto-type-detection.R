@@ -3,10 +3,11 @@ test_that("makeme auto-detects int_plot_html for numeric variables", {
   result <- saros::makeme(
     data = saros::ex_survey,
     dep = c_1:c_2,
-    type = "auto"
+    type = "auto",
+    label_separator = NULL
   )
 
-  expect_true(ggplot2::is.ggplot(result))
+  expect_true(ggplot2::is_ggplot(result))
   # Should have violin/boxplot layers for interval plots
   layer_geoms <- vapply(
     result$layers,
@@ -21,10 +22,11 @@ test_that("makeme auto-detects cat_plot_html for factor variables", {
   result <- saros::makeme(
     data = saros::ex_survey,
     dep = b_1:b_2,
-    type = "auto"
+    type = "auto",
+    label_separator = NULL
   )
 
-  expect_true(ggplot2::is.ggplot(result))
+  expect_true(ggplot2::is_ggplot(result))
   # Should have col/bar layers for categorical plots
   layer_geoms <- vapply(
     result$layers,
@@ -38,15 +40,17 @@ test_that("makeme auto-detection works with type='auto' as default", {
   # Test that auto works as default (first option)
   result_numeric <- saros::makeme(
     data = saros::ex_survey,
-    dep = c_1:c_2
+    dep = c_1:c_2,
+    label_separator = NULL
   )
-  expect_true(ggplot2::is.ggplot(result_numeric))
+  expect_true(ggplot2::is_ggplot(result_numeric))
 
   result_categorical <- saros::makeme(
     data = saros::ex_survey,
-    dep = b_1:b_2
+    dep = b_1:b_2,
+    label_separator = NULL
   )
-  expect_true(ggplot2::is.ggplot(result_categorical))
+  expect_true(ggplot2::is_ggplot(result_categorical))
 })
 
 test_that("makeme auto-detection provides informative error for mixed types", {
@@ -59,7 +63,8 @@ test_that("makeme auto-detection provides informative error for mixed types", {
     saros::makeme(
       data = mixed_data,
       dep = c(mixed_numeric, mixed_factor),
-      type = "auto"
+      type = "auto",
+      label_separator = NULL
     ),
     regexp = "mixed types"
   )
@@ -69,7 +74,8 @@ test_that("makeme auto-detection provides informative error for mixed types", {
     saros::makeme(
       data = mixed_data,
       dep = c(mixed_numeric, mixed_factor),
-      type = "auto"
+      type = "auto",
+      label_separator = NULL
     ),
     regexp = "Numeric variables"
   )
@@ -78,25 +84,44 @@ test_that("makeme auto-detection provides informative error for mixed types", {
     saros::makeme(
       data = mixed_data,
       dep = c(mixed_numeric, mixed_factor),
-      type = "auto"
+      type = "auto",
+      label_separator = NULL
     ),
     regexp = "Categorical variables"
   )
 })
 
-test_that("makeme auto-detection handles character variables as categorical", {
-  # Convert a factor to character
+test_that("makeme auto-detection handles single character variable as chr_table_html", {
+  # Single character variable should use chr_table_html
   char_data <- saros::ex_survey
-  char_data$b_1_char <- as.character(char_data$b_1)
+  char_data$char_var <- as.character(char_data$f_uni)
 
   result <- saros::makeme(
     data = char_data,
-    dep = b_1_char,
-    type = "auto"
+    dep = char_var,
+    type = "auto",
+    label_separator = NULL
   )
 
-  expect_true(ggplot2::is.ggplot(result))
-  # Should detect as categorical
+  # chr_table_html returns a data frame, not a ggplot
+  expect_true(is.data.frame(result))
+})
+
+test_that("makeme auto-detection handles multiple character variables as categorical", {
+  # Multiple character variables should use cat_plot_html
+  char_data <- saros::ex_survey
+  char_data$char_var1 <- as.character(char_data$b_1)
+  char_data$char_var2 <- as.character(char_data$b_2)
+
+  result <- saros::makeme(
+    data = char_data,
+    dep = c(char_var1, char_var2),
+    type = "auto",
+    label_separator = NULL
+  )
+
+  expect_true(ggplot2::is_ggplot(result))
+  # Should detect as categorical plot
   layer_geoms <- vapply(
     result$layers,
     function(l) class(l$geom)[1],
@@ -111,18 +136,20 @@ test_that("makeme auto-detection works with independent variables", {
     data = saros::ex_survey,
     dep = c_1:c_2,
     indep = x1_sex,
-    type = "auto"
+    type = "auto",
+    label_separator = NULL
   )
-  expect_true(ggplot2::is.ggplot(result_numeric))
+  expect_true(ggplot2::is_ggplot(result_numeric))
 
   # Test categorical with independent variable
   result_categorical <- saros::makeme(
     data = saros::ex_survey,
     dep = b_1:b_2,
     indep = x1_sex,
-    type = "auto"
+    type = "auto",
+    label_separator = NULL
   )
-  expect_true(ggplot2::is.ggplot(result_categorical))
+  expect_true(ggplot2::is_ggplot(result_categorical))
 })
 
 test_that("makeme explicit type still works (backward compatibility)", {
@@ -130,16 +157,18 @@ test_that("makeme explicit type still works (backward compatibility)", {
   result_explicit_int <- saros::makeme(
     data = saros::ex_survey,
     dep = c_1:c_2,
-    type = "int_plot_html"
+    type = "int_plot_html",
+    label_separator = NULL
   )
-  expect_true(ggplot2::is.ggplot(result_explicit_int))
+  expect_true(ggplot2::is_ggplot(result_explicit_int))
 
   result_explicit_cat <- saros::makeme(
     data = saros::ex_survey,
     dep = b_1:b_2,
-    type = "cat_plot_html"
+    type = "cat_plot_html",
+    label_separator = NULL
   )
-  expect_true(ggplot2::is.ggplot(result_explicit_cat))
+  expect_true(ggplot2::is_ggplot(result_explicit_cat))
 })
 
 test_that("makeme auto-detection error message suggests correct types", {
@@ -152,7 +181,8 @@ test_that("makeme auto-detection error message suggests correct types", {
     saros::makeme(
       data = mixed_data,
       dep = c(numeric_var, factor_var),
-      type = "auto"
+      type = "auto",
+      label_separator = NULL
     ),
     regexp = "int_plot_html.*for numeric"
   )
@@ -161,7 +191,8 @@ test_that("makeme auto-detection error message suggests correct types", {
     saros::makeme(
       data = mixed_data,
       dep = c(numeric_var, factor_var),
-      type = "auto"
+      type = "auto",
+      label_separator = NULL
     ),
     regexp = "cat_plot_html.*for categorical"
   )
@@ -175,10 +206,11 @@ test_that("makeme auto-detection handles ordered factors as categorical", {
   result <- saros::makeme(
     data = ordered_data,
     dep = b_1_ordered,
-    type = "auto"
+    type = "auto",
+    label_separator = NULL
   )
 
-  expect_true(ggplot2::is.ggplot(result))
+  expect_true(ggplot2::is_ggplot(result))
   # Should detect as categorical
   layer_geoms <- vapply(
     result$layers,
@@ -195,11 +227,11 @@ test_that("makeme auto-detection issue #510 - numeric without type parameter", {
 
   # Now it should auto-detect and work correctly
   expect_no_error({
-    result <- saros::makeme(data = saros::ex_survey, dep = c_1:c_2)
+    result <- saros::makeme(data = saros::ex_survey, dep = c_1:c_2, label_separator = NULL)
   })
 
-  result <- saros::makeme(data = saros::ex_survey, dep = c_1:c_2)
-  expect_true(ggplot2::is.ggplot(result))
+  result <- saros::makeme(data = saros::ex_survey, dep = c_1:c_2, label_separator = NULL)
+  expect_true(ggplot2::is_ggplot(result))
 
   # Verify it's an interval plot
   layer_geoms <- vapply(
