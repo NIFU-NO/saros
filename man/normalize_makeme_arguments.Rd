@@ -4,10 +4,12 @@
 \alias{normalize_makeme_arguments}
 \title{Normalize Multi-Choice Arguments to Single Values}
 \usage{
-normalize_makeme_arguments(args)
+normalize_makeme_arguments(args, data = NULL)
 }
 \arguments{
 \item{args}{List of makeme function arguments}
+
+\item{data}{Data frame being analyzed (needed for auto type detection)}
 }
 \value{
 Modified args list with normalized single-value arguments:
@@ -15,7 +17,7 @@ Modified args list with normalized single-value arguments:
 \item \code{showNA}: First element of showNA vector
 \item \code{data_label}: First element of data_label vector
 \item \code{data_label_position}: First element of data_label_position vector
-\item \code{type}: First element of evaluated type expression
+\item \code{type}: Auto-detected type if "auto", otherwise first element of evaluated type expression
 }
 }
 \description{

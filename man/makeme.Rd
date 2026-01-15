@@ -8,7 +8,7 @@ makeme(
   data,
   dep = tidyselect::everything(),
   indep = NULL,
-  type = c("cat_plot_html", "int_plot_html", "cat_table_html", "int_table_html",
+  type = c("auto", "cat_plot_html", "int_plot_html", "cat_table_html", "int_table_html",
     "sigtest_table_html", "cat_prop_plot_docx", "cat_freq_plot_docx", "int_plot_docx"),
   ...,
   require_common_categories = TRUE,
@@ -91,9 +91,16 @@ Columns in \code{data}. \code{dep} is compulsory.}
 
 \item{type}{\emph{Kind of output}
 
-\verb{scalar<character>} // \emph{default:} \code{"cat_plot_html"} (\code{optional})
+\verb{scalar<character>} // \emph{default:} \code{"auto"} (\code{optional})
 
-For a list of registered types in your session, use \code{get_makeme_types()}.}
+The type of output to generate. Use \code{"auto"} (default) to automatically
+detect the appropriate type based on your dependent variables:
+\itemize{
+\item Numeric/integer variables → \code{"int_plot_html"}
+\item Factor/character variables → \code{"cat_plot_html"}
+}
+
+For a list of all registered types in your session, use \code{get_makeme_types()}.}
 
 \item{...}{\emph{Dynamic dots}
 
