@@ -24,7 +24,7 @@ List with options in R
 ``` r
 global_settings_get()
 #> $type
-#> [1] "cat_plot_html"
+#> [1] "auto"
 #> 
 #> $require_common_categories
 #> [1] TRUE

@@ -8,6 +8,16 @@
   [`global_settings_reset()`](https://nifu-no.github.io/saros/reference/global_settings_reset.md)
   to optionally suppress informational messages when resetting global
   settings to package defaults
+- **Addressed issue
+  [\#510](https://github.com/NIFU-NO/saros/issues/510)**:
+  [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) now
+  defaults to `type = "auto"` which intelligently detects the
+  appropriate output type based on dependent variable classes (numeric
+  -\> `int_plot_html`, factor/character -\> `cat_plot_html`). This
+  eliminates the uninformative “arguments must have same length” error
+  when accidentally providing numeric variables without specifying
+  `type = "int_plot_html"`. Mixed variable types produce a clear error
+  message suggesting the correct type to use
 
 ### Bug Fixes
 

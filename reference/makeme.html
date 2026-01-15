@@ -56,7 +56,7 @@
 <span>  <span class="va">data</span>,</span>
 <span>  dep <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  indep <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cat_plot_html"</span>, <span class="st">"int_plot_html"</span>, <span class="st">"cat_table_html"</span>, <span class="st">"int_table_html"</span>,</span>
+<span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"cat_plot_html"</span>, <span class="st">"int_plot_html"</span>, <span class="st">"cat_table_html"</span>, <span class="st">"int_table_html"</span>,</span>
 <span>    <span class="st">"sigtest_table_html"</span>, <span class="st">"cat_prop_plot_docx"</span>, <span class="st">"cat_freq_plot_docx"</span>, <span class="st">"int_plot_docx"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  require_common_categories <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -143,8 +143,11 @@
 
 <dt id="arg-type">type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p><em>Kind of output</em></p>
-<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"cat_plot_html"</code> (<code>optional</code>)</p>
-<p>For a list of registered types in your session, use <code><a href="get_makeme_types.html">get_makeme_types()</a></code>.</p></dd>
+<p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>"auto"</code> (<code>optional</code>)</p>
+<p>The type of output to generate. Use <code>"auto"</code> (default) to automatically
+detect the appropriate type based on your dependent variables:</p><ul><li><p>Numeric/integer variables → <code>"int_plot_html"</code></p></li>
+<li><p>Factor/character variables → <code>"cat_plot_html"</code></p></li>
+</ul><p>For a list of all registered types in your session, use <code><a href="get_makeme_types.html">get_makeme_types()</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

@@ -10,7 +10,7 @@ makeme(
   data,
   dep = tidyselect::everything(),
   indep = NULL,
-  type = c("cat_plot_html", "int_plot_html", "cat_table_html", "int_table_html",
+  type = c("auto", "cat_plot_html", "int_plot_html", "cat_table_html", "int_table_html",
     "sigtest_table_html", "cat_prop_plot_docx", "cat_freq_plot_docx", "int_plot_docx"),
   ...,
   require_common_categories = TRUE,
@@ -102,9 +102,17 @@ makeme(
 
   *Kind of output*
 
-  `scalar<character>` // *default:* `"cat_plot_html"` (`optional`)
+  `scalar<character>` // *default:* `"auto"` (`optional`)
 
-  For a list of registered types in your session, use
+  The type of output to generate. Use `"auto"` (default) to
+  automatically detect the appropriate type based on your dependent
+  variables:
+
+  - Numeric/integer variables → `"int_plot_html"`
+
+  - Factor/character variables → `"cat_plot_html"`
+
+  For a list of all registered types in your session, use
   [`get_makeme_types()`](https://nifu-no.github.io/saros/reference/get_makeme_types.md).
 
 - ...:

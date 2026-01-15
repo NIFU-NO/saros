@@ -50,6 +50,8 @@
 <div class="section level3">
 <h3 id="new-features-1-6-1">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-6-1"></a></h3>
 <ul><li>Added <code>quiet</code> parameter to <code><a href="../reference/global_settings_reset.html">global_settings_reset()</a></code> to optionally suppress informational messages when resetting global settings to package defaults</li>
+<li>
+<strong>Addressed issue <a href="https://github.com/NIFU-NO/saros/issues/510" class="external-link">#510</a></strong>: <code><a href="../reference/makeme.html">makeme()</a></code> now defaults to <code>type = "auto"</code> which intelligently detects the appropriate output type based on dependent variable classes (numeric -&gt; <code>int_plot_html</code>, factor/character -&gt; <code>cat_plot_html</code>). This eliminates the uninformative “arguments must have same length” error when accidentally providing numeric variables without specifying <code>type = "int_plot_html"</code>. Mixed variable types produce a clear error message suggesting the correct type to use</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-6-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-1"></a></h3>

@@ -6,7 +6,7 @@ vectors are normalized to single values by taking the first element.
 ## Usage
 
 ``` r
-normalize_makeme_arguments(args)
+normalize_makeme_arguments(args, data = NULL)
 ```
 
 ## Arguments
@@ -14,6 +14,10 @@ normalize_makeme_arguments(args)
 - args:
 
   List of makeme function arguments
+
+- data:
+
+  Data frame being analyzed (needed for auto type detection)
 
 ## Value
 
@@ -25,4 +29,5 @@ Modified args list with normalized single-value arguments:
 
 - `data_label_position`: First element of data_label_position vector
 
-- `type`: First element of evaluated type expression
+- `type`: Auto-detected type if "auto", otherwise first element of
+  evaluated type expression
