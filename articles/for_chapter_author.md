@@ -38,8 +38,7 @@ install.packages("saros")
 10. Write text for the results.
 11. Do you want to see how everything looks in the end? Press the
     **Render** button and an HTML page will eventually open. If you get
-    error messages, read them carefully and check with [this
-    list](https://nifu-no.github.io/saros/For_kapittelforfattare/99_Feilmeldinger.qmd).
+    error messages, read them carefully.
 12. By pressing the gear to the right of the Render button, you can set
     the output to the Viewer window in RStudio (applies to HTML output).
     Some people prefer this.
