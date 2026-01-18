@@ -71,7 +71,8 @@ resolve_variable_overlaps <- function(dep, indep) {
 #'
 #' @return Character string with the detected type:
 #'   - `"int_plot_html"` for numeric/integer dependent variables
-#'   - `"cat_plot_html"` for factor/ordered/character dependent variables
+#'   - `"chr_table_html"` for single character dependent variable
+#'   - `"cat_plot_html"` for factor/ordered dependent variables or multiple character variables
 #'
 #' @keywords internal
 auto_detect_makeme_type <- function(data, dep, indep = NULL) {
@@ -88,7 +89,12 @@ auto_detect_makeme_type <- function(data, dep, indep = NULL) {
     return("int_plot_html")
   }
 
-  # Check if all deps are categorical
+  # Check for single character variable - use chr_table_html
+  if (length(dep) == 1 && dep_types[1] == "character") {
+    return("chr_table_html")
+  }
+
+  # Check if all deps are categorical (factor/ordered/character)
   if (all(dep_types %in% c("factor", "ordered", "character"))) {
     return("cat_plot_html")
   }
