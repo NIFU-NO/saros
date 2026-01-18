@@ -12,12 +12,14 @@
   [\#510](https://github.com/NIFU-NO/saros/issues/510)**:
   [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) now
   defaults to `type = "auto"` which intelligently detects the
-  appropriate output type based on dependent variable classes (numeric
-  -\> `int_plot_html`, factor/character -\> `cat_plot_html`). This
-  eliminates the uninformative “arguments must have same length” error
-  when accidentally providing numeric variables without specifying
-  `type = "int_plot_html"`. Mixed variable types produce a clear error
-  message suggesting the correct type to use
+  appropriate output type based on dependent variable classes:
+  - Numeric variables -\> `int_plot_html`
+  - Single character variable -\> `chr_table_html`
+  - Factor/ordered or multiple character variables -\> `cat_plot_html`
+  - This eliminates the uninformative “arguments must have same length”
+    error when accidentally providing numeric variables without
+    specifying type. Mixed variable types produce a clear error message
+    suggesting the correct type to use
 
 ### Bug Fixes
 
@@ -415,8 +417,7 @@ Significance test now works in edge cases
 ([\#297](https://github.com/NIFU-NO/saros/issues/297)) -feat: chr_table
 now ignores NA and empty strings.
 ([\#296](https://github.com/NIFU-NO/saros/issues/296)) -fix:
-`serialized_format` now actually supports
-[qs](https://github.com/qsbase/qs), if installed.
+`serialized_format` now actually supports `{qs}`, if installed.
 ([\#293](https://github.com/NIFU-NO/saros/issues/293)) -feat: Added
 default to replace_heading_for_group
 ([\#291](https://github.com/NIFU-NO/saros/issues/291)) -feat: Removed
