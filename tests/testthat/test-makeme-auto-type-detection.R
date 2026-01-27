@@ -17,6 +17,88 @@ test_that("makeme auto-detects int_plot_html for numeric variables", {
   expect_true(any(grepl("Violin|Boxplot", layer_geoms, ignore.case = TRUE)))
 })
 
+test_that("makeme auto-detection detects unsupported types", {
+  # Test with Date variable
+  date_data <- saros::ex_survey
+  date_data$date_var <- as.Date("2026-01-15")
+  
+  expect_error(
+    saros::makeme(
+      data = date_data,
+      dep = date_var,
+      type = "auto",
+      label_separator = NULL
+    ),
+    regexp = "Unsupported variables"
+  )
+  
+  # Test with POSIXct variable
+  posix_data <- saros::ex_survey
+  posix_data$time_var <- as.POSIXct("2026-01-15 10:30:00")
+  
+  expect_error(
+    saros::makeme(
+      data = posix_data,
+      dep = time_var,
+      type = "auto",
+      label_separator = NULL
+    ),
+    regexp = "Unsupported variables"
+  )
+  
+  # Test with list variable
+  list_data <- saros::ex_survey
+  list_data$list_var <- list(1:10)
+  
+  expect_error(
+    saros::makeme(
+      data = list_data,
+      dep = list_var,
+      type = "auto",
+      label_separator = NULL
+    ),
+    regexp = "Unsupported variables"
+  )
+})
+
+test_that("makeme auto-detection handles mixed supported and unsupported types", {
+  # Test with mix of numeric and Date variables
+  mixed_data <- saros::ex_survey
+  mixed_data$numeric_var <- mixed_data$c_1
+  mixed_data$date_var <- as.Date("2026-01-15")
+  
+  expect_error(
+    saros::makeme(
+      data = mixed_data,
+      dep = c(numeric_var, date_var),
+      type = "auto",
+      label_separator = NULL
+    ),
+    regexp = "mixed types"
+  )
+  
+  # Should show both numeric and unsupported
+  expect_error(
+    saros::makeme(
+      data = mixed_data,
+      dep = c(numeric_var, date_var),
+      type = "auto",
+      label_separator = NULL
+    ),
+    regexp = "Numeric variables"
+  )
+  
+  expect_error(
+    saros::makeme(
+      data = mixed_data,
+      dep = c(numeric_var, date_var),
+      type = "auto",
+      label_separator = NULL
+    ),
+    regexp = "Unsupported variables"
+  )
+})
+
 test_that("makeme auto-detects cat_plot_html for factor variables", {
   # Test with categorical dependent variables
   result <- saros::makeme(
@@ -227,10 +309,18 @@ test_that("makeme auto-detection issue #510 - numeric without type parameter", {
 
   # Now it should auto-detect and work correctly
   expect_no_error({
-    result <- saros::makeme(data = saros::ex_survey, dep = c_1:c_2, label_separator = NULL)
+    result <- saros::makeme(
+      data = saros::ex_survey,
+      dep = c_1:c_2,
+      label_separator = NULL
+    )
   })
 
-  result <- saros::makeme(data = saros::ex_survey, dep = c_1:c_2, label_separator = NULL)
+  result <- saros::makeme(
+    data = saros::ex_survey,
+    dep = c_1:c_2,
+    label_separator = NULL
+  )
   expect_true(ggplot2::is_ggplot(result))
 
   # Verify it's an interval plot

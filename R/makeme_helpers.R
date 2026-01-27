@@ -84,8 +84,18 @@ auto_detect_makeme_type <- function(data, dep, indep = NULL) {
     USE.NAMES = FALSE
   )
 
+  integerish_types <- c("integer", "numeric", "double")
+  categorical_types <- c("factor", "ordered", "logical", "character")
+  unsupported_types <- c(
+    "Date",
+    "POSIXct",
+    "POSIXt",
+    "list",
+    "complex"
+  )
+
   # Check if all deps are numeric/integer
-  if (all(dep_types %in% c("integer", "numeric", "double"))) {
+  if (all(dep_types %in% integerish_types)) {
     return("int_plot_html")
   }
 
@@ -95,18 +105,20 @@ auto_detect_makeme_type <- function(data, dep, indep = NULL) {
   }
 
   # Check if all deps are categorical (factor/ordered/character)
-  if (all(dep_types %in% c("factor", "ordered", "character"))) {
+  if (all(dep_types %in% categorical_types)) {
     return("cat_plot_html")
   }
 
   # Mixed types - provide informative error
-  numeric_vars <- dep[dep_types %in% c("integer", "numeric", "double")]
-  categorical_vars <- dep[dep_types %in% c("factor", "ordered", "character")]
+  numeric_vars <- dep[dep_types %in% integerish_types]
+  categorical_vars <- dep[dep_types %in% categorical_types]
+  unsupported_vars <- dep[dep_types %in% unsupported_types]
 
   cli::cli_abort(c(
     "x" = "Cannot auto-detect type: dependent variables have mixed types.",
     "i" = "Numeric variables: {.val {numeric_vars}}",
     "i" = "Categorical variables: {.val {categorical_vars}}",
+    "i" = "Unsupported variables: {.val {unsupported_vars}}",
     "!" = "Please specify {.arg type} explicitly:",
     " " = "- Use {.code type = 'int_plot_html'} for numeric variables",
     " " = "- Use {.code type = 'cat_plot_html'} for categorical variables"
