@@ -21,7 +21,7 @@ test_that("makeme auto-detection detects unsupported types", {
   # Test with Date variable
   date_data <- saros::ex_survey
   date_data$date_var <- as.Date("2026-01-15")
-  
+
   expect_error(
     saros::makeme(
       data = date_data,
@@ -31,11 +31,11 @@ test_that("makeme auto-detection detects unsupported types", {
     ),
     regexp = "Unsupported variables"
   )
-  
+
   # Test with POSIXct variable
   posix_data <- saros::ex_survey
   posix_data$time_var <- as.POSIXct("2026-01-15 10:30:00")
-  
+
   expect_error(
     saros::makeme(
       data = posix_data,
@@ -45,11 +45,11 @@ test_that("makeme auto-detection detects unsupported types", {
     ),
     regexp = "Unsupported variables"
   )
-  
+
   # Test with list variable
   list_data <- saros::ex_survey
   list_data$list_var <- list(1:10)
-  
+
   expect_error(
     saros::makeme(
       data = list_data,
@@ -66,37 +66,21 @@ test_that("makeme auto-detection handles mixed supported and unsupported types",
   mixed_data <- saros::ex_survey
   mixed_data$numeric_var <- mixed_data$c_1
   mixed_data$date_var <- as.Date("2026-01-15")
-  
-  expect_error(
+
+  # Capture error message once and check all patterns
+  error_msg <- tryCatch(
     saros::makeme(
       data = mixed_data,
       dep = c(numeric_var, date_var),
       type = "auto",
       label_separator = NULL
     ),
-    regexp = "mixed types"
+    error = function(e) conditionMessage(e)
   )
-  
-  # Should show both numeric and unsupported
-  expect_error(
-    saros::makeme(
-      data = mixed_data,
-      dep = c(numeric_var, date_var),
-      type = "auto",
-      label_separator = NULL
-    ),
-    regexp = "Numeric variables"
-  )
-  
-  expect_error(
-    saros::makeme(
-      data = mixed_data,
-      dep = c(numeric_var, date_var),
-      type = "auto",
-      label_separator = NULL
-    ),
-    regexp = "Unsupported variables"
-  )
+
+  expect_match(error_msg, "mixed types")
+  expect_match(error_msg, "Numeric variables")
+  expect_match(error_msg, "Unsupported variables")
 })
 
 test_that("makeme auto-detects cat_plot_html for factor variables", {
@@ -141,36 +125,20 @@ test_that("makeme auto-detection provides informative error for mixed types", {
   mixed_data$mixed_numeric <- mixed_data$c_1
   mixed_data$mixed_factor <- mixed_data$b_1
 
-  expect_error(
+  # Capture error message once and check all patterns
+  error_msg <- tryCatch(
     saros::makeme(
       data = mixed_data,
       dep = c(mixed_numeric, mixed_factor),
       type = "auto",
       label_separator = NULL
     ),
-    regexp = "mixed types"
+    error = function(e) conditionMessage(e)
   )
 
-  # Error should mention both variable types
-  expect_error(
-    saros::makeme(
-      data = mixed_data,
-      dep = c(mixed_numeric, mixed_factor),
-      type = "auto",
-      label_separator = NULL
-    ),
-    regexp = "Numeric variables"
-  )
-
-  expect_error(
-    saros::makeme(
-      data = mixed_data,
-      dep = c(mixed_numeric, mixed_factor),
-      type = "auto",
-      label_separator = NULL
-    ),
-    regexp = "Categorical variables"
-  )
+  expect_match(error_msg, "mixed types")
+  expect_match(error_msg, "Numeric variables")
+  expect_match(error_msg, "Categorical variables")
 })
 
 test_that("makeme auto-detection handles single character variable as chr_table_html", {
@@ -259,25 +227,19 @@ test_that("makeme auto-detection error message suggests correct types", {
   mixed_data$numeric_var <- mixed_data$c_1
   mixed_data$factor_var <- mixed_data$b_1
 
-  expect_error(
+  # Capture error message once and check all patterns
+  error_msg <- tryCatch(
     saros::makeme(
       data = mixed_data,
       dep = c(numeric_var, factor_var),
       type = "auto",
       label_separator = NULL
     ),
-    regexp = "int_plot_html.*for numeric"
+    error = function(e) conditionMessage(e)
   )
 
-  expect_error(
-    saros::makeme(
-      data = mixed_data,
-      dep = c(numeric_var, factor_var),
-      type = "auto",
-      label_separator = NULL
-    ),
-    regexp = "cat_plot_html.*for categorical"
-  )
+  expect_match(error_msg, "int_plot_html.*for numeric")
+  expect_match(error_msg, "cat_plot_html.*for categorical")
 })
 
 test_that("makeme auto-detection handles ordered factors as categorical", {
