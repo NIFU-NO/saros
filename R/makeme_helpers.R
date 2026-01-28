@@ -114,14 +114,44 @@ auto_detect_makeme_type <- function(data, dep, indep = NULL) {
   categorical_vars <- dep[dep_types %in% categorical_types]
   unsupported_vars <- dep[dep_types %in% unsupported_types]
 
+  has_numeric <- length(numeric_vars) > 0
+  has_categorical <- length(categorical_vars) > 0
+  has_unsupported <- length(unsupported_vars) > 0
+
   cli::cli_abort(c(
     "x" = "Cannot auto-detect type: dependent variables have mixed types.",
-    "i" = "Numeric variables: {.val {numeric_vars}}",
-    "i" = "Categorical variables: {.val {categorical_vars}}",
-    "i" = "Unsupported variables: {.val {unsupported_vars}}",
-    "!" = "Please specify {.arg type} explicitly:",
-    " " = "- Use {.code type = 'int_plot_html'} for numeric variables",
-    " " = "- Use {.code type = 'cat_plot_html'} for categorical variables"
+    if (has_numeric) {
+      c("i" = "Numeric variables: {.val {numeric_vars}}")
+    } else {
+      NULL
+    },
+    if (has_categorical) {
+      c("i" = "Categorical variables: {.val {categorical_vars}}")
+    } else {
+      NULL
+    },
+    if (has_unsupported) {
+      c("i" = "Unsupported variables: {.val {unsupported_vars}}")
+    } else {
+      NULL
+    },
+    if (has_numeric || has_categorical) {
+      c(
+        "!" = "Please specify {.arg type} explicitly:",
+        if (has_numeric) {
+          c(" " = "- Use {.code type = 'int_plot_html'} for numeric variables")
+        } else {
+          NULL
+        },
+        if (has_categorical) {
+          c(" " = "- Use {.code type = 'cat_plot_html'} for categorical variables")
+        } else {
+          NULL
+        }
+      )
+    } else {
+      NULL
+    }
   ))
 }
 
