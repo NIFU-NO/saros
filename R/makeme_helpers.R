@@ -84,8 +84,18 @@ auto_detect_makeme_type <- function(data, dep, indep = NULL) {
     USE.NAMES = FALSE
   )
 
+  integerish_types <- c("integer", "numeric", "double")
+  categorical_types <- c("factor", "ordered", "logical", "character")
+  unsupported_types <- c(
+    "Date",
+    "POSIXct",
+    "POSIXt",
+    "list",
+    "complex"
+  )
+
   # Check if all deps are numeric/integer
-  if (all(dep_types %in% c("integer", "numeric", "double"))) {
+  if (all(dep_types %in% integerish_types)) {
     return("int_plot_html")
   }
 
@@ -95,21 +105,53 @@ auto_detect_makeme_type <- function(data, dep, indep = NULL) {
   }
 
   # Check if all deps are categorical (factor/ordered/character)
-  if (all(dep_types %in% c("factor", "ordered", "character"))) {
+  if (all(dep_types %in% categorical_types)) {
     return("cat_plot_html")
   }
 
   # Mixed types - provide informative error
-  numeric_vars <- dep[dep_types %in% c("integer", "numeric", "double")]
-  categorical_vars <- dep[dep_types %in% c("factor", "ordered", "character")]
+  numeric_vars <- dep[dep_types %in% integerish_types]
+  categorical_vars <- dep[dep_types %in% categorical_types]
+  unsupported_vars <- dep[dep_types %in% unsupported_types]
+
+  has_numeric <- length(numeric_vars) > 0
+  has_categorical <- length(categorical_vars) > 0
+  has_unsupported <- length(unsupported_vars) > 0
 
   cli::cli_abort(c(
     "x" = "Cannot auto-detect type: dependent variables have mixed types.",
-    "i" = "Numeric variables: {.val {numeric_vars}}",
-    "i" = "Categorical variables: {.val {categorical_vars}}",
-    "!" = "Please specify {.arg type} explicitly:",
-    " " = "- Use {.code type = 'int_plot_html'} for numeric variables",
-    " " = "- Use {.code type = 'cat_plot_html'} for categorical variables"
+    if (has_numeric) {
+      c("i" = "Numeric variables: {.val {numeric_vars}}")
+    } else {
+      NULL
+    },
+    if (has_categorical) {
+      c("i" = "Categorical variables: {.val {categorical_vars}}")
+    } else {
+      NULL
+    },
+    if (has_unsupported) {
+      c("i" = "Unsupported variables: {.val {unsupported_vars}}")
+    } else {
+      NULL
+    },
+    if (has_numeric || has_categorical) {
+      c(
+        "!" = "Please specify {.arg type} explicitly:",
+        if (has_numeric) {
+          c(" " = "- Use {.code type = 'int_plot_html'} for numeric variables")
+        } else {
+          NULL
+        },
+        if (has_categorical) {
+          c(" " = "- Use {.code type = 'cat_plot_html'} for categorical variables")
+        } else {
+          NULL
+        }
+      )
+    } else {
+      NULL
+    }
   ))
 }
 

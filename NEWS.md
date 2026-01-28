@@ -6,6 +6,7 @@
     -   Numeric variables -> `int_plot_html`
     -   Single character variable -> `chr_table_html`
     -   Factor/ordered or multiple character variables -> `cat_plot_html`
+    -   Unsupported types (Date, POSIXct, POSIXt, list, complex) produce clear error messages identifying the problematic variables
     -   This eliminates the uninformative "arguments must have same length" error when accidentally providing numeric variables without specifying type. Mixed variable types produce a clear error message suggesting the correct type to use
 
 ## Bug Fixes
