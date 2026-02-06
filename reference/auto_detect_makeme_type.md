@@ -29,4 +29,7 @@ Character string with the detected type:
 
 - `"int_plot_html"` for numeric/integer dependent variables
 
-- `"cat_plot_html"` for factor/ordered/character dependent variables
+- `"chr_table_html"` for single character dependent variable
+
+- `"cat_plot_html"` for factor/ordered dependent variables or multiple
+  character variables
