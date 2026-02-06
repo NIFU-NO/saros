@@ -97,6 +97,65 @@ testthat::test_that("n_range2 handles all-NA .count_per_indep_group", {
   testthat::expect_equal(result, "0")
 })
 
+testthat::test_that("n_range2 calculates N per variable for int_plot_html with different NAs", {
+  # Create test data where variables have different numbers of missing values
+  test_data <- saros::ex_survey
+  test_data$c_1[1:50] <- NA # 250 valid cases (300 - 50)
+  # c_2 has 300 valid cases in ex_survey
+
+  # Create int_plot_html
+  plot <- saros::makeme(
+    data = test_data,
+    dep = c_1:c_2,
+    type = "int_plot_html",
+    label_separator = NULL
+  )
+
+  result <- saros::n_range2(plot)
+
+  # Should report range [250-300], not total count
+  testthat::expect_equal(result, "[250-300]")
+})
+
+testthat::test_that("n_range2 accounts for indep NAs in int_plot_html", {
+  # Create test data with NAs in both dep and indep
+  test_data <- saros::ex_survey
+  test_data$c_1[1:50] <- NA
+  test_data$x1_sex[51:60] <- NA
+
+  plot <- saros::makeme(
+    data = test_data,
+    dep = c_1:c_2,
+    indep = x1_sex,
+    type = "int_plot_html",
+    label_separator = NULL
+  )
+
+  result <- saros::n_range2(plot)
+
+  # Should account for NAs in both variables
+  # c_1: 250 valid, but 10 have NA in x1_sex = 240
+  # c_2: 300 valid, but 10 have NA in x1_sex = 290
+  testthat::expect_equal(result, "[240-290]")
+})
+
+testthat::test_that("n_range2 returns single value for single variable int_plot_html", {
+  test_data <- saros::ex_survey
+  test_data$c_1[1:50] <- NA
+
+  plot <- saros::makeme(
+    data = test_data,
+    dep = c_1,
+    type = "int_plot_html",
+    label_separator = NULL
+  )
+
+  result <- saros::n_range2(plot)
+
+  # Should return single value, not a range
+  testthat::expect_equal(result, "250")
+})
+
 testthat::test_that("n_range2 handles empty .count_per_indep_group", {
   # Create a makeme plot and manually set empty vector
   plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)

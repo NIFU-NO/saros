@@ -1,3 +1,9 @@
+# saros 1.6.1.9000 (dev)
+
+## Bug Fixes
+-   Fixed `n_range2()` for `int_plot_html` plots to report N range per dependent variable instead of total count across all variables. Now correctly calculates sample size separately for each variable and reports the range (e.g., [250-299] when variables have different amounts of missing data)
+
+
 # saros 1.6.1
 
 ## New Features

@@ -143,6 +143,7 @@ test_that("get_fig_title_suffix_from_ggplot handles custom link_prefix", {
 test_that("get_fig_title_suffix_from_ggplot handles custom file_suffix", {
   skip_on_cran()
   skip_if_not_installed("withr")
+  skip_if_not_installed("svglite")
 
   plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
 

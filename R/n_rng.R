@@ -181,9 +181,9 @@ n_rng2 <- function(
     # Fallback: calculate N from the number of non-NA rows in the data
     # For int_plot_html plots, check .value (and indep if present)
     if (".value" %in% colnames(data)) {
-      # int_plot_html - check only .value and any indep variable
+      # int_plot_html - calculate N per variable, then get range
+      # Determine which columns to check for complete cases
       check_cols <- ".value"
-      # Add independent variable if it exists (any column that's not a label or .value)
       indep_cols <- setdiff(
         colnames(data),
         c(".variable_name", ".variable_label", ".value")
@@ -191,7 +191,21 @@ n_rng2 <- function(
       if (length(indep_cols) > 0) {
         check_cols <- c(check_cols, indep_cols)
       }
-      n <- sum(stats::complete.cases(data[, check_cols, drop = FALSE]))
+      
+      # Calculate N per variable (group by .variable_name)
+      if (".variable_name" %in% colnames(data)) {
+        n_per_var <- tapply(
+          seq_len(nrow(data)),
+          data$.variable_name,
+          function(idx) {
+            sum(stats::complete.cases(data[idx, check_cols, drop = FALSE]))
+          }
+        )
+        n <- range(n_per_var, na.rm = TRUE)
+      } else {
+        # Fallback if no .variable_name column
+        n <- sum(stats::complete.cases(data[, check_cols, drop = FALSE]))
+      }
     } else {
       # Other ggplot objects - use all columns
       n <- nrow(data[stats::complete.cases(data), , drop = FALSE])

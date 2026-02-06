@@ -17,7 +17,8 @@ auto_detect_makeme_type(data, dep, indep = NULL)
 Character string with the detected type:
 \itemize{
 \item \code{"int_plot_html"} for numeric/integer dependent variables
-\item \code{"cat_plot_html"} for factor/ordered/character dependent variables
+\item \code{"chr_table_html"} for single character dependent variable
+\item \code{"cat_plot_html"} for factor/ordered dependent variables or multiple character variables
 }
 }
 \description{
