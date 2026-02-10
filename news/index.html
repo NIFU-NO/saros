@@ -49,7 +49,8 @@
 <h2 class="pkg-version" data-toc-text="1.6.1.9000" id="saros-1619000-dev">saros 1.6.1.9000 (dev)<a class="anchor" aria-label="anchor" href="#saros-1619000-dev"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-1-6-1-9000">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-1-9000"></a></h3>
-<ul><li>Fixed <code><a href="../reference/n_range2.html">n_range2()</a></code> for <code>int_plot_html</code> plots to report N range per dependent variable instead of total count across all variables. Now correctly calculates sample size separately for each variable and reports the range (e.g., [250-299] when variables have different amounts of missing data)</li>
+<ul><li>Fixed <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> to properly handle <code>int_plot_html</code> plots with independent variables. The function now forwards to <code><a href="../reference/fig_height_h_barchart.html">fig_height_h_barchart()</a></code> with appropriate parameters for interval plots, returning the <code>max</code> parameter value (default 12) while allowing user customization, instead of erroring with “only supports a single indep variable”</li>
+<li>Fixed <code><a href="../reference/n_range2.html">n_range2()</a></code> for <code>int_plot_html</code> plots to report N range per dependent variable instead of total count across all variables. Now correctly calculates sample size separately for each variable and reports the range (e.g., [250-299] when variables have different amounts of missing data)</li>
 </ul></div>
 </div>
     <div class="section level2">

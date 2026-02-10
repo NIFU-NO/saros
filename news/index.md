@@ -5,6 +5,14 @@
 ### Bug Fixes
 
 - Fixed
+  [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  to properly handle `int_plot_html` plots with independent variables.
+  The function now forwards to
+  [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart.md)
+  with appropriate parameters for interval plots, returning the `max`
+  parameter value (default 12) while allowing user customization,
+  instead of erroring with “only supports a single indep variable”
+- Fixed
   [`n_range2()`](https://nifu-no.github.io/saros/reference/n_range2.md)
   for `int_plot_html` plots to report N range per dependent variable
   instead of total count across all variables. Now correctly calculates

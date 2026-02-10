@@ -25,7 +25,7 @@ fig_height_h_barchart2(
   fixed_constant = 0,
   figure_width_in_cm = 14,
   margin_in_cm = 0,
-  max = 8,
+  max = 12,
   min = 1
 )
 ```
