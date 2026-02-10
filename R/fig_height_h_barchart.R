@@ -403,17 +403,47 @@ fig_height_h_barchart2 <- # Returns a numeric value
     fixed_constant = 0,
     figure_width_in_cm = 14,
     margin_in_cm = 0,
-    max = 8,
+    max = 12,
     min = 1
   ) {
     data <- ggobj$data
-    # gg <- ggobj
 
     if (!(inherits(data, "data.frame") && nrow(data) > 0)) {
       cli::cli_warn(
         "{.arg ggobj} must be a ggplot2-object with a nrow>0 data in it. Returning {.arg min}: {.val {min}}."
       )
       return(min)
+    }
+
+    # Check if this is an int_plot_html (has .value instead of .category)
+    if (".value" %in% colnames(data) && !".category" %in% colnames(data)) {
+      # int_plot_html uses simple default height
+      # Forward to fig_height_h_barchart with minimal parameters
+      max_value <- max
+      min_value <- min
+
+      n_y <- dplyr::n_distinct(data$.variable_name)
+      max_chars_labels_y <- base::max(
+        nchar(as.character(data$.variable_label)),
+        na.rm = TRUE
+      )
+
+      return(
+        fig_height_h_barchart(
+          n_y = n_y,
+          n_cats_y = 1, # int_plot_html doesn't have categories
+          max_chars_labels_y = max_chars_labels_y,
+          max_chars_cats_y = 0,
+          n_x = NULL,
+          n_cats_x = NULL,
+          max_chars_labels_x = NULL,
+          max_chars_cats_x = NULL,
+          fixed_constant = max_value, # Use max as the base height
+          multiplier_per_plot = 0, # Disable scaling
+          max = max_value,
+          min = min_value
+        )
+      )
     }
 
     # TODO: Should find a more robust way to identify the indep variable
