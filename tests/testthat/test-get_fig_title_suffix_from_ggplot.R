@@ -213,3 +213,134 @@ test_that("get_fig_title_suffix_from_ggplot validates vector length matching", {
     "must have equal lengths"
   )
 })
+
+test_that("get_fig_title_suffix_from_ggplot respects folder argument", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+  skip_if_not_installed("fs")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  withr::with_tempdir({
+    test_folder <- file.path(getwd(), "custom_folder")
+    dir.create(test_folder, showWarnings = FALSE)
+
+    result <- saros::get_fig_title_suffix_from_ggplot(
+      plot,
+      save = TRUE,
+      folder = test_folder
+    )
+
+    expect_s3_class(result, "AsIs")
+    # Result should contain the custom folder path
+    expect_true(grepl("custom_folder", result))
+    # Files should exist in custom folder
+    expect_true(length(list.files(test_folder)) > 0)
+  })
+})
+
+test_that("get_fig_title_suffix_from_ggplot respects file_prefix argument", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  withr::with_tempdir({
+    result <- saros::get_fig_title_suffix_from_ggplot(
+      plot,
+      save = TRUE,
+      file_prefix = "test_prefix_"
+    )
+
+    expect_s3_class(result, "AsIs")
+    # Result should contain file prefix
+    expect_true(grepl("test_prefix_", result))
+    # Files with prefix should exist
+    files <- list.files(pattern = "^test_prefix_")
+    expect_true(length(files) > 0)
+  })
+})
+
+test_that("get_fig_title_suffix_from_ggplot inherits from global settings", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  withr::with_tempdir({
+    test_folder <- file.path(getwd(), "global_test")
+    dir.create(test_folder, showWarnings = FALSE)
+
+    # Set global options
+    old_settings <- saros::global_settings_set(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      new = list(folder = test_folder, file_prefix = "global_"),
+      quiet = TRUE
+    )
+
+    # Call function without explicit folder/prefix
+    result <- saros::get_fig_title_suffix_from_ggplot(plot, save = TRUE)
+
+    expect_s3_class(result, "AsIs")
+    expect_true(grepl("global_test", result))
+    expect_true(grepl("global_", result))
+
+    # Files should exist in global folder with global prefix
+    files <- list.files(test_folder, pattern = "^global_")
+    expect_true(length(files) > 0)
+
+    # Reset global settings
+    saros::global_settings_reset(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      quiet = TRUE
+    )
+  })
+})
+
+test_that("get_fig_title_suffix_from_ggplot direct args override global settings", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  withr::with_tempdir({
+    global_folder <- file.path(getwd(), "global_folder")
+    direct_folder <- file.path(getwd(), "direct_folder")
+    dir.create(global_folder, showWarnings = FALSE)
+    dir.create(direct_folder, showWarnings = FALSE)
+
+    # Set global options
+    saros::global_settings_set(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      new = list(folder = global_folder, file_prefix = "global_"),
+      quiet = TRUE
+    )
+
+    # Override with direct argument
+    result <- saros::get_fig_title_suffix_from_ggplot(
+      plot,
+      save = TRUE,
+      folder = direct_folder,
+      file_prefix = "direct_"
+    )
+
+    expect_s3_class(result, "AsIs")
+    # Should use direct args, not global
+    expect_true(grepl("direct_folder", result))
+    expect_true(grepl("direct_", result))
+    expect_false(grepl("global_folder", result))
+    expect_false(grepl("global_", result))
+
+    # Files should be in direct folder, not global
+    direct_files <- list.files(direct_folder, pattern = "^direct_")
+    global_files <- list.files(global_folder, pattern = "^global_")
+    expect_true(length(direct_files) > 0)
+    expect_equal(length(global_files), 0)
+
+    # Reset
+    saros::global_settings_reset(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      quiet = TRUE
+    )
+  })
+})

@@ -99,6 +99,7 @@ if (!exists(".saros.env")) {
 
   .saros.env$ignore_args <<- c(
     "data",
+    "plot",
     "plots",
     "plot",
     "filename",
