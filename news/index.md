@@ -19,6 +19,15 @@
   sample size separately for each variable and reports the range (e.g.,
   \[250-299\] when variables have different amounts of missing data)
 
+### Internal Improvements
+
+- Added
+  [`is_int_plot_html()`](https://nifu-no.github.io/saros/reference/is_int_plot_html.md)
+  helper function to centralize detection logic for int_plot_html data
+  structures, improving code maintainability and consistency across
+  [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  and [`n_rng2()`](https://nifu-no.github.io/saros/reference/n_rng2.md)
+
 ## saros 1.6.1
 
 CRAN release: 2026-01-28
