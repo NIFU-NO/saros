@@ -90,30 +90,20 @@ ggsaver <- function(
 
   # Apply palette if specified and plot has a fill aesthetic
   if (!is.null(args$palette_codes) && ggplot2::is_ggplot(plot)) {
-    fill_var <- rlang::as_label(plot$mapping$fill)
+    fill_levels <- get_fill_levels(plot)
 
-    if (!is.null(fill_var) && fill_var != "NULL") {
-      # Check if fill_var exists as a column in the data
-      if (fill_var %in% colnames(plot$data)) {
-        fill_levels <-
-          if (is.factor(plot$data[[fill_var]])) {
-            levels(plot$data[[fill_var]])
-          } else {
-            unique(plot$data[[fill_var]])
-          }
-
-        plot <- suppressMessages(
-          plot +
-            scale_discrete_special(
-              palette_codes = args$palette_codes,
-              lvls = fill_levels,
-              ncol = args$ncol,
-              byrow = args$byrow,
-              label_wrap_width = args$label_wrap_width,
-              priority_palette_codes = args$priority_palette_codes
-            )
-        )
-      }
+    if (!is.null(fill_levels)) {
+      plot <- suppressMessages(
+        plot +
+          scale_discrete_special(
+            palette_codes = args$palette_codes,
+            lvls = fill_levels,
+            ncol = args$ncol,
+            byrow = args$byrow,
+            label_wrap_width = args$label_wrap_width,
+            priority_palette_codes = args$priority_palette_codes
+          )
+      )
     }
   }
 

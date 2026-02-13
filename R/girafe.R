@@ -81,17 +81,10 @@ girafe <- function(
     }
   }
 
-  fill_var <- rlang::as_label(ggobj$mapping$fill)
+  fill_levels <- get_fill_levels(ggobj)
 
   checkbox <- FALSE
-  if (!is.null(fill_var) && fill_var != "NULL") {
-    fill_levels <-
-      if (is.factor(ggobj$data[[fill_var]])) {
-        levels(ggobj$data[[fill_var]])
-      } else {
-        unique(ggobj$data[[fill_var]])
-      }
-
+  if (!is.null(fill_levels)) {
     if (all(fill_levels %in% c(args$checked, args$not_checked))) {
       checkbox <- TRUE
       ggobj <- convert_to_checkbox_plot(
