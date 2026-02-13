@@ -48,6 +48,7 @@ specified.
 
   Wrapper Function for
   [`ggplot2::ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html)
+  with Palette Support
 
 ## Read and write tabular data
 
