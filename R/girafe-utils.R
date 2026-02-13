@@ -32,6 +32,17 @@ get_fill_levels <- function(ggobj) {
 
 #' Build Custom Palette Function
 #'
+#' Creates a palette function that matches colors to factor levels based on
+#' palette_codes and priority_palette_codes.
+#'
+#' @param palette_codes List of character vectors containing colours. Vectors can
+#'   optionally be named for exact level matching.
+#' @param fct_levels Character vector of factor levels to assign colors to.
+#' @param priority_palette_codes Optional named character vector where names are
+#'   categories and values are colours to use first. Defaults to `NULL`.
+#'
+#' @return A palette function that takes n (number of colors) and lvls (levels)
+#'   and returns a named character vector of colors.
 #' @keywords internal
 build_custom_palette <- function(
   palette_codes,

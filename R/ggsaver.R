@@ -6,10 +6,10 @@
 #'
 #' @param plot A ggplot2 object to save.
 #' @param filename File path where the plot should be saved.
-#' @param palette_codes Optional list of named character vectors with names being
-#'   categories and values being colours. Inherits from [girafe()] global settings
-#'   if not specified. The final character vector of the list is taken as a final
-#'   resort. Defaults to `NULL`.
+#' @param palette_codes Optional list of character vectors. Each vector contains
+#'   colours. Vectors can optionally be named, where names are categories and values
+#'   are colours. Inherits from [girafe()] global settings if not specified. The
+#'   final character vector of the list is used as a fallback. Defaults to `NULL`.
 #' @param priority_palette_codes Optional named character of categories (as names)
 #'   with corresponding colours (as values) which are used first. Inherits from
 #'   [girafe()] global settings if not specified. Defaults to `NULL`.
