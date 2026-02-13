@@ -2,26 +2,89 @@
 % Please edit documentation in R/ggsaver.R
 \name{ggsaver}
 \alias{ggsaver}
-\title{Wrapper Function for \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}}
+\title{Wrapper Function for \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} with Palette Support}
 \usage{
-ggsaver(plot, filename, ...)
+ggsaver(
+  plot,
+  filename,
+  palette_codes = NULL,
+  priority_palette_codes = NULL,
+  label_wrap_width = 80,
+  ncol = NULL,
+  byrow = TRUE,
+  ...
+)
 }
 \arguments{
-\item{plot}{Plot}
+\item{plot}{A ggplot2 object to save.}
 
-\item{filename}{Note}
+\item{filename}{File path where the plot should be saved.}
+
+\item{palette_codes}{Optional list of named character vectors with names being
+categories and values being colours. Inherits from \code{\link[=girafe]{girafe()}} global settings
+if not specified. The final character vector of the list is taken as a final
+resort. Defaults to \code{NULL}.}
+
+\item{priority_palette_codes}{Optional named character of categories (as names)
+with corresponding colours (as values) which are used first. Inherits from
+\code{\link[=girafe]{girafe()}} global settings if not specified. Defaults to \code{NULL}.}
+
+\item{label_wrap_width}{Integer. Number of characters fit on the legend labels
+before wrapping. Inherits from \code{\link[=girafe]{girafe()}} global settings. Defaults to \code{80}.}
+
+\item{ncol}{Optional integer or NULL for legend columns. Inherits from
+\code{\link[=girafe]{girafe()}} global settings. Defaults to \code{NULL}.}
+
+\item{byrow}{Whether to display legend keys by row or by column. Inherits from
+\code{\link[=girafe]{girafe()}} global settings. Defaults to \code{TRUE}.}
 
 \item{...}{Arguments forwarded to \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}}
 }
 \value{
-No return value, called for side effects
+No return value, called for side effects (saves plot to file)
 }
 \description{
-This only exists to make it easy to use it in \code{\link[=make_link]{make_link()}}
+Saves ggplot2 objects with automatic palette application from global settings.
+Inherits palette settings from \code{\link[=girafe]{girafe()}} global options, ensuring saved plots
+match the appearance of interactive plots.
+}
+\details{
+This function extends \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} by applying colour palettes before
+saving, ensuring consistency between interactive plots (via \code{\link[=girafe]{girafe()}}) and
+saved static images. Palette settings are inherited from global settings set via
+\code{\link[=global_settings_set]{global_settings_set()}} for the "girafe" function.
+
+If \code{palette_codes} is provided (either directly or via global settings), the
+function applies the same palette transformation that \code{\link[=girafe]{girafe()}} uses for
+interactive plots.
 }
 \examples{
 library(ggplot2)
-my_plot <- ggplot(data=mtcars, aes(x=hp, y=mpg)) + geom_point()
-make_link(my_plot, folder=tempdir(), file_suffix = ".png",
-          save_fn = ggsaver, width = 16, height = 16, units = "cm")
+my_plot <- ggplot(data=mtcars, aes(x=hp, y=mpg, fill=factor(cyl))) + geom_point()
+
+\dontrun{
+# Save with default settings
+ggsaver(my_plot, tempfile(fileext = ".png"))
+
+# Set global palette and save
+global_settings_set(
+  fn_name = "girafe",
+  new = list(palette_codes = list(c("red", "blue", "green")))
+)
+ggsaver(my_plot, tempfile(fileext = ".png"))
+
+# Override global palette for specific save
+ggsaver(
+  my_plot,
+  tempfile(fileext = ".png"),
+  palette_codes = list(c("purple", "orange", "yellow"))
+)
+}
+}
+\seealso{
+\itemize{
+\item \code{\link[=girafe]{girafe()}} for interactive plots with palette support
+\item \code{\link[=global_settings_set]{global_settings_set()}} for setting default palettes
+\item \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}} for the underlying save function
+}
 }
