@@ -62,6 +62,20 @@ get_data_display_column <- function(data) {
   }
 }
 
+#' Detect if data is from int_plot_html
+#'
+#' Checks if a data frame has the structure expected from int_plot_html output,
+#' which uses .value column instead of .category column.
+#'
+#' @param data Data frame to check
+#'
+#' @return Logical indicating if this is int_plot_html format
+#' @keywords internal
+is_int_plot_html <- function(data) {
+  if (is.null(data)) return(FALSE)
+  ".value" %in% colnames(data) && !".category" %in% colnames(data)
+}
+
 #' Validate single dependent variable requirement
 #'
 #' Common validation pattern for functions that require exactly one dependent variable.

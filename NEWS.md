@@ -4,6 +4,9 @@
 -   Fixed `fig_height_h_barchart2()` to properly handle `int_plot_html` plots with independent variables. The function now forwards to `fig_height_h_barchart()` with appropriate parameters for interval plots, returning the `max` parameter value (default 12) while allowing user customization, instead of erroring with "only supports a single indep variable"
 -   Fixed `n_range2()` for `int_plot_html` plots to report N range per dependent variable instead of total count across all variables. Now correctly calculates sample size separately for each variable and reports the range (e.g., [250-299] when variables have different amounts of missing data)
 
+## Internal Improvements
+-   Added `is_int_plot_html()` helper function to centralize detection logic for int_plot_html data structures, improving code maintainability and consistency across `fig_height_h_barchart2()` and `n_rng2()`
+
 
 # saros 1.6.1
 

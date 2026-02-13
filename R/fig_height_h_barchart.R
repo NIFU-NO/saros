@@ -416,7 +416,7 @@ fig_height_h_barchart2 <- # Returns a numeric value
     }
 
     # Check if this is an int_plot_html (has .value instead of .category)
-    if (".value" %in% colnames(data) && !".category" %in% colnames(data)) {
+    if (is_int_plot_html(data)) {
       # int_plot_html uses simple default height
       # Forward to fig_height_h_barchart with minimal parameters
       max_value <- max
