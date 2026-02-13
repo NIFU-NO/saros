@@ -69,7 +69,7 @@ get_fig_title_suffix_from_ggplot <- function(
   n_equals_string = "N = ",
   file_suffixes = c(".csv", ".png"),
   link_prefixes = c("[CSV](", "[PNG]("),
-  save_fns = list(utils::write.csv, saros::ggsaver),
+  save_fns = list(utils::write.csv, ggsaver),
   sep = ", "
 ) {
   # Validate plot and data

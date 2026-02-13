@@ -110,6 +110,7 @@ if (!exists(".saros.env")) {
     "n_y",
     "n_cats_y",
     "ggobj",
+    "save_fns",
     "..."
   )
 
