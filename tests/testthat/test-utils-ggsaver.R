@@ -171,6 +171,7 @@ test_that("ggsaver handles plots without fill aesthetic", {
   plot <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
 
   temp_file <- tempfile(fileext = ".png")
+  withr::defer(unlink(temp_file))
 
   # Should work even with palette_codes set
   custom_palette <- list(c("red", "blue", "green"))
@@ -183,9 +184,6 @@ test_that("ggsaver handles plots without fill aesthetic", {
   ))
 
   expect_true(file.exists(temp_file))
-
-  # Clean up
-  unlink(temp_file)
 })
 
 test_that("ggsaver handles factor() fill mappings correctly", {

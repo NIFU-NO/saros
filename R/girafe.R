@@ -8,7 +8,10 @@
 #' @param label_wrap_width Integer. Number of characters fit on the axis text space before wrapping.
 #' @param interactive Boolean. Whether to produce a ggiraph-plot with interactivity (defaults to TRUE)
 #'    or a static ggplot2-plot.
-#' @param palette_codes Optional list of named character vectors with names being categories and values being colours. The final character vector of the list is taken as a final resort. Defaults to `NULL`.
+#' @param palette_codes Optional list of character vectors. Each vector contains
+#'   colours. Vectors can optionally be named, where names are categories and values
+#'   are colours. The final character vector of the list is used as a fallback.
+#'   Defaults to `NULL`.
 #' @param priority_palette_codes Optional named character of categories (as names) with corresponding colours (as values) which are used first, whereupon the remaining unspecified categories are pulled from the last vector of `palette_codes`. Defaults to `NULL`.
 #' @param ncol Optional integer or NULL.
 #' @param byrow Whether to display legend keys by row or by column.
@@ -48,7 +51,6 @@ girafe <- function(
 
   # Validate parameters
   check_integerish(args$char_limit, min = 1, arg = "char_limit")
-  check_integerish(args$label_wrap_width, min = 1, arg = "label_wrap_width")
   check_bool(args$interactive, arg = "interactive")
   check_string(args$checked, null_allowed = TRUE, arg = "checked")
   check_string(args$not_checked, null_allowed = TRUE, arg = "not_checked")
@@ -58,6 +60,7 @@ girafe <- function(
     arg = "colour_2nd_binary_cat"
   )
 
+  # Validate palette-related parameters (includes label_wrap_width, ncol, byrow)
   validate_palette_params(
     palette_codes = args$palette_codes,
     priority_palette_codes = args$priority_palette_codes,
