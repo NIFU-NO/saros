@@ -57,7 +57,7 @@ fig_height_h_barchart(
 
 \item{x_axis_label_width, strip_width}{Numeric. Width allocated for x-axis labels and strip labels respectively.}
 
-\item{strip_angle}{Integer. Angle of the strip text.}
+\item{strip_angle}{Numeric. Angle of the strip text.}
 
 \item{main_font_size}{Numeric. Font size for the main text.}
 

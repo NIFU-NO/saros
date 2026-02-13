@@ -7,8 +7,12 @@ err_msg <- function(infix) {
   )
 }
 
+# Validation Functions ----
+# All validation functions use validate_* prefix for consistency and discoverability
 
-check_bool <- function(
+#' Validate boolean parameter
+#' @keywords internal
+validate_bool <- function(
   x,
   call = rlang::caller_env(),
   arg = rlang::caller_arg(x)
@@ -18,8 +22,9 @@ check_bool <- function(
   }
 }
 
-
-check_integerish <- function(
+#' Validate integerish parameter
+#' @keywords internal
+validate_integerish <- function(
   x,
   min = -Inf,
   max = Inf,
@@ -45,7 +50,16 @@ check_integerish <- function(
   }
 }
 
-check_double <- function(
+#' Validate double/numeric parameter
+#'
+#' @param x Value to validate
+#' @param min Minimum allowed value (default -Inf)
+#' @param max Maximum allowed value (default Inf)
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @param call Calling environment for error messages
+#' @param arg Argument name for error messages
+#' @keywords internal
+validate_double <- function(
   x,
   min = -Inf,
   max = Inf,
@@ -79,8 +93,150 @@ check_double <- function(
   }
 }
 
+#' Validate string parameter
+#'
+#' @param x Value to validate
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @param call Calling environment for error messages
+#' @param arg Argument name for error messages
+#' @keywords internal
+validate_string <- function(
+  x,
+  null_allowed = FALSE,
+  call = rlang::caller_env(),
+  arg = rlang::caller_arg(x)
+) {
+  if (isTRUE(null_allowed) && is.null(x)) {
+    return()
+  }
+  if (!rlang::is_string(x)) {
+    cli::cli_abort(err_msg(" string (character of length 1)"), call = call)
+  }
+}
 
-check_multiple_dep_and_one_indep <-
+# Backwards compatibility aliases ----
+check_bool <- validate_bool
+check_integerish <- validate_integerish
+check_double <- validate_double
+check_string <- validate_string
+
+# Validation Rule Builders (for declarative validation) ----
+
+#' Create integerish validation rule
+#'
+#' @param min Minimum allowed value (default -Inf)
+#' @param max Maximum allowed value (default Inf)
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @keywords internal
+validate_integerish_rule <- function(min = -Inf, max = Inf, null_allowed = FALSE) {
+  function(x) {
+    if (null_allowed && is.null(x)) return(TRUE)
+    rlang::is_integerish(x, n = 1) && x >= min && x <= max
+  }
+}
+
+#' Create double validation rule
+#'
+#' @param min Minimum allowed value (default -Inf)
+#' @param max Maximum allowed value (default Inf)
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @keywords internal
+validate_double_rule <- function(min = -Inf, max = Inf, null_allowed = FALSE) {
+  function(x) {
+    if (null_allowed && is.null(x)) return(TRUE)
+    is.numeric(x) && length(x) == 1 && x >= min && x <= max
+  }
+}
+
+#' Create boolean validation rule
+#' @keywords internal
+validate_bool_rule <- function() {
+  function(x) {
+    is.logical(x) && length(x) == 1 && !is.na(x)
+  }
+}
+
+#' Create string validation rule
+#'
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @keywords internal
+validate_string_rule <- function(null_allowed = FALSE) {
+  function(x) {
+    if (null_allowed && is.null(x)) return(TRUE)
+    rlang::is_string(x)
+  }
+}
+
+#' Create character vector validation rule
+#'
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @keywords internal
+validate_character_vector_rule <- function(null_allowed = FALSE) {
+  function(x) {
+    if (null_allowed && is.null(x)) return(TRUE)
+    is.character(x)
+  }
+}
+
+# Batch Validation Helper ----
+
+#' Validate multiple parameters at once
+#' 
+#' @param params Named list of parameter values to validate
+#' @param spec Named list of validation specifications. Each element should have:
+#'   - type: one of "integerish", "double", "bool", "string"
+#'   - min, max: optional for numeric types
+#'   - null_allowed: optional boolean (default FALSE)
+#' @param call Calling environment for error messages
+#' 
+#' @keywords internal
+validate_params <- function(params, spec, call = rlang::caller_env()) {
+  for (param_name in names(spec)) {
+    if (!param_name %in% names(params)) next
+    
+    val <- params[[param_name]]
+    rules <- spec[[param_name]]
+    
+    switch(rules$type,
+      "integerish" = validate_integerish(
+        val,
+        min = rules$min %||% -Inf,
+        max = rules$max %||% Inf,
+        null_allowed = rules$null_allowed %||% FALSE,
+        call = call,
+        arg = param_name
+      ),
+      "bool" = validate_bool(
+        val,
+        call = call,
+        arg = param_name
+      ),
+      "double" = validate_double(
+        val,
+        min = rules$min %||% -Inf,
+        max = rules$max %||% Inf,
+        null_allowed = rules$null_allowed %||% FALSE,
+        call = call,
+        arg = param_name
+      ),
+      "string" = validate_string(
+        val,
+        null_allowed = rules$null_allowed %||% FALSE,
+        call = call,
+        arg = param_name
+      ),
+      {
+        cli::cli_abort("Unknown validation type: {rules$type}", call = call)
+      }
+    )
+  }
+  invisible(TRUE)
+}
+
+# Other validation functions ----
+
+#' @keywords internal
+validate_multiple_dep_and_one_indep <-
   function(data, dep, indep, call = rlang::caller_env()) {
     dep_call <- rlang::expr_deparse(rlang::enquo(dep))
     indep_call <- rlang::expr_deparse(rlang::enquo(indep))
@@ -100,8 +256,11 @@ check_multiple_dep_and_one_indep <-
     }
   }
 
+# Backwards compatibility alias
+check_multiple_dep_and_one_indep <- validate_multiple_dep_and_one_indep
 
-check_summary_data_cols <- function(
+#' @keywords internal
+validate_summary_data_cols <- function(
   x,
   call = rlang::caller_env(),
   arg = rlang::caller_arg(x)
@@ -118,22 +277,7 @@ check_summary_data_cols <- function(
   }
 }
 
-check_string <- function(
-  x,
-  null_allowed = FALSE,
-  call = rlang::caller_env(),
-  arg = rlang::caller_arg(x)
-) {
-  if (isTRUE(null_allowed) && is.null(x)) {
-    return()
-  }
-  if (!rlang::is_string(x)) {
-    cli::cli_abort(
-      err_msg(if (isTRUE(null_allowed)) " string or NULL" else " string"),
-      call = call
-    )
-  }
-}
+# Additional palette-specific validation functions ----
 
 check_palette_codes <- function(
   x,
@@ -212,3 +356,6 @@ validate_palette_params <- function(
   }
   invisible()
 }
+
+# Backwards compatibility alias
+check_summary_data_cols <- validate_summary_data_cols

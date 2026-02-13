@@ -35,7 +35,10 @@ replaced in the future with a function that guesses this.}
 \item{interactive}{Boolean. Whether to produce a ggiraph-plot with interactivity (defaults to TRUE)
 or a static ggplot2-plot.}
 
-\item{palette_codes}{Optional list of named character vectors with names being categories and values being colours. The final character vector of the list is taken as a final resort. Defaults to \code{NULL}.}
+\item{palette_codes}{Optional list of character vectors. Each vector contains
+colours. Vectors can optionally be named, where names are categories and values
+are colours. The final character vector of the list is used as a fallback.
+Defaults to \code{NULL}.}
 
 \item{priority_palette_codes}{Optional named character of categories (as names) with corresponding colours (as values) which are used first, whereupon the remaining unspecified categories are pulled from the last vector of \code{palette_codes}. Defaults to \code{NULL}.}
 

@@ -31,7 +31,7 @@ fig_height_h_barchart2(
 
 \item{main_font_size}{Numeric. Font size for the main text.}
 
-\item{strip_angle}{Integer. Angle of the strip text.}
+\item{strip_angle}{Numeric. Angle of the strip text.}
 
 \item{freq}{Logical. If TRUE, frequency plot with categories next to each other. If FALSE (default), proportion plot with stacked categories.}
 
