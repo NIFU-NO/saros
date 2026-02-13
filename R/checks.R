@@ -117,3 +117,98 @@ check_summary_data_cols <- function(
     )
   }
 }
+
+check_string <- function(
+  x,
+  null_allowed = FALSE,
+  call = rlang::caller_env(),
+  arg = rlang::caller_arg(x)
+) {
+  if (isTRUE(null_allowed) && is.null(x)) {
+    return()
+  }
+  if (!rlang::is_string(x)) {
+    cli::cli_abort(
+      err_msg(if (isTRUE(null_allowed)) " string or NULL" else " string"),
+      call = call
+    )
+  }
+}
+
+check_palette_codes <- function(
+  x,
+  null_allowed = TRUE,
+  call = rlang::caller_env(),
+  arg = rlang::caller_arg(x)
+) {
+  if (isTRUE(null_allowed) && is.null(x)) {
+    return()
+  }
+  if (
+    !((rlang::is_list(x) &&
+      all(vapply(x, is.character, logical(1)))) ||
+      (isTRUE(null_allowed) && is.null(x)))
+  ) {
+    cli::cli_abort(
+      "{.arg {arg}} must be NULL or a list of character vectors.",
+      call = call
+    )
+  }
+}
+
+check_priority_palette_codes <- function(
+  x,
+  null_allowed = TRUE,
+  call = rlang::caller_env(),
+  arg = rlang::caller_arg(x)
+) {
+  if (isTRUE(null_allowed) && is.null(x)) {
+    return()
+  }
+  if (!(rlang::is_character(x) || (isTRUE(null_allowed) && is.null(x)))) {
+    cli::cli_abort(
+      "{.arg {arg}} must be a character vector (possibly named) or NULL.",
+      call = call
+    )
+  }
+}
+
+#' Validate Palette Parameters
+#'
+#' Validates palette-related parameters used by `girafe()` and `ggsaver()`.
+#' Ensures type safety and provides clear error messages for invalid inputs.
+#'
+#' @param palette_codes Optional list of named character vectors
+#' @param priority_palette_codes Optional character vector
+#' @param label_wrap_width Integer for legend label wrapping
+#' @param ncol Optional integer for legend columns
+#' @param byrow Logical for legend key arrangement
+#' @param call Calling environment for error messages
+#'
+#' @return NULL (called for side effects - validation)
+#' @keywords internal
+validate_palette_params <- function(
+  palette_codes = NULL,
+  priority_palette_codes = NULL,
+  label_wrap_width = NULL,
+  ncol = NULL,
+  byrow = NULL,
+  call = rlang::caller_env()
+) {
+  if (!is.null(label_wrap_width)) {
+    check_integerish(label_wrap_width, min = 1, call = call)
+  }
+  if (!is.null(ncol)) {
+    check_integerish(ncol, min = 1, null_allowed = TRUE, call = call)
+  }
+  if (!is.null(byrow)) {
+    check_bool(byrow, call = call)
+  }
+  if (!is.null(palette_codes)) {
+    check_palette_codes(palette_codes, call = call)
+  }
+  if (!is.null(priority_palette_codes)) {
+    check_priority_palette_codes(priority_palette_codes, call = call)
+  }
+  invisible()
+}

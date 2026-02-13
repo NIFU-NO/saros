@@ -71,6 +71,15 @@ ggsaver <- function(
   byrow = TRUE,
   ...
 ) {
+  # Validate palette parameters first (before check_options processes them)
+  validate_palette_params(
+    palette_codes = palette_codes,
+    priority_palette_codes = priority_palette_codes,
+    label_wrap_width = label_wrap_width,
+    ncol = ncol,
+    byrow = byrow
+  )
+
   # Check global settings from girafe, then provided settings, and finally defaults
   args <- check_options(
     call = match.call(),
