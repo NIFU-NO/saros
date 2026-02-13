@@ -140,6 +140,11 @@ test_that("ggsaver inherits palette_codes from girafe global settings", {
   # Save current global settings
   old_settings <- global_settings_get("girafe")
 
+  # Set up cleanup to restore exact previous settings
+  withr::defer({
+    global_settings_set(fn_name = "girafe", new = old_settings, quiet = TRUE)
+  })
+
   # Set global palette
   custom_palette <- list(c("purple", "orange", "yellow"))
   global_settings_set(
@@ -152,16 +157,11 @@ test_that("ggsaver inherits palette_codes from girafe global settings", {
     geom_boxplot()
 
   temp_file <- tempfile(fileext = ".png")
+  withr::defer(unlink(temp_file))
 
   # Test that global settings are applied
   expect_no_error(ggsaver(plot, temp_file, width = 5, height = 4))
   expect_true(file.exists(temp_file))
-
-  # Restore original settings
-  global_settings_reset("girafe", quiet = TRUE)
-
-  # Clean up
-  unlink(temp_file)
 })
 
 test_that("ggsaver handles plots without fill aesthetic", {
@@ -186,4 +186,36 @@ test_that("ggsaver handles plots without fill aesthetic", {
 
   # Clean up
   unlink(temp_file)
+})
+
+test_that("ggsaver handles factor() fill mappings correctly", {
+  skip_if_not_installed("ggplot2")
+
+  library(ggplot2)
+
+  # Create plot with factor() in the fill aesthetic (not a bare column name)
+  plot <- ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(cyl))) +
+    geom_boxplot()
+
+  temp_file <- tempfile(fileext = ".png")
+  withr::defer(unlink(temp_file))
+
+  # Custom palette
+  custom_palette <- list(c("red", "blue", "green"))
+
+  # Should successfully apply palette to factor() fill mapping
+  expect_no_error(ggsaver(
+    plot,
+    temp_file,
+    palette_codes = custom_palette,
+    width = 5,
+    height = 4
+  ))
+
+  expect_true(file.exists(temp_file))
+
+  # Verify get_fill_levels extracts levels correctly from factor() mapping
+  fill_levels <- saros:::get_fill_levels(plot)
+  expect_equal(length(fill_levels), 3)
+  expect_equal(sort(fill_levels), c("4", "6", "8"))
 })

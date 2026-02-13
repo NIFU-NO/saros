@@ -1,4 +1,39 @@
-custom_palette <- function(
+#' Extract Fill Levels from ggplot Object
+#'
+#' Evaluates the fill aesthetic mapping in the context of the plot data
+#' to extract fill levels. Handles both simple column references (e.g., `fill = cyl`)
+#' and expressions (e.g., `fill = factor(cyl)`).
+#'
+#' @param ggobj A ggplot2 object
+#' @return Character vector of fill levels, or NULL if no fill mapping exists
+#' @keywords internal
+get_fill_levels <- function(ggobj) {
+  if (is.null(ggobj$mapping$fill)) {
+    return(NULL)
+  }
+
+  # Evaluate the fill mapping in the context of the plot data
+  fill_values <- tryCatch(
+    rlang::eval_tidy(ggobj$mapping$fill, data = ggobj$data),
+    error = function(e) NULL
+  )
+
+  if (is.null(fill_values)) {
+    return(NULL)
+  }
+
+  # Extract levels
+  if (is.factor(fill_values)) {
+    levels(fill_values)
+  } else {
+    unique(fill_values)
+  }
+}
+
+#' Build Custom Palette Function
+#'
+#' @keywords internal
+build_custom_palette <- function(
   palette_codes,
   fct_levels,
   priority_palette_codes = NULL
@@ -119,7 +154,7 @@ scale_discrete_special <- function(
     ggplot2::discrete_scale(
       aesthetics = aesthetics,
       name = "",
-      palette = custom_palette(
+      palette = build_custom_palette(
         palette_codes = palette_codes,
         fct_levels = lvls,
         priority_palette_codes = priority_palette_codes

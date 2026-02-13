@@ -46,54 +46,26 @@ girafe <- function(
     default_values = formals(girafe)
   )
 
-  # If in a Quarto/Rmarkdown document rendering context, avoid doing the tests below unnecessarily often?
-  if (!(rlang::is_integerish(args$char_limit))) {
-    cli::cli_abort("{.arg char_limit} must be an integer.")
-  }
-  if (!(rlang::is_integerish(args$label_wrap_width))) {
-    cli::cli_abort("{.arg label_wrap_width} must be an integer.")
-  }
-  if (!(rlang::is_integerish(args$ncol) || is.null(args$ncol))) {
-    cli::cli_abort("{.arg ncol} must be an integer or NULL.")
-  }
-  if (!(rlang::is_integerish(args$ncol) || is.null(args$ncol))) {
-    cli::cli_abort("{.arg ncol} must be an integer or NULL.")
-  }
-  if (
-    !((rlang::is_list(args$palette_codes) &&
-      all(vapply(args$palette_codes, is.character, logical(1)))) ||
-      is.null(args$palette_codes))
-  ) {
-    cli::cli_abort(
-      "{.arg palette_codes} must be NULL or a list of character vectors."
-    )
-  }
-  if (
-    !((rlang::is_character(args$priority_palette_codes)) ||
-      is.null(args$priority_palette_codes))
-  ) {
-    cli::cli_abort(
-      "{.arg priority_palette_codes} must be a character vector (possibly named) or NULL."
-    )
-  }
-  if (!(rlang::is_bool(args$interactive))) {
-    cli::cli_abort("{.arg interactive} must be boolean.")
-  }
-  if (!(rlang::is_bool(args$byrow))) {
-    cli::cli_abort("{.arg byrow} must be boolean.")
-  }
-  if (!(rlang::is_string(args$checked) || is.null(args$checked))) {
-    cli::cli_abort("{.arg checked} must be a string or NULL.")
-  }
-  if (!(rlang::is_string(args$not_checked) || is.null(args$not_checked))) {
-    cli::cli_abort("{.arg not_checked} must be a string or NULL.")
-  }
-  if (
-    !(rlang::is_string(args$colour_2nd_binary_cat) ||
-      is.null(args$colour_2nd_binary_cat))
-  ) {
-    cli::cli_abort("{.arg colour_2nd_binary_cat} must be a string or NULL.")
-  }
+  # Validate parameters
+  check_integerish(args$char_limit, min = 1, arg = "char_limit")
+  check_integerish(args$label_wrap_width, min = 1, arg = "label_wrap_width")
+  check_bool(args$interactive, arg = "interactive")
+  check_string(args$checked, null_allowed = TRUE, arg = "checked")
+  check_string(args$not_checked, null_allowed = TRUE, arg = "not_checked")
+  check_string(
+    args$colour_2nd_binary_cat,
+    null_allowed = TRUE,
+    arg = "colour_2nd_binary_cat"
+  )
+
+  validate_palette_params(
+    palette_codes = args$palette_codes,
+    priority_palette_codes = args$priority_palette_codes,
+    label_wrap_width = args$label_wrap_width,
+    ncol = args$ncol,
+    byrow = args$byrow
+  )
+
   if (is.null(ggobj) || length(ggobj$data) == 0) {
     return(invisible(data.frame()))
   }
@@ -109,17 +81,10 @@ girafe <- function(
     }
   }
 
-  fill_var <- rlang::as_label(ggobj$mapping$fill)
+  fill_levels <- get_fill_levels(ggobj)
 
   checkbox <- FALSE
-  if (!is.null(fill_var) && fill_var != "NULL") {
-    fill_levels <-
-      if (is.factor(ggobj$data[[fill_var]])) {
-        levels(ggobj$data[[fill_var]])
-      } else {
-        unique(ggobj$data[[fill_var]])
-      }
-
+  if (!is.null(fill_levels)) {
     if (all(fill_levels %in% c(args$checked, args$not_checked))) {
       checkbox <- TRUE
       ggobj <- convert_to_checkbox_plot(
