@@ -100,6 +100,8 @@ if (!exists(".saros.env")) {
   .saros.env$ignore_args <<- c(
     "data",
     "plots",
+    "plot",
+    "filename",
     "dep",
     "indep",
     "chapter_overview",
@@ -118,6 +120,7 @@ if (!exists(".saros.env")) {
     n_range = n_range,
     fig_height_h_barchart = fig_height_h_barchart,
     girafe = girafe,
+    ggsaver = ggsaver,
     txt_from_cat_mesos_plots = txt_from_cat_mesos_plots
   )
 

@@ -106,3 +106,84 @@ test_that("ggsaver suppresses messages", {
   # Clean up
   unlink(temp_file)
 })
+
+test_that("ggsaver applies palette_codes from arguments", {
+  skip_if_not_installed("ggplot2")
+
+  library(ggplot2)
+  plot <- ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(cyl))) +
+    geom_boxplot()
+
+  temp_file <- tempfile(fileext = ".png")
+
+  # Test with custom palette
+  custom_palette <- list(c("red", "blue", "green"))
+  expect_no_error(ggsaver(
+    plot,
+    temp_file,
+    palette_codes = custom_palette,
+    width = 5,
+    height = 4
+  ))
+
+  expect_true(file.exists(temp_file))
+
+  # Clean up
+  unlink(temp_file)
+})
+
+test_that("ggsaver inherits palette_codes from girafe global settings", {
+  skip_if_not_installed("ggplot2")
+
+  library(ggplot2)
+
+  # Save current global settings
+  old_settings <- global_settings_get("girafe")
+
+  # Set global palette
+  custom_palette <- list(c("purple", "orange", "yellow"))
+  global_settings_set(
+    fn_name = "girafe",
+    new = list(palette_codes = custom_palette),
+    quiet = TRUE
+  )
+
+  plot <- ggplot(mtcars, aes(x = factor(cyl), y = mpg, fill = factor(cyl))) +
+    geom_boxplot()
+
+  temp_file <- tempfile(fileext = ".png")
+
+  # Test that global settings are applied
+  expect_no_error(ggsaver(plot, temp_file, width = 5, height = 4))
+  expect_true(file.exists(temp_file))
+
+  # Restore original settings
+  global_settings_reset("girafe", quiet = TRUE)
+
+  # Clean up
+  unlink(temp_file)
+})
+
+test_that("ggsaver handles plots without fill aesthetic", {
+  skip_if_not_installed("ggplot2")
+
+  library(ggplot2)
+  plot <- ggplot(mtcars, aes(x = hp, y = mpg)) + geom_point()
+
+  temp_file <- tempfile(fileext = ".png")
+
+  # Should work even with palette_codes set
+  custom_palette <- list(c("red", "blue", "green"))
+  expect_no_error(ggsaver(
+    plot,
+    temp_file,
+    palette_codes = custom_palette,
+    width = 5,
+    height = 4
+  ))
+
+  expect_true(file.exists(temp_file))
+
+  # Clean up
+  unlink(temp_file)
+})
