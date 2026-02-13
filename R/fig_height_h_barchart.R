@@ -215,36 +215,69 @@ fig_height_h_barchart <- # Returns a numeric value
     hide_axis_text_if_single_variable <- args$hide_axis_text_if_single_variable
     showNA <- args$showNA[[1]]
 
-    check_integerish(n_y)
-    check_integerish(n_cats_y)
-    check_integerish(max_chars_labels_y)
-    check_integerish(max_chars_cats_y)
-    check_integerish(n_x, null_allowed = TRUE)
-    check_integerish(n_cats_x, null_allowed = TRUE)
-    check_integerish(max_chars_labels_x, null_allowed = TRUE)
-    check_integerish(max_chars_cats_x, null_allowed = TRUE)
-    check_bool(freq)
-    check_double(strip_angle)
-    check_double(main_font_size)
-    check_double(multiplier_per_horizontal_line)
-    check_double(multiplier_per_vertical_letter)
-    check_double(multiplier_per_facet)
-    check_double(multiplier_per_legend_line)
-    check_double(multiplier_per_bar)
-    check_double(multiplier_per_plot)
-    check_double(fixed_constant)
-    check_integerish(legend_key_chars_equivalence)
+    # Validate all parameters at once
+    validate_params(
+      params = list(
+        n_y = n_y,
+        n_cats_y = n_cats_y,
+        max_chars_labels_y = max_chars_labels_y,
+        max_chars_cats_y = max_chars_cats_y,
+        n_x = n_x,
+        n_cats_x = n_cats_x,
+        max_chars_labels_x = max_chars_labels_x,
+        max_chars_cats_x = max_chars_cats_x,
+        strip_angle = strip_angle,
+        main_font_size = main_font_size,
+        multiplier_per_horizontal_line = multiplier_per_horizontal_line,
+        multiplier_per_vertical_letter = multiplier_per_vertical_letter,
+        multiplier_per_facet = multiplier_per_facet,
+        multiplier_per_legend_line = multiplier_per_legend_line,
+        multiplier_per_bar = multiplier_per_bar,
+        multiplier_per_plot = multiplier_per_plot,
+        fixed_constant = fixed_constant,
+        legend_key_chars_equivalence = legend_key_chars_equivalence,
+        n_legend_lines = n_legend_lines,
+        margin_in_cm = margin_in_cm,
+        figure_width_in_cm = figure_width_in_cm,
+        max = max,
+        min = min,
+        freq = freq,
+        hide_axis_text_if_single_variable = hide_axis_text_if_single_variable,
+        add_n_to_dep_label = add_n_to_dep_label,
+        add_n_to_indep_label = add_n_to_indep_label
+      ),
+      spec = list(
+        n_y = list(type = "integerish"),
+        n_cats_y = list(type = "integerish"),
+        max_chars_labels_y = list(type = "integerish"),
+        max_chars_cats_y = list(type = "integerish"),
+        n_x = list(type = "integerish", null_allowed = TRUE),
+        n_cats_x = list(type = "integerish", null_allowed = TRUE),
+        max_chars_labels_x = list(type = "integerish", null_allowed = TRUE),
+        max_chars_cats_x = list(type = "integerish", null_allowed = TRUE),
+        strip_angle = list(type = "double"),
+        main_font_size = list(type = "double"),
+        multiplier_per_horizontal_line = list(type = "double"),
+        multiplier_per_vertical_letter = list(type = "double"),
+        multiplier_per_facet = list(type = "double"),
+        multiplier_per_legend_line = list(type = "double"),
+        multiplier_per_bar = list(type = "double"),
+        multiplier_per_plot = list(type = "double"),
+        fixed_constant = list(type = "double"),
+        legend_key_chars_equivalence = list(type = "integerish"),
+        n_legend_lines = list(type = "integerish", null_allowed = TRUE),
+        margin_in_cm = list(type = "integerish"),
+        figure_width_in_cm = list(type = "integerish"),
+        max = list(type = "integerish"),
+        min = list(type = "integerish"),
+        freq = list(type = "bool"),
+        hide_axis_text_if_single_variable = list(type = "bool"),
+        add_n_to_dep_label = list(type = "bool"),
+        add_n_to_indep_label = list(type = "bool")
+      )
+    )
 
-    check_integerish(n_legend_lines, null_allowed = TRUE)
-    check_integerish(margin_in_cm)
-    check_integerish(figure_width_in_cm)
-    check_integerish(strip_angle)
-    check_integerish(max)
-    check_integerish(min)
     legend_location <- legend_location[1]
-    check_bool(hide_axis_text_if_single_variable)
-    check_bool(add_n_to_dep_label)
-    check_bool(add_n_to_indep_label)
 
     multiplier_per_horizontal_line <-
       multiplier_per_horizontal_line * main_font_size / 72.27 * 2.54

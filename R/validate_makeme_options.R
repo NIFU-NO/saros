@@ -30,10 +30,6 @@ validate_makeme_options <- function(params) {
       target[[param_name]]
     }
   }
-  is_scalar_finite_doubleish <- function(x) {
-    is.numeric(x) && length(x) == 1 && is.finite(x)
-  }
-  is_bool <- function(x) is.logical(x) && length(x) == 1 && !is.na(x)
 
   arg_params <-
     list(
@@ -43,79 +39,46 @@ validate_makeme_options <- function(params) {
       }),
 
       # Character vectors (not enums)
-      type = list(fun = function(x) rlang::is_string(x)),
+      type = list(fun = validate_string_rule()),
 
-      # For mesos, see also checks at the bottom of function
-      mesos_var = list(fun = function(x) is.null(x) || rlang::is_string(x)),
-      mesos_group = list(fun = function(x) is.null(x) || rlang::is_string(x)),
-      hide_for_all_if_hidden_for_crowd = list(fun = function(x) {
-        is.null(x) || rlang::is_string(x)
-      }),
-      path = list(fun = function(x) is.null(x) || rlang::is_string(x)),
+      # String parameters (possibly NULL)
+      mesos_var = list(fun = validate_string_rule(null_ok = TRUE)),
+      mesos_group = list(fun = validate_string_rule(null_ok = TRUE)),
+      hide_for_all_if_hidden_for_crowd = list(fun = validate_string_rule(null_ok = TRUE)),
+      path = list(fun = validate_string_rule(null_ok = TRUE)),
       label_separator = list(fun = function(x) is.null(x) || is.character(x)),
-      labels_always_at_top = list(fun = function(x) {
-        is.null(x) || is.character(x)
-      }),
-      labels_always_at_bottom = list(fun = function(x) {
-        is.null(x) || is.character(x)
-      }),
-      font_family = list(fun = function(x) rlang::is_string(x)),
-      data_label_decimal_symbol = list(fun = function(x) rlang::is_string(x)),
+      labels_always_at_top = list(fun = function(x) is.null(x) || is.character(x)),
+      labels_always_at_bottom = list(fun = function(x) is.null(x) || is.character(x)),
+      font_family = list(fun = validate_string_rule()),
+      data_label_decimal_symbol = list(fun = validate_string_rule()),
 
       # Boolean
-      require_common_categories = list(fun = is_bool),
-      simplify_output = list(fun = is_bool),
-      descend = list(fun = is_bool),
-      vertical = list(fun = is_bool),
-      hide_for_crowd_if_all_na = list(fun = is_bool),
-      hide_axis_text_if_single_variable = list(fun = is_bool),
-      totals = list(fun = is_bool),
-      table_main_question_as_header = list(fun = is_bool),
-      hide_for_crowd_if_all_na = list(fun = is_bool),
-      table_wide = list(fun = is_bool),
-      add_n_to_label = list(fun = is_bool),
-      add_n_to_category = list(fun = is_bool),
+      require_common_categories = list(fun = validate_bool_rule()),
+      simplify_output = list(fun = validate_bool_rule()),
+      descend = list(fun = validate_bool_rule()),
+      vertical = list(fun = validate_bool_rule()),
+      hide_for_crowd_if_all_na = list(fun = validate_bool_rule()),
+      hide_axis_text_if_single_variable = list(fun = validate_bool_rule()),
+      totals = list(fun = validate_bool_rule()),
+      table_main_question_as_header = list(fun = validate_bool_rule()),
+      table_wide = list(fun = validate_bool_rule()),
+      add_n_to_label = list(fun = validate_bool_rule()),
+      add_n_to_category = list(fun = validate_bool_rule()),
 
-      # Numeric and integer
-      hide_label_if_prop_below = list(fun = function(x) {
-        is_scalar_finite_doubleish(x) && x >= 0 && x <= 1
-      }),
-      n_categories_limit = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1) && x >= 0
-      }),
-      digits = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0
-      }),
-      label_font_size = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 72
-      }),
-      main_font_size = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 72
-      }),
-      strip_font_size = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 72
-      }),
-      legend_font_size = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 72
-      }),
-      strip_width = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1, finite = TRUE) && x >= 0 && x <= 200
-      }),
-      plot_height = list(fun = function(x) {
-        rlang::is_double(x, n = 1, finite = TRUE) && x >= 0 && x <= 200
-      }),
-      hide_for_crowd_if_valid_n_below = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1)
-      }),
-      hide_for_crowd_if_category_k_below = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1)
-      }),
-      hide_for_crowd_if_category_n_below = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1)
-      }),
-      hide_for_crowd_if_cell_n_below = list(fun = function(x) {
-        rlang::is_integerish(x, n = 1)
-      }),
+      # Numeric and integer with ranges
+      hide_label_if_prop_below = list(fun = validate_double_rule(min = 0, max = 1)),
+      n_categories_limit = list(fun = validate_integerish_rule(min = 0)),
+      digits = list(fun = validate_integerish_rule(min = 0)),
+      label_font_size = list(fun = validate_integerish_rule(min = 0, max = 72)),
+      main_font_size = list(fun = validate_integerish_rule(min = 0, max = 72)),
+      strip_font_size = list(fun = validate_integerish_rule(min = 0, max = 72)),
+      legend_font_size = list(fun = validate_integerish_rule(min = 0, max = 72)),
+      strip_width = list(fun = validate_integerish_rule(min = 0, max = 200)),
+      plot_height = list(fun = validate_double_rule(min = 0, max = 200)),
+      hide_for_crowd_if_valid_n_below = list(fun = validate_integerish_rule()),
+      hide_for_crowd_if_category_k_below = list(fun = validate_integerish_rule()),
+      hide_for_crowd_if_category_n_below = list(fun = validate_integerish_rule()),
+      hide_for_crowd_if_cell_n_below = list(fun = validate_integerish_rule()),
 
       # Enums
       crowd = list(fun = function(x) {

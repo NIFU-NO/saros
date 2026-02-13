@@ -8,6 +8,12 @@
 -   Fixed `n_range2()` for `int_plot_html` plots to report N range per dependent variable instead of total count across all variables. Now correctly calculates sample size separately for each variable and reports the range (e.g., [250-299] when variables have different amounts of missing data)
 
 ## Internal Improvements
+-   **Major refactoring of validation infrastructure** (implements refactoring opportunities #1 and #4):
+    -   All validation functions now use consistent `validate_*` prefix for better discoverability via auto-complete (e.g., `validate_bool()`, `validate_integerish()`, `validate_double()`, `validate_string()`)
+    -   Added `validate_params()` helper function that consolidates multiple parameter validations into a single declarative call, reducing code duplication from 30+ lines to ~5 lines in `fig_height_h_barchart()`
+    -   Created validation rule builders (`validate_integerish_rule()`, `validate_double_rule()`, `validate_bool_rule()`, `validate_string_rule()`) for more expressive and maintainable validation specifications in `validate_makeme_options()`
+    -   Maintained backwards compatibility with `check_*` aliases for existing code
+    -   Improved code maintainability and readability across validation-heavy functions
 -   Added `is_int_plot_html()` helper function to centralize detection logic for int_plot_html data structures, improving code maintainability and consistency across `fig_height_h_barchart2()` and `n_rng2()`
 
 
