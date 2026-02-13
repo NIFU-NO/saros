@@ -42,13 +42,13 @@ validate_makeme_options <- function(params) {
       type = list(fun = validate_string_rule()),
 
       # String parameters (possibly NULL)
-      mesos_var = list(fun = validate_string_rule(null_ok = TRUE)),
-      mesos_group = list(fun = validate_string_rule(null_ok = TRUE)),
-      hide_for_all_if_hidden_for_crowd = list(fun = validate_string_rule(null_ok = TRUE)),
-      path = list(fun = validate_string_rule(null_ok = TRUE)),
-      label_separator = list(fun = function(x) is.null(x) || is.character(x)),
-      labels_always_at_top = list(fun = function(x) is.null(x) || is.character(x)),
-      labels_always_at_bottom = list(fun = function(x) is.null(x) || is.character(x)),
+      mesos_var = list(fun = validate_string_rule(null_allowed = TRUE)),
+      mesos_group = list(fun = validate_string_rule(null_allowed = TRUE)),
+      hide_for_all_if_hidden_for_crowd = list(fun = validate_string_rule(null_allowed = TRUE)),
+      path = list(fun = validate_string_rule(null_allowed = TRUE)),
+      label_separator = list(fun = validate_character_vector_rule(null_allowed = TRUE)),
+      labels_always_at_top = list(fun = validate_character_vector_rule(null_allowed = TRUE)),
+      labels_always_at_bottom = list(fun = validate_character_vector_rule(null_allowed = TRUE)),
       font_family = list(fun = validate_string_rule()),
       data_label_decimal_symbol = list(fun = validate_string_rule()),
 

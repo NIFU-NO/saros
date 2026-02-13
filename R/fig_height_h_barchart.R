@@ -99,7 +99,7 @@ combine_figure_heights <- function(
 #' @param max_chars_cats_x Integer or NULL. Maximum number of characters across the independent variables' response categories (levels).
 #' @param freq Logical. If TRUE, frequency plot with categories next to each other. If FALSE (default), proportion plot with stacked categories.
 #' @param x_axis_label_width,strip_width Numeric. Width allocated for x-axis labels and strip labels respectively.
-#' @param strip_angle Integer. Angle of the strip text.
+#' @param strip_angle Numeric. Angle of the strip text.
 #' @param main_font_size Numeric. Font size for the main text.
 #' @param legend_location Character. Location of the legend. "plot" (default) or "panel".
 #' @param n_legend_lines Integer. Number of lines in the legend.

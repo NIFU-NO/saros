@@ -4,7 +4,14 @@
 \alias{validate_double_rule}
 \title{Create double validation rule}
 \usage{
-validate_double_rule(min = -Inf, max = Inf, null_ok = FALSE)
+validate_double_rule(min = -Inf, max = Inf, null_allowed = FALSE)
+}
+\arguments{
+\item{min}{Minimum allowed value (default -Inf)}
+
+\item{max}{Maximum allowed value (default Inf)}
+
+\item{null_allowed}{Whether NULL is an acceptable value (default FALSE)}
 }
 \description{
 Create double validation rule

@@ -4,7 +4,14 @@
 \alias{validate_integerish_rule}
 \title{Create integerish validation rule}
 \usage{
-validate_integerish_rule(min = -Inf, max = Inf, null_ok = FALSE)
+validate_integerish_rule(min = -Inf, max = Inf, null_allowed = FALSE)
+}
+\arguments{
+\item{min}{Minimum allowed value (default -Inf)}
+
+\item{max}{Maximum allowed value (default Inf)}
+
+\item{null_allowed}{Whether NULL is an acceptable value (default FALSE)}
 }
 \description{
 Create integerish validation rule

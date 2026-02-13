@@ -51,6 +51,13 @@ validate_integerish <- function(
 }
 
 #' Validate double/numeric parameter
+#'
+#' @param x Value to validate
+#' @param min Minimum allowed value (default -Inf)
+#' @param max Maximum allowed value (default Inf)
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @param call Calling environment for error messages
+#' @param arg Argument name for error messages
 #' @keywords internal
 validate_double <- function(
   x,
@@ -87,6 +94,11 @@ validate_double <- function(
 }
 
 #' Validate string parameter
+#'
+#' @param x Value to validate
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @param call Calling environment for error messages
+#' @param arg Argument name for error messages
 #' @keywords internal
 validate_string <- function(
   x,
@@ -111,22 +123,28 @@ check_string <- validate_string
 # Validation Rule Builders (for declarative validation) ----
 
 #' Create integerish validation rule
+#'
+#' @param min Minimum allowed value (default -Inf)
+#' @param max Maximum allowed value (default Inf)
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
 #' @keywords internal
-validate_integerish_rule <- function(min = -Inf, max = Inf, null_ok = FALSE) {
+validate_integerish_rule <- function(min = -Inf, max = Inf, null_allowed = FALSE) {
   function(x) {
-    if (null_ok && is.null(x)) return(TRUE)
-    rlang::is_integerish(x, n = 1, finite = TRUE) && 
-      x >= min && x <= max
+    if (null_allowed && is.null(x)) return(TRUE)
+    rlang::is_integerish(x, n = 1) && x >= min && x <= max
   }
 }
 
 #' Create double validation rule
+#'
+#' @param min Minimum allowed value (default -Inf)
+#' @param max Maximum allowed value (default Inf)
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
 #' @keywords internal
-validate_double_rule <- function(min = -Inf, max = Inf, null_ok = FALSE) {
+validate_double_rule <- function(min = -Inf, max = Inf, null_allowed = FALSE) {
   function(x) {
-    if (null_ok && is.null(x)) return(TRUE)
-    is.numeric(x) && length(x) == 1 && is.finite(x) && 
-      x >= min && x <= max
+    if (null_allowed && is.null(x)) return(TRUE)
+    is.numeric(x) && length(x) == 1 && x >= min && x <= max
   }
 }
 
@@ -139,11 +157,24 @@ validate_bool_rule <- function() {
 }
 
 #' Create string validation rule
+#'
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
 #' @keywords internal
-validate_string_rule <- function(null_ok = FALSE) {
+validate_string_rule <- function(null_allowed = FALSE) {
   function(x) {
-    if (null_ok && is.null(x)) return(TRUE)
+    if (null_allowed && is.null(x)) return(TRUE)
     rlang::is_string(x)
+  }
+}
+
+#' Create character vector validation rule
+#'
+#' @param null_allowed Whether NULL is an acceptable value (default FALSE)
+#' @keywords internal
+validate_character_vector_rule <- function(null_allowed = FALSE) {
+  function(x) {
+    if (null_allowed && is.null(x)) return(TRUE)
+    is.character(x)
   }
 }
 
@@ -194,7 +225,9 @@ validate_params <- function(params, spec, call = rlang::caller_env()) {
         call = call,
         arg = param_name
       ),
-      cli::cli_abort("Unknown validation type: {rules$type}", call = call)
+      {
+        cli::cli_abort("Unknown validation type: {rules$type}", call = call)
+      }
     )
   }
   invisible(TRUE)

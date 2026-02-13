@@ -11,6 +11,15 @@ validate_string(
   arg = rlang::caller_arg(x)
 )
 }
+\arguments{
+\item{x}{Value to validate}
+
+\item{null_allowed}{Whether NULL is an acceptable value (default FALSE)}
+
+\item{call}{Calling environment for error messages}
+
+\item{arg}{Argument name for error messages}
+}
 \description{
 Validate string parameter
 }
