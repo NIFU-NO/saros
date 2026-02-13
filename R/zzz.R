@@ -121,6 +121,7 @@ if (!exists(".saros.env")) {
     fig_height_h_barchart = fig_height_h_barchart,
     girafe = girafe,
     ggsaver = ggsaver,
+    get_fig_title_suffix_from_ggplot = get_fig_title_suffix_from_ggplot,
     txt_from_cat_mesos_plots = txt_from_cat_mesos_plots
   )
 
