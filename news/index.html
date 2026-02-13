@@ -58,7 +58,17 @@
 </ul></div>
 <div class="section level3">
 <h3 id="internal-improvements-1-6-1-9000">Internal Improvements<a class="anchor" aria-label="anchor" href="#internal-improvements-1-6-1-9000"></a></h3>
-<ul><li>Added <code><a href="../reference/is_int_plot_html.html">is_int_plot_html()</a></code> helper function to centralize detection logic for int_plot_html data structures, improving code maintainability and consistency across <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> and <code><a href="../reference/n_rng2.html">n_rng2()</a></code>
+<ul><li>
+<strong>Major refactoring of validation infrastructure</strong> (implements refactoring opportunities <a href="https://github.com/NIFU-NO/saros/issues/1" class="external-link">#1</a> and <a href="https://github.com/NIFU-NO/saros/issues/4" class="external-link">#4</a>):
+<ul><li>All validation functions now use consistent <code>validate_*</code> prefix for better discoverability via auto-complete (e.g., <code><a href="../reference/validate_bool.html">validate_bool()</a></code>, <code><a href="../reference/validate_integerish.html">validate_integerish()</a></code>, <code><a href="../reference/validate_double.html">validate_double()</a></code>, <code><a href="../reference/validate_string.html">validate_string()</a></code>)</li>
+<li>Added <code><a href="../reference/validate_params.html">validate_params()</a></code> helper function that consolidates multiple parameter validations into a single declarative call, reducing code duplication from 30+ lines to ~5 lines in <code><a href="../reference/fig_height_h_barchart.html">fig_height_h_barchart()</a></code>
+</li>
+<li>Created validation rule builders (<code><a href="../reference/validate_integerish_rule.html">validate_integerish_rule()</a></code>, <code><a href="../reference/validate_double_rule.html">validate_double_rule()</a></code>, <code><a href="../reference/validate_bool_rule.html">validate_bool_rule()</a></code>, <code><a href="../reference/validate_string_rule.html">validate_string_rule()</a></code>) for more expressive and maintainable validation specifications in <code>validate_makeme_options()</code>
+</li>
+<li>Maintained backwards compatibility with <code>check_*</code> aliases for existing code</li>
+<li>Improved code maintainability and readability across validation-heavy functions</li>
+</ul></li>
+<li>Added <code><a href="../reference/is_int_plot_html.html">is_int_plot_html()</a></code> helper function to centralize detection logic for int_plot_html data structures, improving code maintainability and consistency across <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> and <code><a href="../reference/n_rng2.html">n_rng2()</a></code>
 </li>
 </ul></div>
 </div>

@@ -32,11 +32,12 @@ ggsaver(
 
 - palette_codes:
 
-  Optional list of named character vectors with names being categories
-  and values being colours. Inherits from
+  Optional list of character vectors. Each vector contains colours.
+  Vectors can optionally be named, where names are categories and values
+  are colours. Inherits from
   [`girafe()`](https://nifu-no.github.io/saros/reference/girafe.md)
   global settings if not specified. The final character vector of the
-  list is taken as a final resort. Defaults to `NULL`.
+  list is used as a fallback. Defaults to `NULL`.
 
 - priority_palette_codes:
 

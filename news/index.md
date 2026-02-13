@@ -38,6 +38,33 @@
 
 ### Internal Improvements
 
+- **Major refactoring of validation infrastructure** (implements
+  refactoring opportunities
+  [\#1](https://github.com/NIFU-NO/saros/issues/1) and
+  [\#4](https://github.com/NIFU-NO/saros/issues/4)):
+  - All validation functions now use consistent `validate_*` prefix for
+    better discoverability via auto-complete (e.g.,
+    [`validate_bool()`](https://nifu-no.github.io/saros/reference/validate_bool.md),
+    [`validate_integerish()`](https://nifu-no.github.io/saros/reference/validate_integerish.md),
+    [`validate_double()`](https://nifu-no.github.io/saros/reference/validate_double.md),
+    [`validate_string()`](https://nifu-no.github.io/saros/reference/validate_string.md))
+  - Added
+    [`validate_params()`](https://nifu-no.github.io/saros/reference/validate_params.md)
+    helper function that consolidates multiple parameter validations
+    into a single declarative call, reducing code duplication from 30+
+    lines to ~5 lines in
+    [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart.md)
+  - Created validation rule builders
+    ([`validate_integerish_rule()`](https://nifu-no.github.io/saros/reference/validate_integerish_rule.md),
+    [`validate_double_rule()`](https://nifu-no.github.io/saros/reference/validate_double_rule.md),
+    [`validate_bool_rule()`](https://nifu-no.github.io/saros/reference/validate_bool_rule.md),
+    [`validate_string_rule()`](https://nifu-no.github.io/saros/reference/validate_string_rule.md))
+    for more expressive and maintainable validation specifications in
+    `validate_makeme_options()`
+  - Maintained backwards compatibility with `check_*` aliases for
+    existing code
+  - Improved code maintainability and readability across
+    validation-heavy functions
 - Added
   [`is_int_plot_html()`](https://nifu-no.github.io/saros/reference/is_int_plot_html.md)
   helper function to centralize detection logic for int_plot_html data

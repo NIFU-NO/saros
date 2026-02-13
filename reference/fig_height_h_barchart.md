@@ -90,7 +90,7 @@ fig_height_h_barchart(
 
 - strip_angle:
 
-  Integer. Angle of the strip text.
+  Numeric. Angle of the strip text.
 
 - main_font_size:
 

@@ -54,9 +54,10 @@ girafe(
 
 - palette_codes:
 
-  Optional list of named character vectors with names being categories
-  and values being colours. The final character vector of the list is
-  taken as a final resort. Defaults to `NULL`.
+  Optional list of character vectors. Each vector contains colours.
+  Vectors can optionally be named, where names are categories and values
+  are colours. The final character vector of the list is used as a
+  fallback. Defaults to `NULL`.
 
 - priority_palette_codes:
 

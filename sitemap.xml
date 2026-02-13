@@ -110,8 +110,18 @@
 <url><loc>https://nifu-no.github.io/saros/reference/tabular_read.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/tabular_write.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_bool.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_bool_rule.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_character_vector_rule.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_double.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_double_rule.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_integerish.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_integerish_rule.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_palette_params.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_params.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_single_dep_var.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_string.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_string_rule.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_type_specific_constraints.html</loc></url>
 </urlset>
 
