@@ -180,7 +180,7 @@ n_rng2 <- function(
   if (!".count_per_indep_group" %in% colnames(data)) {
     # Fallback: calculate N from the number of non-NA rows in the data
     # For int_plot_html plots, check .value (and indep if present)
-    if (".value" %in% colnames(data)) {
+    if (is_int_plot_html(data)) {
       # int_plot_html - calculate N per variable, then get range
       # Determine which columns to check for complete cases
       check_cols <- ".value"
