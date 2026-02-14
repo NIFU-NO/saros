@@ -62,3 +62,58 @@ testthat::test_that("make_link throws error if save function fails", {
     save_fn = save_fn
   ))
 })
+
+testthat::test_that("make_link respects save_fn argument and ignores global settings", {
+  testthat::skip_on_cran()
+  testthat::skip_if_not_installed("withr")
+
+  test_data <- data.frame(x = 1:5, y = 6:10)
+
+  withr::with_tempdir({
+    test_folder <- file.path(getwd(), "make_link_test")
+    dir.create(test_folder, showWarnings = FALSE)
+
+    # Global save_fn writes "global"
+    global_save_fn <- function(data, path) {
+      writeLines("global", path)
+    }
+
+    # Direct save_fn writes "direct"
+    direct_save_fn <- function(data, path) {
+      writeLines("direct", path)
+    }
+
+    # Set global settings for make_link
+    saros::global_settings_set(
+      fn_name = "make_link",
+      new = list(
+        folder = test_folder,
+        save_fn = global_save_fn,
+        file_suffix = ".txt"
+      ),
+      quiet = TRUE
+    )
+
+    # Call make_link with explicit save_fn - should use direct, not global
+    result <- saros::make_link(
+      test_data,
+      folder = test_folder,
+      save_fn = direct_save_fn,
+      file_suffix = ".txt"
+    )
+
+    testthat::expect_type(result, "character")
+    testthat::expect_s3_class(result, "AsIs")
+
+    # Check that direct function was used
+    files <- list.files(test_folder, pattern = "\\.txt$", full.names = TRUE)
+    testthat::expect_true(length(files) >= 1)
+    testthat::expect_equal(readLines(files[1]), "direct")
+
+    # Reset
+    saros::global_settings_reset(
+      fn_name = "make_link",
+      quiet = TRUE
+    )
+  })
+})

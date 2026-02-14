@@ -344,3 +344,178 @@ test_that("get_fig_title_suffix_from_ggplot direct args override global settings
     )
   })
 })
+
+test_that("get_fig_title_suffix_from_ggplot uses save_fns from global settings", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  withr::with_tempdir({
+    test_folder <- file.path(getwd(), "save_fns_test")
+    dir.create(test_folder, showWarnings = FALSE)
+
+    # Create custom save functions that write marker files
+    custom_fn1 <- function(data, path) {
+      writeLines("custom1", path)
+    }
+    custom_fn2 <- function(plot, path, ...) {
+      writeLines("custom2", path)
+    }
+
+    # Set global options with custom save_fns
+    saros::global_settings_set(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      new = list(
+        folder = test_folder,
+        file_suffixes = c(".txt", ".dat"),
+        link_prefixes = c("[File1](", "[File2]("),
+        save_fns = list(custom_fn1, custom_fn2)
+      ),
+      quiet = TRUE
+    )
+
+    # Call function without explicit save_fns
+    result <- saros::get_fig_title_suffix_from_ggplot(plot, save = TRUE)
+
+    expect_s3_class(result, "AsIs")
+    expect_true(grepl("\\[File1\\]", result))
+    expect_true(grepl("\\[File2\\]", result))
+    expect_true(grepl("\\.txt", result))
+    expect_true(grepl("\\.dat", result))
+
+    # Check that custom functions were used
+    files <- list.files(test_folder, full.names = TRUE)
+    expect_true(length(files) >= 2)
+
+    # Verify custom content
+    txt_file <- files[grepl("\\.txt$", files)][1]
+    dat_file <- files[grepl("\\.dat$", files)][1]
+    expect_equal(readLines(txt_file), "custom1")
+    expect_equal(readLines(dat_file), "custom2")
+
+    # Reset
+    saros::global_settings_reset(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      quiet = TRUE
+    )
+  })
+})
+
+test_that("get_fig_title_suffix_from_ggplot direct save_fns override global settings", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  withr::with_tempdir({
+    test_folder <- file.path(getwd(), "override_test")
+    dir.create(test_folder, showWarnings = FALSE)
+
+    # Global save functions
+    global_fn1 <- function(data, path) {
+      writeLines("global1", path)
+    }
+    global_fn2 <- function(plot, path, ...) {
+      writeLines("global2", path)
+    }
+
+    # Direct save functions
+    direct_fn1 <- function(data, path) {
+      writeLines("direct1", path)
+    }
+    direct_fn2 <- function(plot, path, ...) {
+      writeLines("direct2", path)
+    }
+
+    # Set global options
+    saros::global_settings_set(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      new = list(
+        folder = test_folder,
+        file_suffixes = c(".txt", ".dat"),
+        link_prefixes = c("[File1](", "[File2]("),
+        save_fns = list(global_fn1, global_fn2)
+      ),
+      quiet = TRUE
+    )
+
+    # Override with direct save_fns
+    result <- saros::get_fig_title_suffix_from_ggplot(
+      plot,
+      save = TRUE,
+      folder = test_folder,
+      save_fns = list(direct_fn1, direct_fn2)
+    )
+
+    expect_s3_class(result, "AsIs")
+
+    # Check that direct functions were used, not global
+    files <- list.files(test_folder, full.names = TRUE)
+    expect_true(length(files) >= 2)
+
+    # Verify direct content, not global
+    txt_file <- files[grepl("\\.txt$", files)][1]
+    dat_file <- files[grepl("\\.dat$", files)][1]
+    expect_equal(readLines(txt_file), "direct1")
+    expect_equal(readLines(dat_file), "direct2")
+
+    # Reset
+    saros::global_settings_reset(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      quiet = TRUE
+    )
+  })
+})
+
+test_that("get_fig_title_suffix_from_ggplot works with custom xlsx save function", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+  skip_if_not_installed("writexl")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  withr::with_tempdir({
+    test_folder <- file.path(getwd(), "xlsx_test")
+    dir.create(test_folder, showWarnings = FALSE)
+
+    # Custom XLSX save function (simplified version of user's function)
+    write_custom_xlsx <- function(data, path) {
+      if (is.data.frame(data)) {
+        writexl::write_xlsx(data, path)
+      }
+    }
+
+    # Set global options with PNG and XLSX functions
+    saros::global_settings_set(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      new = list(
+        folder = test_folder,
+        file_suffixes = c(".png", ".xlsx"),
+        link_prefixes = c("[PNG](", "[XLSX]("),
+        save_fns = list(saros::ggsaver, write_custom_xlsx)
+      ),
+      quiet = TRUE
+    )
+
+    # Call function
+    result <- saros::get_fig_title_suffix_from_ggplot(plot, save = TRUE)
+
+    expect_s3_class(result, "AsIs")
+    expect_true(grepl("\\[PNG\\]", result))
+    expect_true(grepl("\\[XLSX\\]", result))
+    expect_true(grepl("\\.png", result))
+    expect_true(grepl("\\.xlsx", result))
+
+    # Check that both files were created
+    files <- list.files(test_folder)
+    expect_true(any(grepl("\\.png$", files)))
+    expect_true(any(grepl("\\.xlsx$", files)))
+
+    # Reset
+    saros::global_settings_reset(
+      fn_name = "get_fig_title_suffix_from_ggplot",
+      quiet = TRUE
+    )
+  })
+})
