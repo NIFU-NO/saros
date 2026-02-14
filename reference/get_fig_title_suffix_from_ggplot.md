@@ -11,9 +11,11 @@ get_fig_title_suffix_from_ggplot(
   plot,
   save = FALSE,
   n_equals_string = "N = ",
+  folder = NULL,
+  file_prefix = NULL,
   file_suffixes = c(".csv", ".png"),
   link_prefixes = c("[CSV](", "[PNG]("),
-  save_fns = list(utils::write.csv, ggsaver),
+  save_fns = NULL,
   sep = ", "
 )
 ```
@@ -35,15 +37,27 @@ get_fig_title_suffix_from_ggplot(
 
   String. Prefix text for the sample size display (default: `"N = "`).
 
+- folder:
+
+  String. Folder path where files should be saved. If `NULL`, uses
+  global settings or defaults to `"."` (current directory).
+
+- file_prefix:
+
+  String. Prefix for saved filenames. If `NULL`, uses global settings or
+  defaults to `""` (no prefix).
+
 - file_suffixes:
 
   Character vector. File extensions for the saved plot images (default:
-  `".png"`). Should include the dot.
+  `c(".csv", ".png")`). Should include the dot. (default:
+  `c(".csv", ".png")`). Should include the dot.
 
 - link_prefixes:
 
   Character vector. Markdown link text prefixes for the plot download
-  links (default: `"[PNG]("`).
+  links (default: `c("[CSV](", "[PNG](")`). (default:
+  `c("[CSV](", "[PNG](")`).
 
 - save_fns:
 

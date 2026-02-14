@@ -18,6 +18,17 @@
   or direct
   [`ggsaver()`](https://nifu-no.github.io/saros/reference/ggsaver.md)
   calls
+- Added `folder` and `file_prefix` parameters to
+  [`get_fig_title_suffix_from_ggplot()`](https://nifu-no.github.io/saros/reference/get_fig_title_suffix_from_ggplot.md)
+  for controlling where files are saved and what prefix to use for
+  filenames
+- Enhanced
+  [`get_fig_title_suffix_from_ggplot()`](https://nifu-no.github.io/saros/reference/get_fig_title_suffix_from_ggplot.md)
+  to support global settings inheritance via
+  [`global_settings_set()`](https://nifu-no.github.io/saros/reference/global_settings_set.md),
+  consistent with other saros functions like
+  [`make_link()`](https://nifu-no.github.io/saros/reference/make_link.md)
+  and [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md)
 
 ### Bug Fixes
 
