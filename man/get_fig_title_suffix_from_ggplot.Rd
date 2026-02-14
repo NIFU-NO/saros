@@ -32,9 +32,11 @@ settings or defaults to \code{"."} (current directory).}
 settings or defaults to \code{""} (no prefix).}
 
 \item{file_suffixes}{Character vector. File extensions for the saved plot images
+(default: \code{c(".csv", ".png")}). Should include the dot.
 (default: \code{c(".csv", ".png")}). Should include the dot.}
 
 \item{link_prefixes}{Character vector. Markdown link text prefixes for the plot download links
+(default: \code{c("[CSV](", "[PNG](")}).
 (default: \code{c("[CSV](", "[PNG](")}).}
 
 \item{save_fns}{List of functions. Functions to save the plot data and images.}

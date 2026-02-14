@@ -14,10 +14,6 @@
 #'   settings or defaults to `"."` (current directory).
 #' @param file_prefix String. Prefix for saved filenames. If `NULL`, uses global
 #'   settings or defaults to `""` (no prefix).
-#' @param folder String. Folder path where files should be saved. If `NULL`, uses global
-#'   settings or defaults to `"."` (current directory).
-#' @param file_prefix String. Prefix for saved filenames. If `NULL`, uses global
-#'   settings or defaults to `""` (no prefix).
 #' @param file_suffixes Character vector. File extensions for the saved plot images
 #'   (default: `c(".csv", ".png")`). Should include the dot.
 #'   (default: `c(".csv", ".png")`). Should include the dot.
@@ -79,11 +75,8 @@ get_fig_title_suffix_from_ggplot <- function(
   n_equals_string = "N = ",
   folder = NULL,
   file_prefix = NULL,
-  folder = NULL,
-  file_prefix = NULL,
   file_suffixes = c(".csv", ".png"),
   link_prefixes = c("[CSV](", "[PNG]("),
-  save_fns = NULL,
   save_fns = NULL,
   sep = ", "
 ) {
@@ -116,15 +109,9 @@ get_fig_title_suffix_from_ggplot <- function(
 
   if (length(args$save_fns) == 1 && rlang::is_function(args$save_fns)) {
     args$save_fns <- list(args$save_fns)
-  if (length(args$save_fns) == 1 && rlang::is_function(args$save_fns)) {
-    args$save_fns <- list(args$save_fns)
   }
 
   # Validate that vectorized parameters have matching lengths
-  if (isTRUE(args$save)) {
-    len_suffixes <- length(args$file_suffixes)
-    len_prefixes <- length(args$link_prefixes)
-    len_fns <- length(args$save_fns)
   if (isTRUE(args$save)) {
     len_suffixes <- length(args$file_suffixes)
     len_prefixes <- length(args$link_prefixes)
@@ -147,12 +134,6 @@ get_fig_title_suffix_from_ggplot <- function(
       if (
         args$file_suffixes[i] %in% c(".png", ".jpg", ".jpeg", ".pdf", ".svg")
       ) {
-  x <- stringi::stri_c(args$n_equals_string, n_range2(plot))
-  if (isTRUE(args$save)) {
-    links <- lapply(seq_along(args$file_suffixes), function(i) {
-      if (
-        args$file_suffixes[i] %in% c(".png", ".jpg", ".jpeg", ".pdf", ".svg")
-      ) {
         dat <- plot
       } else {
         dat <- plot$data
@@ -164,15 +145,9 @@ get_fig_title_suffix_from_ggplot <- function(
         file_suffix = args$file_suffixes[i],
         link_prefix = args$link_prefixes[i],
         save_fn = args$save_fns[[i]]
-        folder = args$folder,
-        file_prefix = args$file_prefix,
-        file_suffix = args$file_suffixes[i],
-        link_prefix = args$link_prefixes[i],
-        save_fn = args$save_fns[[i]]
       )
     }) |>
       unlist()
-    I(paste0(c(x, links), collapse = args$sep))
     I(paste0(c(x, links), collapse = args$sep))
   } else {
     I(x)
