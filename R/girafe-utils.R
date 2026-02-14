@@ -124,11 +124,15 @@ build_custom_palette <- function(
 guess_legend_ncols <- function(ggobj, char_limit = 100) {
   fill_var <- rlang::as_label(ggobj$mapping$fill)
   if (!is.null(fill_var)) {
-    lvls <- as.character(unique(ggobj$data[[fill_var]]))
-    max_chars <- max(nchar(lvls), na.rm = TRUE)
-    for (i in 2:15) {
-      if ((max_chars + 5) * i >= char_limit) {
-        return(i - 1)
+    # Use get_fill_levels to handle expressions like factor(cyl)
+    lvls <- get_fill_levels(ggobj)
+    if (!is.null(lvls) && length(lvls) > 0) {
+      lvls <- as.character(lvls)
+      max_chars <- max(nchar(lvls), na.rm = TRUE)
+      for (i in 2:15) {
+        if ((max_chars + 5) * i >= char_limit) {
+          return(i - 1)
+        }
       }
     }
   }

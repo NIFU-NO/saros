@@ -217,7 +217,6 @@ test_that("get_fig_title_suffix_from_ggplot validates vector length matching", {
 test_that("get_fig_title_suffix_from_ggplot respects folder argument", {
   skip_on_cran()
   skip_if_not_installed("withr")
-  skip_if_not_installed("fs")
 
   plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
 

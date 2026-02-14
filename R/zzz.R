@@ -101,7 +101,6 @@ if (!exists(".saros.env")) {
     "data",
     "plot",
     "plots",
-    "plot",
     "filename",
     "dep",
     "indep",
