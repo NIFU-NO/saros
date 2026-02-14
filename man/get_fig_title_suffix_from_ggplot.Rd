@@ -8,9 +8,11 @@ get_fig_title_suffix_from_ggplot(
   plot,
   save = FALSE,
   n_equals_string = "N = ",
+  folder = NULL,
+  file_prefix = NULL,
   file_suffixes = c(".csv", ".png"),
   link_prefixes = c("[CSV](", "[PNG]("),
-  save_fns = list(utils::write.csv, ggsaver),
+  save_fns = NULL,
   sep = ", "
 )
 }
@@ -23,11 +25,19 @@ and plot image (PNG). If \code{FALSE} (default), only returns the N range text.}
 \item{n_equals_string}{String. Prefix text for the sample size display
 (default: \code{"N = "}).}
 
+\item{folder}{String. Folder path where files should be saved. If \code{NULL}, uses global
+settings or defaults to \code{"."} (current directory).}
+
+\item{file_prefix}{String. Prefix for saved filenames. If \code{NULL}, uses global
+settings or defaults to \code{""} (no prefix).}
+
 \item{file_suffixes}{Character vector. File extensions for the saved plot images
-(default: \code{".png"}). Should include the dot.}
+(default: \code{c(".csv", ".png")}). Should include the dot.
+(default: \code{c(".csv", ".png")}). Should include the dot.}
 
 \item{link_prefixes}{Character vector. Markdown link text prefixes for the plot download links
-(default: \code{"[PNG]("}).}
+(default: \code{c("[CSV](", "[PNG](")}).
+(default: \code{c("[CSV](", "[PNG](")}).}
 
 \item{save_fns}{List of functions. Functions to save the plot data and images.}
 

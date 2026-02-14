@@ -10,10 +10,16 @@
 #'   and plot image (PNG). If `FALSE` (default), only returns the N range text.
 #' @param n_equals_string String. Prefix text for the sample size display
 #'   (default: `"N = "`).
+#' @param folder String. Folder path where files should be saved. If `NULL`, uses global
+#'   settings or defaults to `"."` (current directory).
+#' @param file_prefix String. Prefix for saved filenames. If `NULL`, uses global
+#'   settings or defaults to `""` (no prefix).
 #' @param file_suffixes Character vector. File extensions for the saved plot images
-#'   (default: `".png"`). Should include the dot.
+#'   (default: `c(".csv", ".png")`). Should include the dot.
+#'   (default: `c(".csv", ".png")`). Should include the dot.
 #' @param link_prefixes Character vector. Markdown link text prefixes for the plot download links
-#'   (default: `"[PNG]("`).
+#'   (default: `c("[CSV](", "[PNG](")`).
+#'   (default: `c("[CSV](", "[PNG](")`).
 #' @param save_fns List of functions. Functions to save the plot data and images.
 #' @param sep String. Separator between N range text and download links
 #'   (default: `", "`).
@@ -67,11 +73,31 @@ get_fig_title_suffix_from_ggplot <- function(
   plot,
   save = FALSE,
   n_equals_string = "N = ",
+  folder = NULL,
+  file_prefix = NULL,
   file_suffixes = c(".csv", ".png"),
   link_prefixes = c("[CSV](", "[PNG]("),
-  save_fns = list(utils::write.csv, ggsaver),
+  save_fns = NULL,
   sep = ", "
 ) {
+  # Check global options and merge with arguments
+  args <- check_options(
+    call = match.call(),
+    ignore_args = c(.saros.env$ignore_args, "plot"),
+    defaults_env = global_settings_get(
+      fn_name = "get_fig_title_suffix_from_ggplot"
+    ),
+    default_values = formals(get_fig_title_suffix_from_ggplot)
+  )
+
+  # Handle save_fns separately since it's in ignore_args
+  # Get it from the function call directly, or use default
+  if (missing(save_fns)) {
+    args$save_fns <- list(utils::write.csv, ggsaver)
+  } else {
+    args$save_fns <- save_fns
+  }
+
   # Validate plot and data
   if (!ggplot2::is_ggplot(plot)) {
     return(I(""))
@@ -81,15 +107,15 @@ get_fig_title_suffix_from_ggplot <- function(
     return(I(""))
   }
 
-  if (length(save_fns) == 1 && rlang::is_function(save_fns)) {
-    save_fns <- list(save_fns)
+  if (length(args$save_fns) == 1 && rlang::is_function(args$save_fns)) {
+    args$save_fns <- list(args$save_fns)
   }
 
   # Validate that vectorized parameters have matching lengths
-  if (isTRUE(save)) {
-    len_suffixes <- length(file_suffixes)
-    len_prefixes <- length(link_prefixes)
-    len_fns <- length(save_fns)
+  if (isTRUE(args$save)) {
+    len_suffixes <- length(args$file_suffixes)
+    len_prefixes <- length(args$link_prefixes)
+    len_fns <- length(args$save_fns)
 
     if (len_suffixes != len_prefixes || len_suffixes != len_fns) {
       cli::cli_abort(c(
@@ -102,23 +128,27 @@ get_fig_title_suffix_from_ggplot <- function(
     }
   }
 
-  x <- stringi::stri_c(n_equals_string, n_range2(plot))
-  if (isTRUE(save)) {
-    links <- lapply(seq_along(file_suffixes), function(i) {
-      if (file_suffixes[i] %in% c(".png", ".jpg", ".jpeg", ".pdf", ".svg")) {
+  x <- stringi::stri_c(args$n_equals_string, n_range2(plot))
+  if (isTRUE(args$save)) {
+    links <- lapply(seq_along(args$file_suffixes), function(i) {
+      if (
+        args$file_suffixes[i] %in% c(".png", ".jpg", ".jpeg", ".pdf", ".svg")
+      ) {
         dat <- plot
       } else {
         dat <- plot$data
       }
       make_link(
         data = dat,
-        file_suffix = file_suffixes[i],
-        link_prefix = link_prefixes[i],
-        save_fn = save_fns[[i]]
+        folder = args$folder,
+        file_prefix = args$file_prefix,
+        file_suffix = args$file_suffixes[i],
+        link_prefix = args$link_prefixes[i],
+        save_fn = args$save_fns[[i]]
       )
     }) |>
       unlist()
-    I(paste0(c(x, links), collapse = sep))
+    I(paste0(c(x, links), collapse = args$sep))
   } else {
     I(x)
   }

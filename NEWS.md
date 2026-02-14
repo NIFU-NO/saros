@@ -2,6 +2,8 @@
 
 ## New Features
 -   Enhanced `ggsaver()` to automatically apply colour palettes from `girafe()` global settings when saving plots. This ensures saved PNG/PDF images match the appearance of interactive plots displayed with `girafe()`. Palette settings can be configured via `global_settings_set(fn_name = "girafe", new = list(palette_codes = ...))` and will be automatically applied when saving plots through `get_fig_title_suffix_from_ggplot()` or direct `ggsaver()` calls
+-   Added `folder` and `file_prefix` parameters to `get_fig_title_suffix_from_ggplot()` for controlling where files are saved and what prefix to use for filenames
+-   Enhanced `get_fig_title_suffix_from_ggplot()` to support global settings inheritance via `global_settings_set()`, consistent with other saros functions like `make_link()` and `makeme()`
 
 ## Bug Fixes
 -   Fixed `fig_height_h_barchart2()` to properly handle `int_plot_html` plots with independent variables. The function now forwards to `fig_height_h_barchart()` with appropriate parameters for interval plots, returning the `max` parameter value (default 12) while allowing user customization, instead of erroring with "only supports a single indep variable"
