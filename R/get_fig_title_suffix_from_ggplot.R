@@ -83,19 +83,26 @@ get_fig_title_suffix_from_ggplot <- function(
   # Check global options and merge with arguments
   args <- check_options(
     call = match.call(),
-    ignore_args = c(.saros.env$ignore_args, "plot"),
+    ignore_args = c(.saros.env$ignore_args, "plot", "save_fns"),
     defaults_env = global_settings_get(
       fn_name = "get_fig_title_suffix_from_ggplot"
     ),
     default_values = formals(get_fig_title_suffix_from_ggplot)
   )
 
-  # Handle save_fns separately since it's in ignore_args
-  # Get it from the function call directly, or use default
-  if (missing(save_fns)) {
-    args$save_fns <- list(utils::write.csv, ggsaver)
-  } else {
+  # Handle save_fns manually to preserve list structure
+  if (!is.null(save_fns)) {
+    # Use explicitly provided save_fns
     args$save_fns <- save_fns
+  } else {
+    # Try to get from global settings
+    global_save_fns <- global_settings_get("get_fig_title_suffix_from_ggplot")[["save_fns"]]
+    if (!is.null(global_save_fns)) {
+      args$save_fns <- global_save_fns
+    } else {
+      # Use defaults
+      args$save_fns <- list(utils::write.csv, ggsaver)
+    }
   }
 
   # Validate plot and data

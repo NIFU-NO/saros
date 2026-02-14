@@ -141,10 +141,13 @@ make_link.default <- function(
   args <-
     check_options(
       call = match.call(),
-      ignore_args = .saros.env$ignore_args,
+      ignore_args = c(.saros.env$ignore_args, "save_fn"),
       defaults_env = global_settings_get(fn_name = "make_link"),
       default_values = formals(make_link.default)
     )
+
+  # Use the save_fn passed as argument (not from global settings)
+  args$save_fn <- save_fn
 
   if (!rlang::is_string(args$folder)) {
     args$folder <- "."
