@@ -162,6 +162,49 @@ test_that("get_fig_title_suffix_from_ggplot handles custom file_suffix", {
   })
 })
 
+test_that("get_fig_title_suffix_from_ggplot works with single PNG output", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+
+  plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
+
+  withr::with_tempdir({
+    test_folder <- file.path(getwd(), "png_test")
+    dir.create(test_folder, showWarnings = FALSE)
+
+    result <- saros::get_fig_title_suffix_from_ggplot(
+      plot,
+      save = TRUE,
+      folder = test_folder,
+      file_suffixes = ".png",
+      link_prefixes = "[PNG](",
+      save_fns = list(saros::ggsaver)
+    )
+
+    expect_s3_class(result, "AsIs")
+    expect_type(result, "character")
+
+    # Should contain N range
+    expect_true(grepl("^N = \\d+", result))
+
+    # Should contain exactly one link with PNG extension
+    expect_true(grepl("\\[PNG\\]\\(", result))
+    expect_true(grepl("\\.png\\)", result))
+
+    # Should NOT contain CSV link
+    expect_false(grepl("\\[CSV\\]", result))
+    expect_false(grepl("\\.csv", result))
+
+    # Verify PNG file was created
+    png_files <- list.files(test_folder, pattern = "\\.png$")
+    expect_true(length(png_files) == 1)
+
+    # Verify no CSV file was created
+    csv_files <- list.files(test_folder, pattern = "\\.csv$")
+    expect_equal(length(csv_files), 0)
+  })
+})
+
 test_that("get_fig_title_suffix_from_ggplot with save = FALSE doesn't create files", {
   plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
 
@@ -217,7 +260,6 @@ test_that("get_fig_title_suffix_from_ggplot validates vector length matching", {
 test_that("get_fig_title_suffix_from_ggplot respects folder argument", {
   skip_on_cran()
   skip_if_not_installed("withr")
-  skip_if_not_installed("fs")
 
   plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
 
