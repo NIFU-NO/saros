@@ -46,6 +46,14 @@
   instead of total count across all variables. Now correctly calculates
   sample size separately for each variable and reports the range (e.g.,
   \[250-299\] when variables have different amounts of missing data)
+- Fixed `guess_legend_ncols()` in
+  [`girafe()`](https://nifu-no.github.io/saros/reference/girafe.md) to
+  properly handle fill aesthetics using expressions like
+  `fill = factor(cyl)`. The function now uses
+  [`get_fill_levels()`](https://nifu-no.github.io/saros/reference/get_fill_levels.md)
+  to evaluate expressions in data context instead of direct column
+  access, preventing “no non-missing arguments to max; returning -Inf”
+  warnings
 
 ### Internal Improvements
 
