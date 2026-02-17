@@ -60,7 +60,7 @@ metadata (for DOCX, PPTX, PDF files) or uses the filename as fallback.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">make_file_links</span><span class="op">(</span></span>
 <span>  folder <span class="op">=</span> <span class="st">"."</span>,</span>
-<span>  pattern <span class="op">=</span> <span class="st">"*"</span>,</span>
+<span>  pattern <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  bullet_style <span class="op">=</span> <span class="st">"-"</span>,</span>
 <span>  recurse <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  relative_links <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -77,8 +77,8 @@ directory (<code>"."</code>).</p></dd>
 
 
 <dt id="arg-pattern">pattern<a class="anchor" aria-label="anchor" href="#arg-pattern"></a></dt>
-<dd><p>String. Glob pattern for file matching (e.g., <code>"*.pptx"</code>,
-<code>"*.pdf"</code>, <code>"report_*.docx"</code>). Defaults to <code>"*"</code> (all files).</p></dd>
+<dd><p>String. Regular expression pattern for file matching (e.g., <code>"\\.pptx$"</code>,
+<code>"\\.pdf$"</code>, <code>"^report_.*\\.docx$"</code>). Defaults to <code>""</code> (all files).</p></dd>
 
 
 <dt id="arg-bullet-style">bullet_style<a class="anchor" aria-label="anchor" href="#arg-bullet-style"></a></dt>
@@ -92,8 +92,8 @@ Defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-relative-links">relative_links<a class="anchor" aria-label="anchor" href="#arg-relative-links"></a></dt>
-<dd><p>Logical. Whether to use relative paths in links.
-If <code>TRUE</code>, paths are relative to <code>folder</code>. If <code>FALSE</code>, uses basename only.
+<dd><p>Logical. Whether to use relative or absolute paths in links.
+If <code>TRUE</code>, paths are relative to <code>folder</code>. If <code>FALSE</code>, uses absolute paths.
 Defaults to <code>TRUE</code>.</p></dd>
 
 </dl></div>
@@ -124,19 +124,19 @@ which typically sorts alphabetically.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Create links to all PowerPoint files in a folder</span></span></span>
-<span class="r-in"><span><span class="fu">make_file_links</span><span class="op">(</span>folder <span class="op">=</span> <span class="st">"presentations"</span>, pattern <span class="op">=</span> <span class="st">"*.pptx"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">make_file_links</span><span class="op">(</span>folder <span class="op">=</span> <span class="st">"presentations"</span>, pattern <span class="op">=</span> <span class="st">"\\.pptx$"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create links to PDF reports with numbered list</span></span></span>
 <span class="r-in"><span><span class="fu">make_file_links</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  folder <span class="op">=</span> <span class="st">"reports"</span>,</span></span>
-<span class="r-in"><span>  pattern <span class="op">=</span> <span class="st">"report_*.pdf"</span>,</span></span>
+<span class="r-in"><span>  pattern <span class="op">=</span> <span class="st">"^report_.*\\.pdf$"</span>,</span></span>
 <span class="r-in"><span>  bullet_style <span class="op">=</span> <span class="st">"1."</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Recursively find all Office documents</span></span></span>
 <span class="r-in"><span><span class="fu">make_file_links</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  folder <span class="op">=</span> <span class="st">"documents"</span>,</span></span>
-<span class="r-in"><span>  pattern <span class="op">=</span> <span class="st">"*.{docx,pptx}"</span>,</span></span>
+<span class="r-in"><span>  pattern <span class="op">=</span> <span class="st">"\\.(docx|pptx)$"</span>,</span></span>
 <span class="r-in"><span>  recurse <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

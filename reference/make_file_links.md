@@ -10,7 +10,7 @@ filename as fallback.
 ``` r
 make_file_links(
   folder = ".",
-  pattern = "*",
+  pattern = "",
   bullet_style = "-",
   recurse = FALSE,
   relative_links = TRUE
@@ -26,8 +26,9 @@ make_file_links(
 
 - pattern:
 
-  String. Glob pattern for file matching (e.g., `"*.pptx"`, `"*.pdf"`,
-  `"report_*.docx"`). Defaults to `"*"` (all files).
+  String. Regular expression pattern for file matching (e.g.,
+  `"\\.pptx$"`, `"\\.pdf$"`, `"^report_.*\\.docx$"`). Defaults to `""`
+  (all files).
 
 - bullet_style:
 
@@ -41,9 +42,9 @@ make_file_links(
 
 - relative_links:
 
-  Logical. Whether to use relative paths in links. If `TRUE`, paths are
-  relative to `folder`. If `FALSE`, uses basename only. Defaults to
-  `TRUE`.
+  Logical. Whether to use relative or absolute paths in links. If
+  `TRUE`, paths are relative to `folder`. If `FALSE`, uses absolute
+  paths. Defaults to `TRUE`.
 
 ## Value
 
@@ -81,19 +82,19 @@ title extraction.
 ``` r
 if (FALSE) { # \dontrun{
 # Create links to all PowerPoint files in a folder
-make_file_links(folder = "presentations", pattern = "*.pptx")
+make_file_links(folder = "presentations", pattern = "\\.pptx$")
 
 # Create links to PDF reports with numbered list
 make_file_links(
   folder = "reports",
-  pattern = "report_*.pdf",
+  pattern = "^report_.*\\.pdf$",
   bullet_style = "1."
 )
 
 # Recursively find all Office documents
 make_file_links(
   folder = "documents",
-  pattern = "*.{docx,pptx}",
+  pattern = "\\.(docx|pptx)$",
   recurse = TRUE
 )
 } # }
