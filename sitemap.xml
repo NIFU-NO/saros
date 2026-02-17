@@ -39,8 +39,14 @@
 <url><loc>https://nifu-no.github.io/saros/reference/embed_cat_prop_plot.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/embed_cat_table.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/embed_chr_table_html.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/escape_markdown.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/escape_markdown_link.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/evaluate_variable_selection.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/ex_survey.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/extract_document_title.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/extract_docx_title.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/extract_pdf_title.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/extract_pptx_title.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/fig_height_h_barchart.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/filter_crowd_data.html</loc></url>
@@ -73,6 +79,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/is_int_plot_html.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/is_string.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/make_content.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/make_file_links.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/make_link.default.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/make_link.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/make_link.list.html</loc></url>

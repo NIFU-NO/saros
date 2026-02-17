@@ -44,6 +44,9 @@ specified.
 - [`make_link(`*`<list>`*`)`](https://nifu-no.github.io/saros/reference/make_link.list.md)
   : Save data to a file and return a Markdown link
 
+- [`make_file_links()`](https://nifu-no.github.io/saros/reference/make_file_links.md)
+  : Create Markdown Links to Files with Document Titles
+
 - [`ggsaver()`](https://nifu-no.github.io/saros/reference/ggsaver.md) :
 
   Wrapper Function for

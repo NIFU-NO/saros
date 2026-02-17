@@ -4,6 +4,14 @@
 
 ### New Features
 
+- Added
+  [`make_file_links()`](https://nifu-no.github.io/saros/reference/make_file_links.md)
+  function for dynamically creating markdown lists with links to files.
+  Extracts document titles from DOCX, PPTX, and PDF file metadata and
+  generates formatted markdown lists. Ideal for creating navigation
+  links in Quarto/RMarkdown documents that point to generated reports in
+  a folder. Supports glob patterns, recursive search, and customizable
+  list formatting (unordered or numbered)
 - Enhanced
   [`ggsaver()`](https://nifu-no.github.io/saros/reference/ggsaver.md) to
   automatically apply colour palettes from
