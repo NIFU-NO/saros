@@ -13,7 +13,7 @@ test_that("make_file_links creates markdown list for files", {
     file.create(file.path(test_folder, "report.pdf"))
 
     # Test basic functionality
-    result <- make_file_links(folder = test_folder, pattern = "*.txt")
+    result <- make_file_links(folder = test_folder, pattern = "\\.txt$")
 
     expect_type(result, "character")
     expect_true(grepl("file1", result))
@@ -78,7 +78,7 @@ test_that("make_file_links warns when no files found", {
     dir.create(test_folder)
 
     expect_warning(
-      result <- make_file_links(folder = test_folder, pattern = "*.xyz"),
+      result <- make_file_links(folder = test_folder, pattern = "\\.xyz$"),
       "No files found"
     )
     expect_equal(result, "")
@@ -99,7 +99,7 @@ test_that("make_file_links handles recursive search", {
     # Non-recursive should only find file1
     result_non_rec <- make_file_links(
       folder = "docs",
-      pattern = "*.txt",
+      pattern = "\\.txt$",
       recurse = FALSE
     )
     expect_true(grepl("file1", result_non_rec))
@@ -108,7 +108,7 @@ test_that("make_file_links handles recursive search", {
     # Recursive should find both
     result_rec <- make_file_links(
       folder = "docs",
-      pattern = "*.txt",
+      pattern = "\\.txt$",
       recurse = TRUE
     )
     expect_true(grepl("file1", result_rec))
@@ -128,9 +128,15 @@ test_that("make_file_links handles relative_links parameter", {
     result_rel <- make_file_links(folder = "docs", relative_links = TRUE)
     expect_true(grepl("\\[report\\]\\(report\\.txt\\)", result_rel))
 
-    # With basename only
-    result_base <- make_file_links(folder = "docs", relative_links = FALSE)
-    expect_true(grepl("\\[report\\]\\(report\\.txt\\)", result_base))
+    # With absolute links
+    result_abs <- make_file_links(folder = "docs", relative_links = FALSE)
+    # Should contain full path
+    expect_true(grepl("\\[report\\]\\(", result_abs))
+    expect_true(
+      grepl("docs", result_abs) ||
+        grepl("/", result_abs) ||
+        grepl("\\\\", result_abs)
+    )
   })
 })
 
@@ -190,7 +196,7 @@ test_that("make_file_links works with DOCX files if officer is available", {
     docx_path <- file.path(test_folder, "test_doc.docx")
     print(doc, target = docx_path)
 
-    result <- make_file_links(folder = test_folder, pattern = "*.docx")
+    result <- make_file_links(folder = test_folder, pattern = "\\.docx$")
 
     expect_type(result, "character")
     expect_true(grepl("My Test Document", result) || grepl("test_doc", result))
@@ -217,7 +223,7 @@ test_that("make_file_links works with PPTX files if officer is available", {
     pptx_path <- file.path(test_folder, "slides.pptx")
     print(pres, target = pptx_path)
 
-    result <- make_file_links(folder = test_folder, pattern = "*.pptx")
+    result <- make_file_links(folder = test_folder, pattern = "\\.pptx$")
 
     expect_type(result, "character")
     expect_true(grepl("My Presentation", result) || grepl("slides", result))
@@ -240,7 +246,7 @@ test_that("make_file_links handles empty or whitespace titles", {
     docx_path <- file.path(test_folder, "empty_title.docx")
     print(doc, target = docx_path)
 
-    result <- make_file_links(folder = test_folder, pattern = "*.docx")
+    result <- make_file_links(folder = test_folder, pattern = "\\.docx$")
 
     # Should fall back to filename
     expect_true(grepl("empty_title", result))
