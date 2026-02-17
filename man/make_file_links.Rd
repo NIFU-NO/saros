@@ -42,9 +42,9 @@ metadata (for DOCX, PPTX, PDF files) or uses the filename as fallback.
 \details{
 The function attempts to extract document titles from file metadata:
 \itemize{
-\item \strong{DOCX files}: Extracts title from document properties using \code{officer}
-\item \strong{PPTX files}: Extracts title from presentation properties using \code{officer}
-\item \strong{PDF files}: Extracts title from PDF metadata using \code{pdftools}
+\item \strong{DOCX files}: Extracts title from document properties (requires \code{officer} package)
+\item \strong{PPTX files}: Extracts title from presentation properties (requires \code{officer} package)
+\item \strong{PDF files}: Extracts title from PDF metadata (requires \code{pdftools} package)
 }
 
 If title extraction fails or the file type is unsupported, the filename
@@ -53,14 +53,9 @@ If title extraction fails or the file type is unsupported, the filename
 The function preserves the order of files as returned by \code{fs::dir_ls()},
 which typically sorts alphabetically.
 }
-\section{Dependencies}{
+\section{Optional Packages}{
 
-\itemize{
-\item Requires \code{officer} package for DOCX/PPTX title extraction
-\item Requires \code{pdftools} package for PDF title extraction
-\item These packages are suggested dependencies and not required if you're
-only linking to files without title extraction
-}
+The \code{pdftools} package is optional (in Suggests) and only needed for PDF title extraction.
 }
 
 \examples{

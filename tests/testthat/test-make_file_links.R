@@ -150,6 +150,7 @@ test_that("extract_document_title falls back to filename for plain files", {
 test_that("extract_document_title handles missing packages gracefully", {
   skip_on_cran()
   skip_if_not_installed("withr")
+  skip_if_not_installed("pdftools")
 
   withr::with_tempdir({
     # Create a fake PDF file (won't have valid metadata)
@@ -259,5 +260,63 @@ test_that("make_file_links formats output correctly for single file", {
     # Should not have trailing newline for single file
     expect_false(grepl("\n$", result))
     expect_true(grepl("^-\\t\\[single\\]\\(single\\.txt\\)$", result))
+  })
+})
+
+test_that("escape_markdown escapes special characters", {
+  # Test bracket escaping
+  expect_equal(saros:::escape_markdown("[test]"), "&#91;test&#93;")
+
+  # Test angle bracket escaping
+  expect_equal(saros:::escape_markdown("<script>"), "&lt;script&gt;")
+
+  # Test backtick escaping
+  expect_equal(saros:::escape_markdown("`code`"), "&#96;code&#96;")
+
+  # Test NULL handling
+  expect_equal(saros:::escape_markdown(NULL), "")
+
+  # Test empty string
+  expect_equal(saros:::escape_markdown(""), "")
+})
+
+test_that("escape_markdown_link escapes URL special characters", {
+  # Test brackets escaping
+  expect_equal(saros:::escape_markdown_link("file[1].pdf"), "file%5B1%5D.pdf")
+
+  # Test parentheses escaping
+  expect_equal(saros:::escape_markdown_link("file(1).pdf"), "file%281%29.pdf")
+
+  # Test space escaping
+  expect_equal(saros:::escape_markdown_link("my file.pdf"), "my%20file.pdf")
+
+  # Test combined
+  expect_equal(
+    saros:::escape_markdown_link("my [test] file.pdf"),
+    "my%20%5Btest%5D%20file.pdf"
+  )
+
+  # Test NULL handling
+  expect_equal(saros:::escape_markdown_link(NULL), "")
+})
+
+test_that("make_file_links escapes malicious filenames and titles", {
+  skip_on_cran()
+  skip_if_not_installed("withr")
+
+  withr::with_tempdir({
+    dir.create("docs")
+    # Create file with special characters in name
+    malicious_file <- "docs/[injection].txt"
+    file.create(malicious_file)
+
+    result <- make_file_links(folder = "docs")
+
+    # Should escape brackets in title (HTML entities)
+    expect_true(grepl("&#91;injection&#93;", result))
+    # Should escape brackets in path (percent-encoding)
+    expect_true(grepl("%5Binjection%5D\\.txt", result))
+    # Should NOT have unescaped brackets in the path portion
+    expect_false(grepl("]\\(\\[injection\\]", result))
   })
 })

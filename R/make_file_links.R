@@ -23,9 +23,9 @@
 #'
 #' @details
 #' The function attempts to extract document titles from file metadata:
-#' - **DOCX files**: Extracts title from document properties using `officer`
-#' - **PPTX files**: Extracts title from presentation properties using `officer`
-#' - **PDF files**: Extracts title from PDF metadata using `pdftools`
+#' - **DOCX files**: Extracts title from document properties (requires `officer` package)
+#' - **PPTX files**: Extracts title from presentation properties (requires `officer` package)
+#' - **PDF files**: Extracts title from PDF metadata (requires `pdftools` package)
 #'
 #' If title extraction fails or the file type is unsupported, the filename
 #' (without extension) is used as the link text.
@@ -33,12 +33,10 @@
 #' The function preserves the order of files as returned by `fs::dir_ls()`,
 #' which typically sorts alphabetically.
 #'
-#' @section Dependencies:
-#' - Requires `officer` package for DOCX/PPTX title extraction
-#' - Requires `pdftools` package for PDF title extraction
-#' - These packages are suggested dependencies and not required if you're
-#'   only linking to files without title extraction
+#' @section Optional Packages:
+#' The `pdftools` package is optional (in Suggests) and only needed for PDF title extraction.
 #'
+#' @importFrom rlang %||%
 #' @export
 #'
 #' @examples
@@ -102,6 +100,20 @@ make_file_links <- function(
     return("")
   }
 
+  # Check for missing optional packages once per call
+  missing_packages <- character(0)
+  file_exts <- unique(tolower(fs::path_ext(files)))
+  if ("pdf" %in% file_exts && !requireNamespace("pdftools", quietly = TRUE)) {
+    missing_packages <- c(missing_packages, "pdftools (for PDF title extraction)")
+  }
+  if (length(missing_packages) > 0) {
+    cli::cli_warn(c(
+      "Optional packages not installed:",
+      "i" = paste(missing_packages, collapse = ", "),
+      "i" = "Filenames will be used instead of document titles"
+    ))
+  }
+
   # Generate links
   links <- vapply(
     files,
@@ -116,12 +128,16 @@ make_file_links <- function(
         link_path <- fs::path_file(filepath)
       }
 
+      # Escape markdown special characters for security
+      title_escaped <- escape_markdown(title)
+      path_escaped <- escape_markdown_link(link_path)
+
       # Format as markdown list item
       if (bullet_style == "1.") {
         # Numbered lists need index, will be added later
-        sprintf("[%s](%s)", title, link_path)
+        sprintf("[%s](%s)", title_escaped, path_escaped)
       } else {
-        sprintf("%s\t[%s](%s)", bullet_style, title, link_path)
+        sprintf("%s\t[%s](%s)", bullet_style, title_escaped, path_escaped)
       }
     },
     FUN.VALUE = character(1),
@@ -181,19 +197,54 @@ extract_document_title <- function(filepath) {
 }
 
 
+#' Escape Markdown Special Characters
+#'
+#' @param text Character string to escape
+#' @return Escaped character string safe for markdown link text
+#' @keywords internal
+escape_markdown <- function(text) {
+  if (is.null(text) || length(text) == 0) {
+    return("")
+  }
+  # Escape characters that have special meaning in markdown link text
+  text <- gsub("[", "&#91;", text, fixed = TRUE)
+  text <- gsub("]", "&#93;", text, fixed = TRUE)
+  text <- gsub("<", "&lt;", text, fixed = TRUE)
+  text <- gsub(">", "&gt;", text, fixed = TRUE)
+  text <- gsub("`", "&#96;", text, fixed = TRUE)
+  text
+}
+
+
+#' Escape Markdown Link Path
+#'
+#' @param path Character string path to escape
+#' @return Escaped path safe for markdown link URLs
+#' @keywords internal
+escape_markdown_link <- function(path) {
+  if (is.null(path) || length(path) == 0) {
+    return("")
+  }
+  # Escape characters that have special meaning in markdown link URLs
+  # Brackets need to be percent-encoded
+  path <- gsub("[", "%5B", path, fixed = TRUE)
+  path <- gsub("]", "%5D", path, fixed = TRUE)
+  # Parentheses need to be percent-encoded
+  path <- gsub("(", "%28", path, fixed = TRUE)
+  path <- gsub(")", "%29", path, fixed = TRUE)
+  # Spaces should be percent-encoded for URLs
+  path <- gsub(" ", "%20", path, fixed = TRUE)
+  path
+}
+
+
 #' Extract Title from DOCX File
 #'
 #' @param filepath Path to DOCX file
 #' @return Character string with title or NULL
 #' @keywords internal
 extract_docx_title <- function(filepath) {
-  if (!requireNamespace("officer", quietly = TRUE)) {
-    cli::cli_warn(c(
-      "{.pkg officer} package required to extract DOCX titles",
-      "i" = "Install with: {.code install.packages('officer')}"
-    ))
-    return(NULL)
-  }
+
 
   doc <- officer::read_docx(filepath)
   props <- officer::doc_properties(doc)
@@ -211,14 +262,6 @@ extract_docx_title <- function(filepath) {
 #' @return Character string with title or NULL
 #' @keywords internal
 extract_pptx_title <- function(filepath) {
-  if (!requireNamespace("officer", quietly = TRUE)) {
-    cli::cli_warn(c(
-      "{.pkg officer} package required to extract PPTX titles",
-      "i" = "Install with: {.code install.packages('officer')}"
-    ))
-    return(NULL)
-  }
-
   pres <- officer::read_pptx(filepath)
   props <- officer::doc_properties(pres)
 
@@ -235,11 +278,8 @@ extract_pptx_title <- function(filepath) {
 #' @return Character string with title or NULL
 #' @keywords internal
 extract_pdf_title <- function(filepath) {
+  # pdftools is optional (Suggests), warning handled at call site
   if (!requireNamespace("pdftools", quietly = TRUE)) {
-    cli::cli_warn(c(
-      "{.pkg pdftools} package required to extract PDF titles",
-      "i" = "Install with: {.code install.packages('pdftools')}"
-    ))
     return(NULL)
   }
 
