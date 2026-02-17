@@ -7,14 +7,14 @@
 #'
 #' @param folder String. Path to the folder containing files. Defaults to current
 #'   directory (`"."`).
-#' @param pattern String. Glob pattern for file matching (e.g., `"*.pptx"`,
-#'   `"*.pdf"`, `"report_*.docx"`). Defaults to `"*"` (all files).
+#' @param pattern String. Regular expression pattern for file matching (e.g., `"\\.pptx$"`,
+#'   `"\\.pdf$"`, `"^report_.*\\.docx$"`). Defaults to `""` (all files).
 #' @param bullet_style String. Markdown list style. One of `"-"` (unordered),
 #'   `"*"` (unordered), or `"1."` (ordered). Defaults to `"-"`.
 #' @param recurse Logical. Whether to search recursively in subdirectories.
 #'   Defaults to `FALSE`.
-#' @param relative_links Logical. Whether to use relative paths in links.
-#'   If `TRUE`, paths are relative to `folder`. If `FALSE`, uses basename only.
+#' @param relative_links Logical. Whether to use relative or absolute paths in links.
+#'   If `TRUE`, paths are relative to `folder`. If `FALSE`, uses absolute paths.
 #'   Defaults to `TRUE`.
 #'
 #' @return A character string containing a markdown-formatted list of links.
@@ -42,25 +42,25 @@
 #' @examples
 #' \dontrun{
 #' # Create links to all PowerPoint files in a folder
-#' make_file_links(folder = "presentations", pattern = "*.pptx")
+#' make_file_links(folder = "presentations", pattern = "\\.pptx$")
 #'
 #' # Create links to PDF reports with numbered list
 #' make_file_links(
 #'   folder = "reports",
-#'   pattern = "report_*.pdf",
+#'   pattern = "^report_.*\\.pdf$",
 #'   bullet_style = "1."
 #' )
 #'
 #' # Recursively find all Office documents
 #' make_file_links(
 #'   folder = "documents",
-#'   pattern = "*.{docx,pptx}",
+#'   pattern = "\\.(docx|pptx)$",
 #'   recurse = TRUE
 #' )
 #' }
 make_file_links <- function(
   folder = ".",
-  pattern = "*",
+  pattern = "",
   bullet_style = "-",
   recurse = FALSE,
   relative_links = TRUE
@@ -88,7 +88,7 @@ make_file_links <- function(
   # Find files matching pattern
   files <- fs::dir_ls(
     path = folder,
-    glob = pattern,
+    regexp = if (pattern == "") NULL else pattern,
     type = "file",
     recurse = recurse
   )
@@ -104,7 +104,10 @@ make_file_links <- function(
   missing_packages <- character(0)
   file_exts <- unique(tolower(fs::path_ext(files)))
   if ("pdf" %in% file_exts && !requireNamespace("pdftools", quietly = TRUE)) {
-    missing_packages <- c(missing_packages, "pdftools (for PDF title extraction)")
+    missing_packages <- c(
+      missing_packages,
+      "pdftools (for PDF title extraction)"
+    )
   }
   if (length(missing_packages) > 0) {
     cli::cli_warn(c(
@@ -125,7 +128,7 @@ make_file_links <- function(
       if (relative_links) {
         link_path <- fs::path_rel(filepath, start = folder)
       } else {
-        link_path <- fs::path_file(filepath)
+        link_path <- fs::path_abs(filepath)
       }
 
       # Escape markdown special characters for security
@@ -167,17 +170,20 @@ extract_document_title <- function(filepath) {
   ext <- tolower(fs::path_ext(filepath))
   filename_without_ext <- fs::path_ext_remove(fs::path_file(filepath))
 
+  # Only attempt extraction for supported file types
+  if (!ext %in% c("docx", "pptx", "pdf")) {
+    return(filename_without_ext)
+  }
+
   title <- tryCatch(
     {
-      if (ext == "docx") {
-        extract_docx_title(filepath)
-      } else if (ext == "pptx") {
-        extract_pptx_title(filepath)
-      } else if (ext == "pdf") {
-        extract_pdf_title(filepath)
-      } else {
+      switch(
+        ext,
+        docx = extract_docx_title(filepath),
+        pptx = extract_pptx_title(filepath),
+        pdf = extract_pdf_title(filepath),
         filename_without_ext
-      }
+      )
     },
     error = function(e) {
       cli::cli_warn(c(
@@ -244,13 +250,17 @@ escape_markdown_link <- function(path) {
 #' @return Character string with title or NULL
 #' @keywords internal
 extract_docx_title <- function(filepath) {
-
-
   doc <- officer::read_docx(filepath)
   props <- officer::doc_properties(doc)
 
-  # Try different title fields
-  title <- props$title %||% props$subject %||% NULL
+  # Extract title from data frame structure
+  title <- if ("title" %in% props$tag) {
+    props[props$tag == "title", "value"][1]
+  } else if ("subtitle" %in% props$tag) {
+    props[props$tag == "subtitle", "value"][1]
+  } else {
+    NULL
+  }
 
   title
 }
@@ -265,8 +275,14 @@ extract_pptx_title <- function(filepath) {
   pres <- officer::read_pptx(filepath)
   props <- officer::doc_properties(pres)
 
-  # Try different title fields
-  title <- props$title %||% props$subject %||% NULL
+  # Extract title from data frame structure
+  title <- if ("title" %in% props$tag) {
+    props[props$tag == "title", "value"][1]
+  } else if ("subtitle" %in% props$tag) {
+    props[props$tag == "subtitle", "value"][1]
+  } else {
+    NULL
+  }
 
   title
 }

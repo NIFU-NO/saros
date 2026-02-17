@@ -6,7 +6,7 @@
 \usage{
 make_file_links(
   folder = ".",
-  pattern = "*",
+  pattern = "",
   bullet_style = "-",
   recurse = FALSE,
   relative_links = TRUE
@@ -16,8 +16,8 @@ make_file_links(
 \item{folder}{String. Path to the folder containing files. Defaults to current
 directory (\code{"."}).}
 
-\item{pattern}{String. Glob pattern for file matching (e.g., \code{"*.pptx"},
-\code{"*.pdf"}, \code{"report_*.docx"}). Defaults to \code{"*"} (all files).}
+\item{pattern}{String. Regular expression pattern for file matching (e.g., \code{"\\\\.pptx$"},
+\code{"\\\\.pdf$"}, \code{"^report_.*\\\\.docx$"}). Defaults to \code{""} (all files).}
 
 \item{bullet_style}{String. Markdown list style. One of \code{"-"} (unordered),
 \code{"*"} (unordered), or \code{"1."} (ordered). Defaults to \code{"-"}.}
@@ -25,8 +25,8 @@ directory (\code{"."}).}
 \item{recurse}{Logical. Whether to search recursively in subdirectories.
 Defaults to \code{FALSE}.}
 
-\item{relative_links}{Logical. Whether to use relative paths in links.
-If \code{TRUE}, paths are relative to \code{folder}. If \code{FALSE}, uses basename only.
+\item{relative_links}{Logical. Whether to use relative or absolute paths in links.
+If \code{TRUE}, paths are relative to \code{folder}. If \code{FALSE}, uses absolute paths.
 Defaults to \code{TRUE}.}
 }
 \value{
@@ -61,19 +61,19 @@ The \code{pdftools} package is optional (in Suggests) and only needed for PDF ti
 \examples{
 \dontrun{
 # Create links to all PowerPoint files in a folder
-make_file_links(folder = "presentations", pattern = "*.pptx")
+make_file_links(folder = "presentations", pattern = "\\\\.pptx$")
 
 # Create links to PDF reports with numbered list
 make_file_links(
   folder = "reports",
-  pattern = "report_*.pdf",
+  pattern = "^report_.*\\\\.pdf$",
   bullet_style = "1."
 )
 
 # Recursively find all Office documents
 make_file_links(
   folder = "documents",
-  pattern = "*.{docx,pptx}",
+  pattern = "\\\\.(docx|pptx)$",
   recurse = TRUE
 )
 }
