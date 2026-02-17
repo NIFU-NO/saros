@@ -1,6 +1,7 @@
 # saros 1.6.1.9000 (dev)
 
 ## New Features
+-   Added `make_file_links()` function for dynamically creating markdown lists with links to files. Extracts document titles from DOCX, PPTX, and PDF file metadata and generates formatted markdown lists. Ideal for creating navigation links in Quarto/RMarkdown documents that point to generated reports in a folder. Supports glob patterns, recursive search, and customizable list formatting (unordered or numbered)
 -   Enhanced `ggsaver()` to automatically apply colour palettes from `girafe()` global settings when saving plots. This ensures saved PNG/PDF images match the appearance of interactive plots displayed with `girafe()`. Palette settings can be configured via `global_settings_set(fn_name = "girafe", new = list(palette_codes = ...))` and will be automatically applied when saving plots through `get_fig_title_suffix_from_ggplot()` or direct `ggsaver()` calls
 -   Added `folder` and `file_prefix` parameters to `get_fig_title_suffix_from_ggplot()` for controlling where files are saved and what prefix to use for filenames
 -   Enhanced `get_fig_title_suffix_from_ggplot()` to support global settings inheritance via `global_settings_set()`, consistent with other saros functions like `make_link()` and `makeme()`

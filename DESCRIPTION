@@ -57,6 +57,7 @@ Suggests:
     covr,
     haven,
     labelled,
+    pdftools,
     quarto,
     knitr,
     readr,

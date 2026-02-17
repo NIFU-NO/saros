@@ -24,6 +24,7 @@ reference:
   - make_link
   - make_link.default
   - make_link.list
+  - make_file_links
   - ggsaver
 - title: Read and write tabular data
   desc: Functions for reading and writing data frames to various file formats
