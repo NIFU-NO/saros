@@ -417,19 +417,45 @@ fig_height_h_barchart <- # Returns a numeric value
 #' Estimate figure height for a horizontal bar chart
 #'
 #' Taking an object from `makeme()`, this function estimates the height of a
-#' figure for a horizontal bar chart.
+#' figure for a horizontal bar chart. Works with both ggplot2 and mschart objects.
 #'
-#' @param ggobj `ggplot2`-object
+#' @param plot_obj A plot object from `makeme()` - either a `ggplot2` object or an `ms_chart` object
 #' @inheritParams fig_height_h_barchart
 #'
 #' @inherit fig_height_h_barchart return
 #' @export
 #'
 #' @examples
+#' # With ggplot2 (cat_plot_html)
 #' fig_height_h_barchart2(makeme(data = ex_survey, dep = b_1:b_2, indep = x1_sex))
+#' 
+#' # With mschart (cat_plot_docx)
+#' \dontrun{
+#' fig_height_h_barchart2(
+#'   makeme(data = ex_survey, dep = b_1:b_2, 
+#'          type = "cat_plot_docx", docx_return_as_mschart = TRUE)
+#' )
+#' }
 fig_height_h_barchart2 <- # Returns a numeric value
   function(
-    ggobj,
+    plot_obj,
+    ...
+  ) {
+    # Manual dispatch to handle namespaced ggplot2 classes
+    if (inherits(plot_obj, "gg") || inherits(plot_obj, "ggplot")) {
+      return(fig_height_h_barchart2.ggplot(plot_obj, ...))
+    } else if (inherits(plot_obj, "ms_chart")) {
+      return(fig_height_h_barchart2.ms_chart(plot_obj, ...))
+    } else {
+      return(fig_height_h_barchart2.default(plot_obj, ...))
+    }
+  }
+
+#' @export
+#' @rdname fig_height_h_barchart2
+fig_height_h_barchart2.ggplot <- # ggplot2 method
+  function(
+    plot_obj,
     main_font_size = 7,
     strip_angle = 0,
     freq = FALSE,
@@ -450,11 +476,11 @@ fig_height_h_barchart2 <- # Returns a numeric value
     min = 1,
     multiplier_hide_axis_single_var = 0.6
   ) {
-    data <- ggobj$data
+    data <- plot_obj$data
 
     if (!(inherits(data, "data.frame") && nrow(data) > 0)) {
       cli::cli_warn(
-        "{.arg ggobj} must be a ggplot2-object with a nrow>0 data in it. Returning {.arg min}: {.val {min}}."
+        "{.arg plot_obj} must be a ggplot2-object with a nrow>0 data in it. Returning {.arg min}: {.val {min}}."
       )
       return(min)
     }
@@ -606,3 +632,170 @@ fig_height_h_barchart2 <- # Returns a numeric value
       min = min_value
     )
   }
+
+#' @export
+#' @rdname fig_height_h_barchart2
+fig_height_h_barchart2.ms_chart <- # mschart method
+  function(
+    plot_obj,
+    main_font_size = 7,
+    strip_angle = 0,
+    freq = FALSE,
+    x_axis_label_width = 20,
+    strip_width = 20,
+    legend_location = c("plot", "panel"),
+    n_legend_lines = NULL,
+    showNA = c("ifany", "never", "always"),
+    legend_key_chars_equivalence = 5,
+    multiplier_per_horizontal_line = NULL,
+    multiplier_per_vertical_letter = 1,
+    multiplier_per_facet = 1,
+    multiplier_per_legend_line = 1,
+    fixed_constant = 0,
+    figure_width_in_cm = 14,
+    margin_in_cm = 0,
+    max = 12,
+    min = 1,
+    multiplier_hide_axis_single_var = 0.6
+  ) {
+    # Extract data from mschart object
+    data <- plot_obj$data
+
+    if (!(inherits(data, "data.frame") && nrow(data) > 0)) {
+      cli::cli_warn(
+        "{.arg plot_obj} must be an mschart object with a nrow>0 data in it. Returning {.arg min}: {.val {min}}."
+      )
+      return(min)
+    }
+
+    # The mschart data has the same structure as ggplot data from makeme
+    # So we can use the same processing logic
+
+    # TODO: Should find a more robust way to identify the indep variable
+    indep_vars <- colnames(data)[
+      !colnames(data) %in% .saros.env$summary_data_sort2
+    ]
+
+    if (length(indep_vars) > 1) {
+      cli::cli_abort(
+        "{.arg fig_height_h_barchart2} only supports a single indep variable."
+      )
+    }
+    if (length(indep_vars) == 1) {
+      data[[indep_vars]] <-
+        stringi::stri_replace_all_regex(
+          str = as.character(data[[indep_vars]]),
+          pattern = "(.+)___.+",
+          replacement = "$1",
+          dot_all = TRUE
+        )
+    }
+
+    call <- match.call()
+
+    args <- check_options(
+      call = call,
+      ignore_args = .saros.env$ignore_args,
+      defaults_env = global_settings_get(fn_name = "fig_height_h_barchart"),
+      default_values = formals(fig_height_h_barchart)
+    )
+
+    freq <- args$freq
+    x_axis_label_width <- args$x_axis_label_width
+    strip_width <- args$strip_width
+    strip_angle <- args$strip_angle
+    main_font_size <- args$main_font_size
+    legend_location <- args$legend_location
+    n_legend_lines <- args$n_legend_lines
+    legend_key_chars_equivalence <- args$legend_key_chars_equivalence
+    multiplier_per_horizontal_line <- args$multiplier_per_horizontal_line
+    multiplier_per_vertical_letter <- args$multiplier_per_vertical_letter
+    multiplier_per_facet <- args$multiplier_per_facet
+    multiplier_per_legend_line <- args$multiplier_per_legend_line
+    multiplier_per_bar <- args$multiplier_per_bar
+    fixed_constant <- args$fixed_constant
+    figure_width_in_cm <- args$figure_width_in_cm
+    margin_in_cm <- args$margin_in_cm
+    max_value <- args$max
+    min_value <- args$min
+    hide_axis_text_if_single_variable <- args$hide_axis_text_if_single_variable
+    multiplier_hide_axis_single_var <- args$multiplier_hide_axis_single_var
+    showNA <- args$showNA[[1]]
+
+    # Detect if axis text was actually hidden by makeme()
+    # If .variable_label_original exists, the labels were hidden
+    if (".variable_label_original" %in% colnames(data)) {
+      hide_axis_text_if_single_variable <- TRUE
+    }
+
+    n_y <- dplyr::n_distinct(data$.variable_name)
+    n_cats_y <- dplyr::n_distinct(data$.category)
+    max_chars_cats_y <- max(nchar(as.character(data$.category)), na.rm = TRUE)
+    max_chars_labels_y <- max(
+      nchar(as.character(data[[".variable_label"]])),
+      na.rm = TRUE
+    )
+
+    # When axis text is hidden for single variable, allow smaller minimum height
+    if (isTRUE(hide_axis_text_if_single_variable) && n_y == 1) {
+      min_value <- min(c(min_value, 1), na.rm = TRUE)
+    }
+
+    n_x <- if (length(indep_vars) == 1) 1
+    n_cats_x <- if (length(indep_vars) == 1) {
+      dplyr::n_distinct(data[[indep_vars]])
+    }
+    max_chars_cats_x <- if (length(indep_vars) == 1) {
+      max(nchar(as.character(data[[indep_vars]])), na.rm = TRUE)
+    }
+    max_chars_labels_x <- if (length(indep_vars) == 1) {
+      nchar(as.character(attr(data[[indep_vars]], "label")))
+    }
+    if (length(max_chars_labels_x) == 0) {
+      max_chars_labels_x <- 0
+    }
+
+    fig_height_h_barchart(
+      n_y = n_y,
+      n_cats_y = n_cats_y,
+      max_chars_labels_y = max_chars_labels_y,
+      max_chars_cats_y = max_chars_cats_y,
+      n_x = n_x,
+      n_cats_x = n_cats_x,
+      max_chars_labels_x = max_chars_labels_x,
+      max_chars_cats_x = max_chars_cats_x,
+      freq = freq,
+      x_axis_label_width = x_axis_label_width,
+      strip_width = strip_width,
+      strip_angle = strip_angle,
+      main_font_size = main_font_size,
+      legend_location = legend_location,
+      n_legend_lines = n_legend_lines,
+      showNA = showNA,
+      hide_axis_text_if_single_variable = hide_axis_text_if_single_variable,
+      multiplier_hide_axis_single_var = multiplier_hide_axis_single_var,
+      legend_key_chars_equivalence = legend_key_chars_equivalence,
+      multiplier_per_horizontal_line = multiplier_per_horizontal_line,
+      multiplier_per_vertical_letter = multiplier_per_vertical_letter,
+      multiplier_per_facet = multiplier_per_facet,
+      multiplier_per_bar = multiplier_per_bar,
+      multiplier_per_legend_line = multiplier_per_legend_line,
+      fixed_constant = fixed_constant,
+      margin_in_cm = margin_in_cm,
+      figure_width_in_cm = figure_width_in_cm,
+      max = max_value,
+      min = min_value
+    )
+  }
+
+#' @export
+#' @rdname fig_height_h_barchart2
+fig_height_h_barchart2.default <- function(plot_obj, ...) {
+  cli::cli_abort(
+    c(
+      "{.arg fig_height_h_barchart2} requires a plot object from {.fn makeme}.",
+      "i" = "Received object of class: {.cls {class(plot_obj)}}",
+      "i" = "Expected: {.cls gg} (from {.code type='cat_plot_html'}) or {.cls ms_chart} (from {.code type='cat_plot_docx', docx_return_as_mschart=TRUE})"
+    )
+  )
+}
