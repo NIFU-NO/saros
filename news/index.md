@@ -50,6 +50,13 @@
 
 ### Bug Fixes
 
+- Fixed `colour_palette` parameter not being applied in `cat_plot_docx`
+  output. The mschart library requires colour palettes to be named
+  vectors where names match category levels, and the length must match
+  the number of categories. The function now: (1) names the colour
+  palette vector with category levels, (2) expands the palette with
+  generated colours if user provides fewer colours than categories,
+  and (3) trims the palette if user provides more colours than needed
 - Fixed
   [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
   where `hide_axis_text_if_single_variable=TRUE` was paradoxically
