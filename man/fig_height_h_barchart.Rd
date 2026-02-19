@@ -33,6 +33,7 @@ fig_height_h_barchart(
   max = 12,
   min = 2,
   hide_axis_text_if_single_variable = FALSE,
+  multiplier_hide_axis_single_var = 0.6,
   add_n_to_dep_label = FALSE,
   add_n_to_indep_label = FALSE,
   showNA = c("ifany", "never", "always")
@@ -90,6 +91,8 @@ fig_height_h_barchart(
 \item{min}{Numeric. Minimum height.}
 
 \item{hide_axis_text_if_single_variable}{Boolean. Whether the label is hidden for single dependent variable plots.}
+
+\item{multiplier_hide_axis_single_var}{Numeric. Multiplier to reduce panel height when hiding axis text for single variable (default 0.6).}
 
 \item{add_n_to_dep_label, add_n_to_indep_label}{Boolean. If TRUE, will add 10 characters to the max label lengths. This is
 primarily useful when obtaining these settings from the global environment,

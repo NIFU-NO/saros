@@ -23,7 +23,8 @@ fig_height_h_barchart2(
   figure_width_in_cm = 14,
   margin_in_cm = 0,
   max = 12,
-  min = 1
+  min = 1,
+  multiplier_hide_axis_single_var = 0.6
 )
 }
 \arguments{
@@ -62,6 +63,8 @@ fig_height_h_barchart2(
 \item{max}{Numeric. Maximum height.}
 
 \item{min}{Numeric. Minimum height.}
+
+\item{multiplier_hide_axis_single_var}{Numeric. Multiplier to reduce panel height when hiding axis text for single variable (default 0.6).}
 }
 \value{
 Numeric value representing the estimated height of the figure.
