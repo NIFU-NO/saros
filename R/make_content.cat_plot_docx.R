@@ -49,7 +49,7 @@ make_content.cat_plot_docx <-
       font.size = dots$main_font_size,
       font.family = dots$font_family
     )
-    
+
     x <- if (length(indep_vars) == 1 && isFALSE(dots$inverse)) {
       indep_vars
     } else {
@@ -83,7 +83,7 @@ make_content.cat_plot_docx <-
       overlap = overlap,
       gap_width = gap_width
     )
-    
+
     m <- mschart::chart_data_fill(x = m, values = dots$colour_palette)
     m <- mschart::chart_data_stroke(x = m, values = dots$colour_palette)
     if (length(fp_text_settings) > 0) {
@@ -91,11 +91,11 @@ make_content.cat_plot_docx <-
     }
     m <- mschart::chart_labels(x = m, ylab = NULL, xlab = NULL, title = NULL)
     m <- mschart::chart_ax_x(x = m, major_tick_mark = "none")
-    
+
     if (percentage) {
       m <- mschart::chart_ax_y(x = m, num_fmt = "0%")
     }
-    
+
     m <- mschart::chart_theme(
       x = m,
       legend_text = main_text,
@@ -107,6 +107,11 @@ make_content.cat_plot_docx <-
       grid_minor_line_y = blank_border,
       legend_position = if (hide_legend) "n" else "b"
     )
+
+    # Return mschart object directly if requested
+    if (isTRUE(dots$docx_return_as_mschart)) {
+      return(m)
+    }
 
     docx_file <- use_docx(docx_template = dots$docx_template)
 
