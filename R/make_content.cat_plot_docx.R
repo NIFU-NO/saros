@@ -5,11 +5,34 @@ make_content.cat_plot_docx <-
 
     data <- dots$data_summary
 
+    # Get category levels to determine how many colours we need
+    cat_levels <- levels(data[[".category"]])
+    n_categories <- length(cat_levels)
+
     if (is.null(dots$colour_palette)) {
-      n <- length(levels(data[[".category"]]))
-      hues <- seq(15, 375, length = n + 1)
-      dots$colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[1:n]
+      # Generate default colour palette
+      hues <- seq(15, 375, length = n_categories + 1)
+      dots$colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[
+        1:n_categories
+      ]
+    } else {
+      # Expand colour_palette if user provided fewer colours than categories
+      if (length(dots$colour_palette) < n_categories) {
+        # Recycle user colours or generate additional ones
+        n_user_colours <- length(dots$colour_palette)
+        hues <- seq(15, 375, length = (n_categories - n_user_colours) + 1)
+        additional_colours <- grDevices::hcl(h = hues, l = 65, c = 100)[
+          1:(n_categories - n_user_colours)
+        ]
+        dots$colour_palette <- c(dots$colour_palette, additional_colours)
+      } else if (length(dots$colour_palette) > n_categories) {
+        # Trim if user provided more colours than needed
+        dots$colour_palette <- dots$colour_palette[1:n_categories]
+      }
     }
+
+    # Name the colour_palette with category levels for mschart
+    names(dots$colour_palette) <- cat_levels
 
     indep_vars <- colnames(data)[
       !colnames(data) %in%
