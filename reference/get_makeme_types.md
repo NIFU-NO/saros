@@ -108,7 +108,7 @@ arguments to make_content, with the following exceptions:
 
 ``` r
 get_makeme_types()
-#> [1] "cat_freq_plot_docx" "cat_plot_html"      "cat_prop_plot_docx"
-#> [4] "cat_table_html"     "chr_table_html"     "int_plot_html"     
-#> [7] "int_table_html"     "sigtest_table_html"
+#> [1] "cat_plot_docx"      "cat_plot_html"      "cat_table_html"    
+#> [4] "chr_table_html"     "int_plot_html"      "int_table_html"    
+#> [7] "sigtest_table_html"
 ```
