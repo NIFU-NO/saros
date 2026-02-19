@@ -26,7 +26,8 @@ fig_height_h_barchart2(
   figure_width_in_cm = 14,
   margin_in_cm = 0,
   max = 12,
-  min = 1
+  min = 1,
+  multiplier_hide_axis_single_var = 0.6
 )
 ```
 
@@ -105,6 +106,11 @@ fig_height_h_barchart2(
 - min:
 
   Numeric. Minimum height.
+
+- multiplier_hide_axis_single_var:
+
+  Numeric. Multiplier to reduce panel height when hiding axis text for
+  single variable (default 0.6).
 
 ## Value
 
