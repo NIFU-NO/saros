@@ -154,3 +154,35 @@ testthat::test_that("fig_height_h_barchart2 works for cat_plot_html", {
   testthat::expect_type(result, "double")
   testthat::expect_true(result > 0)
 })
+
+testthat::test_that("fig_height_h_barchart2 respects hide_axis_text_if_single_variable", {
+  # When hide_axis_text_if_single_variable = TRUE, height should be smaller
+  plot_hidden <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1,
+    label_separator = NULL,
+    hide_axis_text_if_single_variable = TRUE,
+    type = "cat_plot_html"
+  )
+
+  plot_shown <- saros::makeme(
+    data = saros::ex_survey,
+    dep = p_1,
+    label_separator = NULL,
+    hide_axis_text_if_single_variable = FALSE,
+    type = "cat_plot_html"
+  )
+
+  height_hidden <- saros::fig_height_h_barchart2(plot_hidden)
+  height_shown <- saros::fig_height_h_barchart2(plot_shown)
+
+  # Height with hidden axis text should be smaller than shown axis text
+  testthat::expect_true(
+    height_hidden < height_shown,
+    info = sprintf(
+      "Hidden height (%s) should be < shown height (%s)",
+      height_hidden,
+      height_shown
+    )
+  )
+})

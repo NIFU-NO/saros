@@ -117,6 +117,7 @@ combine_figure_heights <- function(
 #' @param min Numeric. Minimum height.
 #' @param showNA String, one of "ifany", "always" or "never". Not yet in use.
 #' @param hide_axis_text_if_single_variable Boolean. Whether the label is hidden for single dependent variable plots.
+#' @param multiplier_hide_axis_single_var Numeric. Multiplier to reduce panel height when hiding axis text for single variable (default 0.6).
 #' @param add_n_to_dep_label,add_n_to_indep_label Boolean. If TRUE, will add 10 characters to the max label lengths. This is
 #'      primarily useful when obtaining these settings from the global environment,
 #'      avoiding the need to compute this for each figure chunk.
@@ -176,6 +177,7 @@ fig_height_h_barchart <- # Returns a numeric value
     max = 12,
     min = 2,
     hide_axis_text_if_single_variable = FALSE,
+    multiplier_hide_axis_single_var = 0.6,
     add_n_to_dep_label = FALSE,
     add_n_to_indep_label = FALSE,
     showNA = c("ifany", "never", "always")
@@ -213,6 +215,7 @@ fig_height_h_barchart <- # Returns a numeric value
     max <- args$max
     min <- args$min
     hide_axis_text_if_single_variable <- args$hide_axis_text_if_single_variable
+    multiplier_hide_axis_single_var <- args$multiplier_hide_axis_single_var
     showNA <- args$showNA[[1]]
 
     # Validate all parameters at once
@@ -243,6 +246,7 @@ fig_height_h_barchart <- # Returns a numeric value
         min = min,
         freq = freq,
         hide_axis_text_if_single_variable = hide_axis_text_if_single_variable,
+        multiplier_hide_axis_single_var = multiplier_hide_axis_single_var,
         add_n_to_dep_label = add_n_to_dep_label,
         add_n_to_indep_label = add_n_to_indep_label
       ),
@@ -272,6 +276,7 @@ fig_height_h_barchart <- # Returns a numeric value
         min = list(type = "integerish"),
         freq = list(type = "bool"),
         hide_axis_text_if_single_variable = list(type = "bool"),
+        multiplier_hide_axis_single_var = list(type = "double"),
         add_n_to_dep_label = list(type = "bool"),
         add_n_to_indep_label = list(type = "bool")
       )
@@ -388,6 +393,11 @@ fig_height_h_barchart <- # Returns a numeric value
       n_facets *
       multiplier_per_facet
 
+    # Reduce panel height when axis text is hidden for single variable
+    if (isTRUE(hide_axis_text_if_single_variable) && n_y == 1) {
+      panel_height <- panel_height * multiplier_hide_axis_single_var
+    }
+
     ### Put it all together
     plot_height <-
       combine_figure_heights(
@@ -437,7 +447,8 @@ fig_height_h_barchart2 <- # Returns a numeric value
     figure_width_in_cm = 14,
     margin_in_cm = 0,
     max = 12,
-    min = 1
+    min = 1,
+    multiplier_hide_axis_single_var = 0.6
   ) {
     data <- ggobj$data
 
@@ -527,15 +538,28 @@ fig_height_h_barchart2 <- # Returns a numeric value
     max_value <- args$max
     min_value <- args$min
     hide_axis_text_if_single_variable <- args$hide_axis_text_if_single_variable
+    multiplier_hide_axis_single_var <- args$multiplier_hide_axis_single_var
     showNA <- args$showNA[[1]]
+
+    # Detect if axis text was actually hidden by makeme()
+    # If .variable_label_original exists, the labels were hidden
+    if (".variable_label_original" %in% colnames(data)) {
+      hide_axis_text_if_single_variable <- TRUE
+    }
 
     n_y <- dplyr::n_distinct(data$.variable_name)
     n_cats_y <- dplyr::n_distinct(data$.category)
     max_chars_cats_y <- max(nchar(as.character(data$.category)), na.rm = TRUE)
     max_chars_labels_y <- max(
-      nchar(as.character(data$.variable_label)),
+      nchar(as.character(data[[".variable_label"]])),
       na.rm = TRUE
     )
+
+    # When axis text is hidden for single variable, allow smaller minimum height
+    if (isTRUE(hide_axis_text_if_single_variable) && n_y == 1) {
+      min_value <- min(c(min_value, 1), na.rm = TRUE)
+    }
+
     n_x <- if (length(indep_vars) == 1) 1
     n_cats_x <- if (length(indep_vars) == 1) {
       dplyr::n_distinct(data[[indep_vars]])
@@ -568,6 +592,7 @@ fig_height_h_barchart2 <- # Returns a numeric value
       n_legend_lines = n_legend_lines,
       showNA = showNA,
       hide_axis_text_if_single_variable = hide_axis_text_if_single_variable,
+      multiplier_hide_axis_single_var = multiplier_hide_axis_single_var,
       legend_key_chars_equivalence = legend_key_chars_equivalence,
       multiplier_per_horizontal_line = multiplier_per_horizontal_line,
       multiplier_per_vertical_letter = multiplier_per_vertical_letter,
