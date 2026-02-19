@@ -454,8 +454,7 @@ makeme <-
       "cat_table_html",
       "int_table_html",
       "sigtest_table_html",
-      "cat_prop_plot_docx",
-      "cat_freq_plot_docx",
+      "cat_plot_docx",
       "int_plot_docx"
     ),
     ...,
