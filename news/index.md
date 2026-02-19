@@ -37,9 +37,28 @@
   consistent with other saros functions like
   [`make_link()`](https://nifu-no.github.io/saros/reference/make_link.md)
   and [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md)
+- **Unified DOCX plot types**: Merged `cat_prop_plot_docx` and
+  `cat_freq_plot_docx` into a single `cat_plot_docx` type, bringing it
+  in line with the `cat_plot_html` API. The `freq` parameter now
+  controls whether to create stacked proportion/percentage plots
+  (`freq=FALSE`, default) or dodged frequency plots (`freq=TRUE`)
+- Added `docx_return_as_mschart` parameter to
+  [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) to
+  control return type for `cat_plot_docx`. When `TRUE`, returns the
+  mschart object directly instead of embedding it in an rdocx document,
+  enabling more flexible composition of Word documents
 
 ### Bug Fixes
 
+- Fixed
+  [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  where `hide_axis_text_if_single_variable=TRUE` was paradoxically
+  giving larger heights than `FALSE`. Now correctly detects when axis
+  text has been hidden (via `.variable_label_original` column) and
+  applies a reduction factor (default 0.6 via
+  `multiplier_hide_axis_single_var` parameter) plus reduced minimum
+  height, resulting in appropriately smaller plots when axis text is
+  hidden
 - Fixed
   [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
   to properly handle `int_plot_html` plots with independent variables.

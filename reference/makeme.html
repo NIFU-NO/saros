@@ -121,7 +121,8 @@
 <span>  legend_font_size <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  font_family <span class="op">=</span> <span class="st">"sans"</span>,</span>
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  docx_template <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  docx_template <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  docx_return_as_mschart <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -580,6 +581,12 @@ Font sizes for general text (6), data label text (3), strip text (6) and legend 
 <dd><p><em>Filename or rdocx object</em></p>
 <p><code>scalar&lt;character&gt;|&lt;rdocx&gt;-object</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
 <p>Can be either a valid character path to a reference Word file, or an existing rdocx-object in memory.</p></dd>
+
+
+<dt id="arg-docx-return-as-mschart">docx_return_as_mschart<a class="anchor" aria-label="anchor" href="#arg-docx-return-as-mschart"></a></dt>
+<dd><p><em>Return mschart object instead of rdocx</em></p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p>For <code>cat_plot_docx</code> type: if TRUE, return the mschart object instead of embedding it in an rdocx document.</p></dd>
 
 </dl></div>
     <div class="section level2">

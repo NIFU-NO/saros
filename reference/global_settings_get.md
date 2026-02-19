@@ -241,4 +241,7 @@ global_settings_get()
 #> $docx_template
 #> NULL
 #> 
+#> $docx_return_as_mschart
+#> [1] FALSE
+#> 
 ```

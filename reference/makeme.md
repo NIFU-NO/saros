@@ -75,7 +75,8 @@ makeme(
   legend_font_size = 6,
   font_family = "sans",
   path = NULL,
-  docx_template = NULL
+  docx_template = NULL,
+  docx_return_as_mschart = FALSE
 )
 ```
 
@@ -710,6 +711,15 @@ makeme(
 
   Can be either a valid character path to a reference Word file, or an
   existing rdocx-object in memory.
+
+- docx_return_as_mschart:
+
+  *Return mschart object instead of rdocx*
+
+  `scalar<logical>` // *default:* `FALSE` (`optional`)
+
+  For `cat_plot_docx` type: if TRUE, return the mschart object instead
+  of embedding it in an rdocx document.
 
 ## Value
 
