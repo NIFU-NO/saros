@@ -2,12 +2,31 @@
 % Please edit documentation in R/n_rng.R
 \name{n_range2}
 \alias{n_range2}
-\title{Provides a range (or single value) for N in a \code{ggplot2}-object from \code{makeme()}}
+\alias{n_range2.ggplot}
+\alias{n_range2.ms_chart}
+\alias{n_range2.default}
+\title{Provides a range (or single value) for N in a plot object from \code{makeme()}}
 \usage{
-n_range2(ggobj, glue_template_1 = "{n}", glue_template_2 = "[{n[1]}-{n[2]}]")
+n_range2(plot_obj, ...)
+
+n_range2.ggplot(
+  plot_obj,
+  glue_template_1 = "{n}",
+  glue_template_2 = "[{n[1]}-{n[2]}]"
+)
+
+n_range2.ms_chart(
+  plot_obj,
+  glue_template_1 = "{n}",
+  glue_template_2 = "[{n[1]}-{n[2]}]"
+)
+
+n_range2.default(plot_obj, ...)
 }
 \arguments{
-\item{ggobj}{A \code{ggplot2}-object.}
+\item{plot_obj}{A plot object from \code{makeme()} - either a \code{ggplot2} object or an \code{ms_chart} object}
+
+\item{...}{Additional parameters passed to the specific method}
 
 \item{glue_template_1, glue_template_2}{String, for the case of a single
 value (1) or a range with minimum-maximum of values (2).}
@@ -16,8 +35,18 @@ value (1) or a range with minimum-maximum of values (2).}
 String.
 }
 \description{
-Provides a range (or single value) for N in a \code{ggplot2}-object from \code{makeme()}
+Takes a plot object from \code{makeme()} and returns the sample size (N) range as a
+formatted string. Works with both \code{ggplot2} objects and \code{mschart} objects.
 }
 \examples{
+# With ggplot2 (cat_plot_html)
 n_range2(makeme(data = ex_survey, dep = b_1:b_3))
+
+# With mschart (cat_plot_docx)
+\dontrun{
+n_range2(
+  makeme(data = ex_survey, dep = b_1:b_3, 
+         type = "cat_plot_docx", docx_return_as_mschart = TRUE)
+)
+}
 }
