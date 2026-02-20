@@ -45,7 +45,7 @@ n_range2(makeme(data = ex_survey, dep = b_1:b_3))
 # With mschart (cat_plot_docx)
 \dontrun{
 n_range2(
-  makeme(data = ex_survey, dep = b_1:b_3, 
+  makeme(data = ex_survey, dep = b_1:b_3,
          type = "cat_plot_docx", docx_return_as_mschart = TRUE)
 )
 }
