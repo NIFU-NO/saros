@@ -91,9 +91,12 @@ Functions for reading and writing data frames to various file formats
   Provides a range (or single value) for N in data, given dep and indep
 
 - [`n_range2()`](https://nifu-no.github.io/saros/reference/n_range2.md)
+  [`n_range2.ggplot()`](https://nifu-no.github.io/saros/reference/n_range2.md)
+  [`n_range2.ms_chart()`](https://nifu-no.github.io/saros/reference/n_range2.md)
+  [`n_range2.default()`](https://nifu-no.github.io/saros/reference/n_range2.md)
   :
 
-  Provides a range (or single value) for N in a `ggplot2`-object from
+  Provides a range (or single value) for N in a plot object from
   [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md)
 
 ## Convert cat_plot-object to simple conditional text interpretations

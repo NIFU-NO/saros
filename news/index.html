@@ -59,6 +59,8 @@
 <li>Added <code>docx_return_as_mschart</code> parameter to <code><a href="../reference/makeme.html">makeme()</a></code> to control return type for <code>cat_plot_docx</code>. When <code>TRUE</code>, returns the mschart object directly instead of embedding it in an rdocx document, enabling more flexible composition of Word documents</li>
 <li>
 <strong>Refactored <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> to S3 generic</strong>: Now supports both <code>ggplot2</code> objects (from <code>type="cat_plot_html"</code>) and <code>mschart</code> objects (from <code>type="cat_plot_docx", docx_return_as_mschart=TRUE</code>). This enables automatic height calculation for Word charts, making it easier to size charts consistently across output formats</li>
+<li>
+<strong>Refactored <code><a href="../reference/n_range2.html">n_range2()</a></code> to S3 generic</strong>: Now supports both <code>ggplot2</code> objects and <code>mschart</code> objects, similar to <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code>. This enables consistent sample size reporting across both HTML and Word chart outputs, making it easier to annotate charts with N ranges regardless of output format</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-6-1-9000">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-1-9000"></a></h3>
@@ -83,7 +85,7 @@
 <li>Maintained backwards compatibility with <code>check_*</code> aliases for existing code</li>
 <li>Improved code maintainability and readability across validation-heavy functions</li>
 </ul></li>
-<li>Added <code><a href="../reference/is_int_plot_html.html">is_int_plot_html()</a></code> helper function to centralize detection logic for int_plot_html data structures, improving code maintainability and consistency across <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> and <code><a href="../reference/n_rng2.html">n_rng2()</a></code>
+<li>Added <code><a href="../reference/is_int_plot_html.html">is_int_plot_html()</a></code> helper function to centralize detection logic for int_plot_html data structures, improving code maintainability and consistency across <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> and <code>n_rng2()</code>
 </li>
 </ul></div>
 </div>
@@ -113,7 +115,7 @@
 </li>
 <li>Fixed issue <a href="https://github.com/NIFU-NO/saros/issues/512" class="external-link">#512</a> where <code><a href="../reference/makeme.html">makeme()</a></code> with multiple crowds produced identical plots instead of crowd-specific filtered data. The <code><a href="../reference/process_crowd_data.html">process_crowd_data()</a></code> function now correctly passes filtered <code>subset_data</code> to <code><a href="../reference/make_content.html">make_content()</a></code> for each crowd, ensuring each plot displays statistics computed from only that crowd’s data subset</li>
 <li>Fixed <code><a href="../reference/txt_from_cat_mesos_plots.html">txt_from_cat_mesos_plots()</a></code> to handle cases where <code>.category_order</code> contains NA values by using <code>na.rm = TRUE</code> when calculating max values, preventing “NA/NaN argument” errors</li>
-<li>Fixed <code><a href="../reference/n_rng2.html">n_rng2()</a></code> to correctly calculate sample sizes for <code>int_plot_html</code> plots by only checking complete cases on relevant variables (<code>.value</code> and independent variables) instead of all columns in the dataset. Also modified <code>make_content.int_plot_html()</code> to only include necessary columns in the plot object, reducing memory footprint</li>
+<li>Fixed <code>n_rng2()</code> to correctly calculate sample sizes for <code>int_plot_html</code> plots by only checking complete cases on relevant variables (<code>.value</code> and independent variables) instead of all columns in the dataset. Also modified <code>make_content.int_plot_html()</code> to only include necessary columns in the plot object, reducing memory footprint</li>
 </ul></div>
 </div>
     <div class="section level2">
@@ -170,7 +172,7 @@
 <h4 id="robustness-improvements-1-6-0">Robustness Improvements<a class="anchor" aria-label="anchor" href="#robustness-improvements-1-6-0"></a></h4>
 <ul><li>Added vector length validation in <code><a href="../reference/get_fig_title_suffix_from_ggplot.html">get_fig_title_suffix_from_ggplot()</a></code> to prevent subscript-out-of-bounds errors when vectorized parameters have mismatched lengths</li>
 <li>
-<code><a href="../reference/n_rng2.html">n_rng2()</a></code> now gracefully handles plots not created by <code><a href="../reference/makeme.html">makeme()</a></code> by calculating N from complete cases instead of aborting, and properly handles all-NA and empty <code>.count_per_indep_group</code> values by returning “0” with clear warnings instead of producing infinite values</li>
+<code>n_rng2()</code> now gracefully handles plots not created by <code><a href="../reference/makeme.html">makeme()</a></code> by calculating N from complete cases instead of aborting, and properly handles all-NA and empty <code>.count_per_indep_group</code> values by returning “0” with clear warnings instead of producing infinite values</li>
 <li>
 <code><a href="../reference/crowd_plots_as_tabset.html">crowd_plots_as_tabset()</a></code> now validates each plot individually in the loop, preventing invalid objects from causing failures</li>
 <li>Improved empty data frame handling throughout - using <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame()</a></code> and <code><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow()</a></code> checks instead of <code><a href="https://rdrr.io/r/base/length.html" class="external-link">length()</a></code> for more reliable validation</li>

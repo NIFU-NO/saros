@@ -54,6 +54,14 @@
   `type="cat_plot_docx", docx_return_as_mschart=TRUE`). This enables
   automatic height calculation for Word charts, making it easier to size
   charts consistently across output formats
+- **Refactored
+  [`n_range2()`](https://nifu-no.github.io/saros/reference/n_range2.md)
+  to S3 generic**: Now supports both `ggplot2` objects and `mschart`
+  objects, similar to
+  [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md).
+  This enables consistent sample size reporting across both HTML and
+  Word chart outputs, making it easier to annotate charts with N ranges
+  regardless of output format
 
 ### Bug Fixes
 
@@ -137,7 +145,7 @@
   helper function to centralize detection logic for int_plot_html data
   structures, improving code maintainability and consistency across
   [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
-  and [`n_rng2()`](https://nifu-no.github.io/saros/reference/n_rng2.md)
+  and `n_rng2()`
 
 ## saros 1.6.1
 
@@ -203,13 +211,12 @@ CRAN release: 2026-01-28
   to handle cases where `.category_order` contains NA values by using
   `na.rm = TRUE` when calculating max values, preventing “NA/NaN
   argument” errors
-- Fixed
-  [`n_rng2()`](https://nifu-no.github.io/saros/reference/n_rng2.md) to
-  correctly calculate sample sizes for `int_plot_html` plots by only
-  checking complete cases on relevant variables (`.value` and
-  independent variables) instead of all columns in the dataset. Also
-  modified `make_content.int_plot_html()` to only include necessary
-  columns in the plot object, reducing memory footprint
+- Fixed `n_rng2()` to correctly calculate sample sizes for
+  `int_plot_html` plots by only checking complete cases on relevant
+  variables (`.value` and independent variables) instead of all columns
+  in the dataset. Also modified `make_content.int_plot_html()` to only
+  include necessary columns in the plot object, reducing memory
+  footprint
 
 ## saros 1.6.0
 
@@ -324,8 +331,7 @@ CRAN release: 2025-11-10
   [`get_fig_title_suffix_from_ggplot()`](https://nifu-no.github.io/saros/reference/get_fig_title_suffix_from_ggplot.md)
   to prevent subscript-out-of-bounds errors when vectorized parameters
   have mismatched lengths
-- [`n_rng2()`](https://nifu-no.github.io/saros/reference/n_rng2.md) now
-  gracefully handles plots not created by
+- `n_rng2()` now gracefully handles plots not created by
   [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) by
   calculating N from complete cases instead of aborting, and properly
   handles all-NA and empty `.count_per_indep_group` values by returning
