@@ -420,6 +420,7 @@ fig_height_h_barchart <- # Returns a numeric value
 #' figure for a horizontal bar chart. Works with both ggplot2 and mschart objects.
 #'
 #' @param plot_obj A plot object from `makeme()` - either a `ggplot2` object or an `ms_chart` object
+#' @param ... Additional parameters passed to the specific method (`fig_height_h_barchart2.ggplot` or `fig_height_h_barchart2.ms_chart`)
 #' @inheritParams fig_height_h_barchart
 #'
 #' @inherit fig_height_h_barchart return
