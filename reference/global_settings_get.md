@@ -221,10 +221,10 @@ global_settings_get()
 #> [1] "grey"
 #> 
 #> $label_font_size
-#> [1] 6
+#> [1] 9
 #> 
 #> $main_font_size
-#> [1] 6
+#> [1] 9
 #> 
 #> $strip_font_size
 #> [1] 6
