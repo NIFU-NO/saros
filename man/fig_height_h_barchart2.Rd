@@ -60,6 +60,8 @@ fig_height_h_barchart2.default(plot_obj, ...)
 \arguments{
 \item{plot_obj}{A plot object from \code{makeme()} - either a \code{ggplot2} object or an \code{ms_chart} object}
 
+\item{...}{Additional parameters passed to the specific method (\code{fig_height_h_barchart2.ggplot} or \code{fig_height_h_barchart2.ms_chart})}
+
 \item{main_font_size}{Numeric. Font size for the main text.}
 
 \item{strip_angle}{Numeric. Angle of the strip text.}
