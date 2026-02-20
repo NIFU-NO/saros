@@ -44,6 +44,12 @@ make_content.cat_plot_docx <-
       length(indep_vars) == 0 &&
       dplyr::n_distinct(data[[".variable_label"]]) == 1
 
+    if (isTRUE(hide_axis_text)) {
+      # Store original label before hiding for later retrieval
+      data[[".variable_label_original"]] <- data[[".variable_label"]]
+      data[[".variable_label"]] <- ""
+    }
+
     hide_legend <-
       dplyr::n_distinct(data$.category, na.rm = TRUE) == 2 &&
       !is.null(dots$colour_na)
