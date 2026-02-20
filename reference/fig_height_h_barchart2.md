@@ -3,12 +3,15 @@
 Taking an object from
 [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md), this
 function estimates the height of a figure for a horizontal bar chart.
+Works with both ggplot2 and mschart objects.
 
 ## Usage
 
 ``` r
-fig_height_h_barchart2(
-  ggobj,
+fig_height_h_barchart2(plot_obj, ...)
+
+fig_height_h_barchart2.ggplot(
+  plot_obj,
   main_font_size = 7,
   strip_angle = 0,
   freq = FALSE,
@@ -29,13 +32,45 @@ fig_height_h_barchart2(
   min = 1,
   multiplier_hide_axis_single_var = 0.6
 )
+
+fig_height_h_barchart2.ms_chart(
+  plot_obj,
+  main_font_size = 7,
+  strip_angle = 0,
+  freq = FALSE,
+  x_axis_label_width = 20,
+  strip_width = 20,
+  legend_location = c("plot", "panel"),
+  n_legend_lines = NULL,
+  showNA = c("ifany", "never", "always"),
+  legend_key_chars_equivalence = 5,
+  multiplier_per_horizontal_line = NULL,
+  multiplier_per_vertical_letter = 1,
+  multiplier_per_facet = 1,
+  multiplier_per_legend_line = 1,
+  fixed_constant = 0,
+  figure_width_in_cm = 14,
+  margin_in_cm = 0,
+  max = 12,
+  min = 1,
+  multiplier_hide_axis_single_var = 0.6
+)
+
+fig_height_h_barchart2.default(plot_obj, ...)
 ```
 
 ## Arguments
 
-- ggobj:
+- plot_obj:
 
-  `ggplot2`-object
+  A plot object from
+  [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) -
+  either a `ggplot2` object or an `ms_chart` object
+
+- ...:
+
+  Additional parameters passed to the specific method
+  (`fig_height_h_barchart2.ggplot` or `fig_height_h_barchart2.ms_chart`)
 
 - main_font_size:
 
@@ -119,6 +154,15 @@ Numeric value representing the estimated height of the figure.
 ## Examples
 
 ``` r
+# With ggplot2 (cat_plot_html)
 fig_height_h_barchart2(makeme(data = ex_survey, dep = b_1:b_2, indep = x1_sex))
 #> [1] 2
+
+# With mschart (cat_plot_docx)
+if (FALSE) { # \dontrun{
+fig_height_h_barchart2(
+  makeme(data = ex_survey, dep = b_1:b_2, 
+         type = "cat_plot_docx", docx_return_as_mschart = TRUE)
+)
+} # }
 ```

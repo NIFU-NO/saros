@@ -57,6 +57,8 @@
 <li>
 <strong>Unified DOCX plot types</strong>: Merged <code>cat_prop_plot_docx</code> and <code>cat_freq_plot_docx</code> into a single <code>cat_plot_docx</code> type, bringing it in line with the <code>cat_plot_html</code> API. The <code>freq</code> parameter now controls whether to create stacked proportion/percentage plots (<code>freq=FALSE</code>, default) or dodged frequency plots (<code>freq=TRUE</code>)</li>
 <li>Added <code>docx_return_as_mschart</code> parameter to <code><a href="../reference/makeme.html">makeme()</a></code> to control return type for <code>cat_plot_docx</code>. When <code>TRUE</code>, returns the mschart object directly instead of embedding it in an rdocx document, enabling more flexible composition of Word documents</li>
+<li>
+<strong>Refactored <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> to S3 generic</strong>: Now supports both <code>ggplot2</code> objects (from <code>type="cat_plot_html"</code>) and <code>mschart</code> objects (from <code>type="cat_plot_docx", docx_return_as_mschart=TRUE</code>). This enables automatic height calculation for Word charts, making it easier to size charts consistently across output formats</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-6-1-9000">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-1-9000"></a></h3>

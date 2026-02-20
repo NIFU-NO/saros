@@ -47,6 +47,13 @@
   control return type for `cat_plot_docx`. When `TRUE`, returns the
   mschart object directly instead of embedding it in an rdocx document,
   enabling more flexible composition of Word documents
+- **Refactored
+  [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  to S3 generic**: Now supports both `ggplot2` objects (from
+  `type="cat_plot_html"`) and `mschart` objects (from
+  `type="cat_plot_docx", docx_return_as_mschart=TRUE`). This enables
+  automatic height calculation for Word charts, making it easier to size
+  charts consistently across output formats
 
 ### Bug Fixes
 

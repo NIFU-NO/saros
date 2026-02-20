@@ -335,6 +335,9 @@ Functions for reading and writing data frames to various file formats
 - [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart.md)
   : Estimate figure height for a horizontal bar chart
 - [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  [`fig_height_h_barchart2.ggplot()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  [`fig_height_h_barchart2.ms_chart()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  [`fig_height_h_barchart2.default()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
   : Estimate figure height for a horizontal bar chart
 
 ## Obtain sample size range for a makeme-object (experimental)
