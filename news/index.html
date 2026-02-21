@@ -66,7 +66,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-6-1-9000">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-1-9000"></a></h3>
-<ul><li>Fixed default font sizes for <code>cat_plot_docx</code>: increased <code>label_font_size</code> and <code>main_font_size</code> defaults from 6 to 9 for better readability in Word documents</li>
+<ul><li>Fixed <code>cat_plot_docx</code> percentage plots to show consistent axis breaks at 0%, 25%, 50%, 75%, and 100% by setting axis limits (0-1) and major unit (0.25; experimental) for the y-axis. This improves readability and consistency across Word document charts</li>
+<li>Fixed default font sizes for <code>cat_plot_docx</code>: increased <code>label_font_size</code> and <code>main_font_size</code> defaults from 6 to 9 for better readability in Word documents</li>
 <li>Fixed <code>hide_axis_text_if_single_variable</code> parameter not being respected in <code>cat_plot_docx</code> output. The function now properly hides axis labels for single-variable plots when this parameter is <code>TRUE</code>, matching the behavior of <code>cat_plot_html</code>
 </li>
 <li>Fixed <code>colour_palette</code> parameter not being applied in <code>cat_plot_docx</code> output. The mschart library requires colour palettes to be named vectors where names match category levels, and the length must match the number of categories. The function now: (1) names the colour palette vector with category levels, (2) expands the palette with generated colours if user provides fewer colours than categories, and (3) trims the palette if user provides more colours than needed</li>

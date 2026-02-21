@@ -72,6 +72,10 @@
 
 ### Bug Fixes
 
+- Fixed `cat_plot_docx` percentage plots to show consistent axis breaks
+  at 0%, 25%, 50%, 75%, and 100% by setting axis limits (0-1) and major
+  unit (0.25; experimental) for the y-axis. This improves readability
+  and consistency across Word document charts
 - Fixed default font sizes for `cat_plot_docx`: increased
   `label_font_size` and `main_font_size` defaults from 6 to 9 for better
   readability in Word documents
