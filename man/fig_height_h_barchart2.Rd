@@ -113,7 +113,7 @@ fig_height_h_barchart2(makeme(data = ex_survey, dep = b_1:b_2, indep = x1_sex))
 \dontrun{
 fig_height_h_barchart2(
   makeme(data = ex_survey, dep = b_1:b_2, 
-         type = "cat_plot_docx", docx_return_as_mschart = TRUE)
+         type = "cat_plot_docx", docx_return_object = TRUE)
 )
 }
 }
