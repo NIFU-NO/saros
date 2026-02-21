@@ -12,6 +12,7 @@
 -   **Refactored `n_range2()` to S3 generic**: Now supports both `ggplot2` objects and `mschart` objects, similar to `fig_height_h_barchart2()`. This enables consistent sample size reporting across both HTML and Word chart outputs, making it easier to annotate charts with N ranges regardless of output format
 
 ## Bug Fixes
+-   Fixed `cat_plot_docx` percentage plots to show consistent axis breaks at 0%, 25%, 50%, 75%, and 100% by setting axis limits (0-1) and major unit (0.25; experimental) for the y-axis. This improves readability and consistency across Word document charts
 -   Fixed default font sizes for `cat_plot_docx`: increased `label_font_size` and `main_font_size` defaults from 6 to 9 for better readability in Word documents
 -   Fixed `hide_axis_text_if_single_variable` parameter not being respected in `cat_plot_docx` output. The function now properly hides axis labels for single-variable plots when this parameter is `TRUE`, matching the behavior of `cat_plot_html`
 -   Fixed `colour_palette` parameter not being applied in `cat_plot_docx` output. The mschart library requires colour palettes to be named vectors where names match category levels, and the length must match the number of categories. The function now: (1) names the colour palette vector with category levels, (2) expands the palette with generated colours if user provides fewer colours than categories, and (3) trims the palette if user provides more colours than needed

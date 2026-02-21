@@ -122,7 +122,14 @@ make_content.cat_plot_docx <-
     m <- mschart::chart_ax_x(x = m, major_tick_mark = "none")
 
     if (percentage) {
-      m <- mschart::chart_ax_y(x = m, num_fmt = "0%")
+      m <- mschart::chart_ax_y(
+        x = m,
+        num_fmt = "0%",
+        limit_min = 0,
+        limit_max = 1
+      )
+      # Set major unit for axis breaks (0%, 25%, 50%, 75%, 100%)
+      m$y_axis$major_unit <- 0.25
     }
 
     m <- mschart::chart_theme(
