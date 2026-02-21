@@ -485,7 +485,7 @@ Can be either a valid character path to a reference Word file, or an existing rd
 
 \verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
 
-For DOCX output types: if TRUE, return the underlying object (mschart for plots, flextable for tables) instead of embedding it in an rdocx document.}
+For DOCX output types: if TRUE, return the underlying object (mschart for plots, data.frame for tables) instead of embedding it in an rdocx document.}
 }
 \value{
 ggplot-object, optionally an extended ggplot object with ggiraph features.
