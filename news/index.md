@@ -42,16 +42,23 @@
   in line with the `cat_plot_html` API. The `freq` parameter now
   controls whether to create stacked proportion/percentage plots
   (`freq=FALSE`, default) or dodged frequency plots (`freq=TRUE`)
-- Added `docx_return_as_mschart` parameter to
+- **Added DOCX table types**: New `cat_table_docx` and `chr_table_docx`
+  output types for creating Word document tables. These types use
+  [`officer::body_add_table()`](https://davidgohel.github.io/officer/reference/body_add_table.html)
+  to embed tables in Word documents. Like HTML table types, they return
+  data.frames when `docx_return_object=TRUE`, enabling flexible table
+  composition
+- Added `docx_return_object` parameter to
   [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) to
-  control return type for `cat_plot_docx`. When `TRUE`, returns the
-  mschart object directly instead of embedding it in an rdocx document,
-  enabling more flexible composition of Word documents
+  control return type for DOCX outputs. When `TRUE`, returns the
+  underlying object (mschart for plots, data.frame for tables) instead
+  of embedding it in an rdocx document, enabling more flexible
+  composition of Word documents
 - **Refactored
   [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
   to S3 generic**: Now supports both `ggplot2` objects (from
   `type="cat_plot_html"`) and `mschart` objects (from
-  `type="cat_plot_docx", docx_return_as_mschart=TRUE`). This enables
+  `type="cat_plot_docx", docx_return_object=TRUE`). This enables
   automatic height calculation for Word charts, making it easier to size
   charts consistently across output formats
 - **Refactored

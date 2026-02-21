@@ -11,7 +11,8 @@ makeme(
   dep = tidyselect::everything(),
   indep = NULL,
   type = c("auto", "cat_plot_html", "int_plot_html", "cat_table_html", "int_table_html",
-    "sigtest_table_html", "cat_plot_docx", "int_plot_docx"),
+    "sigtest_table_html", "cat_plot_docx", "int_plot_docx", "cat_table_docx",
+    "chr_table_docx"),
   ...,
   require_common_categories = TRUE,
   crowd = c("all"),
@@ -76,7 +77,7 @@ makeme(
   font_family = "sans",
   path = NULL,
   docx_template = NULL,
-  docx_return_as_mschart = FALSE
+  docx_return_object = FALSE
 )
 ```
 
@@ -712,14 +713,15 @@ makeme(
   Can be either a valid character path to a reference Word file, or an
   existing rdocx-object in memory.
 
-- docx_return_as_mschart:
+- docx_return_object:
 
-  *Return mschart object instead of rdocx*
+  *Return underlying object instead of rdocx*
 
   `scalar<logical>` // *default:* `FALSE` (`optional`)
 
-  For `cat_plot_docx` type: if TRUE, return the mschart object instead
-  of embedding it in an rdocx document.
+  For DOCX output types: if TRUE, return the underlying object (mschart
+  for plots, flextable for tables) instead of embedding it in an rdocx
+  document.
 
 ## Value
 

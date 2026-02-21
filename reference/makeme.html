@@ -57,7 +57,8 @@
 <span>  dep <span class="op">=</span> <span class="fu">tidyselect</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  indep <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"cat_plot_html"</span>, <span class="st">"int_plot_html"</span>, <span class="st">"cat_table_html"</span>, <span class="st">"int_table_html"</span>,</span>
-<span>    <span class="st">"sigtest_table_html"</span>, <span class="st">"cat_plot_docx"</span>, <span class="st">"int_plot_docx"</span><span class="op">)</span>,</span>
+<span>    <span class="st">"sigtest_table_html"</span>, <span class="st">"cat_plot_docx"</span>, <span class="st">"int_plot_docx"</span>, <span class="st">"cat_table_docx"</span>,</span>
+<span>    <span class="st">"chr_table_docx"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  require_common_categories <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  crowd <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"all"</span><span class="op">)</span>,</span>
@@ -122,7 +123,7 @@
 <span>  font_family <span class="op">=</span> <span class="st">"sans"</span>,</span>
 <span>  path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  docx_template <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  docx_return_as_mschart <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  docx_return_object <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -583,10 +584,10 @@ Font sizes for general text (6), data label text (3), strip text (6) and legend 
 <p>Can be either a valid character path to a reference Word file, or an existing rdocx-object in memory.</p></dd>
 
 
-<dt id="arg-docx-return-as-mschart">docx_return_as_mschart<a class="anchor" aria-label="anchor" href="#arg-docx-return-as-mschart"></a></dt>
-<dd><p><em>Return mschart object instead of rdocx</em></p>
+<dt id="arg-docx-return-object">docx_return_object<a class="anchor" aria-label="anchor" href="#arg-docx-return-object"></a></dt>
+<dd><p><em>Return underlying object instead of rdocx</em></p>
 <p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
-<p>For <code>cat_plot_docx</code> type: if TRUE, return the mschart object instead of embedding it in an rdocx document.</p></dd>
+<p>For DOCX output types: if TRUE, return the underlying object (mschart for plots, flextable for tables) instead of embedding it in an rdocx document.</p></dd>
 
 </dl></div>
     <div class="section level2">
