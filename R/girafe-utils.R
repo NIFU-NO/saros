@@ -121,6 +121,86 @@ build_custom_palette <- function(
   }
 }
 
+#' Resolve Category Colors for Charts
+#'
+#' Centralizes color resolution logic for both HTML and DOCX charts.
+#' Handles checkbox detection, level reordering, and priority palette setup.
+#'
+#' @param cat_levels Character vector of category levels
+#' @param girafe_settings List of girafe settings from global_settings_get("girafe")
+#'
+#' @return List with:
+#'   - checkbox: Logical indicating if this is a checkbox plot
+#'   - cat_levels: Character vector (reordered if checkbox)
+#'   - priority_palette_codes: Named character vector for priority colors
+#'   - colour_palette: Named character vector of resolved colors
+#' @keywords internal
+resolve_category_colors <- function(cat_levels, girafe_settings) {
+  # Detect checkbox scenario (binary plot matching checked/not_checked)
+  checkbox <- length(cat_levels) == 2 &&
+    !is.null(girafe_settings$checked) &&
+    !is.null(girafe_settings$not_checked) &&
+    all(cat_levels %in% c(girafe_settings$checked, girafe_settings$not_checked))
+
+  # Initialize priority palette
+  priority_palette_codes <- girafe_settings$priority_palette_codes
+
+  # Handle checkbox plots
+  if (checkbox && !is.null(girafe_settings$colour_2nd_binary_cat)) {
+    # Match girafe.R behavior: reverse order when colour_2nd_binary_cat is set
+    # This makes not_checked come first in the levels list
+    cat_levels <- c(girafe_settings$not_checked, girafe_settings$checked)
+
+    # Get second color from palette for checked (now comes second)
+    second_palette_color <- if (!is.null(girafe_settings$palette_codes)) {
+      palette_codes_last <- girafe_settings$palette_codes[[length(
+        girafe_settings$palette_codes
+      )]]
+      if (length(palette_codes_last) > 1) {
+        palette_codes_last[2]
+      } else if (length(palette_codes_last) == 1) {
+        # If only one color in palette, use it for checked
+        palette_codes_last[1]
+      } else {
+        scales::hue_pal()(2)[2]
+      }
+    } else {
+      scales::hue_pal()(2)[2]
+    }
+
+    # Priority palette:
+    # - not_checked (first): gets colour_2nd_binary_cat (de-emphasized)
+    # - checked (second): gets second color from palette (prominent)
+    priority_palette_codes <- c(
+      stats::setNames(
+        girafe_settings$colour_2nd_binary_cat,
+        girafe_settings$not_checked
+      ),
+      stats::setNames(second_palette_color, girafe_settings$checked)
+    )
+  } else if (checkbox) {
+    # Default checkbox order: checked first, not_checked second
+    cat_levels <- c(girafe_settings$checked, girafe_settings$not_checked)
+  }
+
+  # Build color palette using shared logic
+  palette_fn <- build_custom_palette(
+    palette_codes = girafe_settings$palette_codes,
+    fct_levels = cat_levels,
+    priority_palette_codes = priority_palette_codes
+  )
+
+  colour_palette <- palette_fn(length(cat_levels))
+  names(colour_palette) <- cat_levels
+
+  list(
+    checkbox = checkbox,
+    cat_levels = cat_levels,
+    priority_palette_codes = priority_palette_codes,
+    colour_palette = colour_palette
+  )
+}
+
 guess_legend_ncols <- function(ggobj, char_limit = 100) {
   fill_var <- rlang::as_label(ggobj$mapping$fill)
   if (!is.null(fill_var)) {

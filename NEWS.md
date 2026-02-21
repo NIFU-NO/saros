@@ -1,5 +1,8 @@
 # saros 1.6.1.9000 (dev)
 
+## Breaking Changes
+-   **`cat_plot_docx` now uses girafe global settings for colors**: The `colour_palette` parameter has been removed from `cat_plot_docx`. Instead, colors are now controlled exclusively through `global_settings_set(fn_name = "girafe")` for consistency with HTML plots. This enables unified color management across all output formats (HTML and DOCX). Checkbox plot support (`checked`, `not_checked`, `colour_2nd_binary_cat`) is now also available for DOCX plots, with automatic legend hiding and label suppression for the unchecked category. Users should migrate from `makeme(..., colour_palette = c(...))` to `global_settings_set(fn_name = "girafe", new = list(palette_codes = list(c(...))))`.
+
 ## New Features
 -   Added `make_file_links()` function for dynamically creating markdown lists with links to files. Extracts document titles from DOCX, PPTX, and PDF file metadata and generates formatted markdown lists. Ideal for creating navigation links in Quarto/RMarkdown documents that point to generated reports in a folder. Supports glob patterns, recursive search, and customizable list formatting (unordered or numbered)
 -   Enhanced `ggsaver()` to automatically apply colour palettes from `girafe()` global settings when saving plots. This ensures saved PNG/PDF images match the appearance of interactive plots displayed with `girafe()`. Palette settings can be configured via `global_settings_set(fn_name = "girafe", new = list(palette_codes = ...))` and will be automatically applied when saving plots through `get_fig_title_suffix_from_ggplot()` or direct `ggsaver()` calls

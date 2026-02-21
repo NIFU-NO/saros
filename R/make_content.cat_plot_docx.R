@@ -5,34 +5,36 @@ make_content.cat_plot_docx <-
 
     data <- dots$data_summary
 
-    # Get category levels to determine how many colours we need
+    # Pull girafe global settings for color consistency
+    girafe_settings <- global_settings_get(fn_name = "girafe")
+
+    # Get category levels
     cat_levels <- levels(data[[".category"]])
-    n_categories <- length(cat_levels)
 
-    if (is.null(dots$colour_palette)) {
-      # Generate default colour palette
-      hues <- seq(15, 375, length = n_categories + 1)
-      dots$colour_palette <- grDevices::hcl(h = hues, l = 65, c = 100)[
-        1:n_categories
-      ]
-    } else {
-      # Expand colour_palette if user provided fewer colours than categories
-      if (length(dots$colour_palette) < n_categories) {
-        # Recycle user colours or generate additional ones
-        n_user_colours <- length(dots$colour_palette)
-        hues <- seq(15, 375, length = (n_categories - n_user_colours) + 1)
-        additional_colours <- grDevices::hcl(h = hues, l = 65, c = 100)[
-          1:(n_categories - n_user_colours)
-        ]
-        dots$colour_palette <- c(dots$colour_palette, additional_colours)
-      } else if (length(dots$colour_palette) > n_categories) {
-        # Trim if user provided more colours than needed
-        dots$colour_palette <- dots$colour_palette[1:n_categories]
-      }
+    # Resolve colors using shared logic from girafe-utils.R
+    color_info <- resolve_category_colors(cat_levels, girafe_settings)
+
+    # Extract resolved values
+    checkbox <- color_info$checkbox
+    cat_levels <- color_info$cat_levels
+    colour_palette <- color_info$colour_palette
+
+    # Apply checkbox transformations to data
+    if (checkbox) {
+      data <- data |>
+        dplyr::mutate(
+          .category = forcats::fct_relevel(
+            .data$.category,
+            cat_levels[1],
+            cat_levels[2]
+          ),
+          .data_label = ifelse(
+            .data$.category == girafe_settings$not_checked,
+            "",
+            .data$.data_label
+          )
+        )
     }
-
-    # Name the colour_palette with category levels for mschart
-    names(dots$colour_palette) <- cat_levels
 
     indep_vars <- colnames(data)[
       !colnames(data) %in%
@@ -50,16 +52,12 @@ make_content.cat_plot_docx <-
       data[[".variable_label"]] <- ""
     }
 
-    hide_legend <-
-      dplyr::n_distinct(data$.category, na.rm = TRUE) == 2 &&
-      !is.null(dots$colour_na)
-
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in%
       c("percentage", "percentage_bare", "proportion")
 
     fp_text_settings <-
-      lapply(dots$colour_palette, function(color) {
+      lapply(colour_palette, function(color) {
         officer::fp_text(
           font.size = dots$label_font_size,
           color = hex_bw(color, na_colour = dots$colour_na),
@@ -113,8 +111,8 @@ make_content.cat_plot_docx <-
       gap_width = gap_width
     )
 
-    m <- mschart::chart_data_fill(x = m, values = dots$colour_palette)
-    m <- mschart::chart_data_stroke(x = m, values = dots$colour_palette)
+    m <- mschart::chart_data_fill(x = m, values = colour_palette)
+    m <- mschart::chart_data_stroke(x = m, values = colour_palette)
     if (length(fp_text_settings) > 0) {
       m <- mschart::chart_labels_text(x = m, values = fp_text_settings)
     }
@@ -141,7 +139,7 @@ make_content.cat_plot_docx <-
       grid_major_line_y = blank_border,
       grid_minor_line_x = blank_border,
       grid_minor_line_y = blank_border,
-      legend_position = if (hide_legend) "n" else "b"
+      legend_position = if (checkbox) "n" else "b"
     )
 
     # Return mschart object directly if requested
