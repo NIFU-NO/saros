@@ -87,21 +87,27 @@ girafe <- function(
   fill_levels <- get_fill_levels(ggobj)
 
   checkbox <- FALSE
+  priority_palette_codes <- args$priority_palette_codes
+
   if (!is.null(fill_levels)) {
-    if (all(fill_levels %in% c(args$checked, args$not_checked))) {
-      checkbox <- TRUE
+    # Resolve colors using shared logic from girafe-utils.R
+    color_info <- resolve_category_colors(
+      cat_levels = fill_levels,
+      girafe_settings = args
+    )
+
+    checkbox <- color_info$checkbox
+    fill_levels <- color_info$cat_levels
+    priority_palette_codes <- color_info$priority_palette_codes
+
+    # Apply checkbox transformations to ggobj if needed
+    if (checkbox) {
       ggobj <- convert_to_checkbox_plot(
         ggobj,
         checked = args$checked,
         not_checked = args$not_checked,
         colour_2nd_binary_cat = args$colour_2nd_binary_cat
       )
-      # Update fill_levels to match the new order
-      if (rlang::is_string(args$colour_2nd_binary_cat)) {
-        fill_levels <- c(args$not_checked, args$checked)
-      } else {
-        fill_levels <- c(args$checked, args$not_checked)
-      }
     }
 
     ggobj <-
@@ -113,7 +119,7 @@ girafe <- function(
             ncol = args$ncol,
             byrow = args$byrow,
             label_wrap_width = args$label_wrap_width,
-            priority_palette_codes = args$priority_palette_codes
+            priority_palette_codes = priority_palette_codes
           ) +
           ggplot2::guides(
             fill = if (isTRUE(checkbox)) {
