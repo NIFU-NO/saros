@@ -434,7 +434,7 @@ fig_height_h_barchart <- # Returns a numeric value
 #' \dontrun{
 #' fig_height_h_barchart2(
 #'   makeme(data = ex_survey, dep = b_1:b_2, 
-#'          type = "cat_plot_docx", docx_return_as_mschart = TRUE)
+#'          type = "cat_plot_docx", docx_return_object = TRUE)
 #' )
 #' }
 fig_height_h_barchart2 <- # Returns a numeric value
@@ -796,7 +796,7 @@ fig_height_h_barchart2.default <- function(plot_obj, ...) {
     c(
       "{.arg fig_height_h_barchart2} requires a plot object from {.fn makeme}.",
       "i" = "Received object of class: {.cls {class(plot_obj)}}",
-      "i" = "Expected: {.cls gg} (from {.code type='cat_plot_html'}) or {.cls ms_chart} (from {.code type='cat_plot_docx', docx_return_as_mschart=TRUE})"
+      "i" = "Expected: {.cls gg} (from {.code type='cat_plot_html'}) or {.cls ms_chart} (from {.code type='cat_plot_docx', docx_return_object=TRUE})"
     )
   )
 }

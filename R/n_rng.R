@@ -256,7 +256,7 @@ n_range <- function(
 #' \dontrun{
 #' n_range2(
 #'   makeme(data = ex_survey, dep = b_1:b_3,
-#'          type = "cat_plot_docx", docx_return_as_mschart = TRUE)
+#'          type = "cat_plot_docx", docx_return_object = TRUE)
 #' )
 #' }
 n_range2 <- function(
@@ -339,7 +339,7 @@ n_range2.default <- function(plot_obj, ...) {
     c(
       "{.arg n_range2} requires a plot object from {.fn makeme}.",
       "i" = "Received object of class: {.cls {class(plot_obj)}}",
-      "i" = "Expected: {.cls gg} (from {.code type='cat_plot_html'}) or {.cls ms_chart} (from {.code type='cat_plot_docx', docx_return_as_mschart=TRUE})"
+      "i" = "Expected: {.cls gg} (from {.code type='cat_plot_html'}) or {.cls ms_chart} (from {.code type='cat_plot_docx', docx_return_object=TRUE})"
     )
   )
 }

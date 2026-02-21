@@ -138,7 +138,7 @@ make_content.cat_plot_docx <-
     )
 
     # Return mschart object directly if requested
-    if (isTRUE(dots$docx_return_as_mschart)) {
+    if (isTRUE(dots$docx_return_object)) {
       return(m)
     }
 
