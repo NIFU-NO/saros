@@ -720,7 +720,7 @@ makeme(
   `scalar<logical>` // *default:* `FALSE` (`optional`)
 
   For DOCX output types: if TRUE, return the underlying object (mschart
-  for plots, flextable for tables) instead of embedding it in an rdocx
+  for plots, data.frame for tables) instead of embedding it in an rdocx
   document.
 
 ## Value
