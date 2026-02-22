@@ -544,3 +544,42 @@ test_that("txt_from_cat_mesos_plots handles multiple variables with different ca
     expect_true(any(grepl("Binary|FourCat", result)))
   }
 })
+test_that("txt_from_cat_mesos_plots handles mismatched variable label columns", {
+  # Test for the bug where dat_1 uses .variable_label_original and
+  # dat_2 uses .variable_label, causing group_2 to return 0
+
+  # dat_1: variable name in .variable_label_original, .variable_label is empty
+  plot_data_1 <- data.frame(
+    .variable_label = "",
+    .variable_label_original = "Question 1",
+    .category = factor(c("Ja", "Nei"), levels = c("Nei", "Ja")),
+    .category_order = c(1, 2),
+    .proportion = c(0.4, 0.6),
+    stringsAsFactors = FALSE
+  )
+
+  # dat_2: variable name in .variable_label, .variable_label_original is empty
+  plot_data_2 <- data.frame(
+    .variable_label = "Question 1",
+    .variable_label_original = "",
+    .category = factor(c("Ja", "Nei"), levels = c("Nei", "Ja")),
+    .category_order = c(1, 2),
+    .proportion = c(0.7, 0.3),
+    stringsAsFactors = FALSE
+  )
+
+  plots <- list(plot_data_1, plot_data_2)
+
+  result <- saros::txt_from_cat_mesos_plots(plots, min_prop_diff = 0.1)
+
+  expect_type(result, "character")
+  expect_true(length(result) >= 1)
+
+  # Extract the proportions from the result text
+  # Result should contain both group values (not 0 for group_2)
+  expect_true(grepl("0.6", result[1])) # group_1 proportion
+  expect_true(grepl("0.3", result[1])) # group_2 proportion (should NOT be 0!)
+
+  # Ensure it doesn't show 0 for the second group
+  expect_false(grepl("\\(0\\)", result[1]))
+})
