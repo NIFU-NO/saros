@@ -10,13 +10,74 @@ get_variable_label_column <- function(data) {
   }
 }
 
+get_common_variable_label_column <- function(dat_1, dat_2) {
+  # Determine which variable label column to use based on BOTH datasets
+  # Prefer a column that has non-empty values in BOTH datasets
+
+  # Check .variable_label in both datasets
+  dat_1_has_variable_label <- ".variable_label" %in%
+    colnames(dat_1) &&
+    any(nchar(trimws(as.character(dat_1$.variable_label))) > 0)
+  dat_2_has_variable_label <- ".variable_label" %in%
+    colnames(dat_2) &&
+    any(nchar(trimws(as.character(dat_2$.variable_label))) > 0)
+
+  # Check .variable_label_original in both datasets
+  dat_1_has_original <- ".variable_label_original" %in%
+    colnames(dat_1) &&
+    any(nchar(trimws(as.character(dat_1$.variable_label_original))) > 0)
+  dat_2_has_original <- ".variable_label_original" %in%
+    colnames(dat_2) &&
+    any(nchar(trimws(as.character(dat_2$.variable_label_original))) > 0)
+
+  # Prefer .variable_label if BOTH datasets have values there
+  if (dat_1_has_variable_label && dat_2_has_variable_label) {
+    return(list(var_col = ".variable_label", dat_1 = dat_1, dat_2 = dat_2))
+  }
+
+  # Use .variable_label_original if BOTH datasets have values there
+  if (dat_1_has_original && dat_2_has_original) {
+    return(list(
+      var_col = ".variable_label_original",
+      dat_1 = dat_1,
+      dat_2 = dat_2
+    ))
+  }
+
+  # If one dataset has .variable_label and the other has .variable_label_original,
+  # copy values to make them comparable
+  if (
+    dat_1_has_original &&
+      !dat_1_has_variable_label &&
+      dat_2_has_variable_label &&
+      !dat_2_has_original
+  ) {
+    # Copy dat_1's .variable_label_original to .variable_label
+    dat_1$.variable_label <- dat_1$.variable_label_original
+    return(list(var_col = ".variable_label", dat_1 = dat_1, dat_2 = dat_2))
+  }
+
+  if (
+    dat_2_has_original &&
+      !dat_2_has_variable_label &&
+      dat_1_has_variable_label &&
+      !dat_1_has_original
+  ) {
+    # Copy dat_2's .variable_label_original to .variable_label
+    dat_2$.variable_label <- dat_2$.variable_label_original
+    return(list(var_col = ".variable_label", dat_1 = dat_1, dat_2 = dat_2))
+  }
+
+  # Fallback: prefer .variable_label
+  return(list(var_col = ".variable_label", dat_1 = dat_1, dat_2 = dat_2))
+}
+
 get_prop_for_highest_categories <- function(
   plot_data,
   var,
-  selected_categories
+  selected_categories,
+  var_col
 ) {
-  var_col <- get_variable_label_column(plot_data)
-
   data.frame(
     var = var,
     value = plot_data |>
@@ -215,7 +276,12 @@ txt_from_cat_mesos_plots <- function(
   }
 
   # Use original variable label if available (when hide_axis_text_if_single_variable = TRUE)
-  var_col <- get_variable_label_column(dat_1)
+  # Check both datasets to ensure we use a column that works for both
+  # This may normalize the datasets to use the same column
+  normalized <- get_common_variable_label_column(dat_1, dat_2)
+  var_col <- normalized$var_col
+  dat_1 <- normalized$dat_1
+  dat_2 <- normalized$dat_2
 
   # Get unique variables to process
   unique_vars <- dat_1[[var_col]] |>
@@ -278,7 +344,8 @@ txt_from_cat_mesos_plots <- function(
         get_prop_for_highest_categories(
           plot_data = .x,
           var = var,
-          selected_categories = selected_categories
+          selected_categories = selected_categories,
+          var_col = var_col
         )
       }) |>
       dplyr::bind_rows(.id = "group") |>
