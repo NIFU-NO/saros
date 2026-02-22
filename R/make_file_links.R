@@ -117,12 +117,21 @@ make_file_links <- function(
     ))
   }
 
+  # Add extension suffix to all files if there are multiple file types in folder
+  add_ext_suffix <- length(file_exts) >= 2
+
   # Generate links
   links <- vapply(
     files,
     function(filepath) {
       # Extract title from document
       title <- extract_document_title(filepath)
+
+      # Add extension suffix if there are multiple file types in folder
+      if (add_ext_suffix) {
+        ext_upper <- toupper(fs::path_ext(filepath))
+        title <- sprintf("%s (%s)", title, ext_upper)
+      }
 
       # Determine link path
       if (relative_links) {
