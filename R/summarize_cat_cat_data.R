@@ -407,6 +407,7 @@ summarize_cat_cat_data <-
     labels_always_at_bottom = NULL,
     labels_always_at_top = NULL,
     translations = list(),
+    full_category_levels = NULL,
     call = rlang::caller_env()
   ) {
     showNA <- rlang::arg_match(showNA)
@@ -469,7 +470,13 @@ summarize_cat_cat_data <-
 
     check_sort_by(x = cross_table_output$.category, sort_by = sort_dep_by)
 
-    fct_unions <- levels(cross_table_output[[".category"]])
+    # Use pre-computed full category levels if provided (for consistent colors across crowds)
+    # Otherwise, use the levels from the current crosstable output
+    fct_unions <- if (!is.null(full_category_levels)) {
+      full_category_levels
+    } else {
+      levels(cross_table_output[[".category"]])
+    }
 
     cross_table_output |>
       mutate_data_label(
