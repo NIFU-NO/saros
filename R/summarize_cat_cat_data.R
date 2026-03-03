@@ -163,6 +163,11 @@ add_n_to_label <- function(
   if (isTRUE(add_n_to_dep_label)) {
     add_to_var <- ".variable_label"
     count_var <- ".count_per_dep"
+    # Save original label before appending N suffix so that cross-crowd
+    # matching in txt_from_cat_mesos_plots() can use .variable_label_original
+    # as a stable join key (different crowds have different N values, making
+    # .variable_label diverge between crowds).
+    data_summary[[".variable_label_original"]] <- data_summary[[add_to_var]]
     levels(data_summary[[add_to_var]]) <-
       paste0(
         levels(data_summary[[add_to_var]]),
@@ -181,6 +186,10 @@ add_n_to_label <- function(
     ]
     count_var <- ".count_per_indep_group"
     if (length(add_to_var)) {
+      # Save original indep label before appending N suffix for future-proof
+      # cross-crowd matching analogous to the dep-label fix above.
+      data_summary[[paste0(add_to_var, "_original")]] <-
+        data_summary[[add_to_var]]
       data_summary <-
         dplyr::arrange(
           data_summary,
