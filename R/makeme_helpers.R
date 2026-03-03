@@ -289,8 +289,11 @@ compute_full_category_levels <- function(data, dep, showNA = "ifany") {
     character(1)
   )
 
-  if (!all(dep_types %in% c("factor", "ordered", "character"))) {
-    return(NULL) # Not applicable for non-categorical variables
+  # Only compute for factor/ordered variables (not character)
+  # Character variables don't need consistent factor levels across crowds
+  # since they're typically used in tables without color mappings
+  if (!all(dep_types %in% c("factor", "ordered"))) {
+    return(NULL) # Not applicable for non-factor variables
   }
 
   # Use get_common_levels to find all unique levels across dep variables
