@@ -30,6 +30,7 @@ summarize_cat_cat_data(
   labels_always_at_bottom = NULL,
   labels_always_at_top = NULL,
   translations = list(),
+  full_category_levels = NULL,
   call = rlang::caller_env()
 )
 }
