@@ -78,6 +78,7 @@
 <span>  labels_always_at_bottom <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels_always_at_top <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  translations <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  full_category_levels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  call <span class="op">=</span> <span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/stack.html" class="external-link">caller_env</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -331,6 +332,10 @@ See <code>arrange_section_by</code> for sorting of report sections.</p></dd>
 <dd><p><em>Localize your output</em></p>
 <p><code>list&lt;character&gt;</code></p>
 <p>A list of translations where the name is the code and the value is the translation. See the examples.</p></dd>
+
+
+<dt id="arg-full-category-levels">full_category_levels<a class="anchor" aria-label="anchor" href="#arg-full-category-levels"></a></dt>
+<dd><p>Optional character vector of all category levels across crowds (for consistent colors)</p></dd>
 
 
 <dt id="arg-call">call<a class="anchor" aria-label="anchor" href="#arg-call"></a></dt>

@@ -14,6 +14,7 @@ process_crowd_data(
   data,
   mesos_var,
   mesos_group,
+  full_category_levels = NULL,
   ...
 )
 ```
@@ -47,6 +48,10 @@ process_crowd_data(
 - mesos_group:
 
   Specific mesos group identifier
+
+- full_category_levels:
+
+  Optional pre-computed full category levels for consistency
 
 - ...:
 

@@ -13,6 +13,7 @@ generate_data_summary(
   dep_crwd,
   indep_crwd,
   args,
+  full_category_levels = NULL,
   ...
 )
 ```
@@ -38,6 +39,10 @@ generate_data_summary(
 - args:
 
   List of makeme function arguments
+
+- full_category_levels:
+
+  Optional pre-computed full category levels for consistency
 
 - ...:
 

@@ -31,6 +31,7 @@ summarize_cat_cat_data(
   labels_always_at_bottom = NULL,
   labels_always_at_top = NULL,
   translations = list(),
+  full_category_levels = NULL,
   call = rlang::caller_env()
 )
 ```
@@ -371,6 +372,11 @@ summarize_cat_cat_data(
 
   A list of translations where the name is the code and the value is the
   translation. See the examples.
+
+- full_category_levels:
+
+  Optional character vector of all category levels across crowds (for
+  consistent colors)
 
 - call:
 
