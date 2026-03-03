@@ -227,6 +227,8 @@ Column names in \code{data} that should always be placed at the top or bottom of
 
 A list of translations where the name is the code and the value is the translation. See the examples.}
 
+\item{full_category_levels}{Optional character vector of all category levels across crowds (for consistent colors)}
+
 \item{call}{\emph{Internal call}
 
 \verb{obj:<call>} // \emph{Default:} \code{rlang::caller_env()} (\code{optional})

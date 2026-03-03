@@ -781,6 +781,12 @@ get_target_categories <- function(data, method) {
   # - .top/.bottom pick the single highest/lowest level
   # - .upper/.lower pick the half above/below the median (odd/even aware)
   # - .mid_upper/.mid_lower include the middle level in upper/lower respectively
-  all_categories <- levels(data$.category)
+  
+  # Only use categories that actually exist in the data
+  # This prevents issues when full_category_levels includes absent categories
+  all_levels <- levels(data$.category)
+  present_categories <- unique(as.character(data$.category))
+  all_categories <- all_levels[all_levels %in% present_categories]
+  
   subset_vector(all_categories, method)
 }
