@@ -16,6 +16,7 @@ if (!exists(".saros.env")) {
       ".variable_name",
       ".variable_position",
       ".variable_label",
+      ".variable_label_original",
       ".variable_label_prefix",
       ".category",
       ".count",

@@ -87,3 +87,37 @@ testthat::test_that("Preserves other columns unchanged", {
   testthat::expect_equal(result$.count_per_dep, data_summary$.count_per_dep)
   testthat::expect_equal(result$indep_var, data_summary$indep_var)
 })
+
+testthat::test_that("add_n_to_dep_label saves .variable_label_original", {
+  result <- saros:::add_n_to_label(data_summary, add_n_to_dep_label = TRUE)
+  testthat::expect_true(
+    ".variable_label_original" %in% colnames(result),
+    info = ".variable_label_original column must be created"
+  )
+  testthat::expect_equal(
+    as.character(result$.variable_label_original),
+    as.character(data_summary$.variable_label),
+    info = ".variable_label_original must equal the pre-mutation labels"
+  )
+})
+
+testthat::test_that(".variable_label_original not created when flag is FALSE", {
+  result <- saros:::add_n_to_label(data_summary, add_n_to_dep_label = FALSE)
+  testthat::expect_false(
+    ".variable_label_original" %in% colnames(result),
+    info = ".variable_label_original must NOT be created when add_n_to_dep_label is FALSE"
+  )
+})
+
+testthat::test_that("add_n_to_indep_label saves indep_var_original", {
+  result <- saros:::add_n_to_label(data_summary, add_n_to_indep_label = TRUE)
+  testthat::expect_true(
+    "indep_var_original" %in% colnames(result),
+    info = "indep_var_original column must be created"
+  )
+  testthat::expect_equal(
+    as.character(result$indep_var_original),
+    as.character(data_summary$indep_var),
+    info = "indep_var_original must equal the pre-mutation indep labels"
+  )
+})

@@ -583,3 +583,51 @@ test_that("txt_from_cat_mesos_plots handles mismatched variable label columns", 
   # Ensure it doesn't show 0 for the second group
   expect_false(grepl("\\(0\\)", result[1]))
 })
+
+test_that("txt_from_cat_mesos_plots uses .variable_label_original to match crowds with different N suffixes", {
+  # Regression test: when add_n_to_dep_label = TRUE, each crowd's .variable_label
+  # gets a different "(N = X)" suffix appended, causing cross-crowd matching to
+  # fail silently (group_2 proportion becomes 0). The fix saves the original label
+  # in .variable_label_original before mutation so get_common_variable_label_column()
+  # can use it as a stable join key.
+
+  # dat_1 (target crowd, N=68): label has been suffixed with crowd-specific N
+  # Row order: Valgt (order=1, prop=0.65), Ikke valgt (order=2, prop=0.35)
+  # Function picks highest category_order → "Ikke valgt" with prop 0.35
+  plot_data_1 <- data.frame(
+    .variable_label = factor("Fagbrev (N = 68)", levels = "Fagbrev (N = 68)"),
+    .variable_label_original = factor("Fagbrev", levels = "Fagbrev"),
+    .category = factor(c("Valgt", "Ikke valgt"), levels = c("Valgt", "Ikke valgt")),
+    .category_order = c(1L, 2L),
+    .proportion = c(0.65, 0.35),
+    stringsAsFactors = FALSE
+  )
+
+  # dat_2 (others crowd, N=1234): same variable but different N in the label
+  # "Ikke valgt" (highest order) has proportion 0.10
+  plot_data_2 <- data.frame(
+    .variable_label = factor("Fagbrev (N = 1234)", levels = "Fagbrev (N = 1234)"),
+    .variable_label_original = factor("Fagbrev", levels = "Fagbrev"),
+    .category = factor(c("Valgt", "Ikke valgt"), levels = c("Valgt", "Ikke valgt")),
+    .category_order = c(1L, 2L),
+    .proportion = c(0.90, 0.10),
+    stringsAsFactors = FALSE
+  )
+
+  plots <- list(list(data = plot_data_1), list(data = plot_data_2))
+
+  result <- saros::txt_from_cat_mesos_plots(plots, min_prop_diff = 0.10)
+
+  expect_type(result, "character")
+  expect_true(length(result) >= 1, info = "Should produce at least one sentence")
+
+  # group_2 proportion must NOT be 0 — the key regression assertion
+  expect_false(
+    grepl("\\(0\\)", result[1]),
+    info = "group_2 proportion should not be 0 due to N-suffix label mismatch"
+  )
+
+  # Both crowd proportions should appear in the output
+  expect_true(grepl("0.35", result[1]), info = "group_1 proportion (0.35) should appear")
+  expect_true(grepl("0.1",  result[1]), info = "group_2 proportion (0.10) should appear")
+})

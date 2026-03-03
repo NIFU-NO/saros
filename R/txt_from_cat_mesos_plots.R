@@ -14,6 +14,29 @@ get_common_variable_label_column <- function(dat_1, dat_2) {
   # Determine which variable label column to use based on BOTH datasets
   # Prefer a column that has non-empty values in BOTH datasets
 
+  # Check .variable_label_original in both datasets.
+  # This is preferred over .variable_label for cross-crowd matching because
+  # add_n_to_label() appends a crowd-specific "(N = X)" suffix to
+  # .variable_label, making it differ between crowds even for the same
+  # variable. .variable_label_original retains the pre-suffix value and is
+  # therefore a stable join key.
+  dat_1_has_original <- ".variable_label_original" %in%
+    colnames(dat_1) &&
+    any(nchar(trimws(as.character(dat_1$.variable_label_original))) > 0)
+  dat_2_has_original <- ".variable_label_original" %in%
+    colnames(dat_2) &&
+    any(nchar(trimws(as.character(dat_2$.variable_label_original))) > 0)
+
+  # Prefer .variable_label_original when BOTH datasets have it — this avoids
+  # the "(N = X)" mismatch that causes zero-proportion lookups.
+  if (dat_1_has_original && dat_2_has_original) {
+    return(list(
+      var_col = ".variable_label_original",
+      dat_1 = dat_1,
+      dat_2 = dat_2
+    ))
+  }
+
   # Check .variable_label in both datasets
   dat_1_has_variable_label <- ".variable_label" %in%
     colnames(dat_1) &&
@@ -22,26 +45,9 @@ get_common_variable_label_column <- function(dat_1, dat_2) {
     colnames(dat_2) &&
     any(nchar(trimws(as.character(dat_2$.variable_label))) > 0)
 
-  # Check .variable_label_original in both datasets
-  dat_1_has_original <- ".variable_label_original" %in%
-    colnames(dat_1) &&
-    any(nchar(trimws(as.character(dat_1$.variable_label_original))) > 0)
-  dat_2_has_original <- ".variable_label_original" %in%
-    colnames(dat_2) &&
-    any(nchar(trimws(as.character(dat_2$.variable_label_original))) > 0)
-
-  # Prefer .variable_label if BOTH datasets have values there
+  # Fall back to .variable_label if BOTH datasets have values there
   if (dat_1_has_variable_label && dat_2_has_variable_label) {
     return(list(var_col = ".variable_label", dat_1 = dat_1, dat_2 = dat_2))
-  }
-
-  # Use .variable_label_original if BOTH datasets have values there
-  if (dat_1_has_original && dat_2_has_original) {
-    return(list(
-      var_col = ".variable_label_original",
-      dat_1 = dat_1,
-      dat_2 = dat_2
-    ))
   }
 
   # If one dataset has .variable_label and the other has .variable_label_original,
