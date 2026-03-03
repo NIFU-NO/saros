@@ -628,6 +628,6 @@ test_that("txt_from_cat_mesos_plots uses .variable_label_original to match crowd
   )
 
   # Both crowd proportions should appear in the output
-  expect_true(grepl("0.35", result[1]), info = "group_1 proportion (0.35) should appear")
-  expect_true(grepl("0.1",  result[1]), info = "group_2 proportion (0.10) should appear")
+  expect_true(grepl("0.35", result[1], fixed = TRUE), info = "group_1 proportion (0.35) should appear")
+  expect_true(grepl("0.1",  result[1], fixed = TRUE), info = "group_2 proportion (0.10) should appear")
 })

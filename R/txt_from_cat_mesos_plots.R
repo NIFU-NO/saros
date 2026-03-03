@@ -22,10 +22,10 @@ get_common_variable_label_column <- function(dat_1, dat_2) {
   # therefore a stable join key.
   dat_1_has_original <- ".variable_label_original" %in%
     colnames(dat_1) &&
-    any(nchar(trimws(as.character(dat_1$.variable_label_original))) > 0)
+    any(nchar(trimws(as.character(dat_1$.variable_label_original))) > 0, na.rm = TRUE)
   dat_2_has_original <- ".variable_label_original" %in%
     colnames(dat_2) &&
-    any(nchar(trimws(as.character(dat_2$.variable_label_original))) > 0)
+    any(nchar(trimws(as.character(dat_2$.variable_label_original))) > 0, na.rm = TRUE)
 
   # Prefer .variable_label_original when BOTH datasets have it — this avoids
   # the "(N = X)" mismatch that causes zero-proportion lookups.
@@ -40,10 +40,10 @@ get_common_variable_label_column <- function(dat_1, dat_2) {
   # Check .variable_label in both datasets
   dat_1_has_variable_label <- ".variable_label" %in%
     colnames(dat_1) &&
-    any(nchar(trimws(as.character(dat_1$.variable_label))) > 0)
+    any(nchar(trimws(as.character(dat_1$.variable_label))) > 0, na.rm = TRUE)
   dat_2_has_variable_label <- ".variable_label" %in%
     colnames(dat_2) &&
-    any(nchar(trimws(as.character(dat_2$.variable_label))) > 0)
+    any(nchar(trimws(as.character(dat_2$.variable_label))) > 0, na.rm = TRUE)
 
   # Fall back to .variable_label if BOTH datasets have values there
   if (dat_1_has_variable_label && dat_2_has_variable_label) {
