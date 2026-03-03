@@ -10,6 +10,7 @@ generate_data_summary(
   dep_crwd,
   indep_crwd,
   args,
+  full_category_levels = NULL,
   ...
 )
 }
@@ -23,6 +24,8 @@ generate_data_summary(
 \item{indep_crwd}{Character vector of independent variable names for current crowd}
 
 \item{args}{List of makeme function arguments}
+
+\item{full_category_levels}{Optional pre-computed full category levels for consistency}
 
 \item{...}{Additional arguments passed to summarization functions}
 }

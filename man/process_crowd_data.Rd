@@ -12,6 +12,7 @@ process_crowd_data(
   data,
   mesos_var,
   mesos_group,
+  full_category_levels = NULL,
   ...
 )
 }
@@ -29,6 +30,8 @@ process_crowd_data(
 \item{mesos_var}{Mesos-level grouping variable}
 
 \item{mesos_group}{Specific mesos group identifier}
+
+\item{full_category_levels}{Optional pre-computed full category levels for consistency}
 
 \item{...}{Additional arguments passed to data summarization functions}
 }

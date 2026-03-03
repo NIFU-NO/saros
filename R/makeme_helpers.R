@@ -144,7 +144,9 @@ auto_detect_makeme_type <- function(data, dep, indep = NULL) {
           NULL
         },
         if (has_categorical) {
-          c(" " = "- Use {.code type = 'cat_plot_html'} for categorical variables")
+          c(
+            " " = "- Use {.code type = 'cat_plot_html'} for categorical variables"
+          )
         } else {
           NULL
         }
@@ -265,6 +267,52 @@ detect_variable_types <- function(subset_data, dep_crwd, indep_crwd) {
   )
 }
 
+#' Compute Full Category Levels from Unfiltered Data
+#'
+#' Internal helper function that computes the complete set of category levels
+#' from the full unfiltered dataset. This ensures consistent color assignments
+#' across all crowd groups when using mesos_var/mesos_group filtering.
+#'
+#' @param data Full unfiltered data frame
+#' @param dep Character vector of dependent variable names
+#' @param showNA Character indicating whether to include NA as a level
+#'
+#' @return Character vector of all category levels across all dep variables,
+#'   or NULL if not applicable
+#'
+#' @keywords internal
+compute_full_category_levels <- function(data, dep, showNA = "ifany") {
+  # Check if all dep variables are categorical
+  dep_types <- vapply(
+    dep,
+    function(v) class(data[[v]])[1],
+    character(1)
+  )
+
+  # Only compute for factor/ordered variables (not character)
+  # Character variables don't need consistent factor levels across crowds
+  # since they're typically used in tables without color mappings
+  if (!all(dep_types %in% c("factor", "ordered"))) {
+    return(NULL) # Not applicable for non-factor variables
+  }
+
+  # Use get_common_levels to find all unique levels across dep variables
+  full_levels <- get_common_levels(data = data, col_pos = dep)
+
+  # Handle NA based on showNA setting
+  if (
+    showNA == "always" ||
+      (showNA == "ifany" &&
+        any(vapply(dep, function(v) anyNA(data[[v]]), logical(1))))
+  ) {
+    if (!"NA" %in% full_levels) {
+      full_levels <- c(full_levels, "NA")
+    }
+  }
+
+  full_levels
+}
+
 #' Generate Appropriate Data Summary Based on Variable Types
 #'
 #' Internal helper function that routes to the appropriate data summarization
@@ -275,6 +323,7 @@ detect_variable_types <- function(subset_data, dep_crwd, indep_crwd) {
 #' @param dep_crwd Character vector of dependent variable names for current crowd
 #' @param indep_crwd Character vector of independent variable names for current crowd
 #' @param args List of makeme function arguments
+#' @param full_category_levels Optional pre-computed full category levels for consistency
 #' @param ... Additional arguments passed to summarization functions
 #'
 #' @return Data summary object (type depends on variable types):
@@ -289,6 +338,7 @@ generate_data_summary <- function(
   dep_crwd,
   indep_crwd,
   args,
+  full_category_levels = NULL,
   ...
 ) {
   # Future: switch or S3
@@ -327,7 +377,8 @@ generate_data_summary <- function(
       categories_treated_as_na = args$categories_treated_as_na,
       labels_always_at_bottom = args$labels_always_at_bottom,
       labels_always_at_top = args$labels_always_at_top,
-      translations = args$translations
+      translations = args$translations,
+      full_category_levels = full_category_levels
     )
   } else {
     cli::cli_abort(c(
@@ -789,6 +840,7 @@ generate_crowd_output <- function(args, subset_data, dep_crwd, indep_crwd) {
 #' @param data Data frame being analyzed
 #' @param mesos_var Mesos-level grouping variable
 #' @param mesos_group Specific mesos group identifier
+#' @param full_category_levels Optional pre-computed full category levels for consistency
 #' @param ... Additional arguments passed to data summarization functions
 #'
 #' @return Final output object for the crowd, or NULL if no data remains:
@@ -813,6 +865,7 @@ process_crowd_data <- function(
   data,
   mesos_var,
   mesos_group,
+  full_category_levels = NULL,
   ...
 ) {
   # Calculate omitted variables for this crowd
@@ -876,6 +929,7 @@ process_crowd_data <- function(
     dep_crwd,
     indep_crwd,
     args,
+    full_category_levels = full_category_levels,
     ...
   )
 
@@ -999,6 +1053,14 @@ process_all_crowds <- function(
     args$crowd
   )
 
+  # Compute full category levels from unfiltered data for consistency across crowds
+  # This ensures that all crowd plots use the same color mapping
+  full_category_levels <- compute_full_category_levels(
+    data = data,
+    dep = args$dep,
+    showNA = args$showNA
+  )
+
   # Process each crowd
   for (crwd in names(out)) {
     out[[crwd]] <- process_crowd_data(
@@ -1009,6 +1071,7 @@ process_all_crowds <- function(
       data,
       mesos_var,
       mesos_group,
+      full_category_levels = full_category_levels,
       ...
     )
   }

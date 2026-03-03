@@ -249,9 +249,28 @@ add_n_to_category <- function(
     dplyr::mutate(
       .category_new = paste0(.data[[".category_new"]], add_n_to_category_suffix)
     )
-  new_labels <- unique(out$.category_new)
-  names(new_labels) <- levels(out$.category)
-  levels(out$.category) <- new_labels
+
+  # Create a mapping for only the categories present in the data
+  # This handles cases where full_category_levels includes absent categories
+  present_categories <- sort(unique(as.character(out$.category)))
+  new_labels_df <- out |>
+    dplyr::distinct(.data$.category, .data$.category_new) |>
+    dplyr::arrange(.data$.category)
+
+  # Create named vector for present categories only
+  new_labels <- stats::setNames(
+    new_labels_df$.category_new,
+    new_labels_df$.category
+  )
+
+  # Update factor levels - only present categories get new labels
+  all_levels <- levels(out$.category)
+  updated_levels <- all_levels
+  updated_levels[all_levels %in% names(new_labels)] <- new_labels[all_levels[
+    all_levels %in% names(new_labels)
+  ]]
+  levels(out$.category) <- updated_levels
+
   out$.category_new <- NULL # Remove the temporary column
   out$.category_n_rng <- NULL # Remove the temporary column
   out
@@ -362,6 +381,7 @@ apply_legacy_sorting_adjustments <- function(
 #' Summarize a survey dataset for use in tables and graphs
 #'
 #' @inheritParams makeme
+#' @param full_category_levels Optional character vector of all category levels across crowds (for consistent colors)
 #' @param call *Internal call*
 #'
 #'   `obj:<call>` // *Default:* `rlang::caller_env()` (`optional`)
@@ -407,6 +427,7 @@ summarize_cat_cat_data <-
     labels_always_at_bottom = NULL,
     labels_always_at_top = NULL,
     translations = list(),
+    full_category_levels = NULL,
     call = rlang::caller_env()
   ) {
     showNA <- rlang::arg_match(showNA)
@@ -469,7 +490,13 @@ summarize_cat_cat_data <-
 
     check_sort_by(x = cross_table_output$.category, sort_by = sort_dep_by)
 
-    fct_unions <- levels(cross_table_output[[".category"]])
+    # Use pre-computed full category levels if provided (for consistent colors across crowds)
+    # Otherwise, use the levels from the current crosstable output
+    fct_unions <- if (!is.null(full_category_levels)) {
+      full_category_levels
+    } else {
+      levels(cross_table_output[[".category"]])
+    }
 
     cross_table_output |>
       mutate_data_label(

@@ -562,3 +562,212 @@ test_that("setup_and_validate_makeme_args performs complete setup", {
   expect_contains(names(result_setup), "data")
   expect_equal(result_setup$crowd, "all")
 })
+
+test_that("compute_full_category_levels returns NULL for non-factor variables", {
+  # Numeric variables
+  numeric_data <- data.frame(
+    var1 = c(1.1, 2.2, 3.3),
+    var2 = c(4.4, 5.5, 6.6)
+  )
+  result_numeric <- compute_full_category_levels(
+    numeric_data,
+    dep = c("var1", "var2"),
+    showNA = "ifany"
+  )
+  expect_null(result_numeric)
+
+  # Integer variables
+  integer_data <- data.frame(
+    var1 = 1:3,
+    var2 = 4:6
+  )
+  result_integer <- compute_full_category_levels(
+    integer_data,
+    dep = c("var1", "var2"),
+    showNA = "ifany"
+  )
+  expect_null(result_integer)
+
+  # Character variables
+  char_data <- data.frame(
+    var1 = c("A", "B", "C"),
+    var2 = c("X", "Y", "Z"),
+    stringsAsFactors = FALSE
+  )
+  result_char <- compute_full_category_levels(
+    char_data,
+    dep = c("var1", "var2"),
+    showNA = "ifany"
+  )
+  expect_null(result_char)
+
+  # Mixed types (should return NULL)
+  mixed_data <- data.frame(
+    var1 = factor(c("A", "B", "C")),
+    var2 = c(1, 2, 3)
+  )
+  result_mixed <- compute_full_category_levels(
+    mixed_data,
+    dep = c("var1", "var2"),
+    showNA = "ifany"
+  )
+  expect_null(result_mixed)
+})
+
+test_that("compute_full_category_levels handles showNA argument correctly", {
+  # Data with NA values
+  data_with_na <- data.frame(
+    var1 = factor(c("A", "B", NA), levels = c("A", "B", "C"))
+  )
+
+  # showNA = "always" should include "NA"
+  result_always <- compute_full_category_levels(
+    data_with_na,
+    dep = "var1",
+    showNA = "always"
+  )
+  expect_true("NA" %in% result_always)
+  expect_equal(result_always, c("A", "B", "C", "NA"))
+
+  # showNA = "ifany" with NA present should include "NA"
+  result_ifany_with_na <- compute_full_category_levels(
+    data_with_na,
+    dep = "var1",
+    showNA = "ifany"
+  )
+  expect_true("NA" %in% result_ifany_with_na)
+  expect_equal(result_ifany_with_na, c("A", "B", "C", "NA"))
+
+  # showNA = "never" should not include "NA"
+  result_never <- compute_full_category_levels(
+    data_with_na,
+    dep = "var1",
+    showNA = "never"
+  )
+  expect_false("NA" %in% result_never)
+  expect_equal(result_never, c("A", "B", "C"))
+
+  # Data without NA values
+  data_no_na <- data.frame(
+    var1 = factor(c("A", "B", "C"), levels = c("A", "B", "C"))
+  )
+
+  # showNA = "ifany" with no NA should not include "NA"
+  result_ifany_no_na <- compute_full_category_levels(
+    data_no_na,
+    dep = "var1",
+    showNA = "ifany"
+  )
+  expect_false("NA" %in% result_ifany_no_na)
+  expect_equal(result_ifany_no_na, c("A", "B", "C"))
+
+  # showNA = "always" should still include "NA" even without NA values
+  result_always_no_na <- compute_full_category_levels(
+    data_no_na,
+    dep = "var1",
+    showNA = "always"
+  )
+  expect_true("NA" %in% result_always_no_na)
+  expect_equal(result_always_no_na, c("A", "B", "C", "NA"))
+})
+
+test_that("compute_full_category_levels unifies levels across multiple variables", {
+  # Multiple variables with different levels
+  multi_var_data <- data.frame(
+    var1 = factor(c("A", "B", "A"), levels = c("A", "B")),
+    var2 = factor(c("B", "C", "C"), levels = c("B", "C")),
+    var3 = factor(c("A", "C", "D"), levels = c("A", "C", "D"))
+  )
+
+  result <- compute_full_category_levels(
+    multi_var_data,
+    dep = c("var1", "var2", "var3"),
+    showNA = "never"
+  )
+
+  # Should get union of all levels: A, B, C, D
+  expect_equal(sort(result), c("A", "B", "C", "D"))
+  expect_length(result, 4)
+
+  # Test with only some variables having data for certain levels
+  partial_data <- data.frame(
+    var1 = factor(c("Low", "Low", "Low"), levels = c("Low", "High")),
+    var2 = factor(c("High", "High", "Medium"), levels = c("Low", "Medium", "High"))
+  )
+
+  result_partial <- compute_full_category_levels(
+    partial_data,
+    dep = c("var1", "var2"),
+    showNA = "never"
+  )
+
+  # Should include all declared levels
+  expect_true(all(c("Low", "Medium", "High") %in% result_partial))
+  expect_length(result_partial, 3)
+})
+
+test_that("compute_full_category_levels handles ordered factors", {
+  # Ordered factors
+  ordered_data <- data.frame(
+    var1 = ordered(c("low", "med", "high"), levels = c("low", "med", "high"))
+  )
+
+  result <- compute_full_category_levels(
+    ordered_data,
+    dep = "var1",
+    showNA = "never"
+  )
+
+  expect_equal(result, c("low", "med", "high"))
+  expect_type(result, "character")
+
+  # Mixed ordered and regular factors
+  mixed_factor_data <- data.frame(
+    var1 = factor(c("A", "B"), levels = c("A", "B", "C")),
+    var2 = ordered(c("low", "high"), levels = c("low", "med", "high"))
+  )
+
+  result_mixed <- compute_full_category_levels(
+    mixed_factor_data,
+    dep = c("var1", "var2"),
+    showNA = "never"
+  )
+
+  # Should get all levels from both variables
+  expect_true(all(c("A", "B", "C", "low", "med", "high") %in% result_mixed))
+  expect_length(result_mixed, 6)
+})
+
+test_that("compute_full_category_levels handles single variable", {
+  single_var_data <- data.frame(
+    var1 = factor(c("Red", "Green", "Blue"), levels = c("Red", "Green", "Blue", "Yellow"))
+  )
+
+  result <- compute_full_category_levels(
+    single_var_data,
+    dep = "var1",
+    showNA = "never"
+  )
+
+  # Should include all declared levels, even unused ones
+  expect_equal(result, c("Red", "Green", "Blue", "Yellow"))
+  expect_length(result, 4)
+})
+
+test_that("compute_full_category_levels handles NA in multiple variables", {
+  # Multiple variables, only some with NA
+  multi_na_data <- data.frame(
+    var1 = factor(c("A", NA, "B"), levels = c("A", "B")),
+    var2 = factor(c("X", "Y", "Z"), levels = c("X", "Y", "Z"))
+  )
+
+  # showNA = "ifany" should include "NA" if ANY variable has NA
+  result <- compute_full_category_levels(
+    multi_na_data,
+    dep = c("var1", "var2"),
+    showNA = "ifany"
+  )
+
+  expect_true("NA" %in% result)
+  expect_true(all(c("A", "B", "X", "Y", "Z", "NA") %in% result))
+})
