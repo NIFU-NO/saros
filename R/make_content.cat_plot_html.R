@@ -221,7 +221,7 @@ make_content.cat_plot_html <-
           ggplot2::position_dodge(width = 0.9, reverse = FALSE)
         },
         hjust = if (prop_family) {
-          0
+          0.5
         } else {
           if (dots$data_label_position == "center") {
             0.5
