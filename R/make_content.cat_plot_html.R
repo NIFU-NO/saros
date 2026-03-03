@@ -251,6 +251,7 @@ make_content.cat_plot_html <-
         name = "fill.guide",
         data_id = function(x) x,
         tooltip = function(x) x,
+        limits = levels(p_data$.category),
         drop = FALSE
       ) +
       ggiraph::scale_colour_discrete_interactive(
