@@ -136,7 +136,13 @@ girafe <- function(
         classes = "rlang_message"
       )
 
-    if (isTRUE(interactive)) {
+    # In non-HTML knitr formats (typst, docx, pdf), return static ggplot
+    # to avoid knitr:::html_screenshot() creating leftover temp directories
+    # and to produce higher-quality native raster figures.
+    in_knitr <- isTRUE(getOption("knitr.in.progress"))
+    non_html_doc <- in_knitr && !knitr::is_html_output()
+
+    if (isTRUE(args$interactive) && !non_html_doc) {
       ggiraph::girafe(
         ggobj = ggobj,
         pointsize = args$pointsize,
