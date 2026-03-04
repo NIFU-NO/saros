@@ -631,3 +631,94 @@ test_that("txt_from_cat_mesos_plots uses .variable_label_original to match crowd
   expect_true(grepl("0.35", result[1], fixed = TRUE), info = "group_1 proportion (0.35) should appear")
   expect_true(grepl("0.1",  result[1], fixed = TRUE), info = "group_2 proportion (0.10) should appear")
 })
+
+test_that("txt_from_cat_mesos_plots uses checked category for checkbox variables (girafe fallback)", {
+  # Auto-detection via girafe global settings (fallback path).
+  old_girafe <- saros::global_settings_get("girafe")
+  withr::defer(
+    saros::global_settings_set(fn_name = "girafe", new = old_girafe, quiet = TRUE)
+  )
+
+  saros::global_settings_set(
+    fn_name = "girafe",
+    new = list(checked = "Valgt", not_checked = "Ikke valgt"),
+    quiet = TRUE
+  )
+
+  # group_1 selects "Valgt" much more often; without the fix the function
+  # would look at "Ikke valgt" (highest order) and report the opposite direction.
+  plot_data_1 <- data.frame(
+    .variable_label = "Checkbox item",
+    .category = factor(c("Valgt", "Ikke valgt"), levels = c("Valgt", "Ikke valgt")),
+    .category_order = c(1L, 2L),
+    .proportion = c(0.70, 0.30),
+    stringsAsFactors = FALSE
+  )
+
+  plot_data_2 <- data.frame(
+    .variable_label = "Checkbox item",
+    .category = factor(c("Valgt", "Ikke valgt"), levels = c("Valgt", "Ikke valgt")),
+    .category_order = c(1L, 2L),
+    .proportion = c(0.40, 0.60),
+    stringsAsFactors = FALSE
+  )
+
+  plots <- list(list(data = plot_data_1), list(data = plot_data_2))
+
+  result <- saros::txt_from_cat_mesos_plots(plots, min_prop_diff = 0.10)
+
+  expect_type(result, "character")
+  expect_length(result, 1L)
+  expect_true(grepl("Valgt", result[1], fixed = TRUE),
+    info = "Result should mention the checked category 'Valgt'")
+  expect_false(grepl("Ikke valgt", result[1], fixed = TRUE),
+    info = "Result should NOT be driven by the not_checked category")
+  expect_true(grepl("0.7", result[1], fixed = TRUE))
+  expect_true(grepl("0.4", result[1], fixed = TRUE))
+})
+
+test_that("txt_from_cat_mesos_plots uses checked/not_checked explicit parameters", {
+  # Explicit checked/not_checked on the call — no global settings needed.
+
+  plot_data_1 <- data.frame(
+    .variable_label = "Checkbox item",
+    .category = factor(c("Valgt", "Ikke valgt"), levels = c("Valgt", "Ikke valgt")),
+    .category_order = c(1L, 2L),
+    .proportion = c(0.70, 0.30),
+    stringsAsFactors = FALSE
+  )
+
+  plot_data_2 <- data.frame(
+    .variable_label = "Checkbox item",
+    .category = factor(c("Valgt", "Ikke valgt"), levels = c("Valgt", "Ikke valgt")),
+    .category_order = c(1L, 2L),
+    .proportion = c(0.40, 0.60),
+    stringsAsFactors = FALSE
+  )
+
+  plots <- list(list(data = plot_data_1), list(data = plot_data_2))
+
+  result <- saros::txt_from_cat_mesos_plots(
+    plots,
+    checked = "Valgt",
+    not_checked = "Ikke valgt",
+    min_prop_diff = 0.10
+  )
+
+  expect_type(result, "character")
+  expect_length(result, 1L)
+  expect_true(grepl("Valgt", result[1], fixed = TRUE),
+    info = "Explicit checked= should drive the comparison")
+  expect_false(grepl("Ikke valgt", result[1], fixed = TRUE),
+    info = "not_checked category should not appear in output")
+
+  # Explicit params should also suppress checkbox handling when only one is set
+  result_no_override <- saros::txt_from_cat_mesos_plots(
+    plots,
+    min_prop_diff = 0.10
+  )
+  # Without any global settings the function falls back to order-based selection
+  # (highest order = "Ikke valgt"), which exceeds 0.10 diff in the other direction.
+  # Just assert it produces a character result — the direction depends on defaults.
+  expect_type(result_no_override, "character")
+})

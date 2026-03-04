@@ -117,6 +117,12 @@ get_prop_for_highest_categories <- function(
 #' @param selected_categories_last_split Character. Separator for the last item when
 #'   listing multiple categories (default " or ").
 #' @param fallback_string Character. String to return when validation fails (default `character()`).
+#' @param checked,not_checked Optional string. When the categories of a variable exactly match
+#'   these two values, the comparison is always made on `checked` — mirroring the visual convention
+#'   in the bar chart where the checked category is rendered in colour on the left.
+#'   Defaults to `NULL`; when `NULL`, the function tries to auto-detect the values from
+#'   `global_settings_get("girafe")$checked` / `$not_checked`; if those are also `NULL`,
+#'   checkbox handling is disabled and normal order-based category selection applies.
 #' @param reverse Logical. If TRUE, reverses the order of the output text summaries (default FALSE).
 #' @param glue_str_pos Character vector. Templates for positive differences (group_1 > group_2).
 #'   Available placeholders: `{var}`, `{group_1}`, `{group_2}`, `{selected_categories}`.
@@ -129,6 +135,16 @@ get_prop_for_highest_categories <- function(
 #' @details
 #' The function compares proportions between two groups for each variable in the plot data.
 #' One template is randomly selected from the provided vectors for variety in output text.
+#'
+#' **Checkbox (checked/not_checked) variables**: When `checked` and `not_checked` are both
+#' strings, any variable whose categories exactly match that pair is treated as a checkbox
+#' variable.  For such variables the comparison is always made on the `checked` category,
+#' regardless of `flip_to_lowest_categories`.  This mirrors the visual convention in the bar
+#' chart where the checked category is rendered in colour on the left — the semantically
+#' meaningful side — even though its `.category_order` may not be the highest.
+#' If `checked`/`not_checked` are `NULL`, the function tries to auto-detect them from
+#' `global_settings_get("girafe")$checked` / `$not_checked`; if those are also `NULL`,
+#' checkbox handling is disabled.
 #'
 #' @examples
 #' \dontrun{
@@ -169,6 +185,8 @@ txt_from_cat_mesos_plots <- function(
   min_prop_diff = .10,
   n_highest_categories = 1,
   flip_to_lowest_categories = FALSE,
+  checked = NULL,
+  not_checked = NULL,
   digits = 2,
   selected_categories_last_split = " or ",
   fallback_string = character(),
@@ -211,6 +229,21 @@ txt_from_cat_mesos_plots <- function(
 
   # Re-insert plots after check_options (like data in other functions)
   args$plots <- plots
+
+  check_string(args$checked, null_allowed = TRUE, arg = "checked")
+  check_string(args$not_checked, null_allowed = TRUE, arg = "not_checked")
+
+  # Auto-detect checked/not_checked from girafe global settings when not
+  # provided explicitly or via txt_from_cat_mesos_plots global settings.
+  if (is.null(args$checked) || is.null(args$not_checked)) {
+    girafe_fallback <- global_settings_get("girafe")
+    if (is.null(args$checked)) {
+      args$checked <- girafe_fallback$checked
+    }
+    if (is.null(args$not_checked)) {
+      args$not_checked <- girafe_fallback$not_checked
+    }
+  }
 
   # Validate plots argument
   if (!is.list(args$plots)) {
@@ -304,9 +337,22 @@ txt_from_cat_mesos_plots <- function(
 
     n_categories <- nrow(var_categories)
 
-    # Only apply n_highest_categories if there are more categories than the threshold
-    # This prevents summing all categories when there are only 2
-    if (n_categories <= args$n_highest_categories) {
+    # Detect checkbox scenario: when the variable's categories exactly match the
+    # checked/not_checked pair from girafe global settings, always compare on the
+    # checked category.  In the bar chart, checked is rendered to the LEFT in colour
+    # (the visually prominent position), but its .category_order is not necessarily
+    # the highest, so the normal order-based selection would pick not_checked instead.
+    is_checkbox_var <- rlang::is_string(args$checked) &&
+      rlang::is_string(args$not_checked) &&
+      setequal(
+        as.character(var_categories$.category),
+        c(args$checked, args$not_checked)
+      )
+
+    if (is_checkbox_var) {
+      # For checkbox variables, always report on the checked category only.
+      selected_categories <- as.character(args$checked)
+    } else if (n_categories <= args$n_highest_categories) {
       # For variables with few categories, use only the highest/lowest single category
       selected_categories <- var_categories |>
         dplyr::filter(
