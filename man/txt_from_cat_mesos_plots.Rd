@@ -48,8 +48,9 @@ of highest (default FALSE).}
 \item{checked, not_checked}{Optional string. When the categories of a variable exactly match
 these two values, the comparison is always made on \code{checked} — mirroring the visual convention
 in the bar chart where the checked category is rendered in colour on the left.
-Defaults to \code{NULL} (no checkbox handling). If \code{NULL}, the values are auto-detected from
-\code{global_settings_get("girafe")$checked} / \verb{$not_checked} as a fallback.}
+Defaults to \code{NULL}; when \code{NULL}, the function tries to auto-detect the values from
+\code{global_settings_get("girafe")$checked} / \verb{$not_checked}; if those are also \code{NULL},
+checkbox handling is disabled and normal order-based category selection applies.}
 
 \item{digits}{Integer. Number of decimal places for rounding proportions (default 2).}
 
@@ -85,8 +86,9 @@ variable.  For such variables the comparison is always made on the \code{checked
 regardless of \code{flip_to_lowest_categories}.  This mirrors the visual convention in the bar
 chart where the checked category is rendered in colour on the left — the semantically
 meaningful side — even though its \code{.category_order} may not be the highest.
-If \code{checked}/\code{not_checked} are \code{NULL}, the function auto-detects them from
-\code{global_settings_get("girafe")$checked} / \verb{$not_checked}.
+If \code{checked}/\code{not_checked} are \code{NULL}, the function tries to auto-detect them from
+\code{global_settings_get("girafe")$checked} / \verb{$not_checked}; if those are also \code{NULL},
+checkbox handling is disabled.
 }
 \examples{
 \dontrun{

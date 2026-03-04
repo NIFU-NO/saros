@@ -120,8 +120,9 @@ get_prop_for_highest_categories <- function(
 #' @param checked,not_checked Optional string. When the categories of a variable exactly match
 #'   these two values, the comparison is always made on `checked` — mirroring the visual convention
 #'   in the bar chart where the checked category is rendered in colour on the left.
-#'   Defaults to `NULL` (no checkbox handling). If `NULL`, the values are auto-detected from
-#'   `global_settings_get("girafe")$checked` / `$not_checked` as a fallback.
+#'   Defaults to `NULL`; when `NULL`, the function tries to auto-detect the values from
+#'   `global_settings_get("girafe")$checked` / `$not_checked`; if those are also `NULL`,
+#'   checkbox handling is disabled and normal order-based category selection applies.
 #' @param reverse Logical. If TRUE, reverses the order of the output text summaries (default FALSE).
 #' @param glue_str_pos Character vector. Templates for positive differences (group_1 > group_2).
 #'   Available placeholders: `{var}`, `{group_1}`, `{group_2}`, `{selected_categories}`.
@@ -141,8 +142,9 @@ get_prop_for_highest_categories <- function(
 #' regardless of `flip_to_lowest_categories`.  This mirrors the visual convention in the bar
 #' chart where the checked category is rendered in colour on the left — the semantically
 #' meaningful side — even though its `.category_order` may not be the highest.
-#' If `checked`/`not_checked` are `NULL`, the function auto-detects them from
-#' `global_settings_get("girafe")$checked` / `$not_checked`.
+#' If `checked`/`not_checked` are `NULL`, the function tries to auto-detect them from
+#' `global_settings_get("girafe")$checked` / `$not_checked`; if those are also `NULL`,
+#' checkbox handling is disabled.
 #'
 #' @examples
 #' \dontrun{
