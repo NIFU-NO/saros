@@ -9,6 +9,8 @@ txt_from_cat_mesos_plots(
   min_prop_diff = 0.1,
   n_highest_categories = 1,
   flip_to_lowest_categories = FALSE,
+  checked = NULL,
+  not_checked = NULL,
   digits = 2,
   selected_categories_last_split = " or ",
   fallback_string = character(),
@@ -43,6 +45,12 @@ Only applied if the variable has more categories than this value.}
 \item{flip_to_lowest_categories}{Logical. If TRUE, compare lowest categories instead
 of highest (default FALSE).}
 
+\item{checked, not_checked}{Optional string. When the categories of a variable exactly match
+these two values, the comparison is always made on \code{checked} — mirroring the visual convention
+in the bar chart where the checked category is rendered in colour on the left.
+Defaults to \code{NULL} (no checkbox handling). If \code{NULL}, the values are auto-detected from
+\code{global_settings_get("girafe")$checked} / \verb{$not_checked} as a fallback.}
+
 \item{digits}{Integer. Number of decimal places for rounding proportions (default 2).}
 
 \item{selected_categories_last_split}{Character. Separator for the last item when
@@ -70,6 +78,15 @@ of respondents selecting specific categories and produces narrative text descrip
 \details{
 The function compares proportions between two groups for each variable in the plot data.
 One template is randomly selected from the provided vectors for variety in output text.
+
+\strong{Checkbox (checked/not_checked) variables}: When \code{checked} and \code{not_checked} are both
+strings, any variable whose categories exactly match that pair is treated as a checkbox
+variable.  For such variables the comparison is always made on the \code{checked} category,
+regardless of \code{flip_to_lowest_categories}.  This mirrors the visual convention in the bar
+chart where the checked category is rendered in colour on the left — the semantically
+meaningful side — even though its \code{.category_order} may not be the highest.
+If \code{checked}/\code{not_checked} are \code{NULL}, the function auto-detects them from
+\code{global_settings_get("girafe")$checked} / \verb{$not_checked}.
 }
 \examples{
 \dontrun{
