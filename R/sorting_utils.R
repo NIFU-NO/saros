@@ -568,24 +568,16 @@ set_factor_levels_from_order <- function(data) {
 
   # Set category factor levels based on .category_order
   if (".category_order" %in% names(data) && is.factor(data$.category)) {
-    # Preserve full set of category levels to keep unused levels available
-    full_levels <- levels(data$.category)
-
-    present_ordered <- data |>
-      dplyr::distinct(.data$.category, .data$.category_order) |>
-      dplyr::arrange(.data$.category_order) |>
-      dplyr::pull(.data$.category) |>
-      as.character()
-
-    # Append any levels not present in the current data at the end,
-    # preserving their original order
-    remaining <- setdiff(full_levels, present_ordered)
-    new_levels <- c(present_ordered, remaining)
-
-    data$.category <- factor(
-      data$.category,
-      levels = new_levels
-    )
+    # Preserve the original full set of category levels for color consistency
+    # When some categories are missing from a subset (e.g., in mesos groups),
+    # we must maintain the same level order across all subsets to ensure
+    # consistent color mappings in plots
+    # Don't reorder the levels - just keep them as originally set
+    # This preserves color consistency when full_category_levels was used
+    # The .category_order column can still be used for DATA row ordering if needed
+    # but shouldn't affect the factor LEVEL order
+    # Simply retain existing levels without reordering
+    # The data rows will still be arranged by .category_order if that's desired elsewhere
   }
 
   data
@@ -781,12 +773,12 @@ get_target_categories <- function(data, method) {
   # - .top/.bottom pick the single highest/lowest level
   # - .upper/.lower pick the half above/below the median (odd/even aware)
   # - .mid_upper/.mid_lower include the middle level in upper/lower respectively
-  
+
   # Only use categories that actually exist in the data
   # This prevents issues when full_category_levels includes absent categories
   all_levels <- levels(data$.category)
   present_categories <- unique(as.character(data$.category))
   all_categories <- all_levels[all_levels %in% present_categories]
-  
+
   subset_vector(all_categories, method)
 }

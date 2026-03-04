@@ -288,8 +288,9 @@ add_n_to_category <- function(
 
 flip_exception_categories <- function(
   data_summary,
-  sort_by = NULL,
   categories_treated_as_na = c(),
+  sort_by = NULL,
+  data_label = ".proportion",
   call = rlang::caller_env()
 ) {
   if (
