@@ -70,3 +70,40 @@ testthat::test_that("int_plot_html does NOT hide axis label when hide_axis_text_
   testthat::expect_true(inherits(out, "ggplot"))
   testthat::expect_false(".variable_label_original" %in% colnames(out$data))
 })
+
+testthat::test_that("int_plot_html hides fill legend for single dep, no indep", {
+  out <- saros::makeme(
+    data = saros::ex_survey,
+    dep = c_1,
+    type = "int_plot_html",
+    html_interactive = FALSE
+  )
+
+  testthat::expect_true(inherits(out, "ggplot"))
+  testthat::expect_identical(out[["guides"]][["guides"]][["fill"]], "none")
+})
+
+testthat::test_that("int_plot_html does not hide fill legend for multiple dep vars", {
+  out <- saros::makeme(
+    data = saros::ex_survey,
+    dep = c_1:c_2,
+    type = "int_plot_html",
+    html_interactive = FALSE
+  )
+
+  testthat::expect_true(inherits(out, "ggplot"))
+  testthat::expect_false(identical(out[["guides"]][["guides"]][["fill"]], "none"))
+})
+
+testthat::test_that("int_plot_html does not hide fill legend when indep is present", {
+  out <- saros::makeme(
+    data = saros::ex_survey,
+    dep = c_1,
+    indep = x1_sex,
+    type = "int_plot_html",
+    html_interactive = FALSE
+  )
+
+  testthat::expect_true(inherits(out, "ggplot"))
+  testthat::expect_false(identical(out[["guides"]][["guides"]][["fill"]], "none"))
+})

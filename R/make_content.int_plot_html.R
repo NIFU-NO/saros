@@ -188,8 +188,11 @@ make_content.int_plot_html <-
         fill = "white",
         inherit.aes = FALSE,
         na.rm = TRUE
-      ) +
-      ggplot2::guides(fill = "none")
+      )
+
+    if (length(dots$dep) == 1 && length(dots$indep) == 0) {
+      out <- out + ggplot2::guides(fill = "none")
+    }
 
     if (length(facet_var) > 0) {
       out <- out +
