@@ -25,7 +25,9 @@
   generates formatted markdown lists. Ideal for creating navigation
   links in Quarto/RMarkdown documents that point to generated reports in
   a folder. Supports glob patterns, recursive search, and customizable
-  list formatting (unordered or numbered)
+  list formatting (unordered or numbered). It appends a file extension
+  suffix to link labels when multiple file types are present for the
+  same base name, making it clear which format each link points to.
 - Enhanced
   [`ggsaver()`](https://nifu-no.github.io/saros/reference/ggsaver.md) to
   automatically apply colour palettes from
@@ -86,6 +88,43 @@
 
 ### Bug Fixes
 
+- Fixed
+  [`girafe()`](https://nifu-no.github.io/saros/reference/girafe.md) to
+  return a static `ggplot` object instead of a `girafe` object when
+  rendering in non-HTML knitr documents (e.g. PDF, Word). Previously the
+  interactive widget was returned unconditionally, causing rendering
+  failures in non-HTML output formats
+  ([\#551](https://github.com/NIFU-NO/saros/issues/551))
+- Fixed `cat_plot_html` data labels being left-aligned instead of
+  centered. The `hjust` value for `geom_label` was corrected from 0 to
+  0.5 ([\#553](https://github.com/NIFU-NO/saros/issues/553))
+- Fixed
+  [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
+  for checkbox variables to compare on the `checked` category (or the
+  first non-NA category as fallback) rather than always using the first
+  category. This ensures the correct proportion is highlighted when the
+  variable uses `checked`/`not_checked` encoding
+  ([\#556](https://github.com/NIFU-NO/saros/issues/556))
+- Fixed
+  [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
+  color legend inconsistency across mesos groups. Category color
+  assignment now only computes full factor levels for factor/ordered
+  variables, preventing spurious extra colors from appearing in legends
+  for non-factor variables
+  ([\#552](https://github.com/NIFU-NO/saros/issues/552),
+  [\#555](https://github.com/NIFU-NO/saros/issues/555))
+- Fixed
+  [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
+  showing zero proportions due to `.variable_label_original` being
+  overwritten by the N-suffix mutation in `add_n_to_label()` before it
+  could be used for joining. The original column is now preserved before
+  any label mutation
+  ([\#554](https://github.com/NIFU-NO/saros/issues/554))
+- Fixed `int_plot_html` to always hide the fill legend (previously shown
+  for single dep without indep), and to correctly respect
+  `hide_axis_text_if_single_variable` (previously ignored for
+  `int_plot_html`, only applied to `cat_plot_html`)
+  ([\#557](https://github.com/NIFU-NO/saros/issues/557))
 - Fixed `cat_plot_docx` percentage plots to show consistent axis breaks
   at 0%, 25%, 50%, 75%, and 100% by setting axis limits (0-1) and major
   unit (0.25; experimental) for the y-axis. This improves readability
@@ -139,6 +178,11 @@
 
 ### Internal Improvements
 
+- Extracted shared color resolution logic into
+  [`resolve_category_colors()`](https://nifu-no.github.io/saros/reference/resolve_category_colors.md)
+  helper, removing duplication across `make_content.cat_plot_html()`,
+  `make_content.cat_plot_docx()`, and related functions
+  ([\#548](https://github.com/NIFU-NO/saros/issues/548))
 - **Major refactoring of validation infrastructure** (implements
   refactoring opportunities
   [\#1](https://github.com/NIFU-NO/saros/issues/1) and
