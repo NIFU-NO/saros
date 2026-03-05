@@ -12,8 +12,18 @@ testthat::test_that("int_plot_html hides axis label when hide_axis_text_if_singl
   testthat::expect_true(all(as.character(out$data[[".variable_label"]]) == ""))
   testthat::expect_true(".variable_label_original" %in% colnames(out$data))
   testthat::expect_true(all(nchar(as.character(out$data[[".variable_label_original"]])) > 0))
-  # Summary geom_label layer data should also have the label hidden
-  label_layer_data <- out$layers[[3]]$data
+  # Summary geom_label layer data should also have the label hidden.
+  # Locate the layer by geom class rather than by index to be robust to layer reordering.
+  label_layer <- Filter(
+    function(l) inherits(l$geom, c("GeomLabelInteractive", "GeomLabel")),
+    out$layers
+  )
+  testthat::expect_length(label_layer, 1L)
+  label_layer_data <- label_layer[[1]]$data
+  testthat::expect_true(
+    ".variable_label" %in% colnames(label_layer_data),
+    label = "geom_label layer data must contain a .variable_label column"
+  )
   testthat::expect_true(all(as.character(label_layer_data[[".variable_label"]]) == ""))
 })
 
