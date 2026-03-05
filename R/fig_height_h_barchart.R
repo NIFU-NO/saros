@@ -429,11 +429,11 @@ fig_height_h_barchart <- # Returns a numeric value
 #' @examples
 #' # With ggplot2 (cat_plot_html)
 #' fig_height_h_barchart2(makeme(data = ex_survey, dep = b_1:b_2, indep = x1_sex))
-#' 
+#'
 #' # With mschart (cat_plot_docx)
 #' \dontrun{
 #' fig_height_h_barchart2(
-#'   makeme(data = ex_survey, dep = b_1:b_2, 
+#'   makeme(data = ex_survey, dep = b_1:b_2,
 #'          type = "cat_plot_docx", docx_return_object = TRUE)
 #' )
 #' }
@@ -486,57 +486,6 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
       return(min)
     }
 
-    # Check if this is an int_plot_html (has .value instead of .category)
-    if (is_int_plot_html(data)) {
-      # int_plot_html uses simple default height
-      # Forward to fig_height_h_barchart with minimal parameters
-      max_value <- max
-      min_value <- min
-
-      n_y <- dplyr::n_distinct(data$.variable_name)
-      max_chars_labels_y <- base::max(
-        nchar(as.character(data$.variable_label)),
-        na.rm = TRUE
-      )
-
-      return(
-        fig_height_h_barchart(
-          n_y = n_y,
-          n_cats_y = 1, # int_plot_html doesn't have categories
-          max_chars_labels_y = max_chars_labels_y,
-          max_chars_cats_y = 0,
-          n_x = NULL,
-          n_cats_x = NULL,
-          max_chars_labels_x = NULL,
-          max_chars_cats_x = NULL,
-          fixed_constant = max_value, # Use max as the base height
-          multiplier_per_plot = 0, # Disable scaling
-          max = max_value,
-          min = min_value
-        )
-      )
-    }
-
-    # TODO: Should find a more robust way to identify the indep variable
-    indep_vars <- colnames(data)[
-      !colnames(data) %in% .saros.env$summary_data_sort2
-    ]
-
-    if (length(indep_vars) > 1) {
-      cli::cli_abort(
-        "{.arg fig_height_h_barchart2} only supports a single indep variable."
-      )
-    }
-    if (length(indep_vars) == 1) {
-      data[[indep_vars]] <-
-        stringi::stri_replace_all_regex(
-          str = as.character(data[[indep_vars]]),
-          pattern = "(.+)___.+",
-          replacement = "$1",
-          dot_all = TRUE
-        )
-    }
-
     call <- match.call()
 
     args <- check_options(
@@ -575,8 +524,6 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
     }
 
     n_y <- dplyr::n_distinct(data$.variable_name)
-    n_cats_y <- dplyr::n_distinct(data$.category)
-    max_chars_cats_y <- max(nchar(as.character(data$.category)), na.rm = TRUE)
     max_chars_labels_y <- max(
       nchar(as.character(data[[".variable_label"]])),
       na.rm = TRUE
@@ -587,19 +534,87 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
       min_value <- min(c(min_value, 1), na.rm = TRUE)
     }
 
-    n_x <- if (length(indep_vars) == 1) 1
+    # Identify indep variable, excluding .value (int_plot_html data column) which
+    # is absent from summary_data_sort2 and would otherwise be falsely detected.
+    indep_vars <- colnames(data)[
+      !colnames(data) %in% c(.saros.env$summary_data_sort2, ".value")
+    ]
+
+    if (length(indep_vars) > 1) {
+      cli::cli_abort(
+        "{.arg fig_height_h_barchart2} only supports a single indep variable."
+      )
+    }
+    if (length(indep_vars) == 1) {
+      data[[indep_vars]] <-
+        stringi::stri_replace_all_regex(
+          str = as.character(data[[indep_vars]]),
+          pattern = "(.+)___.+",
+          replacement = "$1",
+          dot_all = TRUE
+        )
+    }
+
+    n_x <- if (length(indep_vars) == 1) 1L else NULL
     n_cats_x <- if (length(indep_vars) == 1) {
       dplyr::n_distinct(data[[indep_vars]])
+    } else {
+      NULL
     }
     max_chars_cats_x <- if (length(indep_vars) == 1) {
       max(nchar(as.character(data[[indep_vars]])), na.rm = TRUE)
+    } else {
+      NULL
     }
     max_chars_labels_x <- if (length(indep_vars) == 1) {
       nchar(as.character(attr(data[[indep_vars]], "label")))
+    } else {
+      NULL
     }
     if (length(max_chars_labels_x) == 0) {
       max_chars_labels_x <- 0
     }
+
+    # For int_plot_html, height scales with n_y (facets) * n_cats_x (groups).
+    # n_cats_y = 1 (no stacked categories) and n_legend_lines = 0 (no legend).
+    if (is_int_plot_html(data)) {
+      return(
+        fig_height_h_barchart(
+          n_y = n_y,
+          n_cats_y = 1L,
+          max_chars_labels_y = max_chars_labels_y,
+          max_chars_cats_y = 0L,
+          n_x = n_x,
+          n_cats_x = n_cats_x,
+          max_chars_labels_x = max_chars_labels_x,
+          max_chars_cats_x = max_chars_cats_x,
+          freq = FALSE,
+          x_axis_label_width = x_axis_label_width,
+          strip_width = strip_width,
+          strip_angle = strip_angle,
+          main_font_size = main_font_size,
+          legend_location = legend_location,
+          n_legend_lines = 0L,
+          showNA = showNA,
+          hide_axis_text_if_single_variable = hide_axis_text_if_single_variable,
+          multiplier_hide_axis_single_var = multiplier_hide_axis_single_var,
+          legend_key_chars_equivalence = legend_key_chars_equivalence,
+          multiplier_per_horizontal_line = multiplier_per_horizontal_line,
+          multiplier_per_vertical_letter = multiplier_per_vertical_letter,
+          multiplier_per_facet = multiplier_per_facet,
+          multiplier_per_bar = multiplier_per_bar,
+          multiplier_per_legend_line = multiplier_per_legend_line,
+          fixed_constant = fixed_constant,
+          margin_in_cm = margin_in_cm,
+          figure_width_in_cm = figure_width_in_cm,
+          max = max_value,
+          min = min_value
+        )
+      )
+    }
+
+    n_cats_y <- dplyr::n_distinct(data$.category)
+    max_chars_cats_y <- max(nchar(as.character(data$.category)), na.rm = TRUE)
 
     fig_height_h_barchart(
       n_y = n_y,

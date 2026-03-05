@@ -121,25 +121,37 @@ testthat::test_that("fig_height_h_barchart respects min and max height", {
   testthat::expect_equal(result, 6)
 })
 
-testthat::test_that("fig_height_h_barchart2 returns default for int_plot_html with indep", {
-  plot <- saros::makeme(
+testthat::test_that("fig_height_h_barchart2 scales height for int_plot_html with indep", {
+  plot_without <- saros::makeme(
+    data = saros::ex_survey,
+    dep = c_1:c_2,
+    type = "int_plot_html"
+  )
+  plot_with <- saros::makeme(
     data = saros::ex_survey,
     dep = c_1:c_2,
     indep = b_1,
     type = "int_plot_html"
   )
-  result <- saros::fig_height_h_barchart2(plot)
-  testthat::expect_equal(result, 12)
+  result_without <- saros::fig_height_h_barchart2(plot_without)
+  result_with <- saros::fig_height_h_barchart2(plot_with)
+  testthat::expect_type(result_with, "double")
+  testthat::expect_gte(result_with, 1)
+  testthat::expect_lte(result_with, 12)
+  # Height with indep should be >= height without (more groups = more space needed)
+  testthat::expect_gte(result_with, result_without)
 })
 
-testthat::test_that("fig_height_h_barchart2 returns default for int_plot_html without indep", {
+testthat::test_that("fig_height_h_barchart2 scales height for int_plot_html without indep", {
   plot <- saros::makeme(
     data = saros::ex_survey,
     dep = c_1:c_2,
     type = "int_plot_html"
   )
   result <- saros::fig_height_h_barchart2(plot)
-  testthat::expect_equal(result, 12)
+  testthat::expect_type(result, "double")
+  testthat::expect_gte(result, 1)
+  testthat::expect_lt(result, 12)
 })
 
 testthat::test_that("fig_height_h_barchart2 works for cat_plot_html", {
