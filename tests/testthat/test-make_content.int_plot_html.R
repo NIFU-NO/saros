@@ -11,7 +11,9 @@ testthat::test_that("int_plot_html hides axis label when hide_axis_text_if_singl
   testthat::expect_true(".variable_label" %in% colnames(out$data))
   testthat::expect_true(all(as.character(out$data[[".variable_label"]]) == ""))
   testthat::expect_true(".variable_label_original" %in% colnames(out$data))
-  testthat::expect_true(all(nchar(as.character(out$data[[".variable_label_original"]])) > 0))
+  testthat::expect_true(all(
+    nchar(as.character(out$data[[".variable_label_original"]])) > 0
+  ))
   # Summary geom_label layer data should also have the label hidden.
   # Locate the layer by geom class rather than by index to be robust to layer reordering.
   label_layer <- Filter(
@@ -24,7 +26,9 @@ testthat::test_that("int_plot_html hides axis label when hide_axis_text_if_singl
     ".variable_label" %in% colnames(label_layer_data),
     label = "geom_label layer data must contain a .variable_label column"
   )
-  testthat::expect_true(all(as.character(label_layer_data[[".variable_label"]]) == ""))
+  testthat::expect_true(all(
+    as.character(label_layer_data[[".variable_label"]]) == ""
+  ))
 })
 
 testthat::test_that("int_plot_html does NOT hide axis label when hide_axis_text_if_single_variable=FALSE, single dep, no indep", {
@@ -38,7 +42,9 @@ testthat::test_that("int_plot_html does NOT hide axis label when hide_axis_text_
 
   testthat::expect_true(inherits(out, "ggplot"))
   testthat::expect_true(".variable_label" %in% colnames(out$data))
-  testthat::expect_true(all(nchar(as.character(out$data[[".variable_label"]])) > 0))
+  testthat::expect_true(all(
+    nchar(as.character(out$data[[".variable_label"]])) > 0
+  ))
   testthat::expect_false(".variable_label_original" %in% colnames(out$data))
 })
 
@@ -53,7 +59,9 @@ testthat::test_that("int_plot_html does NOT hide axis label when hide_axis_text_
 
   testthat::expect_true(inherits(out, "ggplot"))
   testthat::expect_true(".variable_label" %in% colnames(out$data))
-  testthat::expect_true(all(nchar(as.character(out$data[[".variable_label"]])) > 0))
+  testthat::expect_true(all(
+    nchar(as.character(out$data[[".variable_label"]])) > 0
+  ))
   testthat::expect_false(".variable_label_original" %in% colnames(out$data))
 })
 
@@ -71,7 +79,7 @@ testthat::test_that("int_plot_html does NOT hide axis label when hide_axis_text_
   testthat::expect_false(".variable_label_original" %in% colnames(out$data))
 })
 
-testthat::test_that("int_plot_html hides fill legend for single dep, no indep", {
+testthat::test_that("int_plot_html always hides fill legend (single dep, no indep)", {
   out <- saros::makeme(
     data = saros::ex_survey,
     dep = c_1,
@@ -81,9 +89,10 @@ testthat::test_that("int_plot_html hides fill legend for single dep, no indep", 
 
   testthat::expect_true(inherits(out, "ggplot"))
   testthat::expect_identical(out[["guides"]][["guides"]][["fill"]], "none")
+  testthat::expect_identical(out$theme$legend.position, "none")
 })
 
-testthat::test_that("int_plot_html does not hide fill legend for multiple dep vars", {
+testthat::test_that("int_plot_html always hides fill legend (multiple dep vars)", {
   out <- saros::makeme(
     data = saros::ex_survey,
     dep = c_1:c_2,
@@ -92,10 +101,11 @@ testthat::test_that("int_plot_html does not hide fill legend for multiple dep va
   )
 
   testthat::expect_true(inherits(out, "ggplot"))
-  testthat::expect_false(identical(out[["guides"]][["guides"]][["fill"]], "none"))
+  testthat::expect_identical(out[["guides"]][["guides"]][["fill"]], "none")
+  testthat::expect_identical(out$theme$legend.position, "none")
 })
 
-testthat::test_that("int_plot_html does not hide fill legend when indep is present", {
+testthat::test_that("int_plot_html always hides fill legend (with indep)", {
   out <- saros::makeme(
     data = saros::ex_survey,
     dep = c_1,
@@ -105,5 +115,6 @@ testthat::test_that("int_plot_html does not hide fill legend when indep is prese
   )
 
   testthat::expect_true(inherits(out, "ggplot"))
-  testthat::expect_false(identical(out[["guides"]][["guides"]][["fill"]], "none"))
+  testthat::expect_identical(out[["guides"]][["guides"]][["fill"]], "none")
+  testthat::expect_identical(out$theme$legend.position, "none")
 })

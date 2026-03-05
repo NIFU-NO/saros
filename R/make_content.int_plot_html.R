@@ -190,9 +190,9 @@ make_content.int_plot_html <-
         na.rm = TRUE
       )
 
-    if (length(dots$dep) == 1 && length(dots$indep) == 0) {
-      out <- out + ggplot2::guides(fill = "none")
-    }
+    out <- out +
+      ggplot2::guides(fill = "none") +
+      ggplot2::theme(legend.position = "none")
 
     if (length(facet_var) > 0) {
       out <- out +
