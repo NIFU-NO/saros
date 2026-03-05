@@ -83,6 +83,18 @@ make_content.int_plot_html <-
         ordered = FALSE
       )
 
+    hide_axis_text <-
+      isTRUE(dots$hide_axis_text_if_single_variable) &&
+      length(dots$indep) == 0 &&
+      length(dots$dep) == 1
+
+    if (isTRUE(hide_axis_text)) {
+      dep_labels[[".variable_label_original"]] <- dep_labels[[
+        ".variable_label"
+      ]]
+      dep_labels[[".variable_label"]] <- ""
+    }
+
     x_axis_var <- dep_axis_text_var
     facet_var <- character()
     if (length(dots$indep) == 1 && isFALSE(dots$inverse)) {
@@ -123,6 +135,10 @@ make_content.int_plot_html <-
       x_axis_label_width = dots$x_axis_label_width
     )
 
+    if (isTRUE(hide_axis_text) && ".variable_label" %in% colnames(desc_tbl)) {
+      desc_tbl[[".variable_label"]] <- ""
+    }
+
     p_data <-
       dots$data |>
       tidyr::pivot_longer(
@@ -131,12 +147,15 @@ make_content.int_plot_html <-
         values_to = ".value"
       ) |>
       dplyr::left_join(y = dep_labels, by = ".variable_name") |>
-      dplyr::select(tidyselect::all_of(c(
-        ".variable_name",
-        ".variable_label",
-        ".value",
-        dots$indep # Include indep variable(s) if present
-      )))
+      dplyr::select(
+        tidyselect::all_of(c(
+          ".variable_name",
+          ".variable_label",
+          ".value",
+          dots$indep # Include indep variable(s) if present
+        )),
+        tidyselect::any_of(".variable_label_original")
+      )
 
     out <-
       p_data |>
