@@ -13,6 +13,8 @@ txt_from_cat_mesos_plots(
   min_prop_diff = 0.1,
   n_highest_categories = 1,
   flip_to_lowest_categories = FALSE,
+  checked = NULL,
+  not_checked = NULL,
   digits = 2,
   selected_categories_last_split = " or ",
   fallback_string = character(),
@@ -58,6 +60,17 @@ txt_from_cat_mesos_plots(
   Logical. If TRUE, compare lowest categories instead of highest
   (default FALSE).
 
+- checked, not_checked:
+
+  Optional string. When the categories of a variable exactly match these
+  two values, the comparison is always made on `checked` — mirroring the
+  visual convention in the bar chart where the checked category is
+  rendered in colour on the left. Defaults to `NULL`; when `NULL`, the
+  function tries to auto-detect the values from
+  `global_settings_get("girafe")$checked` / `$not_checked`; if those are
+  also `NULL`, checkbox handling is disabled and normal order-based
+  category selection applies.
+
 - digits:
 
   Integer. Number of decimal places for rounding proportions (default
@@ -100,6 +113,17 @@ meaningful differences found.
 The function compares proportions between two groups for each variable
 in the plot data. One template is randomly selected from the provided
 vectors for variety in output text.
+
+**Checkbox (checked/not_checked) variables**: When `checked` and
+`not_checked` are both strings, any variable whose categories exactly
+match that pair is treated as a checkbox variable. For such variables
+the comparison is always made on the `checked` category, regardless of
+`flip_to_lowest_categories`. This mirrors the visual convention in the
+bar chart where the checked category is rendered in colour on the left —
+the semantically meaningful side — even though its `.category_order` may
+not be the highest. If `checked`/`not_checked` are `NULL`, the function
+tries to auto-detect them from `global_settings_get("girafe")$checked` /
+`$not_checked`; if those are also `NULL`, checkbox handling is disabled.
 
 ## Examples
 

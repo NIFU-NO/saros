@@ -115,12 +115,13 @@
   hidden
 - Fixed
   [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
-  to properly handle `int_plot_html` plots with independent variables.
-  The function now forwards to
+  for `int_plot_html` plots: previously always returned `max` (12)
+  regardless of plot complexity, and errored with “only supports a
+  single indep variable” when an indep variable was present (because
+  `.value` was falsely detected as a second indep column). Height now
+  scales properly with `n_y` and `n_cats_x` via
   [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart.md)
-  with appropriate parameters for interval plots, returning the `max`
-  parameter value (default 12) while allowing user customization,
-  instead of erroring with “only supports a single indep variable”
+  with `n_cats_y = 1` and `n_legend_lines = 0`
 - Fixed
   [`n_range2()`](https://nifu-no.github.io/saros/reference/n_range2.md)
   for `int_plot_html` plots to report N range per dependent variable

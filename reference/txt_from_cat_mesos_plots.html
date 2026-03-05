@@ -63,6 +63,8 @@ of respondents selecting specific categories and produces narrative text descrip
 <span>  min_prop_diff <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  n_highest_categories <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  flip_to_lowest_categories <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  checked <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  not_checked <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  digits <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  selected_categories_last_split <span class="op">=</span> <span class="st">" or "</span>,</span>
 <span>  fallback_string <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -109,6 +111,15 @@ Only applied if the variable has more categories than this value.</p></dd>
 of highest (default FALSE).</p></dd>
 
 
+<dt id="arg-checked-not-checked">checked, not_checked<a class="anchor" aria-label="anchor" href="#arg-checked-not-checked"></a></dt>
+<dd><p>Optional string. When the categories of a variable exactly match
+these two values, the comparison is always made on <code>checked</code> — mirroring the visual convention
+in the bar chart where the checked category is rendered in colour on the left.
+Defaults to <code>NULL</code>; when <code>NULL</code>, the function tries to auto-detect the values from
+<code>global_settings_get("girafe")$checked</code> / <code>$not_checked</code>; if those are also <code>NULL</code>,
+checkbox handling is disabled and normal order-based category selection applies.</p></dd>
+
+
 <dt id="arg-digits">digits<a class="anchor" aria-label="anchor" href="#arg-digits"></a></dt>
 <dd><p>Integer. Number of decimal places for rounding proportions (default 2).</p></dd>
 
@@ -145,6 +156,15 @@ Returns empty character vector if no plots provided or no meaningful differences
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function compares proportions between two groups for each variable in the plot data.
 One template is randomly selected from the provided vectors for variety in output text.</p>
+<p><strong>Checkbox (checked/not_checked) variables</strong>: When <code>checked</code> and <code>not_checked</code> are both
+strings, any variable whose categories exactly match that pair is treated as a checkbox
+variable.  For such variables the comparison is always made on the <code>checked</code> category,
+regardless of <code>flip_to_lowest_categories</code>.  This mirrors the visual convention in the bar
+chart where the checked category is rendered in colour on the left — the semantically
+meaningful side — even though its <code>.category_order</code> may not be the highest.
+If <code>checked</code>/<code>not_checked</code> are <code>NULL</code>, the function tries to auto-detect them from
+<code>global_settings_get("girafe")$checked</code> / <code>$not_checked</code>; if those are also <code>NULL</code>,
+checkbox handling is disabled.</p>
     </div>
 
     <div class="section level2">
