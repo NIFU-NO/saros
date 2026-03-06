@@ -22,6 +22,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/apply_legacy_sorting_adjustments.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/arrange_table_data.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/arrange_with_order.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/attach_dep_label_prefix.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/auto_detect_makeme_type.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/build_custom_palette.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/calculate_category_order.html</loc></url>
@@ -63,6 +64,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/get_data_display_column.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_data_label_opts.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_dep_display_column.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/get_dep_label_prefix.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_fig_title_suffix_from_ggplot.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_fill_levels.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_indep_col_name.html</loc></url>

@@ -107,6 +107,11 @@ Functions for reading and writing data frames to various file formats
   Provides a range (or single value) for N in a plot object from
   [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md)
 
+## Retrieve metadata attached to saros output objects
+
+- [`get_dep_label_prefix()`](https://nifu-no.github.io/saros/reference/get_dep_label_prefix.md)
+  : Retrieve the dep label prefix from a saros output object
+
 ## Convert cat_plot-object to simple conditional text interpretations
 
 - [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
