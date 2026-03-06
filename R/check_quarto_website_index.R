@@ -37,39 +37,48 @@
 check_quarto_website_index <- function(path = ".", quiet = FALSE) {
   path <- normalizePath(path, mustWork = TRUE)
 
-  all_dirs <- list.dirs(path, recursive = TRUE, full.names = TRUE)
-
-  # Exclude directories whose basename starts with _ or .
-  keep <- !grepl(
-    pattern = "(^|[\\\\/])[\\_\\.]",
-    x = substring(all_dirs, nchar(path) + 2L)
+  # Single scan: collect all .qmd files once
+  all_qmd <- list.files(
+    path,
+    pattern = "\\.qmd$",
+    recursive = TRUE,
+    full.names = FALSE,
+    ignore.case = TRUE
   )
-  # Also exclude the root-level path itself from needing filtering by prefix,
 
-  # but we do want to check the root for index.qmd
-  dirs_to_check <- all_dirs[keep]
+  # Normalize separators for consistent matching
+  all_qmd <- gsub("\\\\", "/", all_qmd)
+
+  # Exclude .qmd files inside _/. prefixed directories
+  excluded <- grepl("(^|/)[\\_\\.]", all_qmd)
+  all_qmd <- all_qmd[!excluded]
+
+  if (length(all_qmd) == 0L) {
+    return(invisible(character(0L)))
+  }
+
+  # Extract the directory component of each .qmd file (relative to path)
+  qmd_dirs <- unique(dirname(all_qmd))
+
+  # Build set of all ancestor directories that contain .qmd files (at any depth)
+  all_ancestors <- unique(unlist(lapply(qmd_dirs, function(d) {
+    parts <- strsplit(d, "/", fixed = TRUE)[[1L]]
+    if (length(parts) == 1L && parts[1L] == ".") {
+      return(".")
+    }
+    c(".", vapply(
+      seq_along(parts),
+      function(i) paste(parts[1:i], collapse = "/"),
+      character(1L)
+    ))
+  })))
 
   missing <- character(0L)
 
-  for (dir in dirs_to_check) {
-    # Check if this folder or any of its subfolders contain .qmd files
-    qmd_files <- list.files(
-      dir,
-      pattern = "\\.qmd$",
-      recursive = TRUE,
-      ignore.case = TRUE
-    )
-    if (length(qmd_files) == 0L) next
-
-    # Check if this specific folder has an index.qmd
-    has_index <- file.exists(file.path(dir, "index.qmd"))
-    if (!has_index) {
-      rel_path <- substring(dir, nchar(path) + 2L)
-      if (nzchar(rel_path)) {
-        missing <- c(missing, rel_path)
-      } else {
-        missing <- c(missing, ".")
-      }
+  for (dir in all_ancestors) {
+    index_rel <- if (dir == ".") "index.qmd" else paste0(dir, "/index.qmd")
+    if (!file.exists(file.path(path, index_rel))) {
+      missing <- c(missing, dir)
     }
   }
 
