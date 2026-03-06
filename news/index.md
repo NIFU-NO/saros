@@ -198,9 +198,10 @@
   - Detects legend position from the theme — when the legend is at the
     sides (`"right"`, `"left"`) or hidden (`"none"`), no vertical space
     is allocated for it, producing more compact figures
-  - Simulates actual text wrapping (via `count_max_wrapped_lines()`) to
-    count the true number of lines labels wrap to, instead of estimating
-    from character counts
+  - Simulates actual text wrapping (via
+    [`count_max_wrapped_lines()`](https://nifu-no.github.io/saros/reference/count_max_wrapped_lines.md))
+    to count the true number of lines labels wrap to, instead of
+    estimating from character counts
 - Fixed
   [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart.md)
   strip angle condition to use `abs(strip_angle)`, so negative angles

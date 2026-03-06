@@ -34,6 +34,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/calculate_proportion_order.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/calculate_sum_value_order.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/compute_full_category_levels.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/count_max_wrapped_lines.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/detect_ghostscript.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/detect_variable_types.html</loc></url>
@@ -49,6 +50,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/ex_survey.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/extract_document_title.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/extract_docx_title.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/extract_ggplot_theme_info.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/extract_pdf_title.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/extract_pptx_title.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/fig_height_h_barchart.html</loc></url>
