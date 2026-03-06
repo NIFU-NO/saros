@@ -50,6 +50,8 @@
 <div class="section level3">
 <h3 id="breaking-changes-1-6-1-9000">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-6-1-9000"></a></h3>
 <ul><li>
+<strong>Removed deprecated <code>embed_*</code> functions</strong>: <code>embed_cat_prop_plot()</code>, <code>embed_cat_table()</code>, and <code>embed_chr_table_html()</code> have been removed. These were soft-deprecated since v1.1.0. Use <code><a href="../reference/makeme.html">makeme()</a></code> instead (e.g., <code>makeme(type = "cat_prop_plot_html")</code>, <code>makeme(type = "cat_table_html")</code>, <code>makeme(type = "chr_table_html")</code>).</li>
+<li>
 <strong><code>cat_plot_docx</code> now uses girafe global settings for colors</strong>: The <code>colour_palette</code> parameter has been removed from <code>cat_plot_docx</code>. Instead, colors are now controlled exclusively through <code>global_settings_set(fn_name = "girafe")</code> for consistency with HTML plots. This enables unified color management across all output formats (HTML and DOCX). Checkbox plot support (<code>checked</code>, <code>not_checked</code>, <code>colour_2nd_binary_cat</code>) is now also available for DOCX plots, with automatic legend hiding and label suppression for the unchecked category. Users should migrate from <code>makeme(..., colour_palette = c(...))</code> to <code>global_settings_set(fn_name = "girafe", new = list(palette_codes = list(c(...))))</code>.</li>
 </ul></div>
 <div class="section level3">

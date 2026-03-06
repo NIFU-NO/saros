@@ -4,6 +4,12 @@
 
 ### Breaking Changes
 
+- **Removed deprecated `embed_*` functions**: `embed_cat_prop_plot()`,
+  `embed_cat_table()`, and `embed_chr_table_html()` have been removed.
+  These were soft-deprecated since v1.1.0. Use
+  [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md)
+  instead (e.g., `makeme(type = "cat_prop_plot_html")`,
+  `makeme(type = "cat_table_html")`, `makeme(type = "chr_table_html")`).
 - **`cat_plot_docx` now uses girafe global settings for colors**: The
   `colour_palette` parameter has been removed from `cat_plot_docx`.
   Instead, colors are now controlled exclusively through

@@ -116,12 +116,3 @@ Functions for reading and writing data frames to various file formats
 
 - [`ex_survey`](https://nifu-no.github.io/saros/reference/ex_survey.md)
   : ex_survey: Mockup dataset of a survey.
-
-## Deprecated functions replaced by makeme()
-
-- [`embed_cat_prop_plot()`](https://nifu-no.github.io/saros/reference/embed_cat_prop_plot.md)
-  : Embed Interactive Categorical Plot (DEPRECATED!)
-- [`embed_cat_table()`](https://nifu-no.github.io/saros/reference/embed_cat_table.md)
-  : Embed Reactable Table (DEPRECATED!)
-- [`embed_chr_table_html()`](https://nifu-no.github.io/saros/reference/embed_chr_table_html.md)
-  : Interactive table of text data (DEPRECATED)
