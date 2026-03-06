@@ -56,6 +56,9 @@ specified.
 - [`quarto_pdf_post_render()`](https://nifu-no.github.io/saros/reference/quarto_pdf_post_render.md)
   : Quarto Post-Render: Enrich PDF Files with DOCX Titles
 
+- [`check_quarto_website_index()`](https://nifu-no.github.io/saros/reference/check_quarto_website_index.md)
+  : Check Quarto Website Folders for Missing index.qmd
+
 ## Read and write tabular data
 
 Functions for reading and writing data frames to various file formats

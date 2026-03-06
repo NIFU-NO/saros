@@ -25,6 +25,12 @@
 ### New Features
 
 - Added
+  [`check_quarto_website_index()`](https://nifu-no.github.io/saros/reference/check_quarto_website_index.md)
+  function to detect folders in a Quarto website project that contain
+  `.qmd` files but are missing an `index.qmd`. Missing index files often
+  cause broken navigation menus. Issues a `cli` warning listing the
+  offending folders.
+- Added
   [`quarto_pdf_post_render()`](https://nifu-no.github.io/saros/reference/quarto_pdf_post_render.md)
   function for use as a Quarto post-render script. For each rendered
   PDF, it checks for a matching DOCX file, extracts the document title
