@@ -9,15 +9,28 @@ attach_dep_label_prefix(obj, main_question)
 \arguments{
 \item{obj}{The object to annotate (ggplot, data.frame, mschart, etc.)}
 
-\item{main_question}{Character scalar; the dep label prefix.}
+\item{main_question}{Character scalar; the dep label prefix. Must satisfy
+\code{rlang::is_string(main_question)} and be non-empty. If not, \code{obj} is
+returned unchanged.}
 }
 \value{
-\code{obj} with \code{attr(obj, "dep_label_prefix")} set (invisibly if NULL/NA).
+\code{obj}, unchanged when \code{main_question} is not a non-empty string,
+otherwise with \code{"dep_label_prefix"} set in the appropriate location.
 }
 \description{
 Attaches the main question (i.e. the label prefix of the dep variables)
 as an attribute \code{"dep_label_prefix"} on the returned object. Works for
 ggplot, data.frame, and mschart objects. Should not be called when returning
 an rdocx object.
+}
+\details{
+Storage location by class:
+\itemize{
+\item \strong{ggplot / gg}: stored on \code{obj$data} when \code{obj$data} is a data.frame,
+so the attribute survives further \code{+} operations. Falls back to
+\code{attr(obj, ...)} when \code{obj$data} is a \code{waiver()} (empty \code{ggplot()}).
+\item \strong{ms_barchart}: stored on \code{obj$data} (consistent with ggplot).
+\item \strong{everything else} (data.frame, tibble, …): stored on the object itself.
+}
 }
 \keyword{internal}

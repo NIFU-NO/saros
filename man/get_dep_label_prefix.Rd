@@ -11,7 +11,8 @@ get_dep_label_prefix(obj)
 (ggplot, data.frame, mschart, …).}
 }
 \value{
-A character scalar: the dep label prefix if present, otherwise \code{""}.
+A character scalar: the dep label prefix if present and non-empty,
+otherwise \code{""}.
 }
 \description{
 Retrieves the \code{"dep_label_prefix"} attribute that saros attaches to every
@@ -20,9 +21,13 @@ question text — the shared label prefix of all dependent variables used to
 produce the object.
 }
 \details{
-For ggplot objects the attribute is stored on \code{obj$data} so that it survives
-further \code{+} operations. For other objects (data.frame, mschart, …) it is
-stored directly on \code{obj}. This function checks both locations.
+Storage location by class:
+\itemize{
+\item \strong{ggplot / gg} and \strong{ms_barchart}: attribute is stored on \code{obj$data}
+(when \code{obj$data} is a data.frame) so that it survives further \code{+}
+operations. This function reads from \code{obj$data} first for both classes.
+\item \strong{data.frame and other objects}: attribute stored directly on \code{obj}.
+}
 }
 \examples{
 p <- makeme(data = ex_survey, dep = b_1:b_3)
