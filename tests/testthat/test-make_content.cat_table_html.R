@@ -102,7 +102,7 @@ testthat::test_that("make_content.cat_table_html works with NA on both dep and i
 
     descend = FALSE
   ) |>
-    testthat::expect_equal(expected = expected_df)
+    testthat::expect_equal(expected = expected_df, ignore_attr = "dep_label_prefix")
 })
 
 testthat::test_that("make_content.cat_table_html works with all missing variable labels", {

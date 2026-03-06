@@ -202,6 +202,7 @@ make_content.int_plot_html <-
           switch = "both"
         )
     }
+    out <- attach_dep_label_prefix(out, dots$main_question)
     if (isFALSE(dots$vertical)) {
       out <- out + ggplot2::coord_flip()
     }

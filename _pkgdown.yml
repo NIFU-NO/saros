@@ -49,6 +49,9 @@ reference:
   contents:
   - n_range
   - n_range2
+- title: Retrieve metadata attached to saros output objects
+  contents:
+  - get_dep_label_prefix
 - title: Convert cat_plot-object to simple conditional text interpretations
   contents:
   - txt_from_cat_mesos_plots

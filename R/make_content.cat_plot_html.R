@@ -14,8 +14,10 @@ make_content.cat_plot_html <-
         "Variables contain NA on all dep-by-indep cells. Returning an empty plot. Consider {.arg {showna_arg_str}} or check your data."
       )
       return(
-        ggplot2::ggplot() +
-          ggplot2::theme_void()
+        attach_dep_label_prefix(
+          ggplot2::ggplot() + ggplot2::theme_void(),
+          dots$main_question
+        )
       )
       showna_arg_str
     }
@@ -318,6 +320,7 @@ make_content.cat_plot_html <-
       }
     }
 
+    p <- attach_dep_label_prefix(p, dots$main_question)
     if (isFALSE(dots$vertical) && length(levels(p$data[[".category"]])) > 0) {
       p + ggplot2::coord_flip()
     } else {

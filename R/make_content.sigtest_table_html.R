@@ -76,5 +76,5 @@ make_content.sigtest_table_html <-
       )
     }
 
-    out
+    attach_dep_label_prefix(out, dots$main_question)
   }

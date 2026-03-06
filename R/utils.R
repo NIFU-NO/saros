@@ -1,5 +1,82 @@
 # Common utility functions for string and variable processing ----
 
+#' Attach dep_label_prefix attribute to a make_content output object
+#'
+#' Attaches the main question (i.e. the label prefix of the dep variables)
+#' as an attribute `"dep_label_prefix"` on the returned object. Works for
+#' ggplot, data.frame, and mschart objects. Should not be called when returning
+#' an rdocx object.
+#'
+#' Storage location by class:
+#' - **ggplot / gg**: stored on `obj$data` when `obj$data` is a data.frame,
+#'   so the attribute survives further `+` operations. Falls back to
+#'   `attr(obj, ...)` when `obj$data` is a `waiver()` (empty `ggplot()`).
+#' - **ms_barchart**: stored on `obj$data` (consistent with ggplot).
+#' - **everything else** (data.frame, tibble, …): stored on the object itself.
+#'
+#' @param obj The object to annotate (ggplot, data.frame, mschart, etc.)
+#' @param main_question Character scalar; the dep label prefix. Must satisfy
+#'   `rlang::is_string(main_question)` and be non-empty. If not, `obj` is
+#'   returned unchanged.
+#'
+#' @return `obj`, unchanged when `main_question` is not a non-empty string,
+#'   otherwise with `"dep_label_prefix"` set in the appropriate location.
+#' @keywords internal
+attach_dep_label_prefix <- function(obj, main_question) {
+  if (rlang::is_string(main_question) && nzchar(main_question)) {
+    # For ggplot objects, store on $data so the attribute survives further
+    # `+` operations (which never replace $data).
+    # For mschart objects, store on $data for the same reason.
+    # For all other objects (data.frame, …), store on the object itself.
+    if (inherits(obj, "gg") && is.data.frame(obj$data)) {
+      attr(obj$data, "dep_label_prefix") <- main_question
+    } else if (inherits(obj, "ms_barchart") && is.data.frame(obj$data)) {
+      attr(obj$data, "dep_label_prefix") <- main_question
+    } else {
+      attr(obj, "dep_label_prefix") <- main_question
+    }
+  }
+  obj
+}
+
+#' Retrieve the dep label prefix from a saros output object
+#'
+#' Retrieves the `"dep_label_prefix"` attribute that saros attaches to every
+#' object returned by [makeme()] / `make_content.*()`. This is the main
+#' question text — the shared label prefix of all dependent variables used to
+#' produce the object.
+#'
+#' Storage location by class:
+#' - **ggplot / gg** and **ms_barchart**: attribute is stored on `obj$data`
+#'   (when `obj$data` is a data.frame) so that it survives further `+`
+#'   operations. This function reads from `obj$data` first for both classes.
+#' - **data.frame and other objects**: attribute stored directly on `obj`.
+#'
+#' @param obj Any object returned by [makeme()] or a `make_content.*()` method
+#'   (ggplot, data.frame, mschart, …).
+#'
+#' @return A character scalar: the dep label prefix if present and non-empty,
+#'   otherwise `""`.
+#'
+#' @export
+#' @examples
+#' p <- makeme(data = ex_survey, dep = b_1:b_3)
+#' get_dep_label_prefix(p)
+get_dep_label_prefix <- function(obj) {
+  is_valid <- function(x) isTRUE(nzchar(x))
+  # For ggplots and mschart, check $data first
+  if (
+    (inherits(obj, "gg") || inherits(obj, "ms_barchart")) &&
+      is.data.frame(obj$data)
+  ) {
+    val <- attr(obj$data, "dep_label_prefix", exact = TRUE)
+    if (is_valid(val)) return(val)
+  }
+  # Fallback: check the object itself (data.frame, or ggplot with waiver $data)
+  val <- attr(obj, "dep_label_prefix", exact = TRUE)
+  if (is_valid(val)) val else ""
+}
+
 #' Apply string wrapping to variables (character or factor)
 #'
 #' A utility function that applies string wrapping to both character and factor
