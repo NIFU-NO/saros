@@ -211,15 +211,20 @@ testthat::test_that("fig_height_h_barchart2 uses theme font size", {
   )
 
   ggplot2::theme_set(ggplot2::theme_gray(base_size = 7))
-  height_small <- saros::fig_height_h_barchart2(plot +
-    ggplot2::theme(text = ggplot2::element_text(size = 7)))
+  height_small <- saros::fig_height_h_barchart2(
+    plot + ggplot2::theme(text = ggplot2::element_text(size = 7)),
+    max = 20,
+    min = 1
+  )
 
   ggplot2::theme_set(ggplot2::theme_gray(base_size = 16))
-  height_large <- saros::fig_height_h_barchart2(plot +
-    ggplot2::theme(text = ggplot2::element_text(size = 16)))
+  height_large <- saros::fig_height_h_barchart2(
+    plot + ggplot2::theme(text = ggplot2::element_text(size = 16)),
+    max = 20,
+    min = 1
+  )
 
   # Larger font should yield a taller figure
-
   testthat::expect_gt(height_large, height_small)
 })
 

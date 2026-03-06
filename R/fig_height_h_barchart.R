@@ -18,8 +18,14 @@
 extract_ggplot_theme_info <- function(plot_obj) {
   complete_theme <- ggplot2::theme_get() + plot_obj$theme
 
-  # Base text size (default 11pt in ggplot2)
-  base_size <- complete_theme$text$size %||% 11
+  # Base text size (default 11pt in ggplot2). Use calc_element() to resolve
+  # any relative sizes (e.g., element_text(size = rel(...))) to a numeric value.
+  base_size <- tryCatch(
+    ggplot2::calc_element("text", complete_theme)$size,
+    error = function(e) complete_theme$text$size
+  )
+  if (is.null(base_size) || length(base_size) == 0) base_size <- 11
+  base_size <- as.numeric(base_size)
 
   # Legend position — determines whether the legend occupies vertical space.
   # ggplot2 >= 3.5.0 stores legend.position as a character string or numeric
@@ -577,8 +583,14 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
     # ---- Extract ggplot theme information for accurate estimation ----
     theme_info <- extract_ggplot_theme_info(plot_obj)
 
-    # Use theme-detected font size (the actual rendering font size)
-    main_font_size <- theme_info$base_size
+    # Only override main_font_size with the theme-derived base size when the
+    # caller did not explicitly supply a value.
+    mc <- match.call()
+    main_font_size_missing <- is.null(mc[["main_font_size"]])
+    if (main_font_size_missing || is.null(main_font_size)) {
+      # Use theme-detected font size (the actual rendering font size)
+      main_font_size <- theme_info$base_size
+    }
 
     # If legend doesn't add vertical height (positioned at sides or hidden),
     # set legend lines to 0 to avoid wasting space
@@ -650,10 +662,16 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
     if (!is.null(n_x) && n_x == 1) {
       # Bivariate: strip labels are already wrapped in data by strip_wrap_var()
       strip_labels <- unique(as.character(data[[".variable_label"]]))
-      actual_strip_lines <- max(
-        stringi::stri_count_fixed(strip_labels, "\n") + 1L,
-        na.rm = TRUE
-      )
+      # Remove NA labels to avoid max(..., na.rm = TRUE) yielding -Inf on all-NA/empty input
+      strip_labels <- strip_labels[!is.na(strip_labels)]
+      if (length(strip_labels) == 0L) {
+        actual_strip_lines <- 1L
+      } else {
+        actual_strip_lines <- max(
+          stringi::stri_count_fixed(strip_labels, "\n") + 1L,
+          na.rm = TRUE
+        )
+      }
       # Set max_chars_labels_y so fig_height_h_barchart computes the correct max_lines_y
       max_chars_labels_y <- actual_strip_lines * strip_width
 
