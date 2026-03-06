@@ -40,6 +40,7 @@ reference:
   contents:
   - get_fig_title_suffix_from_ggplot
   - crowd_plots_as_tabset
+  - crowd_tables_as_tabset
 - title: Compute optimal figure heights for the built-in cat_plot
   contents:
   - fig_height_h_barchart
@@ -51,6 +52,12 @@ reference:
 - title: Convert cat_plot-object to simple conditional text interpretations
   contents:
   - txt_from_cat_mesos_plots
+- title: Insert text from a data frame by chunk name
+  contents:
+  - insert_text
+- title: Detect the current output format
+  contents:
+  - output_format
 - title: Only relevant when expanding the S3 system with your own functions
   contents: make_content
 - title: Example dataset
