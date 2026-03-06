@@ -112,6 +112,8 @@ if (!exists(".saros.env")) {
     "n_cats_y",
     "ggobj",
     "save_fns",
+    "tbl_list",
+    "chunk",
     "..."
   )
 
@@ -124,7 +126,9 @@ if (!exists(".saros.env")) {
     girafe = girafe,
     ggsaver = ggsaver,
     get_fig_title_suffix_from_ggplot = get_fig_title_suffix_from_ggplot,
-    txt_from_cat_mesos_plots = txt_from_cat_mesos_plots
+    txt_from_cat_mesos_plots = txt_from_cat_mesos_plots,
+    insert_text = insert_text,
+    crowd_tables_as_tabset = crowd_tables_as_tabset
   )
 
   for (fn_name in names(fn_opt_list)) {
