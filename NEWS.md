@@ -32,6 +32,11 @@
 -   Fixed `guess_legend_ncols()` in `girafe()` to properly handle fill aesthetics using expressions like `fill = factor(cyl)`. The function now uses `get_fill_levels()` to evaluate expressions in data context instead of direct column access, preventing "no non-missing arguments to max; returning -Inf" warnings
 
 ## Internal Improvements
+-   **Optimized `fig_height_h_barchart2()` ggplot height estimation**: The function now extracts information directly from the ggplot object for more accurate height calculations:
+    -   Reads the actual font size from the ggplot theme (`base_size`) instead of using a fixed default, so heights scale correctly when users change the global ggplot2 theme (e.g., `theme_gray(base_size = 14)`)
+    -   Detects legend position from the theme — when the legend is at the sides (`"right"`, `"left"`) or hidden (`"none"`), no vertical space is allocated for it, producing more compact figures
+    -   Simulates actual text wrapping (via `count_max_wrapped_lines()`) to count the true number of lines labels wrap to, instead of estimating from character counts
+-   Fixed `fig_height_h_barchart()` strip angle condition to use `abs(strip_angle)`, so negative angles (e.g., -90° from default ggplot2 strip themes) are handled identically to their positive counterparts
 -   Extracted shared color resolution logic into `resolve_category_colors()` helper, removing duplication across `make_content.cat_plot_html()`, `make_content.cat_plot_docx()`, and related functions (#548)
 -   **Major refactoring of validation infrastructure** (implements refactoring opportunities #1 and #4):
     -   All validation functions now use consistent `validate_*` prefix for better discoverability via auto-complete (e.g., `validate_bool()`, `validate_integerish()`, `validate_double()`, `validate_string()`)

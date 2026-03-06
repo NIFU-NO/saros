@@ -51,10 +51,21 @@
 #' }
 quarto_pdf_post_render <- function(
   output_files = strsplit(
-    Sys.getenv("QUARTO_PROJECT_OUTPUT_FILES"), "\n"
+    Sys.getenv("QUARTO_PROJECT_OUTPUT_FILES"),
+    "\n"
   )[[1L]]
 ) {
   if (length(output_files) == 0L || all(output_files == "")) {
+    # Avoid blocking on stdin in interactive / TTY contexts where Quarto
+    # is not piping output file paths.
+    if (interactive() || isatty(stdin())) {
+      cli::cli_inform(c(
+        "No Quarto output files were detected from the environment or stdin.",
+        "i" = "When calling {.fn quarto_pdf_post_render} interactively,",
+        "i" = "please provide {.arg output_files} explicitly."
+      ))
+      return(invisible(NULL))
+    }
     output_files <- read_quarto_post_render_input()
   }
 
@@ -97,10 +108,10 @@ process_single_pdf_post_render <- function(pdf_path, gs_bin) {
     return(invisible(NULL))
   }
 
-  # Check for corresponding DOCX with same base name
-  docx_path <- sub("\\.pdf$", ".docx", pdf_path, ignore.case = TRUE)
+  # Check for corresponding DOCX with same base name (case-insensitive)
+  docx_path <- find_matching_docx(pdf_path)
 
-  if (!file.exists(docx_path)) {
+  if (is.null(docx_path)) {
     cli::cli_inform(
       "No matching DOCX for {.path {basename(pdf_path)}}, skipping."
     )
@@ -175,6 +186,31 @@ read_quarto_post_render_input <- function() {
 }
 
 
+#' Find a Matching DOCX File for a PDF (Case-Insensitive)
+#'
+#' Looks in the same directory as the PDF for a `.docx` file with the same
+#' base name, matching case-insensitively on the extension.
+#'
+#' @param pdf_path Path to the PDF file.
+#' @return Path to the matching DOCX file, or `NULL` if not found.
+#' @keywords internal
+find_matching_docx <- function(pdf_path) {
+  dir_path <- dirname(pdf_path)
+  base_name <- fs::path_ext_remove(basename(pdf_path))
+
+  # List all files in the directory and find a .docx match (case-insensitive)
+  candidates <- list.files(dir_path, full.names = TRUE)
+  for (f in candidates) {
+    f_base <- fs::path_ext_remove(basename(f))
+    f_ext <- tolower(fs::path_ext(f))
+    if (f_ext == "docx" && tolower(f_base) == tolower(base_name)) {
+      return(f)
+    }
+  }
+  NULL
+}
+
+
 #' Detect Ghostscript Binary on System PATH
 #'
 #' @return String with the Ghostscript command name, or `NULL` if not found.
@@ -212,8 +248,13 @@ set_pdf_metadata_title <- function(pdf_path, title, gs_bin) {
   temp_marks <- tempfile(fileext = ".ps")
   on.exit(unlink(c(temp_out, temp_marks)), add = TRUE)
 
+  # Normalize title: replace newlines/carriage returns with spaces and
+  # strip other non-printable control characters to avoid invalid pdfmark
+  title_clean <- gsub("[\r\n]+", " ", title)
+  title_clean <- gsub("[[:cntrl:]]", "", title_clean)
+
   # Escape PostScript string special characters
-  title_ps <- gsub("\\", "\\\\", title, fixed = TRUE)
+  title_ps <- gsub("\\", "\\\\", title_clean, fixed = TRUE)
   title_ps <- gsub("(", "\\(", title_ps, fixed = TRUE)
   title_ps <- gsub(")", "\\)", title_ps, fixed = TRUE)
 
@@ -247,9 +288,15 @@ set_pdf_metadata_title <- function(pdf_path, title, gs_bin) {
       (is.null(status) || status == 0L) &&
       file.exists(temp_out)
   ) {
-    file.copy(temp_out, pdf_path, overwrite = TRUE)
-    cli::cli_inform("Set PDF title for {.path {basename(pdf_path)}}")
-    return(invisible(TRUE))
+    copy_ok <- tryCatch(
+      file.copy(temp_out, pdf_path, overwrite = TRUE),
+      warning = function(e) FALSE,
+      error = function(e) FALSE
+    )
+    if (isTRUE(copy_ok)) {
+      cli::cli_inform("Set PDF title for {.path {basename(pdf_path)}}")
+      return(invisible(TRUE))
+    }
   }
 
   cli::cli_warn("Failed to set PDF title for {.path {basename(pdf_path)}}")
@@ -263,7 +310,22 @@ set_pdf_metadata_title <- function(pdf_path, title, gs_bin) {
 #' @return String with regex metacharacters escaped.
 #' @keywords internal
 escape_for_regex <- function(x) {
-  chars <- c("\\", ".", "|", "(", ")", "{", "}", "[", "]", "^", "$", "*", "+", "?")
+  chars <- c(
+    "\\",
+    ".",
+    "|",
+    "(",
+    ")",
+    "{",
+    "}",
+    "[",
+    "]",
+    "^",
+    "$",
+    "*",
+    "+",
+    "?"
+  )
   for (ch in chars) {
     x <- gsub(ch, paste0("\\", ch), x, fixed = TRUE)
   }
@@ -284,7 +346,6 @@ escape_for_regex <- function(x) {
 update_html_pdf_link_text <- function(html_path, pdf_filename, title) {
   lines <- readLines(html_path, warn = FALSE)
   content <- paste(lines, collapse = "\n")
-
 
   # Escape pdf_filename for use in regex (use fixed replacements to avoid
   # regex engine issues with complex character classes)
