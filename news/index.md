@@ -19,6 +19,15 @@
 ### New Features
 
 - Added
+  [`quarto_pdf_post_render()`](https://nifu-no.github.io/saros/reference/quarto_pdf_post_render.md)
+  function for use as a Quarto post-render script. For each rendered
+  PDF, it checks for a matching DOCX file, extracts the document title
+  from the DOCX metadata, sets it as the PDF metadata title (via
+  Ghostscript), and updates the link text in the corresponding
+  `index.html`. Defaults to reading output files from the
+  `QUARTO_PROJECT_OUTPUT_FILES` environment variable set by Quarto
+  during project render.
+- Added
   [`make_file_links()`](https://nifu-no.github.io/saros/reference/make_file_links.md)
   function for dynamically creating markdown lists with links to files.
   Extracts document titles from DOCX, PPTX, and PDF file metadata and
@@ -178,6 +187,25 @@
 
 ### Internal Improvements
 
+- **Optimized
+  [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  ggplot height estimation**: The function now extracts information
+  directly from the ggplot object for more accurate height calculations:
+  - Reads the actual font size from the ggplot theme (`base_size`)
+    instead of using a fixed default, so heights scale correctly when
+    users change the global ggplot2 theme (e.g.,
+    `theme_gray(base_size = 14)`)
+  - Detects legend position from the theme — when the legend is at the
+    sides (`"right"`, `"left"`) or hidden (`"none"`), no vertical space
+    is allocated for it, producing more compact figures
+  - Simulates actual text wrapping (via `count_max_wrapped_lines()`) to
+    count the true number of lines labels wrap to, instead of estimating
+    from character counts
+- Fixed
+  [`fig_height_h_barchart()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart.md)
+  strip angle condition to use `abs(strip_angle)`, so negative angles
+  (e.g., -90° from default ggplot2 strip themes) are handled identically
+  to their positive counterparts
 - Extracted shared color resolution logic into
   [`resolve_category_colors()`](https://nifu-no.github.io/saros/reference/resolve_category_colors.md)
   helper, removing duplication across `make_content.cat_plot_html()`,

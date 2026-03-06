@@ -53,6 +53,9 @@ specified.
   [`ggplot2::ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html)
   with Palette Support
 
+- [`quarto_pdf_post_render()`](https://nifu-no.github.io/saros/reference/quarto_pdf_post_render.md)
+  : Quarto Post-Render: Enrich PDF Files with DOCX Titles
+
 ## Read and write tabular data
 
 Functions for reading and writing data frames to various file formats
