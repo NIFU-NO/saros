@@ -1,3 +1,65 @@
+# ---- Helpers for extracting ggplot theme information ----
+
+#' Extract plotting dimensions from ggplot theme
+#'
+#' Extracts the base font size and legend position from a ggplot2 object's
+#' complete theme (global theme + plot-level overrides) to improve automatic
+#' height estimation.
+#'
+#' @param plot_obj A ggplot2 object
+#' @return A list with components:
+#'   \describe{
+#'     \item{base_size}{Numeric. The base text size in points from the theme.}
+#'     \item{legend_adds_height}{Logical. TRUE when the legend is positioned at
+#'       the bottom or top (adding vertical space), FALSE when at the sides,
+#'       inside the panel, or hidden.}
+#'   }
+#' @keywords internal
+extract_ggplot_theme_info <- function(plot_obj) {
+  complete_theme <- ggplot2::theme_get() + plot_obj$theme
+
+  # Base text size (default 11pt in ggplot2). Use calc_element() to resolve
+  # any relative sizes (e.g., element_text(size = rel(...))) to a numeric value.
+  base_size <- tryCatch(
+    ggplot2::calc_element("text", complete_theme)$size,
+    error = function(e) complete_theme$text$size
+  )
+  if (is.null(base_size) || length(base_size) == 0) base_size <- 11
+  base_size <- as.numeric(base_size)
+
+  # Legend position — determines whether the legend occupies vertical space.
+  # ggplot2 >= 3.5.0 stores legend.position as a character string or numeric
+  # vector (for "inside" placement). Older versions use character only.
+  legend_position <- complete_theme$legend.position %||% "bottom"
+  if (is.numeric(legend_position)) legend_position <- "inside"
+  if (is.character(legend_position) && length(legend_position) > 1) {
+    legend_position <- legend_position[1]
+  }
+  # Legend adds height only at top or bottom
+  legend_adds_height <- legend_position %in% c("bottom", "top")
+
+  list(
+    base_size = base_size,
+    legend_adds_height = legend_adds_height
+  )
+}
+
+#' Count maximum wrapped lines for a character vector
+#'
+#' Simulates text wrapping and counts the maximum number of lines
+#' any label wraps to, giving exact line counts instead of estimates.
+#'
+#' @param labels Character vector of labels
+#' @param width Maximum width for wrapping
+#' @return Integer, maximum number of wrapped lines
+#' @keywords internal
+count_max_wrapped_lines <- function(labels, width) {
+  if (length(labels) == 0 || all(is.na(labels))) return(1L)
+  labels <- unique(as.character(labels))
+  wrapped <- string_wrap(labels, width = width)
+  max(stringi::stri_count_fixed(wrapped, "\n") + 1L, na.rm = TRUE)
+}
+
 estimate_categories_per_line <- function(
   figure_width_cm = 12,
   max_chars_cats = 20, # Maximum characters across the categories
@@ -362,12 +424,13 @@ fig_height_h_barchart <- # Returns a numeric value
 
       n_facets <- n_y
 
-      if (strip_angle >= 45 && strip_angle <= 135) {
+      abs_strip_angle <- abs(strip_angle)
+      if (abs_strip_angle >= 45 && abs_strip_angle <= 135) {
         # vertical strip height (one strip)
         height_per_strip <-
           max_chars_labels_y * # Incorrect, should really be the longest line in the split variable labels
           multiplier_per_vertical_letter
-      } else if (strip_angle < 45 || strip_angle > 135) {
+      } else {
         # horizontal strip height (one strip)
         height_per_strip <-
           max_lines_y *
@@ -517,6 +580,24 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
     multiplier_hide_axis_single_var <- args$multiplier_hide_axis_single_var
     showNA <- args$showNA[[1]]
 
+    # ---- Extract ggplot theme information for accurate estimation ----
+    theme_info <- extract_ggplot_theme_info(plot_obj)
+
+    # Only override main_font_size with the theme-derived base size when the
+    # caller did not explicitly supply a value.
+    mc <- match.call()
+    main_font_size_missing <- is.null(mc[["main_font_size"]])
+    if (main_font_size_missing || is.null(main_font_size)) {
+      # Use theme-detected font size (the actual rendering font size)
+      main_font_size <- theme_info$base_size
+    }
+
+    # If legend doesn't add vertical height (positioned at sides or hidden),
+    # set legend lines to 0 to avoid wasting space
+    if (!theme_info$legend_adds_height) {
+      n_legend_lines <- 0L
+    }
+
     # Detect if axis text was actually hidden by makeme()
     # If .variable_label_original exists, the labels were hidden
     if (".variable_label_original" %in% colnames(data)) {
@@ -573,6 +654,38 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
     }
     if (length(max_chars_labels_x) == 0) {
       max_chars_labels_x <- 0
+    }
+
+    # ---- Compute actual wrapped line counts for precise height estimation ----
+    # Instead of estimating lines from ceil(max_chars / width),
+    # simulate the actual text wrapping and count newlines.
+    if (!is.null(n_x) && n_x == 1) {
+      # Bivariate: strip labels are already wrapped in data by strip_wrap_var()
+      strip_labels <- unique(as.character(data[[".variable_label"]]))
+      # Remove NA labels to avoid max(..., na.rm = TRUE) yielding -Inf on all-NA/empty input
+      strip_labels <- strip_labels[!is.na(strip_labels)]
+      if (length(strip_labels) == 0L) {
+        actual_strip_lines <- 1L
+      } else {
+        actual_strip_lines <- max(
+          stringi::stri_count_fixed(strip_labels, "\n") + 1L,
+          na.rm = TRUE
+        )
+      }
+      # Set max_chars_labels_y so fig_height_h_barchart computes the correct max_lines_y
+      max_chars_labels_y <- actual_strip_lines * strip_width
+
+      # For indep categories (x-axis bars after coord_flip): simulate wrapping
+      if (!is.null(max_chars_cats_x)) {
+        indep_labels <- unique(as.character(data[[indep_vars]]))
+        actual_bar_lines <- count_max_wrapped_lines(indep_labels, x_axis_label_width)
+        max_chars_cats_x <- actual_bar_lines * x_axis_label_width
+      }
+    } else {
+      # Univariate: y-axis labels are wrapped at render time by scale_x_reorder
+      unique_labels <- unique(as.character(data[[".variable_label"]]))
+      actual_label_lines <- count_max_wrapped_lines(unique_labels, x_axis_label_width)
+      max_chars_labels_y <- actual_label_lines * x_axis_label_width
     }
 
     # For int_plot_html, height scales with n_y (facets) * n_cats_x (groups).
