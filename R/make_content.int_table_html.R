@@ -105,5 +105,5 @@ make_content.int_table_html <-
     }
 
     # Apply rounding and return
-    round_numeric_stats(data_out, dots$digits)
+    attach_dep_label_prefix(round_numeric_stats(data_out, dots$digits), dots$main_question)
   }

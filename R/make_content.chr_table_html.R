@@ -67,5 +67,5 @@ make_content.chr_table_html <-
       }
     }
 
-    result
+    attach_dep_label_prefix(result, dots$main_question)
   }

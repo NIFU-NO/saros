@@ -144,7 +144,7 @@ make_content.cat_plot_docx <-
 
     # Return mschart object directly if requested
     if (isTRUE(dots$docx_return_object)) {
-      return(m)
+      return(attach_dep_label_prefix(m, dots$main_question))
     }
 
     docx_file <- use_docx(docx_template = dots$docx_template)

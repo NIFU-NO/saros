@@ -123,5 +123,5 @@ make_content.cat_table_html <-
       data_out[[1]] <- NULL
     }
 
-    data_out
+    attach_dep_label_prefix(data_out, dots$main_question)
   }
