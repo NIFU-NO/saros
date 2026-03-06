@@ -176,7 +176,7 @@ possible interest.
     so that it can later be easily [created at once with your preferred
     directory numbering
     scheme](https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html).
-    If located on e.g. Github this can be [downloaded, unzipped and
+    If located on e.g. GitHub this can be [downloaded, unzipped and
     placed in a new project
     folder](https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html).
 
@@ -187,7 +187,7 @@ The development version from [GitHub](https://github.com/) with:
 ``` r
 install.packages("pak")
 pak::pak("saros")
-# pak::pak("NIFU-NO/saros") # Alternatively, latest developer-version at Github
+# pak::pak("NIFU-NO/saros") # Alternatively, latest developer-version at GitHub
 ```
 
 ## Draft a simple report using defaults, in a temporary folder

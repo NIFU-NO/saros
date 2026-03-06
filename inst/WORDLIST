@@ -7,7 +7,8 @@ Colour
 Colours
 Ctrl
 DOCX
-Github
+GitHub
+JSON
 Kristiania
 Lifecycle
 Likert
@@ -59,7 +60,7 @@ dev
 discoverability
 docx
 dta
-erroring
+errored
 ffffff
 flexi
 folderpaths
@@ -89,6 +90,7 @@ makeme
 mesos
 modularized
 mschart
+pdfmark
 pkgdown
 png
 pos
@@ -105,6 +107,7 @@ showNA
 sigtest
 srvyr
 stackoverflow
+stdin
 sublicense
 summarization
 tabset

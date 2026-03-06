@@ -87,7 +87,7 @@ knitr::opts_chunk$set(
         *   variables with all NA for a given "crowd" (a target group, all others combined, or all)
 1.   [Draft the report](https://nifu-no.github.io/saros.base/reference/draft_report.html), using the output from refine_chapter_overview() and your raw data. Optionally provide a range of YAML-defaults and QMD-prefixes/suffixes to your chapter-files, index-files or full report-files, as well as creating chapter-datasets for compartmentalized authoring.
 1.    After rendering your Quarto Project (using regular Quarto/RStudio tools), optionally [batch configure access restrictions](https://nifu-no.github.io/saros.base/reference/setup_access_restrictions.html) and [send out glue-tailored emails](https://nifu-no.github.io/saros.base/reference/create_email_credentials.html) to institutions that have participated in your survey, now receiving password-protected access to their own report.
-1.    Having done this once for a report, you might want to create a project template for your organization. Folder structures can be [mapped to a YAML file](https://nifu-no.github.io/saros.base/reference/generate_yaml_from_directory.html) so that it can later be easily [created at once with your preferred directory numbering scheme](https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html). If located on e.g. Github this can be [downloaded, unzipped and placed in a new project folder](https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html).
+1.    Having done this once for a report, you might want to create a project template for your organization. Folder structures can be [mapped to a YAML file](https://nifu-no.github.io/saros.base/reference/generate_yaml_from_directory.html) so that it can later be easily [created at once with your preferred directory numbering scheme](https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html). If located on e.g. GitHub this can be [downloaded, unzipped and placed in a new project folder](https://nifu-no.github.io/saros.base/reference/download_zip_to_folder.html).
 
 
 ## Installation
@@ -97,7 +97,7 @@ The development version from [GitHub](https://github.com/) with:
 ```{r, eval = FALSE}
 install.packages("pak")
 pak::pak("saros")
-# pak::pak("NIFU-NO/saros") # Alternatively, latest developer-version at Github
+# pak::pak("NIFU-NO/saros") # Alternatively, latest developer-version at GitHub
 ```
 
 
