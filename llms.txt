@@ -335,6 +335,8 @@ Functions for reading and writing data frames to various file formats
   Links
 - [`crowd_plots_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.md)
   : Convert List of Plots to Quarto Tabset
+- [`crowd_tables_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_tables_as_tabset.md)
+  : Convert List of Tables to Quarto Tabset
 
 ## Compute optimal figure heights for the built-in cat_plot
 
@@ -364,6 +366,16 @@ Functions for reading and writing data frames to various file formats
 
 - [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
   : Extract Text Summary from Categorical Mesos Plots
+
+## Insert text from a data frame by chunk name
+
+- [`insert_text()`](https://nifu-no.github.io/saros/reference/insert_text.md)
+  : Insert Text from a Data Frame by Chunk Name
+
+## Detect the current output format
+
+- [`output_format()`](https://nifu-no.github.io/saros/reference/output_format.md)
+  : Detect the Current Output Format
 
 ## Only relevant when expanding the S3 system with your own functions
 
