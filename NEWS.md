@@ -1,6 +1,7 @@
 # saros 1.6.1.9000 (dev)
 
 ## Breaking Changes
+-   **Removed deprecated `embed_*` functions**: `embed_cat_prop_plot()`, `embed_cat_table()`, and `embed_chr_table_html()` have been removed. These were soft-deprecated since v1.1.0. Use `makeme()` instead (e.g., `makeme(type = "cat_prop_plot_html")`, `makeme(type = "cat_table_html")`, `makeme(type = "chr_table_html")`).
 -   **`cat_plot_docx` now uses girafe global settings for colors**: The `colour_palette` parameter has been removed from `cat_plot_docx`. Instead, colors are now controlled exclusively through `global_settings_set(fn_name = "girafe")` for consistency with HTML plots. This enables unified color management across all output formats (HTML and DOCX). Checkbox plot support (`checked`, `not_checked`, `colour_2nd_binary_cat`) is now also available for DOCX plots, with automatic legend hiding and label suppression for the unchecked category. Users should migrate from `makeme(..., colour_palette = c(...))` to `global_settings_set(fn_name = "girafe", new = list(palette_codes = list(c(...))))`.
 
 ## New Features
