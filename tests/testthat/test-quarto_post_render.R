@@ -9,7 +9,7 @@ test_that("update_html_pdf_link_text replaces link text for matching PDF", {
     "</body></html>"
   ), html_path)
 
-  result <- update_html_pdf_link_text(html_path, "report.pdf", "My Report Title")
+  result <- saros:::update_html_pdf_link_text(html_path, "report.pdf", "My Report Title")
 
   expect_true(result)
   content <- paste(readLines(html_path), collapse = "\n")
@@ -30,7 +30,7 @@ test_that("update_html_pdf_link_text handles href with path prefix", {
     "</body></html>"
   ), html_path)
 
-  result <- update_html_pdf_link_text(html_path, "report.pdf", "Updated Title")
+  result <- saros:::update_html_pdf_link_text(html_path, "report.pdf", "Updated Title")
 
   expect_true(result)
   content <- paste(readLines(html_path), collapse = "\n")
@@ -49,7 +49,7 @@ test_that("update_html_pdf_link_text returns FALSE when no links found", {
     "</body></html>"
   ), html_path)
 
-  result <- update_html_pdf_link_text(html_path, "report.pdf", "Title")
+  result <- saros:::update_html_pdf_link_text(html_path, "report.pdf", "Title")
 
   expect_false(result)
 })
@@ -65,7 +65,7 @@ test_that("update_html_pdf_link_text escapes HTML in title", {
     "</body></html>"
   ), html_path)
 
-  update_html_pdf_link_text(html_path, "report.pdf", "Title <with> & \"special\" chars")
+  saros:::update_html_pdf_link_text(html_path, "report.pdf", "Title <with> & \"special\" chars")
 
   content <- paste(readLines(html_path), collapse = "\n")
   expect_true(grepl("&amp;", content, fixed = TRUE))
@@ -75,7 +75,7 @@ test_that("update_html_pdf_link_text escapes HTML in title", {
 
 
 test_that("detect_ghostscript returns NULL or a valid command", {
-  result <- detect_ghostscript()
+  result <- saros:::detect_ghostscript()
   if (!is.null(result)) {
     expect_true(nzchar(Sys.which(result)))
   }
@@ -100,7 +100,7 @@ test_that("process_single_pdf_post_render skips when no DOCX exists", {
   file.create(pdf_path)
 
   expect_message(
-    process_single_pdf_post_render(pdf_path, gs_bin = NULL),
+    saros:::process_single_pdf_post_render(pdf_path, gs_bin = NULL),
     "No matching DOCX"
   )
 })
@@ -108,7 +108,7 @@ test_that("process_single_pdf_post_render skips when no DOCX exists", {
 
 test_that("process_single_pdf_post_render warns for missing PDF", {
   expect_warning(
-    process_single_pdf_post_render("/nonexistent/report.pdf", gs_bin = NULL),
+    saros:::process_single_pdf_post_render("/nonexistent/report.pdf", gs_bin = NULL),
     "PDF file not found"
   )
 })
