@@ -26,6 +26,7 @@ reference:
   - make_link.list
   - make_file_links
   - ggsaver
+  - quarto_pdf_post_render
 - title: Read and write tabular data
   desc: Functions for reading and writing data frames to various file formats
   contents:
