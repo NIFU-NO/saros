@@ -377,7 +377,7 @@ update_html_pdf_link_text <- function(html_path, pdf_filename, title) {
     m_parts <- regexec(a_pattern, match_str, perl = TRUE)
     parts <- regmatches(match_str, m_parts)[[1L]]
     # parts: [1] full match, [2] opening <a> tag, [3] old text, [4] </a>
-    new_link <- paste0(parts[2L], title_html, parts[4L])
+    new_link <- paste0(parts[2L], title_html, " (PDF)", parts[4L])
     content <- sub(match_str, new_link, content, fixed = TRUE)
   }
 
