@@ -80,6 +80,8 @@ Functions for reading and writing data frames to various file formats
   Links
 - [`crowd_plots_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.md)
   : Convert List of Plots to Quarto Tabset
+- [`crowd_plots_as_officer()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_officer.md)
+  : Convert List of Plots to officer-Compatible Format
 - [`crowd_tables_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_tables_as_tabset.md)
   : Convert List of Tables to Quarto Tabset
 
