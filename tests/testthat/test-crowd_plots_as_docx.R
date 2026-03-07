@@ -176,10 +176,10 @@ testthat::test_that("crowd_plots_as_docx respects add_dep_label_prefix option", 
   # Inspect document contents to verify prefix presence/absence
   doc_with <- officer::read_docx(path_with_prefix)
   doc_without <- officer::read_docx(path_without_prefix)
-  
+
   summary_with <- officer::docx_summary(doc_with)
   summary_without <- officer::docx_summary(doc_without)
-  
+
   # Document with prefix should have more paragraphs (heading + prefix + chart vs heading + chart)
   n_par_with <- sum(summary_with$content_type == "paragraph")
   n_par_without <- sum(summary_without$content_type == "paragraph")
