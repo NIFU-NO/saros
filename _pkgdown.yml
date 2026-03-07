@@ -40,6 +40,7 @@ reference:
   contents:
   - get_fig_title_suffix_from_ggplot
   - crowd_plots_as_tabset
+  - crowd_plots_as_officer
   - crowd_tables_as_tabset
 - title: Compute optimal figure heights for the built-in cat_plot
   contents:
