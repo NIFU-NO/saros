@@ -172,12 +172,14 @@ crowd_plots_as_docx <- function(
   doc <- use_docx(docx_template = docx_template)
 
   # Get chart dimensions if not specified
-  dims <- get_docx_dims(doc)
-  if (is.null(chart_width)) {
-    chart_width <- dims["w"]
-  }
-  if (is.null(chart_height)) {
-    chart_height <- dims["h"]
+  if (is.null(chart_width) || is.null(chart_height)) {
+    dims <- get_docx_dims(doc)
+    if (is.null(chart_width)) {
+      chart_width <- dims[["w"]]
+    }
+    if (is.null(chart_height)) {
+      chart_height <- dims[["h"]]
+    }
   }
 
   # Assemble document
