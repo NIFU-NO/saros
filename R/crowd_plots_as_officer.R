@@ -14,8 +14,9 @@
 #' @return A list with class `"saros_officer_plots"` containing:
 #'   - `plots`: Named list of mschart objects ready for officer insertion
 #'   - `metadata`: List of metadata for each plot (if `extract_metadata = TRUE`),
-#'     including plot names, dep_label_prefix, and other attributes
-#'   - `n_plots`: Integer count of non-NULL plots
+#'     including plot names, dep_label_prefix, and other attributes; `NULL` if
+#'     `extract_metadata = FALSE`
+#'   - `n_plots`: Integer count of valid mschart objects after filtering
 #'
 #' @details
 #' This function validates and structures plot objects for Word document assembly.
@@ -62,12 +63,11 @@
 #' # Use in officer workflow
 #' library(officer)
 #' doc <- read_docx()
-#' for (i in seq_along(officer_plots$plots)) {
-#'   plot_name <- names(officer_plots$plots)[i]
+#' for (plot_name in names(officer_plots$plots)) {
 #'   doc <- doc |>
 #'     body_add_par(plot_name, style = "heading 2") |>
-#'     body_add_par(officer_plots$metadata[[i]]$dep_label_prefix) |>
-#'     mschart::body_add_chart(officer_plots$plots[[i]])
+#'     body_add_par(officer_plots$metadata[[plot_name]]$dep_label_prefix) |>
+#'     mschart::body_add_chart(officer_plots$plots[[plot_name]])
 #' }
 #' print(doc, target = "output.docx")
 #' }
@@ -89,16 +89,31 @@ crowd_plots_as_officer <- function(
     )
   }
 
+  # Handle empty list early (before name validation)
   if (length(plot_list) == 0) {
     cli::cli_warn("{.arg plot_list} is empty. Returning empty structure.")
     return(structure(
       list(
         plots = list(),
-        metadata = list(),
+        metadata = if (extract_metadata) list() else NULL,
         n_plots = 0L
       ),
       class = "saros_officer_plots"
     ))
+  }
+
+  # Validate plot_list has names
+  if (is.null(names(plot_list))) {
+    cli::cli_abort(
+      "{.arg plot_list} must be a named list. Use meaningful names for plots."
+    )
+  }
+
+  # Check for missing or empty names
+  if (any(is.na(names(plot_list))) || any(names(plot_list) == "")) {
+    cli::cli_abort(
+      "{.arg plot_list} contains missing or empty names. All plots must have non-empty names."
+    )
   }
 
   # Filter out NULL plots and validate
@@ -164,6 +179,7 @@ crowd_plots_as_officer <- function(
 #' @param ... Additional arguments (unused)
 #'
 #' @return Invisibly returns `x`
+#' @keywords internal
 #' @export
 print.saros_officer_plots <- function(x, ...) {
   cli::cli_h1("saros officer plots")

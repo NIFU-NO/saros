@@ -19,8 +19,9 @@ A list with class \code{"saros_officer_plots"} containing:
 \itemize{
 \item \code{plots}: Named list of mschart objects ready for officer insertion
 \item \code{metadata}: List of metadata for each plot (if \code{extract_metadata = TRUE}),
-including plot names, dep_label_prefix, and other attributes
-\item \code{n_plots}: Integer count of non-NULL plots
+including plot names, dep_label_prefix, and other attributes; \code{NULL} if
+\code{extract_metadata = FALSE}
+\item \code{n_plots}: Integer count of valid mschart objects after filtering
 }
 }
 \description{
@@ -68,12 +69,11 @@ officer_plots <- crowd_plots_as_officer(plots)
 # Use in officer workflow
 library(officer)
 doc <- read_docx()
-for (i in seq_along(officer_plots$plots)) {
-  plot_name <- names(officer_plots$plots)[i]
+for (plot_name in names(officer_plots$plots)) {
   doc <- doc |>
     body_add_par(plot_name, style = "heading 2") |>
-    body_add_par(officer_plots$metadata[[i]]$dep_label_prefix) |>
-    mschart::body_add_chart(officer_plots$plots[[i]])
+    body_add_par(officer_plots$metadata[[plot_name]]$dep_label_prefix) |>
+    mschart::body_add_chart(officer_plots$plots[[plot_name]])
 }
 print(doc, target = "output.docx")
 }

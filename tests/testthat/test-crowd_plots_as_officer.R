@@ -9,17 +9,49 @@ testthat::test_that("crowd_plots_as_officer validates inputs", {
 
   # Test: non-boolean extract_metadata
   testthat::expect_error(
-    crowd_plots_as_officer(list(), extract_metadata = "yes"),
+    crowd_plots_as_officer(list(a = 1), extract_metadata = "yes"),
     "must be a single logical value"
   )
 
-  # Test: empty list produces warning
+  # Test: unnamed list should error
+  testthat::expect_error(
+    crowd_plots_as_officer(list(1, 2, 3)),
+    "must be a named list"
+  )
+
+  # Test: list with NA names should error
+  list_with_na_name <- list("a" = 1, "b" = 2)
+  names(list_with_na_name)[2] <- NA_character_
+  testthat::expect_error(
+    crowd_plots_as_officer(list_with_na_name),
+    "missing or empty names"
+  )
+
+  # Test: list with empty string names should error
+  list_with_empty_name <- list("a" = 1, "b" = 2)
+  names(list_with_empty_name)[2] <- ""
+  testthat::expect_error(
+    crowd_plots_as_officer(list_with_empty_name),
+    "missing or empty names"
+  )
+
+  # Test: empty list with extract_metadata = TRUE
   testthat::expect_warning(
-    result <- crowd_plots_as_officer(list()),
+    result <- crowd_plots_as_officer(list(), extract_metadata = TRUE),
     "is empty"
   )
   testthat::expect_s3_class(result, "saros_officer_plots")
   testthat::expect_equal(result$n_plots, 0L)
+  testthat::expect_length(result$metadata, 0)
+
+  # Test: empty list with extract_metadata = FALSE
+  testthat::expect_warning(
+    result <- crowd_plots_as_officer(list(), extract_metadata = FALSE),
+    "is empty"
+  )
+  testthat::expect_s3_class(result, "saros_officer_plots")
+  testthat::expect_equal(result$n_plots, 0L)
+  testthat::expect_null(result$metadata)
 })
 
 testthat::test_that("crowd_plots_as_officer handles mschart objects", {
