@@ -13,7 +13,7 @@ test_that("update_html_pdf_link_text replaces link text for matching PDF", {
 
   expect_true(result)
   content <- paste(readLines(html_path), collapse = "\n")
-  expect_true(grepl("My Report Title", content, fixed = TRUE))
+  expect_true(grepl("My Report Title (PDF)", content, fixed = TRUE))
   # The other link should remain unchanged
 
   expect_true(grepl(">other.pdf</a>", content, fixed = TRUE))
@@ -34,7 +34,7 @@ test_that("update_html_pdf_link_text handles href with path prefix", {
 
   expect_true(result)
   content <- paste(readLines(html_path), collapse = "\n")
-  expect_true(grepl("Updated Title", content, fixed = TRUE))
+  expect_true(grepl("Updated Title (PDF)", content, fixed = TRUE))
   expect_false(grepl(">report</a>", content, fixed = TRUE))
 })
 
@@ -68,6 +68,7 @@ test_that("update_html_pdf_link_text escapes HTML in title", {
   saros:::update_html_pdf_link_text(html_path, "report.pdf", "Title <with> & \"special\" chars")
 
   content <- paste(readLines(html_path), collapse = "\n")
+  expect_true(grepl(" (PDF)", content, fixed = TRUE))
   expect_true(grepl("&amp;", content, fixed = TRUE))
   expect_true(grepl("&lt;with&gt;", content, fixed = TRUE))
   expect_true(grepl("&quot;special&quot;", content, fixed = TRUE))
