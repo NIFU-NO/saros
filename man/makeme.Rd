@@ -75,7 +75,7 @@ makeme(
   font_family = "sans",
   path = NULL,
   docx_template = NULL,
-  docx_return_object = FALSE
+  docx_return_object = TRUE
 )
 }
 \arguments{
@@ -483,7 +483,7 @@ Can be either a valid character path to a reference Word file, or an existing rd
 
 \item{docx_return_object}{\emph{Return underlying object instead of rdocx}
 
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
 
 For DOCX output types: if TRUE, return the underlying object (mschart for plots, data.frame for tables) instead of embedding it in an rdocx document.}
 }

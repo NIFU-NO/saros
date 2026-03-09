@@ -23,7 +23,8 @@ testthat::test_that("chart cat_docx", {
           hide_label_if_prop_below = 0,
           descend = TRUE,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -74,7 +75,8 @@ testthat::test_that("chart cat_docx", {
           hide_label_if_prop_below = 0,
           descend = TRUE,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -108,7 +110,8 @@ testthat::test_that("chart cat_docx", {
           hide_label_if_prop_below = 0,
           descend = TRUE,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -148,7 +151,8 @@ testthat::test_that("chart cat_docx", {
           hide_label_if_prop_below = 0,
           descend = TRUE,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -188,7 +192,10 @@ testthat::test_that("chart cat_docx", {
           vertical = FALSE,
           digits = 0,
           hide_label_if_prop_below = 0,
-          descend = TRUE
+          descend = TRUE,
+          height_per_col = .3,
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -228,7 +235,8 @@ testthat::test_that("chart cat_docx", {
           hide_label_if_prop_below = 0,
           descend = TRUE,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -268,7 +276,8 @@ testthat::test_that("chart cat_docx", {
           hide_label_if_prop_below = 0,
           descend = TRUE,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -303,7 +312,8 @@ testthat::test_that("chart cat_docx", {
           hide_label_if_prop_below = 0,
           descend = TRUE,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -339,7 +349,8 @@ testthat::test_that("chart cat_docx", {
           digits = 0,
           hide_label_if_prop_below = 0,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -376,7 +387,8 @@ testthat::test_that("chart cat_docx", {
           digits = 0,
           hide_label_if_prop_below = 0,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
@@ -413,7 +425,8 @@ testthat::test_that("chart cat_docx", {
           hide_label_if_prop_below = 0,
           descend = TRUE,
           height_per_col = .3,
-          height_fixed = 1
+          height_fixed = 1,
+          docx_return_object = FALSE
         )
     },
     class = "rdocx",
