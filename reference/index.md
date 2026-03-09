@@ -75,6 +75,10 @@ Functions for reading and writing data frames to various file formats
 
 ## Generate figure captions and Quarto tabsets
 
+- [`crowd_output()`](https://nifu-no.github.io/saros/reference/crowd_output.md)
+  : Universal Output Function for Crowd Plots and Tables
+- [`is_rendering()`](https://nifu-no.github.io/saros/reference/is_rendering.md)
+  : Detect if Running in knitr/Quarto Rendering Context
 - [`get_fig_title_suffix_from_ggplot()`](https://nifu-no.github.io/saros/reference/get_fig_title_suffix_from_ggplot.md)
   : Generate Figure Title Suffix with N Range and Optional Download
   Links
@@ -82,6 +86,8 @@ Functions for reading and writing data frames to various file formats
   : Convert List of Plots to Quarto Tabset
 - [`crowd_plots_as_officer()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_officer.md)
   : Convert List of Plots to officer-Compatible Format
+- [`crowd_plots_as_docx()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_docx.md)
+  : Write Plots to Word Document (DOCX)
 - [`crowd_tables_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_tables_as_tabset.md)
   : Convert List of Tables to Quarto Tabset
 

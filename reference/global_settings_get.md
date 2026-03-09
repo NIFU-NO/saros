@@ -242,6 +242,6 @@ global_settings_get()
 #> NULL
 #> 
 #> $docx_return_object
-#> [1] FALSE
+#> [1] TRUE
 #> 
 ```

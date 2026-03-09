@@ -77,7 +77,7 @@ makeme(
   font_family = "sans",
   path = NULL,
   docx_template = NULL,
-  docx_return_object = FALSE
+  docx_return_object = TRUE
 )
 ```
 
@@ -717,7 +717,7 @@ makeme(
 
   *Return underlying object instead of rdocx*
 
-  `scalar<logical>` // *default:* `FALSE` (`optional`)
+  `scalar<logical>` // *default:* `TRUE` (`optional`)
 
   For DOCX output types: if TRUE, return the underlying object (mschart
   for plots, data.frame for tables) instead of embedding it in an rdocx

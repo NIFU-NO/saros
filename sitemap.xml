@@ -37,6 +37,8 @@
 <url><loc>https://nifu-no.github.io/saros/reference/check_quarto_website_index.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/compute_full_category_levels.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/count_max_wrapped_lines.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/crowd_output.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/crowd_plots_as_docx.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/crowd_plots_as_officer.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/crowd_tables_as_tabset.html</loc></url>
@@ -87,6 +89,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/insert_text.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/is_colour.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/is_int_plot_html.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/is_rendering.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/is_string.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/make_content.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/make_file_links.html</loc></url>
