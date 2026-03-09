@@ -38,6 +38,8 @@ reference:
   - girafe
 - title: Generate figure captions and Quarto tabsets
   contents:
+  - crowd_output
+  - is_rendering
   - get_fig_title_suffix_from_ggplot
   - crowd_plots_as_tabset
   - crowd_plots_as_officer
