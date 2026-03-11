@@ -1,4 +1,5 @@
 Acknowledgements
+BOM
 Bugfixes
 CMD
 CRAN's
@@ -38,6 +39,7 @@ Tidyselect
 YAML
 args
 barchart
+behaviour
 bool
 bugfixes
 callout
@@ -65,6 +67,7 @@ folderpaths
 fp
 funder
 geoms
+gg
 ggiraph
 ggobj
 ggplot
@@ -93,6 +96,7 @@ pkgdown
 png
 pos
 pre
+programmatically
 qmd
 rdocx
 recode
@@ -125,3 +129,4 @@ vdiffr
 vectorized
 xlsx
 yaml
+æøå
