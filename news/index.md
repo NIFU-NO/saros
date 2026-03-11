@@ -165,6 +165,12 @@
   generated colours if user provides fewer colours than categories,
   and (3) trims the palette if user provides more colours than needed
 - Fixed
+  [`set_pdf_metadata_title()`](https://nifu-no.github.io/saros/reference/set_pdf_metadata_title.md)
+  corrupting non-ASCII characters (e.g. æøå) in PDF metadata titles. The
+  pdfmark title is now encoded as a UTF-16BE hex string with BOM instead
+  of a plain PostScript literal, avoiding locale/codepage-dependent byte
+  interpretation by Ghostscript
+- Fixed
   [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
   where `hide_axis_text_if_single_variable=TRUE` was paradoxically
   giving larger heights than `FALSE`. Now correctly detects when axis
