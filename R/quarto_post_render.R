@@ -248,19 +248,37 @@ set_pdf_metadata_title <- function(pdf_path, title, gs_bin) {
   temp_marks <- tempfile(fileext = ".ps")
   on.exit(unlink(c(temp_out, temp_marks)), add = TRUE)
 
+  # Convert text to a PDF Unicode string: UTF-16BE bytes with BOM, hex-encoded.
+  # This avoids locale/codepage corruption for non-ASCII characters.
+  to_pdf_unicode_hex <- function(x) {
+    utf16_raw <- tryCatch(
+      iconv(enc2utf8(x), from = "UTF-8", to = "UTF-16BE", toRaw = TRUE)[[1L]],
+      error = function(e) NULL
+    )
+
+    if (is.null(utf16_raw)) {
+      return(NULL)
+    }
+
+    bytes <- c(as.raw(0xFE), as.raw(0xFF), utf16_raw)
+    hex <- paste(sprintf("%02X", as.integer(bytes)), collapse = "")
+    sprintf("<%s>", hex)
+  }
+
   # Normalize title: replace newlines/carriage returns with spaces and
   # strip other non-printable control characters to avoid invalid pdfmark
   title_clean <- gsub("[\r\n]+", " ", title)
   title_clean <- gsub("[[:cntrl:]]", "", title_clean)
 
-  # Escape PostScript string special characters
-  title_ps <- gsub("\\", "\\\\", title_clean, fixed = TRUE)
-  title_ps <- gsub("(", "\\(", title_ps, fixed = TRUE)
-  title_ps <- gsub(")", "\\)", title_ps, fixed = TRUE)
+  title_pdf <- to_pdf_unicode_hex(title_clean)
+  if (is.null(title_pdf)) {
+    cli::cli_warn("Failed to encode PDF title as Unicode.")
+    return(invisible(FALSE))
+  }
 
   # Write pdfmark to a temp PostScript file (avoids shell escaping issues)
   writeLines(
-    sprintf("[/Title (%s) /DOCINFO pdfmark", title_ps),
+    sprintf("[/Title %s /DOCINFO pdfmark", title_pdf),
     temp_marks
   )
 

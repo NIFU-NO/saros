@@ -2,14 +2,21 @@ test_that("update_html_pdf_link_text replaces link text for matching PDF", {
   html_dir <- withr::local_tempdir()
   html_path <- file.path(html_dir, "index.html")
 
-  writeLines(c(
-    "<html><body>",
-    '<a href="report.pdf">report.pdf</a>',
-    '<a href="other.pdf">other.pdf</a>',
-    "</body></html>"
-  ), html_path)
+  writeLines(
+    c(
+      "<html><body>",
+      '<a href="report.pdf">report.pdf</a>',
+      '<a href="other.pdf">other.pdf</a>',
+      "</body></html>"
+    ),
+    html_path
+  )
 
-  result <- saros:::update_html_pdf_link_text(html_path, "report.pdf", "My Report Title")
+  result <- saros:::update_html_pdf_link_text(
+    html_path,
+    "report.pdf",
+    "My Report Title"
+  )
 
   expect_true(result)
   content <- paste(readLines(html_path), collapse = "\n")
@@ -24,13 +31,20 @@ test_that("update_html_pdf_link_text handles href with path prefix", {
   html_dir <- withr::local_tempdir()
   html_path <- file.path(html_dir, "index.html")
 
-  writeLines(c(
-    "<html><body>",
-    '<a href="./report.pdf">report</a>',
-    "</body></html>"
-  ), html_path)
+  writeLines(
+    c(
+      "<html><body>",
+      '<a href="./report.pdf">report</a>',
+      "</body></html>"
+    ),
+    html_path
+  )
 
-  result <- saros:::update_html_pdf_link_text(html_path, "report.pdf", "Updated Title")
+  result <- saros:::update_html_pdf_link_text(
+    html_path,
+    "report.pdf",
+    "Updated Title"
+  )
 
   expect_true(result)
   content <- paste(readLines(html_path), collapse = "\n")
@@ -43,11 +57,14 @@ test_that("update_html_pdf_link_text returns FALSE when no links found", {
   html_dir <- withr::local_tempdir()
   html_path <- file.path(html_dir, "index.html")
 
-  writeLines(c(
-    "<html><body>",
-    '<a href="other.pdf">other</a>',
-    "</body></html>"
-  ), html_path)
+  writeLines(
+    c(
+      "<html><body>",
+      '<a href="other.pdf">other</a>',
+      "</body></html>"
+    ),
+    html_path
+  )
 
   result <- saros:::update_html_pdf_link_text(html_path, "report.pdf", "Title")
 
@@ -59,13 +76,20 @@ test_that("update_html_pdf_link_text escapes HTML in title", {
   html_dir <- withr::local_tempdir()
   html_path <- file.path(html_dir, "index.html")
 
-  writeLines(c(
-    "<html><body>",
-    '<a href="report.pdf">report</a>',
-    "</body></html>"
-  ), html_path)
+  writeLines(
+    c(
+      "<html><body>",
+      '<a href="report.pdf">report</a>',
+      "</body></html>"
+    ),
+    html_path
+  )
 
-  saros:::update_html_pdf_link_text(html_path, "report.pdf", "Title <with> & \"special\" chars")
+  saros:::update_html_pdf_link_text(
+    html_path,
+    "report.pdf",
+    "Title <with> & \"special\" chars"
+  )
 
   content <- paste(readLines(html_path), collapse = "\n")
   expect_true(grepl(" (PDF)", content, fixed = TRUE))
@@ -83,6 +107,43 @@ test_that("detect_ghostscript returns NULL or a valid command", {
 })
 
 
+test_that("set_pdf_metadata_title writes Unicode pdfmark for non-ASCII title", {
+  pdf_path <- tempfile(fileext = ".pdf")
+  file.create(pdf_path)
+
+  captured_pdfmark <- NULL
+
+  testthat::local_mocked_bindings(
+    system2 = function(command, args, stdout = TRUE, stderr = TRUE) {
+      marks_path <- tail(args, 1L)
+      captured_pdfmark <<- paste(
+        readLines(marks_path, warn = FALSE),
+        collapse = "\n"
+      )
+
+      out_arg <- args[grepl("^-sOutputFile=", args)][1L]
+      out_path <- sub("^-sOutputFile=", "", out_arg)
+      file.create(out_path)
+
+      character(0)
+    },
+    .package = "base"
+  )
+
+  ok <- saros:::set_pdf_metadata_title(pdf_path, "Tittel æøå", "gs")
+
+  expect_true(ok)
+  expect_false(is.null(captured_pdfmark))
+  expect_match(
+    captured_pdfmark,
+    "^\\[/Title <[0-9A-F]+> /DOCINFO pdfmark$",
+    perl = TRUE
+  )
+  expect_match(captured_pdfmark, "FEFF", fixed = TRUE)
+  expect_match(captured_pdfmark, "00E600F800E5", fixed = TRUE)
+})
+
+
 test_that("read_quarto_post_render_input parses JSON array", {
   # Mock stdin by testing the JSON parsing logic directly
   input <- '["_site/ch1/report.pdf", "_site/ch1/index.html", "_site/ch2/data.pdf"]'
@@ -91,7 +152,10 @@ test_that("read_quarto_post_render_input parses JSON array", {
   matches <- regmatches(input, gregexpr('"([^"\\\\]|\\\\.)*"', input))[[1L]]
   paths <- gsub('^"|"$', "", matches)
 
-  expect_equal(paths, c("_site/ch1/report.pdf", "_site/ch1/index.html", "_site/ch2/data.pdf"))
+  expect_equal(
+    paths,
+    c("_site/ch1/report.pdf", "_site/ch1/index.html", "_site/ch2/data.pdf")
+  )
 })
 
 
@@ -109,7 +173,10 @@ test_that("process_single_pdf_post_render skips when no DOCX exists", {
 
 test_that("process_single_pdf_post_render warns for missing PDF", {
   expect_warning(
-    saros:::process_single_pdf_post_render("/nonexistent/report.pdf", gs_bin = NULL),
+    saros:::process_single_pdf_post_render(
+      "/nonexistent/report.pdf",
+      gs_bin = NULL
+    ),
     "PDF file not found"
   )
 })
@@ -156,11 +223,14 @@ test_that("quarto_pdf_post_render processes matching PDF + DOCX pair", {
 
   # Create an index.html with a link to the PDF
   html_path <- file.path(tmp_dir, "index.html")
-  writeLines(c(
-    "<html><body>",
-    '<a href="report.pdf">report.pdf</a>',
-    "</body></html>"
-  ), html_path)
+  writeLines(
+    c(
+      "<html><body>",
+      '<a href="report.pdf">report.pdf</a>',
+      "</body></html>"
+    ),
+    html_path
+  )
 
   # Run the post-render (gs_bin = NULL to skip PDF metadata)
   quarto_pdf_post_render(pdf_path)
