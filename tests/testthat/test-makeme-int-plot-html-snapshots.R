@@ -144,14 +144,14 @@ test_that("int_plot_html with label customization", {
 test_that("int_plot_html error handling", {
   data("ex_survey", package = "saros")
 
-  # Test with categorical variable (should error because it lacks mean/SD statistics)
+  # Test with categorical variable (should error with type-variable mismatch)
   expect_error(
     saros::makeme(
       data = ex_survey,
       dep = a_1, # This is categorical - keep for error test
       type = "int_plot_html"
     ),
-    regexp = "Column `mean` not found"
+    regexp = "expects numeric variables"
   )
 
   # Test with mixed variable types - should error before reaching the statistics issue

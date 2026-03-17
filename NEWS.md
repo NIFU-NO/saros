@@ -36,6 +36,7 @@
 -   Fixed `fig_height_h_barchart2()` for `int_plot_html` plots: previously always returned `max` (12) regardless of plot complexity, and errored with "only supports a single indep variable" when an indep variable was present (because `.value` was falsely detected as a second indep column). Height now scales properly with `n_y` and `n_cats_x` via `fig_height_h_barchart()` with `n_cats_y = 1` and `n_legend_lines = 0`
 -   Fixed `n_range2()` for `int_plot_html` plots to report N range per dependent variable instead of total count across all variables. Now correctly calculates sample size separately for each variable and reports the range (e.g., [250-299] when variables have different amounts of missing data)
 -   Fixed `guess_legend_ncols()` in `girafe()` to properly handle fill aesthetics using expressions like `fill = factor(cyl)`. The function now uses `get_fill_levels()` to evaluate expressions in data context instead of direct column access, preventing "no non-missing arguments to max; returning -Inf" warnings
+-   `makeme()` now gives an informative error message when the requested output type is incompatible with the dependent variable types (e.g., using `type = "cat_table_html"` with numeric variables, or `type = "int_plot_html"` with factor variables). Previously this produced a cryptic error about setting an attribute on NULL.
 
 ## Internal Improvements
 -   **Optimized `fig_height_h_barchart2()` ggplot height estimation**: The function now extracts information directly from the ggplot object for more accurate height calculations:
