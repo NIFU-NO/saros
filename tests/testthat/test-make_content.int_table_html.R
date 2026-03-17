@@ -151,10 +151,10 @@ testthat::test_that("make_content.int_table_html handles character indep without
 })
 
 testthat::test_that("make_content.int_table_html handles table_main_question_as_header with variable suffixes", {
-  # Test with variables that have separators to ensure suffixes are extracted
+  # Test with numeric variables that have separators to ensure suffixes are extracted
   result <- saros::makeme(
     data = saros::ex_survey,
-    dep = c("a_1", "a_2"),
+    dep = c("c_1", "c_2"),
     type = "int_table_html",
     table_main_question_as_header = TRUE
   )
@@ -162,24 +162,34 @@ testthat::test_that("make_content.int_table_html handles table_main_question_as_
   testthat::expect_s3_class(result, "data.frame")
   # The column header should be the main question
   testthat::expect_true(
-    "Do you consent to the following?" %in% colnames(result)
+    "How many years of experience do you have in" %in% colnames(result)
   )
-  # The variable values should only contain suffixes ("Agreement #1", "Agreement #2")
-  testthat::expect_true(all(c("Agreement #1", "Agreement #2") %in% result[[1]]))
+  # The variable values should only contain suffixes ("Company A", "Company B")
+  testthat::expect_true(all(c("Company A", "Company B") %in% result[[1]]))
   testthat::expect_false(
-    "Do you consent to the following? - Agreement #1" %in% result[[1]]
+    "How many years of experience do you have in - Company A" %in% result[[1]]
   )
   testthat::expect_false(
-    "Do you consent to the following? - Agreement #2" %in% result[[1]]
+    "How many years of experience do you have in - Company B" %in% result[[1]]
   )
 })
 
 testthat::test_that("make_content.int_table_html handles label_separator with naming conflicts", {
-  # Test with dependent and independent variables that have the same main question
+  # Create a dataset where a categorical indep shares the same label prefix as numeric dep vars
+  test_data <- saros::ex_survey
+  test_data$c_grp <- factor(rep(
+    c("Low", "High"),
+    length.out = nrow(test_data)
+  ))
+  attr(
+    test_data$c_grp,
+    "label"
+  ) <- "How many years of experience do you have in - Group"
+
   result <- saros::makeme(
-    data = saros::ex_survey,
-    dep = c("a_1", "a_2"),
-    indep = "a_3",
+    data = test_data,
+    dep = c("c_1", "c_2"),
+    indep = "c_grp",
     type = "int_table_html",
     label_separator = " - ",
     table_main_question_as_header = TRUE
@@ -188,15 +198,15 @@ testthat::test_that("make_content.int_table_html handles label_separator with na
   testthat::expect_s3_class(result, "data.frame")
   # The main question should be the column header
   testthat::expect_true(
-    "Do you consent to the following?" %in% colnames(result)
+    "How many years of experience do you have in" %in% colnames(result)
   )
   # The indep column should have "(indep)" suffix to resolve naming conflict
   testthat::expect_true(
-    "Do you consent to the following? (indep)" %in% colnames(result)
+    "How many years of experience do you have in (indep)" %in% colnames(result)
   )
   # Variable values should show only suffixes
-  testthat::expect_true(all(c("Agreement #1", "Agreement #2") %in% result[[1]]))
+  testthat::expect_true(all(c("Company A", "Company B") %in% result[[1]]))
   testthat::expect_false(
-    "Do you consent to the following? - Agreement #1" %in% result[[1]]
+    "How many years of experience do you have in - Company A" %in% result[[1]]
   )
 })

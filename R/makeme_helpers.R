@@ -229,6 +229,52 @@ validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
   invisible(TRUE)
 }
 
+#' Validate Variable Type Compatibility with Requested Output Type
+#'
+#' Checks that the dependent variable types are compatible with the requested
+#' output type. For example, categorical types (\code{cat_plot_*},
+#' \code{cat_table_*}) require factor/ordered/character variables, not
+#' numeric/integer.
+#'
+#' @param type Character string of the requested output type
+#' @param dep_types Character vector of classes for dependent variables
+#' @param dep_names Character vector of dependent variable names
+#'
+#' @return NULL (function used for side effects - validation errors)
+#'
+#' @keywords internal
+validate_type_variable_compatibility <- function(type, dep_types, dep_names) {
+  is_cat_type <- grepl("^cat_", type)
+  is_int_type <- grepl("^int_", type)
+
+  numeric_classes <- c("integer", "numeric", "double")
+  categorical_classes <- c("factor", "ordered", "character", "logical")
+
+  if (is_cat_type && any(dep_types %in% numeric_classes)) {
+    bad_vars <- dep_names[dep_types %in% numeric_classes]
+    bad_types <- dep_types[dep_types %in% numeric_classes]
+    n_bad <- length(bad_vars)
+    cli::cli_abort(c(
+      "x" = "{.arg type} = {.val {type}} expects categorical variables (factor, ordered, character, logical), but received {cli::qty(n_bad)} numeric variable{?s}.",
+      "i" = "{cli::qty(n_bad)} Numeric variable{?s}: {.var {bad_vars}} ({bad_types}).",
+      "i" = "Use {.code type = 'int_plot_html'} or {.code type = 'int_table_html'} for numeric variables, or convert them to factors first."
+    ))
+  }
+
+  if (is_int_type && any(dep_types %in% categorical_classes)) {
+    bad_vars <- dep_names[dep_types %in% categorical_classes]
+    bad_types <- dep_types[dep_types %in% categorical_classes]
+    n_bad <- length(bad_vars)
+    cli::cli_abort(c(
+      "x" = "{.arg type} = {.val {type}} expects numeric variables (integer, numeric, double), but received {cli::qty(n_bad)} categorical variable{?s}.",
+      "i" = "{cli::qty(n_bad)} Categorical variable{?s}: {.var {bad_vars}} ({bad_types}).",
+      "i" = "Use {.code type = 'cat_plot_html'} or {.code type = 'cat_table_html'} for categorical variables."
+    ))
+  }
+
+  invisible(NULL)
+}
+
 #' Detect Variable Types for Dependent and Independent Variables
 #'
 #' Internal helper function that examines the class of variables in the subset
@@ -923,6 +969,10 @@ process_crowd_data <- function(
 
   # Detect variable types and generate data summary
   variable_types <- detect_variable_types(subset_data, dep_crwd, indep_crwd)
+
+  # Validate that variable types are compatible with the requested output type
+  validate_type_variable_compatibility(args$type, variable_types$dep, dep_crwd)
+
   args$data_summary <- generate_data_summary(
     variable_types,
     subset_data,
