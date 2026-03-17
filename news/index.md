@@ -118,6 +118,16 @@
 
 ### Bug Fixes
 
+- [`crowd_plots_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.md)
+  now gives an informative error when passed table output (e.g. from
+  `type = "cat_table_html"`) instead of plot output, directing users to
+  [`crowd_tables_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_tables_as_tabset.md)
+  ([\#515](https://github.com/NIFU-NO/saros/issues/515))
+- [`txt_from_cat_mesos_plots()`](https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.md)
+  now gives an informative error when passed table output instead of
+  plot output, instead of failing with a cryptic `.category_order`
+  column-not-found error
+  ([\#515](https://github.com/NIFU-NO/saros/issues/515))
 - Fixed
   [`girafe()`](https://nifu-no.github.io/saros/reference/girafe.md) to
   return a static `ggplot` object instead of a `girafe` object when
