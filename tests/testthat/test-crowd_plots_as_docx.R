@@ -197,7 +197,10 @@ testthat::test_that("crowd_plots_as_docx handles empty plot list", {
 
   # Should warn but still create file
   testthat::expect_warning(
-    result <- crowd_plots_as_docx(empty_list, path = output_path),
+    testthat::expect_warning(
+      result <- crowd_plots_as_docx(empty_list, path = output_path),
+      "is empty"
+    ),
     "No valid plots"
   )
 

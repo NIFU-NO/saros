@@ -236,7 +236,8 @@ crowd_plots_as_tabset <- function(
   # Insert page breaks between plots
   out_list <- Filter(Negate(is.null), out_list)
   pagebreak <- match.arg(pagebreak)
-  insert_pagebreak <- switch(pagebreak,
+  insert_pagebreak <- switch(
+    pagebreak,
     auto = output_format() != "html",
     always = TRUE,
     never = FALSE
