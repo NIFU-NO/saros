@@ -221,6 +221,12 @@
   to evaluate expressions in data context instead of direct column
   access, preventing “no non-missing arguments to max; returning -Inf”
   warnings
+- [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) now
+  gives an informative error message when the requested output type is
+  incompatible with the dependent variable types (e.g., using
+  `type = "cat_table_html"` with numeric variables, or
+  `type = "int_plot_html"` with factor variables). Previously this
+  produced a cryptic error about setting an attribute on NULL.
 
 ### Internal Improvements
 
