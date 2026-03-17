@@ -52,7 +52,7 @@ crowd_tables_as_tabset <- function(
 
   pagebreak <- match.arg(args$pagebreak, choices = c("auto", "always", "never"))
   insert_pagebreak <- switch(pagebreak,
-    auto = output_format() != "html",
+    auto = !is_html_output_or_officer(),
     always = TRUE,
     never = FALSE
   )

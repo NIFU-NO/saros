@@ -120,6 +120,16 @@ crowd_plots_as_tabset <- function(
     return(invisible(NULL))
   }
 
+  # Error if all non-NULL elements are data frames (tables, not plots)
+  non_null_items <- plot_list[non_null_plots]
+  all_dataframes <- all(vapply(non_null_items, is.data.frame, logical(1)))
+  if (all_dataframes) {
+    cli::cli_abort(c(
+      "{.arg plot_list} contains data frames, not ggplot objects.",
+      "i" = "Use {.fun crowd_tables_as_tabset} for tabulating data frames."
+    ))
+  }
+
   # Match plot_type argument
   plot_type <- match.arg(plot_type)
 
@@ -238,19 +248,17 @@ crowd_plots_as_tabset <- function(
   pagebreak <- match.arg(pagebreak)
   insert_pagebreak <- switch(
     pagebreak,
-    auto = output_format() != "html",
+    auto = !is_html_output_or_officer(),
     always = TRUE,
     never = FALSE
   )
 
-  if (insert_pagebreak && length(out_list) > 1) {
-    interleaved <- list(out_list[[1]])
-    for (i in seq(2, length(out_list))) {
-      interleaved <- c(
-        interleaved,
-        list("\\newpage"),
-        list(out_list[[i]])
-      )
+  n <- length(out_list)
+  if (insert_pagebreak && n > 1) {
+    interleaved <- vector("list", 2L * n - 1L)
+    for (i in seq_along(out_list)) {
+      interleaved[[2L * i - 1L]] <- out_list[[i]]
+      if (i < n) interleaved[[2L * i]] <- "\\newpage"
     }
     out <- unlist(interleaved)
   } else {
