@@ -142,7 +142,10 @@ testthat::test_that("crowd_output() handles empty plot list", {
 
   # Should warn but create file
   testthat::expect_warning(
-    result <- crowd_output(empty_list, path = output_path),
+    testthat::expect_warning(
+      result <- crowd_output(empty_list, path = output_path),
+      "is empty"
+    ),
     "No valid plots"
   )
 

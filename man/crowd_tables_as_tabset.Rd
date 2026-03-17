@@ -4,7 +4,11 @@
 \alias{crowd_tables_as_tabset}
 \title{Convert List of Tables to Quarto Tabset}
 \usage{
-crowd_tables_as_tabset(tbl_list, table_fn = knitr::kable)
+crowd_tables_as_tabset(
+  tbl_list,
+  table_fn = knitr::kable,
+  pagebreak = c("auto", "always", "never")
+)
 }
 \arguments{
 \item{tbl_list}{A named list of data frames. Names become tab labels.}
@@ -13,6 +17,13 @@ crowd_tables_as_tabset(tbl_list, table_fn = knitr::kable)
 table object. Defaults to \code{\link[knitr:kable]{knitr::kable()}}. Other options include
 \code{\link[gt:gt]{gt::gt()}}, \code{tinytable::tt}, etc. Can be set globally via
 \code{global_settings_set(new = list(table_fn = gt::gt), fn_name = "crowd_tables_as_tabset")}.}
+
+\item{pagebreak}{Character. Controls page break insertion between tables:
+\itemize{
+\item \code{"auto"} (default): Insert page breaks for non-HTML formats only
+\item \code{"always"}: Always insert page breaks between tables
+\item \code{"never"}: Never insert page breaks
+}}
 }
 \value{
 Called for its side effects (printing tabset markdown and tables).

@@ -110,9 +110,12 @@ testthat::test_that("crowd_plots_as_officer skips NULL and invalid objects", {
     "Another invalid" = data.frame(x = 1)
   )
 
-  # Should warn about invalid objects
+  # Should warn about invalid objects (two invalid entries)
   testthat::expect_warning(
-    result <- crowd_plots_as_officer(plot_list),
+    testthat::expect_warning(
+      result <- crowd_plots_as_officer(plot_list),
+      "not a valid mschart object"
+    ),
     "not a valid mschart object"
   )
 

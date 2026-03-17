@@ -19,3 +19,20 @@ output_format <- function() {
   fmt <- knitr::pandoc_to()
   if (is.null(fmt)) "officer" else fmt
 }
+
+#' Check if current output is HTML or officer (non-paginated)
+#'
+#' Uses [knitr::is_html_output()] when knitr is in progress (covers
+#' revealjs, slidy, and other HTML-based Pandoc formats). Outside of
+#' knitr (officer context), returns `TRUE` so that page breaks are not
+#' inserted by default.
+#'
+#' @return Logical scalar.
+#' @keywords internal
+is_html_output_or_officer <- function() {
+  if (isTRUE(getOption("knitr.in.progress"))) {
+    knitr::is_html_output()
+  } else {
+    TRUE
+  }
+}
