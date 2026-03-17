@@ -7,7 +7,11 @@ document code chunk with `results='asis'`.
 ## Usage
 
 ``` r
-crowd_tables_as_tabset(tbl_list, table_fn = knitr::kable)
+crowd_tables_as_tabset(
+  tbl_list,
+  table_fn = knitr::kable,
+  pagebreak = c("auto", "always", "never")
+)
 ```
 
 ## Arguments
@@ -24,6 +28,16 @@ crowd_tables_as_tabset(tbl_list, table_fn = knitr::kable)
   options include `gt::gt()`, `tinytable::tt`, etc. Can be set globally
   via
   `global_settings_set(new = list(table_fn = gt::gt), fn_name = "crowd_tables_as_tabset")`.
+
+- pagebreak:
+
+  Character. Controls page break insertion between tables:
+
+  - `"auto"` (default): Insert page breaks for non-HTML formats only
+
+  - `"always"`: Always insert page breaks between tables
+
+  - `"never"`: Never insert page breaks
 
 ## Value
 

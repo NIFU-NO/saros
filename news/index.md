@@ -24,6 +24,15 @@
 
 ### New Features
 
+- [`crowd_plots_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.md)
+  and
+  [`crowd_tables_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_tables_as_tabset.md)
+  now insert Quarto `{{< pagebreak >}}` shortcodes between items when
+  rendering to paginated formats (docx, typst, PDF). HTML-based formats
+  (including revealjs and slidy) are detected via
+  [`knitr::is_html_output()`](https://rdrr.io/pkg/knitr/man/output_type.html)
+  and are never page-broken. A new `pagebreak` parameter (`"auto"`,
+  `"always"`, `"never"`) controls this behaviour
 - Added
   [`check_quarto_website_index()`](https://nifu-no.github.io/saros/reference/check_quarto_website_index.md)
   function to detect folders in a Quarto website project that contain

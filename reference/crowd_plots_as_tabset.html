@@ -63,7 +63,8 @@ with automatic height calculation and optional download links.</p>
 <span>  plot_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cat_plot_html"</span>, <span class="st">"int_plot_html"</span>, <span class="st">"auto"</span><span class="op">)</span>,</span>
 <span>  save <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  fig_height <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fig_height_int_default <span class="op">=</span> <span class="fl">6</span></span>
+<span>  fig_height_int_default <span class="op">=</span> <span class="fl">6</span>,</span>
+<span>  pagebreak <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"always"</span>, <span class="st">"never"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,6 +97,13 @@ If <code>NULL</code> (default), height is calculated automatically based on <cod
 <dt id="arg-fig-height-int-default">fig_height_int_default<a class="anchor" aria-label="anchor" href="#arg-fig-height-int-default"></a></dt>
 <dd><p>Numeric. Default height for interval plots when
 auto-calculation is not available (default: 6 inches).</p></dd>
+
+
+<dt id="arg-pagebreak">pagebreak<a class="anchor" aria-label="anchor" href="#arg-pagebreak"></a></dt>
+<dd><p>Character. Controls page break insertion between plots:</p><ul><li><p><code>"auto"</code> (default): Insert page breaks for non-HTML formats only</p></li>
+<li><p><code>"always"</code>: Always insert page breaks between plots</p></li>
+<li><p><code>"never"</code>: Never insert page breaks</p></li>
+</ul></dd>
 
 </dl></div>
     <div class="section level2">

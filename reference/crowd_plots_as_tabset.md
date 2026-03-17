@@ -14,7 +14,8 @@ crowd_plots_as_tabset(
   plot_type = c("cat_plot_html", "int_plot_html", "auto"),
   save = FALSE,
   fig_height = NULL,
-  fig_height_int_default = 6
+  fig_height_int_default = 6,
+  pagebreak = c("auto", "always", "never")
 )
 ```
 
@@ -50,6 +51,16 @@ crowd_plots_as_tabset(
 
   Numeric. Default height for interval plots when auto-calculation is
   not available (default: 6 inches).
+
+- pagebreak:
+
+  Character. Controls page break insertion between plots:
+
+  - `"auto"` (default): Insert page breaks for non-HTML formats only
+
+  - `"always"`: Always insert page breaks between plots
+
+  - `"never"`: Never insert page breaks
 
 ## Value
 
