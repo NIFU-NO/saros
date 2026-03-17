@@ -238,19 +238,17 @@ crowd_plots_as_tabset <- function(
   pagebreak <- match.arg(pagebreak)
   insert_pagebreak <- switch(
     pagebreak,
-    auto = output_format() != "html",
+    auto = !is_html_output_or_officer(),
     always = TRUE,
     never = FALSE
   )
 
   if (insert_pagebreak && length(out_list) > 1) {
-    interleaved <- list(out_list[[1]])
-    for (i in seq(2, length(out_list))) {
-      interleaved <- c(
-        interleaved,
-        list("\n\n{{< pagebreak >}}\n\n"),
-        list(out_list[[i]])
-      )
+    n <- length(out_list)
+    interleaved <- vector("list", 2L * n - 1L)
+    for (i in seq_along(out_list)) {
+      interleaved[[2L * i - 1L]] <- out_list[[i]]
+      if (i < n) interleaved[[2L * i]] <- "\n\n{{< pagebreak >}}\n\n"
     }
     out <- unlist(interleaved)
   } else {
