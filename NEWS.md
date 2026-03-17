@@ -19,6 +19,8 @@
 -   **Refactored `n_range2()` to S3 generic**: Now supports both `ggplot2` objects and `mschart` objects, similar to `fig_height_h_barchart2()`. This enables consistent sample size reporting across both HTML and Word chart outputs, making it easier to annotate charts with N ranges regardless of output format
 
 ## Bug Fixes
+-   `crowd_plots_as_tabset()` now gives an informative error when passed table output (e.g. from `type = "cat_table_html"`) instead of plot output, directing users to `crowd_tables_as_tabset()` (#515)
+-   `txt_from_cat_mesos_plots()` now gives an informative error when passed table output instead of plot output, instead of failing with a cryptic `.category_order` column-not-found error (#515)
 -   Fixed `girafe()` to return a static `ggplot` object instead of a `girafe` object when rendering in non-HTML knitr documents (e.g. PDF, Word). Previously the interactive widget was returned unconditionally, causing rendering failures in non-HTML output formats (#551)
 -   Fixed `cat_plot_html` data labels being left-aligned instead of centered. The `hjust` value for `geom_label` was corrected from 0 to 0.5 (#553)
 -   Fixed `txt_from_cat_mesos_plots()` for checkbox variables to compare on the `checked` category (or the first non-NA category as fallback) rather than always using the first category. This ensures the correct proportion is highlighted when the variable uses `checked`/`not_checked` encoding (#556)

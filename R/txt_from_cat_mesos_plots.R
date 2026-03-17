@@ -266,6 +266,33 @@ txt_from_cat_mesos_plots <- function(
     return(args$fallback_string)
   }
 
+  # Check if user passed table output instead of plot output
+  # Data frames with the right columns (.category_order, .proportion, etc.)
+  # are allowed as direct input, but pivoted table output from cat_table_html
+  # lacks these columns and should be rejected early with a clear message.
+  non_null_plots <- Filter(Negate(is.null), args$plots)
+  if (length(non_null_plots) > 0) {
+    first_elem <- non_null_plots[[1]]
+    if (
+      inherits(first_elem, "data.frame") &&
+        !ggplot2::is_ggplot(first_elem) &&
+        !all(c(".category_order", ".proportion", ".category") %in%
+          colnames(first_elem))
+    ) {
+      cli::cli_abort(c(
+        "{.arg plots} contains data frames (table output), not ggplot objects.",
+        "i" = paste0(
+          "{.fn txt_from_cat_mesos_plots} expects plot output ",
+          "(e.g. from {.code type = \"cat_plot_html\"})."
+        ),
+        "i" = paste0(
+          "Table output (e.g. from {.code type = \"cat_table_html\"}) ",
+          "is not supported by this function."
+        )
+      ))
+    }
+  }
+
   # Check that each element has a data component
   has_data <- vapply(
     args$plots,
