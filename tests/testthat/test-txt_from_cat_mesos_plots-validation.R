@@ -98,3 +98,20 @@ testthat::test_that("txt_from_cat_mesos_plots works with valid data frames direc
   )
   testthat::expect_type(result, "character")
 })
+
+testthat::test_that("txt_from_cat_mesos_plots errors informatively for table output", {
+  # Create table output (data frames without expected plot columns)
+  tables <- saros::makeme(
+    data = saros::ex_survey,
+    dep = b_1:b_2,
+    crowd = c("target", "others"),
+    mesos_var = "f_uni",
+    mesos_group = "Uni of A",
+    type = "cat_table_html"
+  )
+
+  testthat::expect_error(
+    saros::txt_from_cat_mesos_plots(tables),
+    "cat_plot_html"
+  )
+})

@@ -302,4 +302,21 @@ withr::with_tempdir({
     combined_output <- paste(output, collapse = "\n")
     expect_true(any(grepl("Others", names(plots))))
   })
+
+  test_that("crowd_plots_as_tabset errors informatively for table output", {
+    # Create table output (data frames, not ggplots)
+    tables <- saros::makeme(
+      data = saros::ex_survey,
+      dep = b_1:b_2,
+      crowd = c("target", "others"),
+      mesos_var = "f_uni",
+      mesos_group = "Uni of A",
+      type = "cat_table_html"
+    )
+
+    expect_error(
+      saros::crowd_plots_as_tabset(tables, save = FALSE),
+      "crowd_tables_as_tabset"
+    )
+  })
 })
