@@ -42,8 +42,15 @@ crowd_tables_as_tabset <- function(tbl_list, table_fn = knitr::kable) {
       default_values = formals(crowd_tables_as_tabset)
     )
 
-  for (itable in names(tbl_list)) {
-    cat(sprintf("##### %s\n", itable))
-    print(args$table_fn(tbl_list[[itable]]))
+  fmt <- output_format()
+  insert_pagebreak <- fmt != "html"
+  table_names <- names(tbl_list)
+
+  for (i in seq_along(table_names)) {
+    if (insert_pagebreak && i > 1) {
+      cat("\\newpage\n\n")
+    }
+    cat(sprintf("##### %s\n", table_names[i]))
+    print(args$table_fn(tbl_list[[table_names[i]]]))
   }
 }

@@ -169,7 +169,7 @@ crowd_plots_as_tabset <- function(
   }
 
   # Generate tabset
-  out <-
+  out_list <-
     lapply(names(plot_list), function(.x) {
       plot <- plot_list[[.x]]
 
@@ -226,8 +226,22 @@ crowd_plots_as_tabset <- function(
         envir = environment(),
         quiet = TRUE
       )
-    }) |>
-    unlist()
+    })
+
+  # Insert page breaks between plots for non-HTML formats
+  out_list <- Filter(Negate(is.null), out_list)
+  fmt <- output_format()
+
+  if (fmt != "html" && length(out_list) > 1) {
+    interleaved <- list(out_list[[1]])
+    for (i in seq(2, length(out_list))) {
+      interleaved <- c(interleaved, list("\\newpage"), list(out_list[[i]]))
+    }
+    out <- unlist(interleaved)
+  } else {
+    out <- unlist(out_list)
+  }
+
   cat(out, sep = "\n")
   invisible(NULL)
 }
