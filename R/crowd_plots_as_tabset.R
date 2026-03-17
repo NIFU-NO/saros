@@ -17,6 +17,10 @@
 #'   If `NULL` (default), height is calculated automatically based on `plot_type`.
 #' @param fig_height_int_default Numeric. Default height for interval plots when
 #'   auto-calculation is not available (default: 6 inches).
+#' @param pagebreak Character. Controls page break insertion between plots:
+#'   - `"auto"` (default): Insert page breaks for non-HTML formats only
+#'   - `"always"`: Always insert page breaks between plots
+#'   - `"never"`: Never insert page breaks
 #'
 #' @return Invisibly returns `NULL`. The function's purpose is its side effect
 #'   of printing Quarto markdown that creates a tabset.
@@ -84,7 +88,8 @@ crowd_plots_as_tabset <- function(
   plot_type = c("cat_plot_html", "int_plot_html", "auto"),
   save = FALSE,
   fig_height = NULL,
-  fig_height_int_default = 6
+  fig_height_int_default = 6,
+  pagebreak = c("auto", "always", "never")
 ) {
   # Validate inputs
   if (!is.list(plot_list)) {
@@ -228,16 +233,21 @@ crowd_plots_as_tabset <- function(
       )
     })
 
-  # Insert page breaks between plots for non-HTML formats
+  # Insert page breaks between plots
   out_list <- Filter(Negate(is.null), out_list)
-  fmt <- output_format()
+  pagebreak <- match.arg(pagebreak)
+  insert_pagebreak <- switch(pagebreak,
+    auto = output_format() != "html",
+    always = TRUE,
+    never = FALSE
+  )
 
-  if (fmt != "html" && length(out_list) > 1) {
+  if (insert_pagebreak && length(out_list) > 1) {
     interleaved <- list(out_list[[1]])
     for (i in seq(2, length(out_list))) {
       interleaved <- c(
         interleaved,
-        list("\n{{< pagebreak >}}\n"),
+        list("\n\n{{< pagebreak >}}\n\n"),
         list(out_list[[i]])
       )
     }

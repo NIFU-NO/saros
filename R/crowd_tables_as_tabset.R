@@ -10,6 +10,10 @@
 #'   table object. Defaults to [knitr::kable()]. Other options include
 #'   [gt::gt()], `tinytable::tt`, etc. Can be set globally via
 #'   `global_settings_set(new = list(table_fn = gt::gt), fn_name = "crowd_tables_as_tabset")`.
+#' @param pagebreak Character. Controls page break insertion between tables:
+#'   - `"auto"` (default): Insert page breaks for non-HTML formats only
+#'   - `"always"`: Always insert page breaks between tables
+#'   - `"never"`: Never insert page breaks
 #'
 #' @return Called for its side effects (printing tabset markdown and tables).
 #'   Returns `NULL` invisibly.
@@ -34,7 +38,11 @@
 #' # Use gt::gt instead
 #' crowd_tables_as_tabset(tbl_list, table_fn = gt::gt)
 #' }
-crowd_tables_as_tabset <- function(tbl_list, table_fn = knitr::kable) {
+crowd_tables_as_tabset <- function(
+  tbl_list,
+  table_fn = knitr::kable,
+  pagebreak = c("auto", "always", "never")
+) {
   args <-
     check_options(
       call = match.call(),
@@ -42,8 +50,12 @@ crowd_tables_as_tabset <- function(tbl_list, table_fn = knitr::kable) {
       default_values = formals(crowd_tables_as_tabset)
     )
 
-  fmt <- output_format()
-  insert_pagebreak <- fmt != "html"
+  pagebreak <- match.arg(args$pagebreak, choices = c("auto", "always", "never"))
+  insert_pagebreak <- switch(pagebreak,
+    auto = output_format() != "html",
+    always = TRUE,
+    never = FALSE
+  )
   table_names <- names(tbl_list)
 
   for (i in seq_along(table_names)) {
