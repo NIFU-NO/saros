@@ -48,7 +48,7 @@ crowd_tables_as_tabset <- function(tbl_list, table_fn = knitr::kable) {
 
   for (i in seq_along(table_names)) {
     if (insert_pagebreak && i > 1) {
-      cat("\\newpage\n\n")
+      cat("\n\n{{< pagebreak >}}\n\n")
     }
     cat(sprintf("##### %s\n", table_names[i]))
     print(args$table_fn(tbl_list[[table_names[i]]]))

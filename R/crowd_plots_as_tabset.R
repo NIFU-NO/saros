@@ -235,7 +235,11 @@ crowd_plots_as_tabset <- function(
   if (fmt != "html" && length(out_list) > 1) {
     interleaved <- list(out_list[[1]])
     for (i in seq(2, length(out_list))) {
-      interleaved <- c(interleaved, list("\\newpage"), list(out_list[[i]]))
+      interleaved <- c(
+        interleaved,
+        list("\n{{< pagebreak >}}\n"),
+        list(out_list[[i]])
+      )
     }
     out <- unlist(interleaved)
   } else {
