@@ -177,10 +177,9 @@ testthat::test_that("make_content.int_table_html handles table_main_question_as_
 testthat::test_that("make_content.int_table_html handles label_separator with naming conflicts", {
   # Create a dataset where a categorical indep shares the same label prefix as numeric dep vars
   test_data <- saros::ex_survey
-  test_data$c_grp <- factor(sample(
+  test_data$c_grp <- factor(rep(
     c("Low", "High"),
-    nrow(test_data),
-    replace = TRUE
+    length.out = nrow(test_data)
   ))
   attr(
     test_data$c_grp,

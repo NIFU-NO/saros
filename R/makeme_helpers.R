@@ -232,8 +232,9 @@ validate_type_specific_constraints <- function(args, data, indep, dep_pos) {
 #' Validate Variable Type Compatibility with Requested Output Type
 #'
 #' Checks that the dependent variable types are compatible with the requested
-#' output type. For example, categorical types (cat_plot_*, cat_table_*) require
-#' factor/ordered/character variables, not numeric/integer.
+#' output type. For example, categorical types (\code{cat_plot_*},
+#' \code{cat_table_*}) require factor/ordered/character variables, not
+#' numeric/integer.
 #'
 #' @param type Character string of the requested output type
 #' @param dep_types Character vector of classes for dependent variables
@@ -254,7 +255,7 @@ validate_type_variable_compatibility <- function(type, dep_types, dep_names) {
     bad_types <- dep_types[dep_types %in% numeric_classes]
     n_bad <- length(bad_vars)
     cli::cli_abort(c(
-      "x" = "{.arg type} = {.val {type}} expects categorical variables (factor, character), but received {cli::qty(n_bad)} numeric variable{?s}.",
+      "x" = "{.arg type} = {.val {type}} expects categorical variables (factor, ordered, character, logical), but received {cli::qty(n_bad)} numeric variable{?s}.",
       "i" = "{cli::qty(n_bad)} Numeric variable{?s}: {.var {bad_vars}} ({bad_types}).",
       "i" = "Use {.code type = 'int_plot_html'} or {.code type = 'int_table_html'} for numeric variables, or convert them to factors first."
     ))
@@ -265,7 +266,7 @@ validate_type_variable_compatibility <- function(type, dep_types, dep_names) {
     bad_types <- dep_types[dep_types %in% categorical_classes]
     n_bad <- length(bad_vars)
     cli::cli_abort(c(
-      "x" = "{.arg type} = {.val {type}} expects numeric variables (integer, numeric), but received {cli::qty(n_bad)} categorical variable{?s}.",
+      "x" = "{.arg type} = {.val {type}} expects numeric variables (integer, numeric, double), but received {cli::qty(n_bad)} categorical variable{?s}.",
       "i" = "{cli::qty(n_bad)} Categorical variable{?s}: {.var {bad_vars}} ({bad_types}).",
       "i" = "Use {.code type = 'cat_plot_html'} or {.code type = 'cat_table_html'} for categorical variables."
     ))

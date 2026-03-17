@@ -18,7 +18,8 @@ NULL (function used for side effects - validation errors)
 }
 \description{
 Checks that the dependent variable types are compatible with the requested
-output type. For example, categorical types (cat_plot_\emph{, cat_table_}) require
-factor/ordered/character variables, not numeric/integer.
+output type. For example, categorical types (\code{cat_plot_*},
+\code{cat_table_*}) require factor/ordered/character variables, not
+numeric/integer.
 }
 \keyword{internal}
