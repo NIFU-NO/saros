@@ -120,16 +120,6 @@ crowd_plots_as_tabset <- function(
     return(invisible(NULL))
   }
 
-  # Check if user passed table output instead of plot output
-  first_non_null <- plot_list[[which(non_null_plots)[1]]]
-  if (inherits(first_non_null, "data.frame") && !ggplot2::is_ggplot(first_non_null)) {
-    cli::cli_abort(c(
-      "{.arg plot_list} contains data frames (table output), not ggplot objects.",
-      "i" = "{.fn crowd_plots_as_tabset} expects plot output (e.g. from {.code type = \"cat_plot_html\"}).",
-      "i" = "For table output (e.g. from {.code type = \"cat_table_html\"}), use {.fn crowd_tables_as_tabset} instead."
-    ))
-  }
-
   # Match plot_type argument
   plot_type <- match.arg(plot_type)
 
@@ -248,17 +238,19 @@ crowd_plots_as_tabset <- function(
   pagebreak <- match.arg(pagebreak)
   insert_pagebreak <- switch(
     pagebreak,
-    auto = !is_html_output_or_officer(),
+    auto = output_format() != "html",
     always = TRUE,
     never = FALSE
   )
 
   if (insert_pagebreak && length(out_list) > 1) {
-    n <- length(out_list)
-    interleaved <- vector("list", 2L * n - 1L)
-    for (i in seq_along(out_list)) {
-      interleaved[[2L * i - 1L]] <- out_list[[i]]
-      if (i < n) interleaved[[2L * i]] <- "\n\n{{< pagebreak >}}\n\n"
+    interleaved <- list(out_list[[1]])
+    for (i in seq(2, length(out_list))) {
+      interleaved <- c(
+        interleaved,
+        list("\\newpage"),
+        list(out_list[[i]])
+      )
     }
     out <- unlist(interleaved)
   } else {

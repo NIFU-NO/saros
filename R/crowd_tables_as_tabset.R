@@ -51,9 +51,8 @@ crowd_tables_as_tabset <- function(
     )
 
   pagebreak <- match.arg(args$pagebreak, choices = c("auto", "always", "never"))
-  insert_pagebreak <- switch(
-    pagebreak,
-    auto = !is_html_output_or_officer(),
+  insert_pagebreak <- switch(pagebreak,
+    auto = output_format() != "html",
     always = TRUE,
     never = FALSE
   )
@@ -61,7 +60,7 @@ crowd_tables_as_tabset <- function(
 
   for (i in seq_along(table_names)) {
     if (insert_pagebreak && i > 1) {
-      cat("\n\n{{< pagebreak >}}\n\n")
+      cat("\\newpage\n\n")
     }
     cat(sprintf("##### %s\n", table_names[i]))
     print(args$table_fn(tbl_list[[table_names[i]]]))
