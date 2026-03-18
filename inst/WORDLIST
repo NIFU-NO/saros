@@ -20,9 +20,11 @@ Modularized
 NIFU
 NONINFRINGEMENT
 ORCID
+OneDrive
 POSIXct
 POSIXt
 PPTX
+Pandoc
 Pandoc's
 QMD
 Quosure
@@ -102,11 +104,14 @@ rdocx
 recode
 reproducibility
 reusability
+revealjs
 rlang
 roxygen
 sav
+shortcodes
 showNA
 sigtest
+slidy
 srvyr
 stackoverflow
 stdin
@@ -123,6 +128,7 @@ tidyselect
 tidytext
 tidyverse
 tsv
+typst
 unicode
 ut
 vdiffr
