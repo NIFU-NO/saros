@@ -1,5 +1,44 @@
 # Common utility functions for string and variable processing ----
 
+#' Wrap a file-writing expression with informative error handling
+#'
+#' Catches errors from file-writing operations and re-throws with
+#' actionable diagnostics (permissions, long OneDrive/SharePoint paths, etc.).
+#'
+#' @param expr An expression that writes a file.
+#' @param path Character scalar. The file path being written to.
+#' @param call The calling environment for error reporting.
+#'
+#' @return The result of `expr`, invisibly.
+#' @keywords internal
+safe_file_write <- function(expr, path, call = rlang::caller_env()) {
+  invisible(tryCatch(
+    expr,
+    error = function(cnd) {
+      hints <- character()
+      if (!dir.exists(dirname(path))) {
+        hints <- c(hints, i = "The directory {.path {dirname(path)}} does not exist.")
+      }
+      if (nchar(path) > 260L) {
+        hints <- c(
+          hints,
+          i = "The file path is {nchar(path)} characters long (> 260).",
+          i = "Long paths on SharePoint/OneDrive may cause failures. Try a shorter path."
+        )
+      }
+      if (grepl("OneDrive|SharePoint", path, ignore.case = TRUE)) {
+        hints <- c(hints, i = "The path appears to be on OneDrive/SharePoint. Check that the file is not locked by syncing.")
+      }
+      hints <- c(hints, i = "Do you have write access to {.path {dirname(path)}}?")
+      cli::cli_abort(
+        c(x = "Cannot save to {.path {path}}.", hints),
+        parent = cnd,
+        call = call
+      )
+    }
+  ))
+}
+
 #' Attach dep_label_prefix attribute to a make_content output object
 #'
 #' Attaches the main question (i.e. the label prefix of the dep variables)

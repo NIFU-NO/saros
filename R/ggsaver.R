@@ -107,11 +107,14 @@ ggsaver <- function(
     }
   }
 
-  suppressMessages(ggplot2::ggsave(
-    filename = filename,
-    plot = plot,
-    dpi = "retina",
-    create.dir = TRUE,
-    ...
-  ))
+  safe_file_write(
+    suppressMessages(ggplot2::ggsave(
+      filename = filename,
+      plot = plot,
+      dpi = "retina",
+      create.dir = TRUE,
+      ...
+    )),
+    path = filename
+  )
 }

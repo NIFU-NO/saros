@@ -169,21 +169,13 @@ make_link.default <- function(
 
   # save_fn <- args$save_fn
 
-  tryCatch(
+  safe_file_write(
     {
       if (!file.exists(path)) {
         args$save_fn(data, path)
       }
       I(paste0(args$link_prefix, path, args$link_suffix))
     },
-    error = function(cnd) {
-      # ={data}
-      cli::cli_warn(
-        c(
-          x = "Function {rlang::call_name(quote(safe_fn()))} failed with arguments {.arg path}={path}, {.arg data} is {.obj_type_friendly {data}}."
-        ),
-        parent = cnd
-      )
-    }
+    path = path
   )
 }

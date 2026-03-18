@@ -13,7 +13,7 @@ make_content.cat_table_docx <-
       }
       docx_file <- use_docx(docx_template = dots$docx_template)
       if (!is.null(dots$path)) {
-        print(docx_file, target = dots$path)
+        safe_file_write(print(docx_file, target = dots$path), path = dots$path)
       } else {
         docx_file
       }
@@ -29,5 +29,5 @@ make_content.cat_table_docx <-
     docx_file <- use_docx(docx_template = dots$docx_template)
     docx_file <- officer::body_add_table(docx_file, df)
 
-    if (!is.null(dots$path)) print(docx_file, target = dots$path) else docx_file
+    if (!is.null(dots$path)) safe_file_write(print(docx_file, target = dots$path), path = dots$path) else docx_file
   }

@@ -161,5 +161,5 @@ make_content.cat_plot_docx <-
         height = dots$plot_height
       )
 
-    if (!is.null(dots$path)) print(docx_file, target = dots$path) else docx_file
+    if (!is.null(dots$path)) safe_file_write(print(docx_file, target = dots$path), path = dots$path) else docx_file
   }

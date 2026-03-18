@@ -164,7 +164,7 @@ crowd_plots_as_docx <- function(
       "No valid plots to insert. Creating empty DOCX file at {.file {path}}."
     )
     doc <- use_docx(docx_template = docx_template)
-    print(doc, target = path)
+    safe_file_write(print(doc, target = path), path = path)
     return(invisible(path))
   }
 
@@ -209,7 +209,7 @@ crowd_plots_as_docx <- function(
   }
 
   # Write file
-  print(doc, target = path)
+  safe_file_write(print(doc, target = path), path = path)
 
   invisible(path)
 }
