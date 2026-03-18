@@ -1,3 +1,83 @@
+#' Validate that a column-based sort references an existing column
+#'
+#' Fails fast with an informative error when `sort_by` names a column
+#' (from the allowed whitelist) that is not present in `data`.
+#' Only performs validation for scalar `sort_by`; non-scalar values
+#' (e.g. category vectors) are skipped since they are validated by
+#' [validate_sort_category()] instead.
+#'
+#' @param sort_by Character scalar, or `NULL`. The column name to sort by.
+#'   Non-scalar values are silently accepted (no column validation).
+#' @param data Data frame to check.
+#' @param allowed Character vector of whitelisted column names.
+#' @param call Calling environment for error reporting.
+#'
+#' @return `TRUE` invisibly if valid.
+#' @keywords internal
+validate_sort_column <- function(
+  sort_by,
+  data,
+  allowed = .saros.env$allowed_dep_sort_columns,
+  call = rlang::caller_env()
+) {
+  if (is.null(sort_by) || length(sort_by) != 1) return(invisible(TRUE))
+  if (!(sort_by %in% allowed)) return(invisible(TRUE))
+  if (sort_by %in% names(data)) return(invisible(TRUE))
+
+  available <- intersect(allowed, names(data))
+  available_msg <- if (length(available) > 0) {
+    cli::format_inline("Available columns: {.var {available}}.")
+  } else {
+    cli::format_inline("None of the sortable columns ({.var {allowed}}) are present in the data.")
+  }
+
+  cli::cli_abort(
+    c(
+      x = "Column {.var {sort_by}} not found in data.",
+      i = available_msg,
+      i = "Column {.var {sort_by}} may not have been computed for this output type."
+    ),
+    call = call
+  )
+}
+
+#' Validate that category-based sort references categories present in data
+#'
+#' Fails fast with an informative error when `sort_by` names one or more
+#' categories that do not exist in the `.category` column of `data`.
+#'
+#' @param sort_by Character vector of category names to sort by.
+#' @param data Data frame containing a `.category` column.
+#' @param call Calling environment for error reporting.
+#'
+#' @return `TRUE` invisibly if valid.
+#' @keywords internal
+validate_sort_category <- function(
+  sort_by,
+  data,
+  call = rlang::caller_env()
+) {
+  if (is.null(sort_by) || length(sort_by) == 0) return(invisible(TRUE))
+  # Only validate when sort_by looks like user-supplied categories
+  # (not dot-prefixed internal column/method names)
+  if (all(startsWith(sort_by, "."))) return(invisible(TRUE))
+
+  if (!".category" %in% names(data)) return(invisible(TRUE))
+
+  categories_in_data <- unique(as.character(data$.category))
+  missing <- setdiff(sort_by, categories_in_data)
+
+  if (length(missing) == 0) return(invisible(TRUE))
+
+  cli::cli_abort(
+    c(
+      x = "Sort {cli::qty(missing)} categor{?y/ies} not found in data: {.val {missing}}.",
+      i = "Available categories: {.val {categories_in_data}}."
+    ),
+    call = call
+  )
+}
+
 #' Create sorting order variables for output dataframe
 #'
 #' This module provides centralized sorting functionality to ensure consistent
@@ -74,6 +154,11 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
   if (is.null(sort_by)) {
     sort_by <- ".variable_position"
   }
+
+  # Validate early: column exists or categories exist
+
+  validate_sort_column(sort_by, data, allowed = .saros.env$allowed_dep_sort_columns)
+  validate_sort_category(sort_by, data)
 
   # Calculate base order based on sort method
 
@@ -253,6 +338,10 @@ add_indep_order <- function(
   if (is.null(sort_by)) {
     sort_by <- ".factor_order"
   }
+
+  # Validate early: column exists or categories exist
+  validate_sort_column(sort_by, data, allowed = .saros.env$allowed_indep_sort_columns)
+  validate_sort_category(sort_by, data)
 
   # Apply ascending order column sorting if it's not ".variable_label" (which should remain in existing order)
   data$.indep_order <- if (length(sort_by) == 1 && sort_by == ".factor_order") {
