@@ -48,12 +48,10 @@ testthat::test_that("get_main_question handles NA values", {
   testthat::expect_equal(result, "What is your age? ")
 })
 
-testthat::test_that("get_main_question warns if no main question found", {
-  testthat::expect_warning(
-    result <- saros:::get_main_question(
-      ": Age",
-      label_separator = ": "
-    )
+testthat::test_that("get_main_question returns empty string if no main question found", {
+  result <- saros:::get_main_question(
+    ": Age",
+    label_separator = ": "
   )
   testthat::expect_equal(result, "")
 })

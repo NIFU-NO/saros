@@ -45,14 +45,6 @@ get_main_question <-
         ),
         call = call
       )
-    } else if (length(x) == 1 && nchar(x) == 0L) {
-      cli::cli_warn(
-        c(
-          x = "No main question found.",
-          i = "Check your {.arg label_separator} ({.val {label_separator}})."
-        ),
-        call = call
-      )
     }
     x <- if (length(x) > 0) {
       stringi::stri_c(ignore_null = TRUE, x, collapse = "\n")
