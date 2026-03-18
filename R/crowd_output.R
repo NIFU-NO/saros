@@ -143,7 +143,7 @@ crowd_output <- function(
       }
 
       # Save and return path
-      print(docx_file, target = path)
+      safe_file_write(print(docx_file, target = path), path = path)
       invisible(path)
     } else {
       crowd_plots_as_docx(plot_list, path = path, ...)
