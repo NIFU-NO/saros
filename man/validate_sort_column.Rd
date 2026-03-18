@@ -12,7 +12,8 @@ validate_sort_column(
 )
 }
 \arguments{
-\item{sort_by}{Character scalar. The column name to sort by.}
+\item{sort_by}{Character scalar, or \code{NULL}. The column name to sort by.
+Non-scalar values are silently accepted (no column validation).}
 
 \item{data}{Data frame to check.}
 
@@ -26,5 +27,8 @@ validate_sort_column(
 \description{
 Fails fast with an informative error when \code{sort_by} names a column
 (from the allowed whitelist) that is not present in \code{data}.
+Only performs validation for scalar \code{sort_by}; non-scalar values
+(e.g. category vectors) are skipped since they are validated by
+\code{\link[=validate_sort_category]{validate_sort_category()}} instead.
 }
 \keyword{internal}

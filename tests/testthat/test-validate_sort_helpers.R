@@ -36,6 +36,16 @@ testthat::test_that("validate_sort_column error includes available columns", {
   )
 })
 
+testthat::test_that("validate_sort_column error handles no available columns", {
+  df <- data.frame(x = 1:3)
+  testthat::expect_error(
+    saros:::validate_sort_column(".count", df,
+      allowed = c(".count", ".proportion")
+    ),
+    regexp = "None of the sortable columns"
+  )
+})
+
 # validate_sort_category() -----------------------------------------------------
 
 testthat::test_that("validate_sort_category passes for NULL sort_by", {

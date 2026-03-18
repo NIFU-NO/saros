@@ -2,9 +2,13 @@
 #'
 #' Fails fast with an informative error when `sort_by` names a column
 #' (from the allowed whitelist) that is not present in `data`.
+#' Only performs validation for scalar `sort_by`; non-scalar values
+#' (e.g. category vectors) are skipped since they are validated by
+#' [validate_sort_category()] instead.
 #'
+#' @param sort_by Character scalar, or `NULL`. The column name to sort by.
+#'   Non-scalar values are silently accepted (no column validation).
 #' @param data Data frame to check.
-#' @param sort_by Character scalar. The column name to sort by.
 #' @param allowed Character vector of whitelisted column names.
 #' @param call Calling environment for error reporting.
 #'
@@ -20,10 +24,17 @@ validate_sort_column <- function(
   if (!(sort_by %in% allowed)) return(invisible(TRUE))
   if (sort_by %in% names(data)) return(invisible(TRUE))
 
+  available <- intersect(allowed, names(data))
+  available_msg <- if (length(available) > 0) {
+    cli::format_inline("Available columns: {.var {available}}.")
+  } else {
+    cli::format_inline("None of the sortable columns ({.var {allowed}}) are present in the data.")
+  }
+
   cli::cli_abort(
     c(
       x = "Column {.var {sort_by}} not found in data.",
-      i = "Available columns: {.var {intersect(allowed, names(data))}}.",
+      i = available_msg,
       i = "Column {.var {sort_by}} may not have been computed for this output type."
     ),
     call = call
@@ -49,7 +60,6 @@ validate_sort_category <- function(
   if (is.null(sort_by) || length(sort_by) == 0) return(invisible(TRUE))
   # Only validate when sort_by looks like user-supplied categories
   # (not dot-prefixed internal column/method names)
-  if (length(sort_by) == 1 && startsWith(sort_by, ".")) return(invisible(TRUE))
   if (all(startsWith(sort_by, "."))) return(invisible(TRUE))
 
   if (!".category" %in% names(data)) return(invisible(TRUE))
