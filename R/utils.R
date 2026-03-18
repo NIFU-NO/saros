@@ -12,7 +12,7 @@
 #' @return The result of `expr`, invisibly.
 #' @keywords internal
 safe_file_write <- function(expr, path, call = rlang::caller_env()) {
-  tryCatch(
+  invisible(tryCatch(
     expr,
     error = function(cnd) {
       hints <- character()
@@ -36,7 +36,7 @@ safe_file_write <- function(expr, path, call = rlang::caller_env()) {
         call = call
       )
     }
-  )
+  ))
 }
 
 #' Attach dep_label_prefix attribute to a make_content output object

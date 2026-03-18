@@ -40,4 +40,5 @@ tabular_write <- function(object, path, format) {
     ),
     path = path
   )
+  invisible(TRUE)
 }
