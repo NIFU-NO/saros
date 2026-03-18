@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(R.exe -e \"devtools::test\\(filter = ''get_main_question''\\)\")",
+      "Bash(export R_USER=\"C:/Users/py128/OneDrive - NIFU/Dokumenter\")",
+      "Bash(R.exe -e \"devtools::test\\(filter = ''make_content.cat_table_html''\\)\")"
+    ]
+  }
+}
