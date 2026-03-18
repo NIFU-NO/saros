@@ -20,17 +20,24 @@ output_format <- function() {
   if (is.null(fmt)) "officer" else fmt
 }
 
-#' Check if current output is HTML or officer (non-paginated)
+#' Check if current output format does not support page breaks
+#'
+#' Returns `TRUE` for formats where `\\newpage` page breaks should be
+#' suppressed: HTML-based formats, Typst (where page breaks inside
+#' containers cause errors), and officer contexts.
 #'
 #' Uses [knitr::is_html_output()] when knitr is in progress (covers
-#' revealjs, slidy, and other HTML-based Pandoc formats). Outside of
-#' knitr (officer context), returns `TRUE` so that page breaks are not
-#' inserted by default.
+#' revealjs, slidy, and other HTML-based Pandoc formats). Also returns
+#' `TRUE` for Typst, since Typst does not support page breaks inside
+#' containers and the Quarto `pagebreak` shortcode lacks native Typst
+#' support. Outside of knitr (officer context), returns `TRUE` so that
+#' page breaks are not inserted by default.
 #'
 #' @return Logical scalar.
 #' @keywords internal
 is_html_output_or_officer <- function() {
   if (isTRUE(getOption("knitr.in.progress"))) {
+    if (identical(knitr::pandoc_to(), "typst")) return(TRUE)
     knitr::is_html_output()
   } else {
     TRUE
