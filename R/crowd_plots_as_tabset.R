@@ -18,9 +18,9 @@
 #' @param fig_height_int_default Numeric. Default height for interval plots when
 #'   auto-calculation is not available (default: 6 inches).
 #' @param pagebreak Character. Controls page break insertion between plots:
-#'   - `"auto"` (default): Insert page breaks for non-HTML formats only
+#'   - `"never"` (default): Never insert page breaks
+#'   - `"auto"`: Insert page breaks for non-HTML/non-Typst formats only
 #'   - `"always"`: Always insert page breaks between plots
-#'   - `"never"`: Never insert page breaks
 #'
 #' @return Invisibly returns `NULL`. The function's purpose is its side effect
 #'   of printing Quarto markdown that creates a tabset.
@@ -89,7 +89,7 @@ crowd_plots_as_tabset <- function(
   save = FALSE,
   fig_height = NULL,
   fig_height_int_default = 6,
-  pagebreak = c("auto", "always", "never")
+  pagebreak = c("never", "auto", "always")
 ) {
   # Validate inputs
   if (!is.list(plot_list)) {
