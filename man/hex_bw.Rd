@@ -13,6 +13,6 @@ hex_bw(hex_code, na_colour = "#ffffff")
 Colours in hex-format, either black or white.
 }
 \description{
-Code is taken from XXX.
+Uses the W3C relative luminance formula (WCAG 2.0) to determine contrast.
 }
 \keyword{internal}

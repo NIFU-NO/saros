@@ -10,7 +10,7 @@ crowd_plots_as_tabset(
   save = FALSE,
   fig_height = NULL,
   fig_height_int_default = 6,
-  pagebreak = c("auto", "always", "never")
+  pagebreak = c("never", "auto", "always")
 )
 }
 \arguments{
@@ -35,9 +35,9 @@ auto-calculation is not available (default: 6 inches).}
 
 \item{pagebreak}{Character. Controls page break insertion between plots:
 \itemize{
-\item \code{"auto"} (default): Insert page breaks for non-HTML formats only
+\item \code{"never"} (default): Never insert page breaks
+\item \code{"auto"}: Insert page breaks for non-HTML/non-Typst formats only
 \item \code{"always"}: Always insert page breaks between plots
-\item \code{"never"}: Never insert page breaks
 }}
 }
 \value{

@@ -203,10 +203,7 @@ is_int_plot_html <- function(data) {
 #' @keywords internal
 validate_single_dep_var <- function(dep, function_name) {
   if (length(dep) > 1) {
-    rlang::abort(paste0(
-      function_name,
-      " requires exactly one dependent variable"
-    ))
+    cli::cli_abort("{.fn {function_name}} requires exactly one dependent variable.")
   }
 }
 

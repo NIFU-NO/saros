@@ -50,7 +50,7 @@ simple_descriptives <- function(
   label_separator = NULL
 ) {
   if (length(x_var) > 1) {
-    rlang::abort("`x_var` must currently be of length 1 or `NULL`.")
+    cli::cli_abort("{.arg x_var} must be of length 1 or {.code NULL}.")
   }
 
   out <-

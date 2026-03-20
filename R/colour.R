@@ -23,7 +23,7 @@ is_colour <- function(x) {
 
 #' Identify Suitable Font Given Background Hex Colour
 #'
-#' Code is taken from XXX.
+#' Uses the W3C relative luminance formula (WCAG 2.0) to determine contrast.
 #'
 #' @param hex_code Colour in hex-format.
 #'
