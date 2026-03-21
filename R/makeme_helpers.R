@@ -736,7 +736,7 @@ process_crowd_data <- function(
     dropped <- dep_crwd[all_na_deps]
     cli::cli_warn(c(
       "Dropping {cli::qty(dropped)} variable{?s} with no non-NA data: {.var {dropped}}.",
-      i = "All values are NA after filtering for crowd {.val {crwd}}."
+      i = "All values are NA after applying crowd, indep, and category filters."
     ))
     dep_crwd <- dep_crwd[!all_na_deps]
     if (length(dep_crwd) == 0) {
