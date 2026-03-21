@@ -314,15 +314,6 @@ specified.
 - [`check_quarto_website_index()`](https://nifu-no.github.io/saros/reference/check_quarto_website_index.md)
   : Check Quarto Website Folders for Missing index.qmd
 
-## Read and write tabular data
-
-Functions for reading and writing data frames to various file formats
-
-- [`tabular_read()`](https://nifu-no.github.io/saros/reference/tabular_read.md)
-  : Read tabular data from various formats
-- [`tabular_write()`](https://nifu-no.github.io/saros/reference/tabular_write.md)
-  : Write tabular data to various formats
-
 ## Advanced Palette-Retrieving ggiraph::girafe wrapper
 
 - [`girafe()`](https://nifu-no.github.io/saros/reference/girafe.md) :

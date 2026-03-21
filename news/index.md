@@ -560,9 +560,8 @@ CRAN release: 2025-11-10
   integrate `colour_2nd_binary_cat` parameter with
   `convert_to_checkbox_plot()` function
 - Modularized tabular I/O functionality - renamed `pretty_tabular.R` to
-  `tabular_write.R` and extracted
-  [`tabular_read()`](https://nifu-no.github.io/saros/reference/tabular_read.md)
-  function into separate file
+  `tabular_write.R` and extracted `tabular_read()` function into
+  separate file
 - Centralized global constants (sorting whitelists) in `zzz.R` under
   `.saros.env` for easier maintenance
 - Extracted duplicate label wrapping logic into

@@ -10,7 +10,7 @@ document code chunk with `results='asis'`.
 crowd_tables_as_tabset(
   tbl_list,
   table_fn = knitr::kable,
-  pagebreak = c("auto", "always", "never")
+  pagebreak = c("never", "auto", "always")
 )
 ```
 
@@ -33,11 +33,11 @@ crowd_tables_as_tabset(
 
   Character. Controls page break insertion between tables:
 
-  - `"auto"` (default): Insert page breaks for non-HTML formats only
+  - `"never"` (default): Never insert page breaks
+
+  - `"auto"`: Insert page breaks for non-HTML/non-Typst formats only
 
   - `"always"`: Always insert page breaks between tables
-
-  - `"never"`: Never insert page breaks
 
 ## Value
 

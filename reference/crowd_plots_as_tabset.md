@@ -15,7 +15,7 @@ crowd_plots_as_tabset(
   save = FALSE,
   fig_height = NULL,
   fig_height_int_default = 6,
-  pagebreak = c("auto", "always", "never")
+  pagebreak = c("never", "auto", "always")
 )
 ```
 
@@ -56,11 +56,11 @@ crowd_plots_as_tabset(
 
   Character. Controls page break insertion between plots:
 
-  - `"auto"` (default): Insert page breaks for non-HTML formats only
+  - `"never"` (default): Never insert page breaks
+
+  - `"auto"`: Insert page breaks for non-HTML/non-Typst formats only
 
   - `"always"`: Always insert page breaks between plots
-
-  - `"never"`: Never insert page breaks
 
 ## Value
 
