@@ -55,6 +55,7 @@ if (!exists(".saros.env")) {
     c(
       ".count",
       ".count_total_indep",
+      ".count_per_indep_group",
       ".mean",
       ".median",
       ".sum_value"
