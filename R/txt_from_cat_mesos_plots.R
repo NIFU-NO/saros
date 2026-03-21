@@ -1,15 +1,3 @@
-get_variable_label_column <- function(data) {
-  # Use original variable label if available (when hide_axis_text_if_single_variable = TRUE)
-  if (
-    any(colnames(data) == ".variable_label_original") &&
-      all(data$.variable_label == "")
-  ) {
-    ".variable_label_original"
-  } else {
-    ".variable_label"
-  }
-}
-
 get_common_variable_label_column <- function(dat_1, dat_2) {
   # Determine which variable label column to use based on BOTH datasets
   # Prefer a column that has non-empty values in BOTH datasets
