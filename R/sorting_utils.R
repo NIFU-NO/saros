@@ -258,6 +258,38 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
       sort_by[1],
       descend = descend
     )
+  } else if (length(sort_by) == 1 && sort_by == ".range") {
+    # Sort by range of proportions (max - min) across categories per variable
+    if (!".proportion" %in% names(data)) {
+      cli::cli_abort(
+        c(
+          x = "{.val .range} sorting requires a {.var .proportion} column.",
+          i = "This output type may not compute proportions. Use a different {.arg sort_dep_by} value."
+        )
+      )
+    }
+    # Aggregate mean proportion per (variable, category) first to handle
+    # bivariate data with multiple indep groups, then compute range per variable
+    range_map <- data |>
+      dplyr::summarize(
+        .mean_prop = mean(.data$.proportion, na.rm = TRUE),
+        .by = c(".variable_name", ".category")
+      ) |>
+      dplyr::summarize(
+        .range = {
+          vals <- .data$.mean_prop[!is.na(.data$.mean_prop)]
+          if (length(vals) < 2) 0 else max(vals) - min(vals)
+        },
+        .by = ".variable_name"
+      ) |>
+      arrange_with_order(.data$.range, descend = descend) |>
+      dplyr::mutate(order_rank = dplyr::row_number()) |>
+      dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+    data <- dplyr::left_join(
+      data, range_map, by = ".variable_name", relationship = "many-to-one"
+    )
+    data$.dep_order <- data$order_rank
+    data$order_rank <- NULL
   } else if (
     length(sort_by) == 1 && all(sort_by %in% .saros.env$summary_data_sort1)
   ) {
