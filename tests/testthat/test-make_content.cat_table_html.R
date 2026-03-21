@@ -72,7 +72,7 @@ testthat::test_that("make_content.cat_table_html works with NA on both dep and i
         ordered = TRUE
       ),
       `M (%)` = c("67", "33"),
-      `F (%)` = c(NA, "33"),
+      `F (%)` = c("", "33"),
       `NA (%)` = c("33", "33"),
       `Total (N)` = c(3L, 3L)
     ) |>

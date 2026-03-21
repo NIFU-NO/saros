@@ -50,6 +50,15 @@ make_content.cat_table_html <-
           values_from = ".data_label",
           names_expand = TRUE
         )
+      # Normalize NA and "0" to "" for consistent empty cell display
+      data_out <- dplyr::mutate(
+        data_out,
+        dplyr::across(
+          tidyselect::all_of(cat_lvls),
+          ~ dplyr::if_else(is.na(.x) | .x == "0", "", .x)
+        )
+      )
+
       new_col_order <-
         c(col_basis, dots$indep, cat_lvls, ".count_per_indep_group")
 
@@ -78,6 +87,13 @@ make_content.cat_table_html <-
         c(col_basis, dots$indep, ".category", ".data_label", ".count"),
         drop = FALSE
       ] |>
+        dplyr::mutate(
+          .data_label = dplyr::if_else(
+            is.na(.data$.data_label) | .data$.data_label == "0",
+            "",
+            .data$.data_label
+          )
+        ) |>
         dplyr::rename_with(
           .cols = ".count",
           .fn = function(x) dots$translations$table_heading_N
