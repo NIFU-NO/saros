@@ -371,10 +371,10 @@ add_indep_order <- function(
       calculate_indep_proportion_order(data, sort_by, indep_col, descend)
     } else if (startsWith(sort_by, ".count")) {
       # Count-based sorting
-      if (sort_by == ".count_per_indep_group") {
-        column_name <- ".count_total_indep"
+      column_name <- if (sort_by == ".count_per_indep_group") {
+        ".count_per_indep_group"
       } else {
-        column_name <- ".count"
+        ".count"
       }
       # Whitelist: allow only known safe columns for direct indep ordering
       if (column_name %in% .saros.env$allowed_indep_sort_columns) {
@@ -732,7 +732,8 @@ calculate_indep_column_order <- function(
     dplyr::summarise(
       order_value = if (
         identical(column_name, ".count") ||
-          identical(column_name, ".count_total_indep")
+          identical(column_name, ".count_total_indep") ||
+          identical(column_name, ".count_per_indep_group")
       ) {
         sum(.data[[column_name]], na.rm = TRUE)
       } else {
