@@ -9,7 +9,7 @@ if (!exists(".saros.env")) {
   }
 
   .saros.env$summary_data_sort1 <<-
-    c(".top", ".upper", ".mid_upper", ".lower", ".mid_lower", ".bottom")
+    c(".top", ".upper", ".mid_upper", ".lower", ".mid_lower", ".bottom", ".range")
   .saros.env$summary_data_sort2 <<-
     c(
       # Can this be constructed on the fly from class or crosstable_empty_output()? Or opposite?

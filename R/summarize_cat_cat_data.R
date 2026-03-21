@@ -84,7 +84,8 @@ add_collapsed_categories <-
     lvls <- lvls[!lvls %in% categories_treated_as_na]
     if (
       length(sort_by) == 1 &&
-        any(.saros.env$summary_data_sort1 == sort_by)
+        any(.saros.env$summary_data_sort1 == sort_by) &&
+        sort_by != ".range"
     ) {
       sort_by <- subset_vector(vec = lvls, set = sort_by)
     }

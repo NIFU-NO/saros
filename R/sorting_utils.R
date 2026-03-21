@@ -258,6 +258,23 @@ add_dep_order <- function(data, sort_by, descend = FALSE) {
       sort_by[1],
       descend = descend
     )
+  } else if (length(sort_by) == 1 && sort_by == ".range") {
+    # Sort by range of proportions (max - min) across categories per variable
+    range_map <- data |>
+      dplyr::group_by(.data$.variable_name) |>
+      dplyr::summarize(
+        .range = max(.data$.proportion, na.rm = TRUE) -
+          min(.data$.proportion, na.rm = TRUE),
+        .groups = "drop"
+      ) |>
+      arrange_with_order(.data$.range, descend = descend) |>
+      dplyr::mutate(order_rank = dplyr::row_number()) |>
+      dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
+    data <- dplyr::left_join(
+      data, range_map, by = ".variable_name", relationship = "many-to-one"
+    )
+    data$.dep_order <- data$order_rank
+    data$order_rank <- NULL
   } else if (
     length(sort_by) == 1 && all(sort_by %in% .saros.env$summary_data_sort1)
   ) {
