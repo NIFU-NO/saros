@@ -77,7 +77,7 @@ crosstable_prepare_data <- function(data, dep_var, indep, showNA) {
 
 # Helper function: Calculate mean values
 crosstable_calculate_means <- function(data, indep) {
-  data$.mean <- suppressWarnings(as.numeric(data$.category))
+  data$.mean <- suppressWarnings(as.numeric(as.character(data$.category)))
   tryCatch(
     stats::aggregate(
       .mean ~ .,
@@ -94,7 +94,7 @@ crosstable_calculate_means <- function(data, indep) {
 
 # Helper function: Calculate median values
 crosstable_calculate_medians <- function(data, indep) {
-  data$.median <- suppressWarnings(as.numeric(data$.category))
+  data$.median <- suppressWarnings(as.numeric(as.character(data$.category)))
   tryCatch(
     stats::aggregate(
       .median ~ .,
