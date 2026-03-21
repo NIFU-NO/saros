@@ -59,7 +59,9 @@
 <url><loc>https://nifu-no.github.io/saros/reference/extract_pptx_title.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/fig_height_h_barchart.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/filter_crowd_data.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/find_matching_docx.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/generate_crowd_output.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/generate_data_summary.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_colour_palette.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_colour_set.html</loc></url>
@@ -80,6 +82,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/global_settings_get.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/global_settings_reset.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/global_settings_set.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/handle_crowd_columns.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/hex_bw.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/index.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/initialize_arguments.html</loc></url>
@@ -132,6 +135,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/strip_wrap_var.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/subset_vector.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/summarize_cat_cat_data.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/summarize_data_by_type.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/txt_from_cat_mesos_plots.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/update_html_pdf_link_text.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_bool.html</loc></url>
