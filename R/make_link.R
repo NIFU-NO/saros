@@ -157,7 +157,7 @@ make_link.default <- function(
   }
   if (!fs::dir_exists(args$folder)) {
     cli::cli_warn(
-      "The folder '{args$folder}' does not exist. Attempting to create it."
+      "The folder {.path {args$folder}} does not exist. Attempting to create it."
     )
     fs::dir_create(args$folder)
   }

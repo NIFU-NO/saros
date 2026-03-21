@@ -7,7 +7,7 @@
 crowd_tables_as_tabset(
   tbl_list,
   table_fn = knitr::kable,
-  pagebreak = c("auto", "always", "never")
+  pagebreak = c("never", "auto", "always")
 )
 }
 \arguments{
@@ -20,9 +20,9 @@ table object. Defaults to \code{\link[knitr:kable]{knitr::kable()}}. Other optio
 
 \item{pagebreak}{Character. Controls page break insertion between tables:
 \itemize{
-\item \code{"auto"} (default): Insert page breaks for non-HTML formats only
+\item \code{"never"} (default): Never insert page breaks
+\item \code{"auto"}: Insert page breaks for non-HTML/non-Typst formats only
 \item \code{"always"}: Always insert page breaks between tables
-\item \code{"never"}: Never insert page breaks
 }}
 }
 \value{

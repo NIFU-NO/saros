@@ -28,11 +28,6 @@ reference:
   - ggsaver
   - quarto_pdf_post_render
   - check_quarto_website_index
-- title: Read and write tabular data
-  desc: Functions for reading and writing data frames to various file formats
-  contents:
-  - tabular_read
-  - tabular_write
 - title: "Advanced Palette-Retrieving ggiraph::girafe wrapper"
   contents:
   - girafe

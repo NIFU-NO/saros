@@ -47,6 +47,13 @@ insert_text <- function(data, chunk, before = TRUE, error_on_empty = NULL, enabl
       default_values = formals(insert_text)
     )
   if (isFALSE(args$enabled)) return(I(character(0)))
+  required_cols <- c("chunk", "before", "text")
+  missing_cols <- setdiff(required_cols, names(data))
+  if (length(missing_cols) > 0) {
+    cli::cli_abort(
+      "{.arg data} is missing required column{?s}: {.var {missing_cols}}."
+    )
+  }
   if (fs::path_ext(chunk) == "rmarkdown") {
     chunk <- fs::path_ext_remove(chunk)
   }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/output_format.R
 \name{is_html_output_or_officer}
 \alias{is_html_output_or_officer}
-\title{Check if current output is HTML or officer (non-paginated)}
+\title{Check if \verb{\\\\newpage} emission should be suppressed}
 \usage{
 is_html_output_or_officer()
 }
@@ -10,9 +10,18 @@ is_html_output_or_officer()
 Logical scalar.
 }
 \description{
+Returns \code{TRUE} when the current rendering context should \strong{not} emit
+\verb{\\\\newpage} between content blocks. This covers HTML-based formats
+(where page breaks are meaningless), Typst (where \verb{\\\\newpage} is
+converted to \verb{#pagebreak()} which errors inside containers), and
+officer contexts (where page breaks are handled differently).
+}
+\details{
 Uses \code{\link[knitr:output_type]{knitr::is_html_output()}} when knitr is in progress (covers
-revealjs, slidy, and other HTML-based Pandoc formats). Outside of
-knitr (officer context), returns \code{TRUE} so that page breaks are not
-inserted by default.
+revealjs, slidy, and other HTML-based Pandoc formats). Also returns
+\code{TRUE} for Typst, since \verb{#pagebreak()} fails inside containers and
+the Quarto \code{pagebreak} shortcode lacks native Typst support. Outside
+of knitr (officer context), returns \code{TRUE} so that \verb{\\\\newpage} is not
+emitted by default.
 }
 \keyword{internal}
