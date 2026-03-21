@@ -726,6 +726,24 @@ process_crowd_data <- function(
     return(NULL)
   }
 
+  # Drop dep variables that have all-NA values in the subset
+  all_na_deps <- vapply(
+    dep_crwd,
+    function(v) all(is.na(subset_data[[v]])),
+    logical(1)
+  )
+  if (any(all_na_deps)) {
+    dropped <- dep_crwd[all_na_deps]
+    cli::cli_warn(c(
+      "Dropping {cli::qty(dropped)} variable{?s} with no non-NA data: {.var {dropped}}.",
+      i = "All values are NA after applying crowd, indep, and category filters."
+    ))
+    dep_crwd <- dep_crwd[!all_na_deps]
+    if (length(dep_crwd) == 0) {
+      return(NULL)
+    }
+  }
+
   # Detect variable types and generate data summary
   variable_types <- detect_variable_types(subset_data, dep_crwd, indep_crwd)
 
