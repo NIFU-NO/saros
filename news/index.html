@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">saros</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,16 +46,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.6.1.9000" id="saros-1619000-dev">saros 1.6.1.9000 (dev)<a class="anchor" aria-label="anchor" href="#saros-1619000-dev"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.6.2" id="saros-162">saros 1.6.2<a class="anchor" aria-label="anchor" href="#saros-162"></a></h2>
 <div class="section level3">
-<h3 id="breaking-changes-1-6-1-9000">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-6-1-9000"></a></h3>
+<h3 id="breaking-changes-1-6-2">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-1-6-2"></a></h3>
 <ul><li>
 <strong>Removed deprecated <code>embed_*</code> functions</strong>: <code>embed_cat_prop_plot()</code>, <code>embed_cat_table()</code>, and <code>embed_chr_table_html()</code> have been removed. These were soft-deprecated since v1.1.0. Use <code><a href="../reference/makeme.html">makeme()</a></code> instead (e.g., <code>makeme(type = "cat_prop_plot_html")</code>, <code>makeme(type = "cat_table_html")</code>, <code>makeme(type = "chr_table_html")</code>).</li>
 <li>
 <strong><code>cat_plot_docx</code> now uses girafe global settings for colors</strong>: The <code>colour_palette</code> parameter has been removed from <code>cat_plot_docx</code>. Instead, colors are now controlled exclusively through <code>global_settings_set(fn_name = "girafe")</code> for consistency with HTML plots. This enables unified color management across all output formats (HTML and DOCX). Checkbox plot support (<code>checked</code>, <code>not_checked</code>, <code>colour_2nd_binary_cat</code>) is now also available for DOCX plots, with automatic legend hiding and label suppression for the unchecked category. Users should migrate from <code>makeme(..., colour_palette = c(...))</code> to <code>global_settings_set(fn_name = "girafe", new = list(palette_codes = list(c(...))))</code>.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-features-1-6-1-9000">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-6-1-9000"></a></h3>
+<h3 id="new-features-1-6-2">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-6-2"></a></h3>
 <ul><li>
 <code><a href="../reference/crowd_plots_as_tabset.html">crowd_plots_as_tabset()</a></code> and <code><a href="../reference/crowd_tables_as_tabset.html">crowd_tables_as_tabset()</a></code> now insert Quarto <code>{{&lt; pagebreak &gt;}}</code> shortcodes between items when rendering to paginated formats (docx, typst, PDF). HTML-based formats (including revealjs and slidy) are detected via <code><a href="https://rdrr.io/pkg/knitr/man/output_type.html" class="external-link">knitr::is_html_output()</a></code> and are never page-broken. A new <code>pagebreak</code> parameter (<code>"auto"</code>, <code>"always"</code>, <code>"never"</code>) controls this behaviour</li>
 <li>Added <code><a href="../reference/check_quarto_website_index.html">check_quarto_website_index()</a></code> function to detect folders in a Quarto website project that contain <code>.qmd</code> files but are missing an <code>index.qmd</code>. Missing index files often cause broken navigation menus. Issues a <code>cli</code> warning listing the offending folders.</li>
@@ -76,8 +76,9 @@
 <strong>Refactored <code><a href="../reference/n_range2.html">n_range2()</a></code> to S3 generic</strong>: Now supports both <code>ggplot2</code> objects and <code>mschart</code> objects, similar to <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code>. This enables consistent sample size reporting across both HTML and Word chart outputs, making it easier to annotate charts with N ranges regardless of output format</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-1-6-1-9000">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-1-9000"></a></h3>
-<ul><li>
+<h3 id="bug-fixes-1-6-2">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-6-2"></a></h3>
+<ul><li>Updated <code><a href="../reference/make_link.html">make_link()</a></code> tests to use dynamic <code><a href="https://rlang.r-lib.org/reference/hash.html" class="external-link">rlang::hash()</a></code> values instead of hardcoded hashes, preventing fragile failures when hash representations change across environments or versions (<a href="https://github.com/NIFU-NO/saros/issues/587" class="external-link">#587</a>)</li>
+<li>
 <code><a href="../reference/crowd_plots_as_tabset.html">crowd_plots_as_tabset()</a></code> now gives an informative error when passed table output (e.g. from <code>type = "cat_table_html"</code>) instead of plot output, directing users to <code><a href="../reference/crowd_tables_as_tabset.html">crowd_tables_as_tabset()</a></code> (<a href="https://github.com/NIFU-NO/saros/issues/515" class="external-link">#515</a>)</li>
 <li>
 <code><a href="../reference/txt_from_cat_mesos_plots.html">txt_from_cat_mesos_plots()</a></code> now gives an informative error when passed table output instead of plot output, instead of failing with a cryptic <code>.category_order</code> column-not-found error (<a href="https://github.com/NIFU-NO/saros/issues/515" class="external-link">#515</a>)</li>
@@ -102,7 +103,7 @@
 <code><a href="../reference/makeme.html">makeme()</a></code> now gives an informative error message when the requested output type is incompatible with the dependent variable types (e.g., using <code>type = "cat_table_html"</code> with numeric variables, or <code>type = "int_plot_html"</code> with factor variables). Previously this produced a cryptic error about setting an attribute on NULL.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-improvements-1-6-1-9000">Internal Improvements<a class="anchor" aria-label="anchor" href="#internal-improvements-1-6-1-9000"></a></h3>
+<h3 id="internal-improvements-1-6-2">Internal Improvements<a class="anchor" aria-label="anchor" href="#internal-improvements-1-6-2"></a></h3>
 <ul><li>
 <strong>Optimized <code><a href="../reference/fig_height_h_barchart2.html">fig_height_h_barchart2()</a></code> ggplot height estimation</strong>: The function now extracts information directly from the ggplot object for more accurate height calculations:
 <ul><li>Reads the actual font size from the ggplot theme (<code>base_size</code>) instead of using a fixed default, so heights scale correctly when users change the global ggplot2 theme (e.g., <code>theme_gray(base_size = 14)</code>)</li>

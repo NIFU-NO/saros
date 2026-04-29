@@ -1,6 +1,6 @@
 # Changelog
 
-## saros 1.6.1.9000 (dev)
+## saros 1.6.2
 
 ### Breaking Changes
 
@@ -118,6 +118,13 @@
 
 ### Bug Fixes
 
+- Updated
+  [`make_link()`](https://nifu-no.github.io/saros/reference/make_link.md)
+  tests to use dynamic
+  [`rlang::hash()`](https://rlang.r-lib.org/reference/hash.html) values
+  instead of hardcoded hashes, preventing fragile failures when hash
+  representations change across environments or versions
+  ([\#587](https://github.com/NIFU-NO/saros/issues/587))
 - [`crowd_plots_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.md)
   now gives an informative error when passed table output (e.g. from
   `type = "cat_table_html"`) instead of plot output, directing users to
