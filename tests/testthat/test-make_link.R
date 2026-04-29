@@ -2,7 +2,7 @@ testthat::test_that("make_link generates correct link for default settings", {
   result <- saros::make_link(mtcars, folder = tempdir())
   testthat::expect_true(grepl(
     x = as.character(result),
-    "\\[download figure data\\]\\(.+/d0487363db4e6cc64fdb740cb6617fc0\\.csv\\)$"
+    paste0("\\[download figure data\\]\\(.+/", rlang::hash(mtcars), "\\.csv\\)$")
   ))
 })
 
@@ -17,7 +17,7 @@ testthat::test_that("make_link generates correct link with custom prefix and suf
   )
   testthat::expect_true(grepl(
     x = as.character(result),
-    "\\[clicking me\\]\\(.+/data_d0487363db4e6cc64fdb740cb6617fc0\\.txt\\) is the way to go"
+    paste0("\\[clicking me\\]\\(.+/data_", rlang::hash(mtcars), "\\.txt\\) is the way to go")
   ))
 })
 
@@ -30,7 +30,7 @@ testthat::test_that("make_link uses custom save function", {
   )
   testthat::expect_true(grepl(
     x = as.character(result),
-    "\\[download figure data\\]\\(.+/d0487363db4e6cc64fdb740cb6617fc0\\.rds\\)$"
+    paste0("\\[download figure data\\]\\(.+/", rlang::hash(mtcars), "\\.rds\\)$")
   ))
 })
 
