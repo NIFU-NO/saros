@@ -5,7 +5,13 @@
       "Bash(export R_USER=\"C:/Users/py128/OneDrive - NIFU/Dokumenter\")",
       "Bash(R.exe -e \"devtools::test\\(filter = ''make_content.cat_table_html''\\)\")",
       "Bash(cd:*)",
-      "Bash(gh issue:*)"
+      "Bash(gh issue:*)",
+      "Bash(ls \"C:\\\\Users\\\\py128\\\\OneDrive - NIFU\\\\Github-R\\\\saros\\\\R\"/*.R)",
+      "Bash(for func:*)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "Bash(find 'C:\\\\Users\\\\py128\\\\OneDrive - NIFU\\\\Github-R\\\\saros\\\\tests\\\\testthat' -name test-*.R -type f)",
+      "Bash(gh pr:*)"
     ]
   }
 }

@@ -8,7 +8,6 @@ Colour
 Colours
 Ctrl
 DOCX
-JSON
 Kristiania
 Lifecycle
 Likert
@@ -40,11 +39,9 @@ Tabset
 Tidyselect
 Typst
 WCAG
-YAML
 args
 barchart
 behaviour
-bool
 bugfixes
 callout
 chapter’
@@ -54,11 +51,9 @@ cli
 colour
 colours
 conv
-customizable
 datawizard
 dep
 dep’
-dev
 discoverability
 docx
 errored
@@ -75,6 +70,7 @@ ggplot
 ggsave
 girafe
 har
+hardcoded
 https
 ifany
 indep
@@ -98,11 +94,8 @@ pkgdown
 png
 pos
 pre
-programmatically
 qmd
 rdocx
-recode
-reproducibility
 reusability
 revealjs
 rlang
@@ -131,6 +124,5 @@ typst
 unicode
 ut
 vdiffr
-vectorized
 yaml
 æøå

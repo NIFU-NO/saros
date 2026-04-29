@@ -9,13 +9,14 @@
 
 ## Package updates
 
-This is an update to saros 1.6.1 with the following key changes:
+This submission updates saros to 1.6.2 with the following key changes:
 
 ### New Features
-* **Intelligent type auto-detection (issue #510)**: `makeme()` now defaults to `type = "auto"` which automatically detects the appropriate output type based on dependent variable classes (numeric → `int_plot_html`, factor/character → `cat_plot_html`). This eliminates cryptic error messages and provides a better user experience.
+* **Intelligent type auto-detection (issue #510)**: `makeme()` now defaults to `type = "auto"` which automatically detects the appropriate output type based on dependent variable classes (numeric → `int_plot_html`, factor → `cat_plot_html`, character → `chr_table_html`). This eliminates cryptic error messages and provides a better user experience.
 * Added `quiet` parameter to `global_settings_reset()` to optionally suppress informational messages when resetting global settings to package defaults.
 
 ### Bug Fixes
+* Updated `make_link()` tests to use dynamic `rlang::hash()` values instead of hardcoded hashes, making tests robust across environments and hash implementation changes (issue #587).
 * Fixed issue #518 where `crowd_plots_as_tabset()` with `save = NULL` produced cryptic "object 'caption' not found" error. Added proper validation to ensure `save` parameter is a single logical value.
 * Fixed `txt_from_cat_mesos_plots()` where second group (others) proportions incorrectly became zero. Refactored to process each variable separately.
 * Fixed `txt_from_cat_mesos_plots()` where `n_highest_categories=2` with binary variables summed all categories to 1.0, producing uninformative results.
