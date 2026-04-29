@@ -1,4 +1,4 @@
-# saros 1.6.1.9000 (dev)
+# saros 1.6.2
 
 ## Breaking Changes
 -   **Removed deprecated `embed_*` functions**: `embed_cat_prop_plot()`, `embed_cat_table()`, and `embed_chr_table_html()` have been removed. These were soft-deprecated since v1.1.0. Use `makeme()` instead (e.g., `makeme(type = "cat_prop_plot_html")`, `makeme(type = "cat_table_html")`, `makeme(type = "chr_table_html")`).
@@ -19,6 +19,7 @@
 -   **Refactored `n_range2()` to S3 generic**: Now supports both `ggplot2` objects and `mschart` objects, similar to `fig_height_h_barchart2()`. This enables consistent sample size reporting across both HTML and Word chart outputs, making it easier to annotate charts with N ranges regardless of output format
 
 ## Bug Fixes
+-   Updated `make_link()` tests to use dynamic `rlang::hash()` values instead of hardcoded hashes, preventing fragile failures when hash representations change across environments or versions (#587)
 -   `crowd_plots_as_tabset()` now gives an informative error when passed table output (e.g. from `type = "cat_table_html"`) instead of plot output, directing users to `crowd_tables_as_tabset()` (#515)
 -   `txt_from_cat_mesos_plots()` now gives an informative error when passed table output instead of plot output, instead of failing with a cryptic `.category_order` column-not-found error (#515)
 -   Fixed `girafe()` to return a static `ggplot` object instead of a `girafe` object when rendering in non-HTML knitr documents (e.g. PDF, Word). Previously the interactive widget was returned unconditionally, causing rendering failures in non-HTML output formats (#551)
