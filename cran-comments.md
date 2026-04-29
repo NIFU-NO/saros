@@ -12,7 +12,7 @@
 This submission updates saros to 1.6.2 with the following key changes:
 
 ### New Features
-* **Intelligent type auto-detection (issue #510)**: `makeme()` now defaults to `type = "auto"` which automatically detects the appropriate output type based on dependent variable classes (numeric → `int_plot_html`, factor/character → `cat_plot_html`). This eliminates cryptic error messages and provides a better user experience.
+* **Intelligent type auto-detection (issue #510)**: `makeme()` now defaults to `type = "auto"` which automatically detects the appropriate output type based on dependent variable classes (numeric → `int_plot_html`, factor → `cat_plot_html`, character → `chr_table_html`). This eliminates cryptic error messages and provides a better user experience.
 * Added `quiet` parameter to `global_settings_reset()` to optionally suppress informational messages when resetting global settings to package defaults.
 
 ### Bug Fixes
