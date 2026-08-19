@@ -26,6 +26,7 @@ validate_sort_indep_by <- function(sort_by, data, call = rlang::caller_env()) {
   if (all(sort_by %in% categories)) return(invisible(TRUE))
 
   unsupported <- setdiff(sort_by, c(keys, categories))
+  if (length(unsupported) == 0) unsupported <- sort_by
   cli::cli_abort(
     c(
       x = "Invalid {.arg sort_indep_by}: {.val {unsupported}}.",
