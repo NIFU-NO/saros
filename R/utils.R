@@ -102,7 +102,9 @@ attach_dep_label_prefix <- function(obj, main_question) {
 #' p <- makeme(data = ex_survey, dep = b_1:b_3)
 #' get_dep_label_prefix(p)
 get_dep_label_prefix <- function(obj) {
-  is_valid <- function(x) isTRUE(nzchar(x))
+  # rlang::is_string() rejects NA_character_ and multi-element attributes;
+  # nzchar(NA) is TRUE, so a bare nzchar() check would leak NA to the caller.
+  is_valid <- function(x) rlang::is_string(x) && nzchar(x)
   # For ggplots and mschart, check $data first
   if (
     (inherits(obj, "gg") || inherits(obj, "ms_barchart")) &&

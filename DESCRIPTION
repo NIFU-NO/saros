@@ -39,7 +39,7 @@ Imports:
     dplyr,
     forcats,
     fs,
-    ggiraph,
+    ggiraph (>= 0.9.2),
     ggplot2,
     glue,
     grDevices,
@@ -72,10 +72,10 @@ Suggests:
     readxl
 Config/testthat/edition: 3
 Encoding: UTF-8
-RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
 Language: en-US
 VignetteBuilder: quarto
 Config/Needs/website: rmarkdown
 Config/testthat/parallel: true
 LazyData: true
+Config/roxygen2/version: 8.0.0

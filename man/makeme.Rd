@@ -339,7 +339,28 @@ the base order). Unordered factors will be reordered by \code{sort_dep_by}.
 \item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
 \item{".lower"}{The sum of the proportions for the categories below the middle category.}
 \item{".bottom"}{The proportions for the lowest category available in the variable.}
-}}
+\item{".range"}{The spread (max - min) of the category proportions within each
+variable: a measure of consensus, not of direction. A variable where one
+category dominates has a large range; a variable whose answers are spread
+evenly across all categories has a range near zero. With the default
+\code{descend = TRUE} the most concentrated variables come first; use
+\code{descend = FALSE} to surface the most evenly split ones. It says nothing
+about which category dominates -- use \code{.top} or \code{.bottom} for that.}
+\item{".count"}{Sort by the cell count column.}
+\item{".proportion"}{Sort by the proportion column.}
+\item{".mean"}{Sort by the mean of the ordinal category codes.}
+\item{".median"}{Sort by the median of the ordinal category codes.}
+\item{".sum_value"}{Sort by the summed value column.}
+\item{character()}{Character vector of category labels. Sorting uses the
+\emph{counts} in those categories, not their proportions: a single label orders
+by that category's \code{.count}, and several labels order by the summed
+\code{.sum_value} when that column is present, otherwise by the summed \code{.count}.
+Across variables with unequal numbers of respondents this differs from
+ordering by proportion.}
+}
+
+Supplying a key outside this set raises an error listing the valid
+alternatives. See \code{vignette("sorting", package = "saros")}.}
 
 \item{sort_indep_by}{\emph{What to sort independent variable categories by}
 
@@ -357,8 +378,22 @@ Passing \code{NULL} is accepted and treated as \code{".factor_order"}.
 \item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
 \item{".lower"}{The sum of the proportions for the categories below the middle category.}
 \item{".bottom"}{The proportions for the lowest category available.}
-\item{character()}{Character vector of category labels to sum together.}
-}}
+\item{".factor_order"}{Preserve the independent variable's factor level order
+(default). Equivalent to passing \code{NULL}.}
+\item{".variable_label"}{Sort alphabetically by the independent category labels.}
+\item{".count"}{Sort by cell count.}
+\item{".count_per_indep_group"}{Sort by the total number of valid responses in
+each independent group, so the largest groups come first. Useful for ordering
+organizations, regions or similar by size rather than by response pattern.}
+\item{".mean"}{Sort by the mean of the ordinal category codes.}
+\item{".median"}{Sort by the median of the ordinal category codes.}
+\item{".sum_value"}{Sort by the summed value column.}
+\item{character()}{Character vector of category labels whose summed values
+form the sort key.}
+}
+
+Supplying a key outside this set raises an error listing the valid
+alternatives. See \code{vignette("sorting", package = "saros")}.}
 
 \item{sort_by}{\emph{What to sort output by (legacy)}
 
@@ -385,7 +420,7 @@ If \code{NULL} (default), dependent variables will be sorted by \code{.variable_
 
 \item{descend}{\emph{Sorting order}
 
-\verb{scalar<logical>} // \emph{default:} \code{FALSE} (\code{optional})
+\verb{scalar<logical>} // \emph{default:} \code{TRUE} (\code{optional})
 
 Reverse sorting of \code{sort_by} in figures and tables. Works with both
 ordered and unordered factors - for ordered factors, it reverses the

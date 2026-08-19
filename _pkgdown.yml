@@ -65,3 +65,20 @@ reference:
 - title: Example dataset
   contents: ex_survey
 
+articles:
+- title: Using saros
+  desc: >
+    Producing figures and tables inside a Quarto document. For setting up the
+    project, drafting the report structure and rendering it, see
+    [saros.base](https://nifu-no.github.io/saros.base/).
+  navbar: Using saros
+  contents:
+  - for_chapter_author
+  - sorting
+- title: Background
+  desc: Orientation for readers of a saros report, and for developers extending it.
+  navbar: Background
+  contents:
+  - for_readers
+  - for_developers
+  - saros_name
