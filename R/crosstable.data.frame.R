@@ -77,6 +77,14 @@ crosstable_prepare_data <- function(data, dep_var, indep, showNA) {
 
 # Helper function: Calculate mean values
 crosstable_calculate_means <- function(data, indep) {
+  # INTENTIONAL: as.numeric() on a factor yields the *level codes* (1, 2, 3, ...),
+  # not the label text. That is exactly what is wanted here — saros summarises
+  # ordinal survey scales whose categories are text ("Strongly disagree" ...
+  # "Strongly agree"), so the mean/median is taken over the ordered positions.
+  # Do NOT "fix" this by adding as.character() first: that would parse the label
+  # text and return all-NA for every text-based scale, which is the normal case.
+  # suppressWarnings() covers the character-column case, where coercion of
+  # non-numeric labels correctly yields NA. See #577.
   data$.mean <- suppressWarnings(as.numeric(data$.category))
   tryCatch(
     stats::aggregate(
@@ -94,6 +102,14 @@ crosstable_calculate_means <- function(data, indep) {
 
 # Helper function: Calculate median values
 crosstable_calculate_medians <- function(data, indep) {
+  # INTENTIONAL: as.numeric() on a factor yields the *level codes* (1, 2, 3, ...),
+  # not the label text. That is exactly what is wanted here — saros summarises
+  # ordinal survey scales whose categories are text ("Strongly disagree" ...
+  # "Strongly agree"), so the mean/median is taken over the ordered positions.
+  # Do NOT "fix" this by adding as.character() first: that would parse the label
+  # text and return all-NA for every text-based scale, which is the normal case.
+  # suppressWarnings() covers the character-column case, where coercion of
+  # non-numeric labels correctly yields NA. See #577.
   data$.median <- suppressWarnings(as.numeric(data$.category))
   tryCatch(
     stats::aggregate(
