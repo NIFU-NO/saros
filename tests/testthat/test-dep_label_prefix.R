@@ -210,3 +210,77 @@ test_that("makeme cat_plot_docx rdocx path does NOT expose dep_label_prefix", {
   expect_s3_class(out, "rdocx")
   expect_equal(saros::get_dep_label_prefix(out), "")
 })
+
+# ---------------------------------------------------------------------------
+# #585: the documented contract is "takes a makeme() object, returns a string".
+# These pin the *scalar character* guarantee, so a future change cannot start
+# returning NULL, NA, or a vector for some output types.
+# ---------------------------------------------------------------------------
+
+test_that("get_dep_label_prefix always returns a length-1 non-NA character scalar (#585)", {
+  expect_string <- function(x, info) {
+    testthat::expect_type(x, "character")
+    testthat::expect_length(x, 1L)
+    testthat::expect_false(is.na(x), info = info)
+  }
+
+  outputs <- list(
+    cat_plot_html = saros::makeme(
+      data = saros::ex_survey,
+      dep = b_1:b_3,
+      type = "cat_plot_html",
+      label_separator = " - ",
+      html_interactive = FALSE,
+      showNA = "never"
+    ),
+    cat_table_html = saros::makeme(
+      data = saros::ex_survey,
+      dep = b_1:b_3,
+      type = "cat_table_html",
+      label_separator = " - ",
+      showNA = "never"
+    ),
+    int_plot_html = saros::makeme(
+      data = saros::ex_survey,
+      dep = c_1:c_2,
+      type = "int_plot_html",
+      html_interactive = FALSE
+    ),
+    int_table_html = saros::makeme(
+      data = saros::ex_survey,
+      dep = c_1:c_2,
+      type = "int_table_html",
+      label_separator = " - "
+    ),
+    cat_plot_docx = saros::makeme(
+      data = saros::ex_survey,
+      dep = b_1:b_3,
+      type = "cat_plot_docx",
+      label_separator = " - ",
+      showNA = "never",
+      docx_return_object = TRUE
+    )
+  )
+
+  for (type_name in names(outputs)) {
+    expect_string(saros::get_dep_label_prefix(outputs[[type_name]]), type_name)
+  }
+})
+
+test_that("get_dep_label_prefix returns '' rather than erroring on unusual input (#585)", {
+  expect_equal(saros::get_dep_label_prefix(NULL), "")
+  expect_equal(saros::get_dep_label_prefix(character(0)), "")
+  expect_equal(saros::get_dep_label_prefix(NA), "")
+  expect_equal(saros::get_dep_label_prefix(list()), "")
+})
+
+test_that("get_dep_label_prefix ignores an NA or multi-element attribute (#585)", {
+  # nzchar(NA) is TRUE, so a naive check would leak NA_character_ to the caller.
+  df_na <- data.frame(x = 1)
+  attr(df_na, "dep_label_prefix") <- NA_character_
+  expect_equal(saros::get_dep_label_prefix(df_na), "")
+
+  df_multi <- data.frame(x = 1)
+  attr(df_multi, "dep_label_prefix") <- c("first", "second")
+  expect_length(saros::get_dep_label_prefix(df_multi), 1L)
+})
