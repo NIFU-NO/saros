@@ -17,7 +17,7 @@ converted to \verb{#pagebreak()} which errors inside containers), and
 officer contexts (where page breaks are handled differently).
 }
 \details{
-Uses \code{\link[knitr:output_type]{knitr::is_html_output()}} when knitr is in progress (covers
+Uses \code{\link[knitr:is_html_output]{knitr::is_html_output()}} when knitr is in progress (covers
 revealjs, slidy, and other HTML-based Pandoc formats). Also returns
 \code{TRUE} for Typst, since \verb{#pagebreak()} fails inside containers and
 the Quarto \code{pagebreak} shortcode lacks native Typst support. Outside

@@ -1,11 +1,15 @@
 # saros 1.6.3
 
-## Internal Improvements
--   Documented, at all four call sites and with tests, that `crosstable()` computes `.mean` and `.median` over the *factor level codes* of ordinal scales rather than over the category labels. This is deliberate -- saros summarizes ordinal survey scales whose categories are text -- and had previously been mistaken for a bug (#577)
-
 ## Bug Fixes
+-   Documented the `.range`, `.count`, `.proportion`, `.mean`, `.median` and `.sum_value` keys for `sort_dep_by`, and the `.factor_order`, `.variable_label`, `.count`, `.count_per_indep_group`, `.mean`, `.median` and `.sum_value` keys for `sort_indep_by`, none of which were listed in `?makeme`. Corrected the documented default of `descend`, which is `TRUE` rather than `FALSE` (#493)
 -   `ggiraph` is now required at `>= 0.9.2`, the version that fixed the upstream "Failed setting attribute 'data-id'/'onclick', mismatched lengths of ids and values" warnings when plot data contain `NA` (#457)
 -   `get_dep_label_prefix()` now returns `""` when the `dep_label_prefix` attribute is `NA_character_` or has more than one element, as its documentation promises. Previously it returned `NA` in that case, because `nzchar(NA)` is `TRUE` (#585)
+
+## Documentation
+-   New `vignette("sorting")` documents every supported `sort_dep_by` and `sort_indep_by` key grouped by family, the precedence of ordered factors, the `descend`/`descend_indep` defaults, the validation errors, and setting a sort order once via `global_settings_set()` (#493)
+
+## Internal Improvements
+-   Documented, at all four call sites and with tests, that `crosstable()` computes `.mean` and `.median` over the *factor level codes* of ordinal scales rather than over the category labels. This is deliberate -- saros summarizes ordinal survey scales whose categories are text -- and had previously been mistaken for a bug (#577)
 
 # saros 1.6.2
 
@@ -14,6 +18,8 @@
 -   **`cat_plot_docx` now uses girafe global settings for colors**: The `colour_palette` parameter has been removed from `cat_plot_docx`. Instead, colors are now controlled exclusively through `global_settings_set(fn_name = "girafe")` for consistency with HTML plots. This enables unified color management across all output formats (HTML and DOCX). Checkbox plot support (`checked`, `not_checked`, `colour_2nd_binary_cat`) is now also available for DOCX plots, with automatic legend hiding and label suppression for the unchecked category. Users should migrate from `makeme(..., colour_palette = c(...))` to `global_settings_set(fn_name = "girafe", new = list(palette_codes = list(c(...))))`.
 
 ## New Features
+-   New `sort_dep_by = ".range"` orders dependent variables by the spread (max - min) of their category proportions, i.e. by how unevenly the answers are distributed. Variables where one category dominates sort first with the default `descend = TRUE` (#494)
+-   New `sort_indep_by = ".count_per_indep_group"` orders the categories of the independent variable by the total number of valid responses in each group, so groups can be ordered by size rather than by response pattern (#492)
 -   `crowd_plots_as_tabset()` and `crowd_tables_as_tabset()` now insert Quarto `{{< pagebreak >}}` shortcodes between items when rendering to paginated formats (docx, typst, PDF). HTML-based formats (including revealjs and slidy) are detected via `knitr::is_html_output()` and are never page-broken. A new `pagebreak` parameter (`"auto"`, `"always"`, `"never"`) controls this behaviour
 -   Added `check_quarto_website_index()` function to detect folders in a Quarto website project that contain `.qmd` files but are missing an `index.qmd`. Missing index files often cause broken navigation menus. Issues a `cli` warning listing the offending folders.
 -   Added `quarto_pdf_post_render()` function for use as a Quarto post-render script. For each rendered PDF, it checks for a matching DOCX file, extracts the document title from the DOCX metadata, sets it as the PDF metadata title (via Ghostscript), and updates the link text in the corresponding `index.html`. Defaults to reading output files from the `QUARTO_PROJECT_OUTPUT_FILES` environment variable set by Quarto during project render.

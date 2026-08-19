@@ -18,7 +18,7 @@ If the file extension is \code{"rmarkdown"}, it is stripped automatically.}
 \item{error_on_empty}{Controls behaviour when no matching text is found:
 \itemize{
 \item \code{TRUE}: throws an error via \code{\link[cli:cli_abort]{cli::cli_abort()}}.
-\item \code{FALSE}: issues a warning via \code{\link[cli:cli_abort]{cli::cli_warn()}}.
+\item \code{FALSE}: issues a warning via \code{\link[cli:cli_warn]{cli::cli_warn()}}.
 \item \code{NULL} (default): silently returns an empty \code{AsIs} object.
 }}
 

@@ -8,11 +8,11 @@ output_format()
 }
 \value{
 A character string: \code{"html"}, \code{"docx"}, \code{"typst"}, \code{"officer"},
-or another format reported by \code{\link[knitr:output_type]{knitr::pandoc_to()}}.
+or another format reported by \code{\link[knitr:pandoc_to]{knitr::pandoc_to()}}.
 }
 \description{
 Returns the output format of the current rendering context. When called
-inside a Quarto/knitr document, delegates to \code{\link[knitr:output_type]{knitr::pandoc_to()}}.
+inside a Quarto/knitr document, delegates to \code{\link[knitr:pandoc_to]{knitr::pandoc_to()}}.
 When called outside of Quarto (e.g. in an officer-based script), returns
 \code{"officer"}.
 }
