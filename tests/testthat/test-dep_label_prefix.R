@@ -280,7 +280,9 @@ test_that("get_dep_label_prefix ignores an NA or multi-element attribute (#585)"
   attr(df_na, "dep_label_prefix") <- NA_character_
   expect_equal(saros::get_dep_label_prefix(df_na), "")
 
+  # Asserting the exact value matters here: expect_length(x, 1) alone would also
+  # pass if the function silently returned just the first element.
   df_multi <- data.frame(x = 1)
   attr(df_multi, "dep_label_prefix") <- c("first", "second")
-  expect_length(saros::get_dep_label_prefix(df_multi), 1L)
+  expect_equal(saros::get_dep_label_prefix(df_multi), "")
 })
