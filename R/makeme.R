@@ -296,7 +296,22 @@
 #' \item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
 #' \item{".lower"}{The sum of the proportions for the categories below the middle category.}
 #' \item{".bottom"}{The proportions for the lowest category available in the variable.}
+#' \item{".range"}{The spread (max - min) of the category proportions within each
+#'   variable, i.e. how unevenly the answers are distributed. A variable where one
+#'   category dominates has a large range; a variable whose answers are spread
+#'   evenly across all categories has a range near zero. Useful for surfacing the
+#'   items respondents most agreed on (or most disagreed on, with `descend`).}
+#' \item{".count"}{Sort by the cell count column.}
+#' \item{".proportion"}{Sort by the proportion column.}
+#' \item{".mean"}{Sort by the mean of the ordinal category codes.}
+#' \item{".median"}{Sort by the median of the ordinal category codes.}
+#' \item{".sum_value"}{Sort by the summed value column.}
+#' \item{character()}{Character vector of category labels; their proportions are
+#'   summed and used as the sort key.}
 #' }
+#'
+#' Supplying a key outside this set raises an error listing the valid
+#' alternatives. See `vignette("sorting", package = "saros")`.
 #'
 #' @param sort_indep_by *What to sort independent variable categories by*
 #'
@@ -314,8 +329,21 @@
 #' \item{".mid_lower"}{The sum of the proportions for the categories including and below the middle category.}
 #' \item{".lower"}{The sum of the proportions for the categories below the middle category.}
 #' \item{".bottom"}{The proportions for the lowest category available.}
+#' \item{".factor_order"}{Preserve the independent variable's factor level order
+#'   (default). Equivalent to passing `NULL`.}
+#' \item{".variable_label"}{Sort alphabetically by the independent category labels.}
+#' \item{".count"}{Sort by cell count.}
+#' \item{".count_per_indep_group"}{Sort by the total number of valid responses in
+#'   each independent group, so the largest groups come first. Useful for ordering
+#'   organizations, regions or similar by size rather than by response pattern.}
+#' \item{".mean"}{Sort by the mean of the ordinal category codes.}
+#' \item{".median"}{Sort by the median of the ordinal category codes.}
+#' \item{".sum_value"}{Sort by the summed value column.}
 #' \item{character()}{Character vector of category labels to sum together.}
 #' }
+#'
+#' Supplying a key outside this set raises an error listing the valid
+#' alternatives. See `vignette("sorting", package = "saros")`.
 #'
 #' @param sort_by *What to sort output by (legacy)*
 #'
@@ -342,7 +370,7 @@
 #'
 #' @param descend *Sorting order*
 #'
-#'   `scalar<logical>` // *default:* `FALSE` (`optional`)
+#'   `scalar<logical>` // *default:* `TRUE` (`optional`)
 #'
 #'   Reverse sorting of `sort_by` in figures and tables. Works with both
 #'   ordered and unordered factors - for ordered factors, it reverses the

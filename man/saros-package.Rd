@@ -20,6 +20,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Stephan Daus \email{stephus.daus@gmail.com} (\href{https://orcid.org/0000-0003-0230-6997}{ORCID}) [copyright holder]
 
+Authors:
+\itemize{
+  \item Stephan Daus \email{stephus.daus@gmail.com} (\href{https://orcid.org/0000-0003-0230-6997}{ORCID}) [copyright holder]
+}
+
 Other contributors:
 \itemize{
   \item Julia Silge (Author of internal scale_x_reordered) [contributor]
