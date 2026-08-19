@@ -14,8 +14,11 @@
 # (e.g. by clipping bars with scale limits while interactive aesthetics keep the
 # full-length vectors).
 
-render_warnings <- function(p) {
-  warnings_seen <- character(0)
+# Collects only the ggiraph id-mismatch warnings this file is about. Any other
+# warning is deliberately left to propagate, so an unexpected draw-time warning
+# stays visible in the test output instead of being silently swallowed.
+render_id_mismatch_warnings <- function(p) {
+  mismatches <- character(0)
   withCallingHandlers(
     {
       svg_file <- withr::local_tempfile(fileext = ".svg")
@@ -24,20 +27,17 @@ render_warnings <- function(p) {
       print(p)
     },
     warning = function(w) {
-      warnings_seen <<- c(warnings_seen, conditionMessage(w))
-      invokeRestart("muffleWarning")
+      if (grepl("mismatched lengths", conditionMessage(w), fixed = TRUE)) {
+        mismatches <<- c(mismatches, conditionMessage(w))
+        invokeRestart("muffleWarning")
+      }
     }
   )
-  warnings_seen
+  mismatches
 }
 
 expect_no_id_mismatch <- function(p) {
-  mismatches <- grep(
-    "mismatched lengths",
-    render_warnings(p),
-    value = TRUE
-  )
-  testthat::expect_equal(mismatches, character(0))
+  testthat::expect_equal(render_id_mismatch_warnings(p), character(0))
 }
 
 testthat::test_that("cat_plot_html renders without ggiraph id-mismatch warnings (#457)", {
@@ -75,7 +75,9 @@ testthat::test_that("cat_plot_html with NA values renders without id-mismatch wa
 testthat::test_that("cat_plot_html with a dep that is all-NA inside one indep group renders cleanly (#457)", {
   testthat::skip_on_cran()
 
-  # Empty facet panels are the "clipping" half of the ggiraph warning.
+  # b_1 has no responses at all for the first x1_sex group, so that group's bars
+  # are absent from b_1's panel while the interactive attribute vectors are
+  # still built for the full data.
   sparse_data <- saros::ex_survey
   sparse_data$b_1[sparse_data$x1_sex == levels(sparse_data$x1_sex)[1]] <- NA
 
