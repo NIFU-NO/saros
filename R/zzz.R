@@ -54,7 +54,24 @@ if (!exists(".saros.env")) {
   .saros.env$allowed_indep_sort_columns <<-
     c(
       ".count",
-      ".count_total_indep",
+      ".count_per_indep_group",
+      ".mean",
+      ".median",
+      ".sum_value"
+    )
+  # Every key `add_indep_order()` implements. Anything else is rejected rather
+  # than silently ignored (#600).
+  .saros.env$allowed_indep_sort_keys <<-
+    c(
+      ".factor_order",
+      ".variable_label",
+      ".top",
+      ".upper",
+      ".mid_upper",
+      ".mid_lower",
+      ".lower",
+      ".bottom",
+      ".count",
       ".count_per_indep_group",
       ".mean",
       ".median",

@@ -1,6 +1,9 @@
 # saros 1.6.3
 
 ## Bug Fixes
+-   `sort_dep_by` with a character vector of two or more category labels no longer sorts in the opposite direction to `descend`. `calculate_sum_value_order()` negated the flag, so a multi-label sort ordered ascending under the default `descend = TRUE` while the single-label form ordered descending. **This changes the output order for anyone currently passing a multi-element `sort_dep_by`** (#599)
+-   `sort_indep_by` now errors on a key it cannot honour instead of silently returning unsorted output. Previously any unrecognised value — including a simple typo such as `".coutn"` — was quietly ignored, and any `.count`-prefixed value was treated as `.count`. Removed the `.count_total_indep` key, which was whitelisted but never computed and so could only ever error (#600)
+-   Corrected the documented basis for a character-vector `sort_dep_by`: a single label sorts by `.count`, while several labels sort by summed proportions (or counts when `data_label = "count"`). The 1.6.3 documentation described both as count-based (#493)
 -   Documented the `.range`, `.count`, `.proportion`, `.mean`, `.median` and `.sum_value` keys for `sort_dep_by`, and the `.factor_order`, `.variable_label`, `.count`, `.count_per_indep_group`, `.mean`, `.median` and `.sum_value` keys for `sort_indep_by`, none of which were listed in `?makeme`. Corrected the documented default of `descend`, which is `TRUE` rather than `FALSE` (#493)
 -   `ggiraph` is now required at `>= 0.9.2`, the version that fixed the upstream "Failed setting attribute 'data-id'/'onclick', mismatched lengths of ids and values" warnings when plot data contain `NA` (#457)
 -   `get_dep_label_prefix()` now returns `""` when the `dep_label_prefix` attribute is `NA_character_` or has more than one element, as its documentation promises. Previously it returned `NA` in that case, because `nzchar(NA)` is `TRUE` (#585)
