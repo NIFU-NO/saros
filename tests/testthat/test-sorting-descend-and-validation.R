@@ -18,7 +18,7 @@ dep_order <- function(...) {
 # #599: descend must mean the same thing for one label and for several
 # ---------------------------------------------------------------------------
 
-testthat::test_that("multi-category sort_dep_by honours descend (#599)", {
+testthat::test_that("multi-category sort_dep_by honors descend (#599)", {
   # Summed values for these two categories, largest first:
   #   Bejing (171) > Budapest (161) > Brussels (156)
   testthat::expect_equal(
@@ -44,7 +44,7 @@ testthat::test_that("single- and multi-category sort_dep_by agree on descend (#5
 })
 
 # ---------------------------------------------------------------------------
-# #600: sort_indep_by must reject what it cannot honour
+# #600: sort_indep_by must reject what it cannot honor
 # ---------------------------------------------------------------------------
 
 indep_sorted <- function(sort_indep_by) {
@@ -73,7 +73,7 @@ testthat::test_that("supported sort_indep_by keys still work (#600)", {
   testthat::expect_no_error(indep_sorted(NULL))
 })
 
-testthat::test_that("an unrecognised sort_indep_by key errors instead of being ignored (#600)", {
+testthat::test_that("an unrecognized sort_indep_by key errors instead of being ignored (#600)", {
   # Previously these returned silently unsorted output, so a typo produced
   # wrong order with no indication anything was wrong.
   testthat::expect_error(indep_sorted(".totally_bogus"), "sort_indep_by")

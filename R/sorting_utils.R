@@ -3,7 +3,7 @@
 #' Validate a `sort_indep_by` key against what `add_indep_order()` implements
 #'
 #' `add_indep_order()` previously fell back to an unsorted `seq_len(nrow(data))`
-#' for anything it did not recognise, so a typo silently produced unsorted
+#' for anything it did not recognize, so a typo silently produced unsorted
 #' output with no indication that the argument had been ignored (#600).
 #'
 #' @param sort_by The `sort_indep_by` value supplied by the user.
@@ -412,7 +412,7 @@ add_indep_order <- function(
     sort_by <- ".factor_order"
   }
 
-  # Validate early: reject keys the dispatch below cannot honour, then check
+  # Validate early: reject keys the dispatch below cannot honor, then check
   # that the column or categories are actually present.
   validate_sort_indep_by(sort_by, data)
   validate_sort_column(sort_by, data, allowed = .saros.env$allowed_indep_sort_columns)
