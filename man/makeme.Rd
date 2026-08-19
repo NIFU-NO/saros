@@ -351,12 +351,13 @@ about which category dominates -- use \code{.top} or \code{.bottom} for that.}
 \item{".mean"}{Sort by the mean of the ordinal category codes.}
 \item{".median"}{Sort by the median of the ordinal category codes.}
 \item{".sum_value"}{Sort by the summed value column.}
-\item{character()}{Character vector of category labels. Sorting uses the
-\emph{counts} in those categories, not their proportions: a single label orders
-by that category's \code{.count}, and several labels order by the summed
-\code{.sum_value} when that column is present, otherwise by the summed \code{.count}.
-Across variables with unequal numbers of respondents this differs from
-ordering by proportion.}
+\item{character()}{Character vector of category labels. Note that the two
+forms use different bases. A \strong{single} label orders by that category's
+\code{.count}. \strong{Several} labels order by the summed \code{.sum_value}, which sums
+the proportions -- or the counts when \code{data_label = "count"}. Across
+variables with unequal numbers of respondents the count and proportion
+orderings differ, so a single label and a one-element-longer vector can
+order the same data differently.}
 }
 
 Supplying a key outside this set raises an error listing the valid

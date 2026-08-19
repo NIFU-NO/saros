@@ -1,4 +1,46 @@
 #' Validate that a column-based sort references an existing column
+
+#' Validate a `sort_indep_by` key against what `add_indep_order()` implements
+#'
+#' `add_indep_order()` previously fell back to an unsorted `seq_len(nrow(data))`
+#' for anything it did not recognize, so a typo silently produced unsorted
+#' output with no indication that the argument had been ignored (#600).
+#'
+#' @param sort_by The `sort_indep_by` value supplied by the user.
+#' @param data Dataset, used to read the available `.category` levels.
+#' @param call Calling environment for the error message.
+#' @return `invisible(TRUE)`, or aborts.
+#'
+#' @keywords internal
+validate_sort_indep_by <- function(sort_by, data, call = rlang::caller_env()) {
+  if (is.null(sort_by) || length(sort_by) == 0) return(invisible(TRUE))
+
+  keys <- .saros.env$allowed_indep_sort_keys
+  if (length(sort_by) == 1 && sort_by %in% keys) return(invisible(TRUE))
+
+  categories <- if (".category" %in% names(data)) {
+    levels(data$.category)
+  } else {
+    character(0)
+  }
+  if (all(sort_by %in% categories)) return(invisible(TRUE))
+
+  unsupported <- setdiff(sort_by, c(keys, categories))
+  if (length(unsupported) == 0) unsupported <- sort_by
+  cli::cli_abort(
+    c(
+      x = "Invalid {.arg sort_indep_by}: {.val {unsupported}}.",
+      i = "Supported key{?s}: {.val {keys}}.",
+      i = if (length(categories) > 0) {
+        "Or one or more categories present in the data: {.val {categories}}."
+      } else {
+        "No categories are available in the data to sort by."
+      }
+    ),
+    call = call
+  )
+}
+
 #'
 #' Fails fast with an informative error when `sort_by` names a column
 #' (from the allowed whitelist) that is not present in `data`.
@@ -371,7 +413,9 @@ add_indep_order <- function(
     sort_by <- ".factor_order"
   }
 
-  # Validate early: column exists or categories exist
+  # Validate early: reject keys the dispatch below cannot honor, then check
+  # that the column or categories are actually present.
+  validate_sort_indep_by(sort_by, data)
   validate_sort_column(sort_by, data, allowed = .saros.env$allowed_indep_sort_columns)
   validate_sort_category(sort_by, data)
 
@@ -401,19 +445,10 @@ add_indep_order <- function(
     ) {
       # Proportion-based sorting
       calculate_indep_proportion_order(data, sort_by, indep_col, descend)
-    } else if (startsWith(sort_by, ".count")) {
-      # Count-based sorting
-      column_name <- if (sort_by == ".count_per_indep_group") {
-        ".count_per_indep_group"
-      } else {
-        ".count"
-      }
-      # Whitelist: allow only known safe columns for direct indep ordering
-      if (column_name %in% .saros.env$allowed_indep_sort_columns) {
-        calculate_indep_column_order(data, column_name, indep_col, descend)
-      } else {
-        seq_len(nrow(data))
-      }
+    } else if (sort_by %in% c(".count", ".count_per_indep_group")) {
+      # Count-based sorting. Matched exactly rather than by ".count" prefix, so
+      # a near-miss key cannot be silently treated as ".count" (#600).
+      calculate_indep_column_order(data, sort_by, indep_col, descend)
     } else if (sort_by %in% c(".mean", ".median", ".sum_value")) {
       # Statistical measures (whitelisted)
       calculate_indep_column_order(data, sort_by, indep_col, descend)
@@ -654,8 +689,7 @@ calculate_sum_value_order <- function(data, descend = FALSE) {
       order_value = sum(.data$.sum_value, na.rm = TRUE),
       .by = tidyselect::all_of(".variable_name")
     ) |>
-    # Default behaviour historically sorted descending; invert flag to preserve API
-    arrange_with_order(.data$order_value, descend = !descend) |>
+    arrange_with_order(.data$order_value, descend = descend) |>
     dplyr::mutate(order_rank = dplyr::row_number()) |>
     dplyr::select(tidyselect::all_of(c(".variable_name", "order_rank")))
 
@@ -764,7 +798,6 @@ calculate_indep_column_order <- function(
     dplyr::summarise(
       order_value = if (
         identical(column_name, ".count") ||
-          identical(column_name, ".count_total_indep") ||
           identical(column_name, ".count_per_indep_group")
       ) {
         sum(.data[[column_name]], na.rm = TRUE)
