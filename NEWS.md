@@ -1,6 +1,7 @@
 # saros 1.6.3
 
 ## Bug Fixes
+-   `cat_plot_html` now groups hover highlighting by category: hovering any bar highlights that category across every dependent variable, and hovering a legend key highlights its bars. Previously `data_id` was a per-row sequence, so hovering a bar highlighted only that bar and hovering a legend key highlighted nothing, because the legend's `data_id` (the category) never matched the bars' (a row number). Tooltips remain per bar (#458)
 -   Documented the `.range`, `.count`, `.proportion`, `.mean`, `.median` and `.sum_value` keys for `sort_dep_by`, and the `.factor_order`, `.variable_label`, `.count`, `.count_per_indep_group`, `.mean`, `.median` and `.sum_value` keys for `sort_indep_by`, none of which were listed in `?makeme`. Corrected the documented default of `descend`, which is `TRUE` rather than `FALSE` (#493)
 -   `ggiraph` is now required at `>= 0.9.2`, the version that fixed the upstream "Failed setting attribute 'data-id'/'onclick', mismatched lengths of ids and values" warnings when plot data contain `NA` (#457)
 -   `get_dep_label_prefix()` now returns `""` when the `dep_label_prefix` attribute is `NA_character_` or has more than one element, as its documentation promises. Previously it returned `NA` in that case, because `nzchar(NA)` is `TRUE` (#585)
