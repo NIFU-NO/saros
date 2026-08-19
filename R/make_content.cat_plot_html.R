@@ -172,7 +172,11 @@ make_content.cat_plot_html <-
           fill = .data$.category,
           group = .data$.category,
           label = .data$.data_label,
-          data_id = .data$.id,
+          # Group hover highlighting by category, so hovering any bar lights up
+          # that category across every variable. This also matches the data_id
+          # that scale_fill_discrete_interactive() gives the legend keys below,
+          # which is what makes legend hover highlight the bars (#458).
+          data_id = as.character(.data$.category),
           onclick = .data$.onclick
         )
       ) +
