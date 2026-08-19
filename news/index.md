@@ -1,6 +1,10 @@
 # Changelog
 
+## saros 1.6.3
+
 ## saros 1.6.2
+
+CRAN release: 2026-04-29
 
 ### Breaking Changes
 

@@ -1,12 +1,12 @@
-pandoc: 3.1.11
-pkgdown: 2.2.0
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   for_chapter_author: for_chapter_author.html
   for_developers: for_developers.html
   for_readers: for_readers.html
   saros_name: saros_name.html
-last_built: 2026-04-29T22:39Z
+last_built: 2026-08-19T14:37Z
 urls:
   reference: https://nifu-no.github.io/saros/reference
   article: https://nifu-no.github.io/saros/articles

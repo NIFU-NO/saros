@@ -9,6 +9,7 @@ Then open RStudio and install the package
 [saros](https://nifu-no.github.io/saros/)
 
 ``` r
+
 install.packages("saros")
 ```
 

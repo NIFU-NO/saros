@@ -13,13 +13,13 @@ possible interest.
 
 ## Overview: tools for five stages of the report production
 
-| What                                                      | Note                                                                                                                                                                           | Sub-package               |
-|-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------|
-| Project setup containing ready-made R-scripts and folders | Optional                                                                                                                                                                       | saros.base                |
-| Data cleaning                                             | Only supplements [{tidyverse}](https://www.tidyverse.org/)/[{datawizard}](https://easystats.github.io/datawizard/)/ [{labelled}](https://larmarange.github.io/labelled/)-tools | saros.utils (not on CRAN) |
-| Report drafting                                           |                                                                                                                                                                                | saros.base                |
-| Easy content generation for common standardized outputs   | Standardized output types. Alternatively use your own functions                                                                                                                | saros                     |
-| Web access restriction and distribution                   | Optional                                                                                                                                                                       | saros.base                |
+| What | Note | Sub-package |
+|----|----|----|
+| Project setup containing ready-made R-scripts and folders | Optional | saros.base |
+| Data cleaning | Only supplements [{tidyverse}](https://www.tidyverse.org/)/[{datawizard}](https://easystats.github.io/datawizard/)/ [{labelled}](https://larmarange.github.io/labelled/)-tools | saros.utils (not on CRAN) |
+| Report drafting |  | saros.base |
+| Easy content generation for common standardized outputs | Standardized output types. Alternatively use your own functions | saros |
+| Web access restriction and distribution | Optional | saros.base |
 
 ## Why saros?
 
@@ -167,6 +167,7 @@ possible interest.
 The development version from [GitHub](https://github.com/) with:
 
 ``` r
+
 install.packages("pak")
 pak::pak("saros")
 # pak::pak("NIFU-NO/saros") # Alternatively, latest developer-version at GitHub
@@ -175,6 +176,7 @@ pak::pak("saros")
 ## Draft a simple report using defaults, in a temporary folder
 
 ``` r
+
 library(saros)
 refine_chapter_overview(data = ex_survey,
                         chapter_overview = ex_survey_ch_overview) |>
@@ -186,6 +188,7 @@ refine_chapter_overview(data = ex_survey,
 - Dropping
 
 ``` r
+
 library(saros)
 refine_chapter_overview(data = ex_survey,
                         chapter_overview = ex_survey_ch_overview,
@@ -213,6 +216,7 @@ params:
 ```
 
 ``` r
+
 library(saros)
 refine_chapter_overview(data = ex_survey,
                         chapter_overview = ex_survey_ch_overview,

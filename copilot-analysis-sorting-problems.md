@@ -174,6 +174,7 @@ error messages when sorting fails - No validation of data types
 **Proposed Validation**:
 
 ``` r
+
 validate_sort_column <- function(data, column_name) {
   if (!column_name %in% names(data)) {
     cli::cli_abort("Column {.field {column_name}} not found in data")
