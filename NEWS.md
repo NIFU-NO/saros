@@ -1,5 +1,8 @@
 # saros 1.6.3
 
+## Internal Improvements
+-   Documented, at all four call sites and with tests, that `crosstable()` computes `.mean` and `.median` over the *factor level codes* of ordinal scales rather than over the category labels. This is deliberate -- saros summarizes ordinal survey scales whose categories are text -- and had previously been mistaken for a bug (#577)
+
 ## Bug Fixes
 -   `ggiraph` is now required at `>= 0.9.2`, the version that fixed the upstream "Failed setting attribute 'data-id'/'onclick', mismatched lengths of ids and values" warnings when plot data contain `NA` (#457)
 -   `get_dep_label_prefix()` now returns `""` when the `dep_label_prefix` attribute is `NA_character_` or has more than one element, as its documentation promises. Previously it returned `NA` in that case, because `nzchar(NA)` is `TRUE` (#585)
