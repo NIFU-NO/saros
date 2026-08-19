@@ -71,8 +71,8 @@ crosstable_calculate_medians_svy <- function(data, indep) {
   )
   summary_median <- srvyr::summarize(
     summary_median,
-    # INTENTIONAL: see the note in crosstable_calculate_means() — the mean is
-    # taken over ordinal factor level codes, not over the label text (#577).
+    # INTENTIONAL: see the note in crosstable_calculate_means() — the median
+    # is taken over ordinal factor level codes, not over the label text (#577).
     .median = srvyr::survey_median(
       suppressWarnings(as.numeric(.data$.category)),
       na.rm = TRUE
