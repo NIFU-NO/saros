@@ -104,11 +104,14 @@ proportion.
 - A variable whose answers spread evenly across all categories has a range near
   zero.
 
-This is the key to reach for when the question is "which items did respondents
-agree on, and which split them?" rather than "which items scored highest".
+It is a measure of **consensus, not of direction**. A large range tells you the
+responses concentrated in one category, but nothing about *which* category —
+`".top"` and `".bottom"` are the keys for that. Reach for `".range"` when the
+question is "which items did respondents converge on, and which split them?"
+rather than "which items scored highest".
 
 ```{r}
-# Most-agreed-upon items first
+# Most concentrated items first (one category dominates)
 makeme(
   data = ex_survey,
   dep = b_1:b_3,
@@ -117,7 +120,7 @@ makeme(
   descend = TRUE
 )
 
-# Most-divided items first
+# Most evenly split items first
 makeme(
   data = ex_survey,
   dep = b_1:b_3,
@@ -149,9 +152,14 @@ deliberate: it is the usual way to summarize an ordinal survey scale.
 
 ## Custom category keys
 
-Passing a character vector of category labels sums those categories'
-proportions and sorts on the result. This is the escape hatch when none of the
-named keys expresses the ordering you want.
+Passing a character vector of category labels sorts on those categories. This is
+the escape hatch when none of the named keys expresses the ordering you want.
+
+Note that this works on **counts, not proportions**: a single label orders by
+that category's `.count`, and several labels order by the summed `.sum_value`
+when that column is present, otherwise by the summed `.count`. When the
+dependent variables have unequal numbers of respondents, that is not the same
+ordering you would get from the proportions.
 
 ```{r}
 makeme(

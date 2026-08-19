@@ -108,17 +108,23 @@ the base order). Unordered factors will be reordered by \code{sort_dep_by}.
 \item{".lower"}{The sum of the proportions for the categories below the middle category.}
 \item{".bottom"}{The proportions for the lowest category available in the variable.}
 \item{".range"}{The spread (max - min) of the category proportions within each
-variable, i.e. how unevenly the answers are distributed. A variable where one
+variable: a measure of consensus, not of direction. A variable where one
 category dominates has a large range; a variable whose answers are spread
-evenly across all categories has a range near zero. Useful for surfacing the
-items respondents most agreed on (or most disagreed on, with \code{descend}).}
+evenly across all categories has a range near zero. With the default
+\code{descend = TRUE} the most concentrated variables come first; use
+\code{descend = FALSE} to surface the most evenly split ones. It says nothing
+about which category dominates -- use \code{.top} or \code{.bottom} for that.}
 \item{".count"}{Sort by the cell count column.}
 \item{".proportion"}{Sort by the proportion column.}
 \item{".mean"}{Sort by the mean of the ordinal category codes.}
 \item{".median"}{Sort by the median of the ordinal category codes.}
 \item{".sum_value"}{Sort by the summed value column.}
-\item{character()}{Character vector of category labels; their proportions are
-summed and used as the sort key.}
+\item{character()}{Character vector of category labels. Sorting uses the
+\emph{counts} in those categories, not their proportions: a single label orders
+by that category's \code{.count}, and several labels order by the summed
+\code{.sum_value} when that column is present, otherwise by the summed \code{.count}.
+Across variables with unequal numbers of respondents this differs from
+ordering by proportion.}
 }
 
 Supplying a key outside this set raises an error listing the valid
@@ -150,7 +156,8 @@ organizations, regions or similar by size rather than by response pattern.}
 \item{".mean"}{Sort by the mean of the ordinal category codes.}
 \item{".median"}{Sort by the median of the ordinal category codes.}
 \item{".sum_value"}{Sort by the summed value column.}
-\item{character()}{Character vector of category labels to sum together.}
+\item{character()}{Character vector of category labels whose summed values
+form the sort key.}
 }
 
 Supplying a key outside this set raises an error listing the valid
