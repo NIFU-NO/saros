@@ -286,7 +286,13 @@
 </section><section class="level2"><h3 id="custom-category-keys">Custom category keys<a class="anchor" aria-label="anchor" href="#custom-category-keys"></a>
 </h3>
 <p>Passing a character vector of category labels sorts on those categories. This is the escape hatch when none of the named keys expresses the ordering you want.</p>
-<p>Note that this works on <strong>counts, not proportions</strong>: a single label orders by that category’s <code>.count</code>, and several labels order by the summed <code>.sum_value</code> when that column is present, otherwise by the summed <code>.count</code>. When the dependent variables have unequal numbers of respondents, that is not the same ordering you would get from the proportions.</p>
+<p>Be aware that the two forms sort on different bases:</p>
+<ul>
+<li>A <strong>single</strong> label orders by that category’s <code>.count</code>.</li>
+<li>
+<strong>Several</strong> labels order by the summed <code>.sum_value</code>, which sums the <em>proportions</em> — or the counts when <code>data_label = "count"</code>.</li>
+</ul>
+<p>When the dependent variables have equal numbers of respondents this makes no difference. When they do not, adding a second label can change the ordering of the variables you had already sorted, because the basis switched from counts to proportions.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/makeme.html">makeme</a></span><span class="op">(</span></span>

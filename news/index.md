@@ -4,6 +4,26 @@
 
 ### Bug Fixes
 
+- `sort_dep_by` with a character vector of two or more category labels
+  no longer sorts in the opposite direction to `descend`.
+  [`calculate_sum_value_order()`](https://nifu-no.github.io/saros/reference/calculate_sum_value_order.md)
+  negated the flag, so a multi-label sort ordered ascending under the
+  default `descend = TRUE` while the single-label form ordered
+  descending. **This changes the output order for anyone currently
+  passing a multi-element `sort_dep_by`**
+  ([\#599](https://github.com/NIFU-NO/saros/issues/599))
+- `sort_indep_by` now errors on a key it cannot honor instead of
+  silently returning unsorted output. Previously any unrecognized value
+  — including a simple typo such as `".coutn"` — was quietly ignored,
+  and any `.count`-prefixed value was treated as `.count`. Removed the
+  `.count_total_indep` key, which was whitelisted but never computed and
+  so could only ever error
+  ([\#600](https://github.com/NIFU-NO/saros/issues/600))
+- Corrected the documented basis for a character-vector `sort_dep_by`: a
+  single label sorts by `.count`, while several labels sort by summed
+  proportions (or counts when `data_label = "count"`). The 1.6.3
+  documentation described both as count-based
+  ([\#493](https://github.com/NIFU-NO/saros/issues/493))
 - `cat_plot_html` now groups hover highlighting by category: hovering
   any bar highlights that category across every dependent variable, and
   hovering a legend key highlights its bars. Previously `data_id` was a

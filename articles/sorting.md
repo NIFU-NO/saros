@@ -159,12 +159,16 @@ Passing a character vector of category labels sorts on those categories.
 This is the escape hatch when none of the named keys expresses the
 ordering you want.
 
-Note that this works on **counts, not proportions**: a single label
-orders by that category’s `.count`, and several labels order by the
-summed `.sum_value` when that column is present, otherwise by the summed
-`.count`. When the dependent variables have unequal numbers of
-respondents, that is not the same ordering you would get from the
-proportions.
+Be aware that the two forms sort on different bases:
+
+- A **single** label orders by that category’s `.count`.
+- **Several** labels order by the summed `.sum_value`, which sums the
+  *proportions* — or the counts when `data_label = "count"`.
+
+When the dependent variables have equal numbers of respondents this
+makes no difference. When they do not, adding a second label can change
+the ordering of the variables you had already sorted, because the basis
+switched from counts to proportions.
 
 ``` r
 
