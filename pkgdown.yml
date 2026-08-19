@@ -6,7 +6,8 @@ articles:
   for_developers: for_developers.html
   for_readers: for_readers.html
   saros_name: saros_name.html
-last_built: 2026-08-19T14:37Z
+  sorting: sorting.html
+last_built: 2026-08-19T22:05Z
 urls:
   reference: https://nifu-no.github.io/saros/reference
   article: https://nifu-no.github.io/saros/articles

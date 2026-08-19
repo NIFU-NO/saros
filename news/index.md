@@ -2,6 +2,60 @@
 
 ## saros 1.6.3
 
+### Bug Fixes
+
+- `cat_plot_html` now groups hover highlighting by category: hovering
+  any bar highlights that category across every dependent variable, and
+  hovering a legend key highlights its bars. Previously `data_id` was a
+  per-row sequence, so hovering a bar highlighted only that bar and
+  hovering a legend key highlighted nothing, because the legend’s
+  `data_id` (the category) never matched the bars’ (a row number).
+  Tooltips remain per bar
+  ([\#458](https://github.com/NIFU-NO/saros/issues/458))
+- Documented the `.range`, `.count`, `.proportion`, `.mean`, `.median`
+  and `.sum_value` keys for `sort_dep_by`, and the `.factor_order`,
+  `.variable_label`, `.count`, `.count_per_indep_group`, `.mean`,
+  `.median` and `.sum_value` keys for `sort_indep_by`, none of which
+  were listed in
+  [`?makeme`](https://nifu-no.github.io/saros/reference/makeme.md).
+  Corrected the documented default of `descend`, which is `TRUE` rather
+  than `FALSE` ([\#493](https://github.com/NIFU-NO/saros/issues/493))
+- `ggiraph` is now required at `>= 0.9.2`, the version that fixed the
+  upstream “Failed setting attribute ‘data-id’/‘onclick’, mismatched
+  lengths of ids and values” warnings when plot data contain `NA`
+  ([\#457](https://github.com/NIFU-NO/saros/issues/457))
+- [`get_dep_label_prefix()`](https://nifu-no.github.io/saros/reference/get_dep_label_prefix.md)
+  now returns `""` when the `dep_label_prefix` attribute is
+  `NA_character_` or has more than one element, as its documentation
+  promises. Previously it returned `NA` in that case, because
+  `nzchar(NA)` is `TRUE`
+  ([\#585](https://github.com/NIFU-NO/saros/issues/585))
+
+### Documentation
+
+- `_pkgdown.yml` now has an `articles:` section, grouping the vignettes
+  into “Using saros” and “Background” so they appear in the site
+  navigation. The group description cross-links to saros.base, which
+  covers project setup, drafting the report structure and rendering
+  ([\#334](https://github.com/NIFU-NO/saros/issues/334))
+- New
+  [`vignette("sorting")`](https://nifu-no.github.io/saros/articles/sorting.md)
+  documents every supported `sort_dep_by` and `sort_indep_by` key
+  grouped by family, the precedence of ordered factors, the
+  `descend`/`descend_indep` defaults, the validation errors, and setting
+  a sort order once via
+  [`global_settings_set()`](https://nifu-no.github.io/saros/reference/global_settings_set.md)
+  ([\#493](https://github.com/NIFU-NO/saros/issues/493))
+
+### Internal Improvements
+
+- Documented, at all four call sites and with tests, that `crosstable()`
+  computes `.mean` and `.median` over the *factor level codes* of
+  ordinal scales rather than over the category labels. This is
+  deliberate – saros summarizes ordinal survey scales whose categories
+  are text – and had previously been mistaken for a bug
+  ([\#577](https://github.com/NIFU-NO/saros/issues/577))
+
 ## saros 1.6.2
 
 CRAN release: 2026-04-29
@@ -28,6 +82,15 @@ CRAN release: 2026-04-29
 
 ### New Features
 
+- New `sort_dep_by = ".range"` orders dependent variables by the spread
+  (max - min) of their category proportions, i.e. by how unevenly the
+  answers are distributed. Variables where one category dominates sort
+  first with the default `descend = TRUE`
+  ([\#494](https://github.com/NIFU-NO/saros/issues/494))
+- New `sort_indep_by = ".count_per_indep_group"` orders the categories
+  of the independent variable by the total number of valid responses in
+  each group, so groups can be ordered by size rather than by response
+  pattern ([\#492](https://github.com/NIFU-NO/saros/issues/492))
 - [`crowd_plots_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.md)
   and
   [`crowd_tables_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_tables_as_tabset.md)

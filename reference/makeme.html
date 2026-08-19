@@ -18,9 +18,14 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/for_chapter_author.html">UNKNOWN TITLE</a></li>
-    <li><a class="dropdown-item" href="../articles/for_developers.html">UNKNOWN TITLE</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Using saros</h6></li>
+    <li><a class="dropdown-item" href="../articles/for_chapter_author.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="../articles/sorting.html">UNKNOWN TITLE</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Background</h6></li>
     <li><a class="dropdown-item" href="../articles/for_readers.html">UNKNOWN TITLE</a></li>
+    <li><a class="dropdown-item" href="../articles/for_developers.html">UNKNOWN TITLE</a></li>
     <li><a class="dropdown-item" href="../articles/saros_name.html">UNKNOWN TITLE</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -402,8 +407,41 @@ the base order). Unordered factors will be reordered by <code>sort_dep_by</code>
 <dt>".bottom"</dt>
 <dd><p>The proportions for the lowest category available in the variable.</p></dd>
 
+<dt>".range"</dt>
+<dd><p>The spread (max - min) of the category proportions within each
+variable: a measure of consensus, not of direction. A variable where one
+category dominates has a large range; a variable whose answers are spread
+evenly across all categories has a range near zero. With the default
+<code>descend = TRUE</code> the most concentrated variables come first; use
+<code>descend = FALSE</code> to surface the most evenly split ones. It says nothing
+about which category dominates – use <code>.top</code> or <code>.bottom</code> for that.</p></dd>
 
-</dl></dd>
+<dt>".count"</dt>
+<dd><p>Sort by the cell count column.</p></dd>
+
+<dt>".proportion"</dt>
+<dd><p>Sort by the proportion column.</p></dd>
+
+<dt>".mean"</dt>
+<dd><p>Sort by the mean of the ordinal category codes.</p></dd>
+
+<dt>".median"</dt>
+<dd><p>Sort by the median of the ordinal category codes.</p></dd>
+
+<dt>".sum_value"</dt>
+<dd><p>Sort by the summed value column.</p></dd>
+
+<dt>character()</dt>
+<dd><p>Character vector of category labels. Sorting uses the
+<em>counts</em> in those categories, not their proportions: a single label orders
+by that category's <code>.count</code>, and several labels order by the summed
+<code>.sum_value</code> when that column is present, otherwise by the summed <code>.count</code>.
+Across variables with unequal numbers of respondents this differs from
+ordering by proportion.</p></dd>
+
+
+</dl><p>Supplying a key outside this set raises an error listing the valid
+alternatives. See <code><a href="../articles/sorting.html">vignette("sorting", package = "saros")</a></code>.</p></dd>
 
 
 <dt id="arg-sort-indep-by">sort_indep_by<a class="anchor" aria-label="anchor" href="#arg-sort-indep-by"></a></dt>
@@ -433,11 +471,37 @@ Passing <code>NULL</code> is accepted and treated as <code>".factor_order"</code
 <dt>".bottom"</dt>
 <dd><p>The proportions for the lowest category available.</p></dd>
 
+<dt>".factor_order"</dt>
+<dd><p>Preserve the independent variable's factor level order
+(default). Equivalent to passing <code>NULL</code>.</p></dd>
+
+<dt>".variable_label"</dt>
+<dd><p>Sort alphabetically by the independent category labels.</p></dd>
+
+<dt>".count"</dt>
+<dd><p>Sort by cell count.</p></dd>
+
+<dt>".count_per_indep_group"</dt>
+<dd><p>Sort by the total number of valid responses in
+each independent group, so the largest groups come first. Useful for ordering
+organizations, regions or similar by size rather than by response pattern.</p></dd>
+
+<dt>".mean"</dt>
+<dd><p>Sort by the mean of the ordinal category codes.</p></dd>
+
+<dt>".median"</dt>
+<dd><p>Sort by the median of the ordinal category codes.</p></dd>
+
+<dt>".sum_value"</dt>
+<dd><p>Sort by the summed value column.</p></dd>
+
 <dt>character()</dt>
-<dd><p>Character vector of category labels to sum together.</p></dd>
+<dd><p>Character vector of category labels whose summed values
+form the sort key.</p></dd>
 
 
-</dl></dd>
+</dl><p>Supplying a key outside this set raises an error listing the valid
+alternatives. See <code><a href="../articles/sorting.html">vignette("sorting", package = "saros")</a></code>.</p></dd>
 
 
 <dt id="arg-sort-by">sort_by<a class="anchor" aria-label="anchor" href="#arg-sort-by"></a></dt>
@@ -488,7 +552,7 @@ If <code>NULL</code> (default), dependent variables will be sorted by <code>.var
 
 <dt id="arg-descend">descend<a class="anchor" aria-label="anchor" href="#arg-descend"></a></dt>
 <dd><p><em>Sorting order</em></p>
-<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>FALSE</code> (<code>optional</code>)</p>
+<p><code>scalar&lt;logical&gt;</code> // <em>default:</em> <code>TRUE</code> (<code>optional</code>)</p>
 <p>Reverse sorting of <code>sort_by</code> in figures and tables. Works with both
 ordered and unordered factors - for ordered factors, it reverses the
 display order while preserving the inherent level ordering.

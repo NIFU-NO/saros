@@ -28,6 +28,11 @@ Useful links:
 **Maintainer**: Stephan Daus <stephus.daus@gmail.com>
 ([ORCID](https://orcid.org/0000-0003-0230-6997)) \[copyright holder\]
 
+Authors:
+
+- Stephan Daus <stephus.daus@gmail.com>
+  ([ORCID](https://orcid.org/0000-0003-0230-6997)) \[copyright holder\]
+
 Other contributors:
 
 - Julia Silge (Author of internal scale_x_reordered) \[contributor\]

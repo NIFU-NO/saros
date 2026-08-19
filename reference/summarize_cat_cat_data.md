@@ -197,6 +197,50 @@ summarize_cat_cat_data(
 
   :   The proportions for the lowest category available in the variable.
 
+  ".range"
+
+  :   The spread (max - min) of the category proportions within each
+      variable: a measure of consensus, not of direction. A variable
+      where one category dominates has a large range; a variable whose
+      answers are spread evenly across all categories has a range near
+      zero. With the default `descend = TRUE` the most concentrated
+      variables come first; use `descend = FALSE` to surface the most
+      evenly split ones. It says nothing about which category dominates
+      – use `.top` or `.bottom` for that.
+
+  ".count"
+
+  :   Sort by the cell count column.
+
+  ".proportion"
+
+  :   Sort by the proportion column.
+
+  ".mean"
+
+  :   Sort by the mean of the ordinal category codes.
+
+  ".median"
+
+  :   Sort by the median of the ordinal category codes.
+
+  ".sum_value"
+
+  :   Sort by the summed value column.
+
+  character()
+
+  :   Character vector of category labels. Sorting uses the *counts* in
+      those categories, not their proportions: a single label orders by
+      that category's `.count`, and several labels order by the summed
+      `.sum_value` when that column is present, otherwise by the summed
+      `.count`. Across variables with unequal numbers of respondents
+      this differs from ordering by proportion.
+
+  Supplying a key outside this set raises an error listing the valid
+  alternatives. See
+  [`vignette("sorting", package = "saros")`](https://nifu-no.github.io/saros/articles/sorting.md).
+
 - sort_indep_by:
 
   *What to sort independent variable categories by*
@@ -240,9 +284,46 @@ summarize_cat_cat_data(
 
   :   The proportions for the lowest category available.
 
+  ".factor_order"
+
+  :   Preserve the independent variable's factor level order (default).
+      Equivalent to passing `NULL`.
+
+  ".variable_label"
+
+  :   Sort alphabetically by the independent category labels.
+
+  ".count"
+
+  :   Sort by cell count.
+
+  ".count_per_indep_group"
+
+  :   Sort by the total number of valid responses in each independent
+      group, so the largest groups come first. Useful for ordering
+      organizations, regions or similar by size rather than by response
+      pattern.
+
+  ".mean"
+
+  :   Sort by the mean of the ordinal category codes.
+
+  ".median"
+
+  :   Sort by the median of the ordinal category codes.
+
+  ".sum_value"
+
+  :   Sort by the summed value column.
+
   character()
 
-  :   Character vector of category labels to sum together.
+  :   Character vector of category labels whose summed values form the
+      sort key.
+
+  Supplying a key outside this set raises an error listing the valid
+  alternatives. See
+  [`vignette("sorting", package = "saros")`](https://nifu-no.github.io/saros/articles/sorting.md).
 
 - data_label:
 
@@ -337,7 +418,7 @@ summarize_cat_cat_data(
 
   *Sorting order*
 
-  `scalar<logical>` // *default:* `FALSE` (`optional`)
+  `scalar<logical>` // *default:* `TRUE` (`optional`)
 
   Reverse sorting of `sort_by` in figures and tables. Works with both
   ordered and unordered factors - for ordered factors, it reverses the
