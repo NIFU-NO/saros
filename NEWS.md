@@ -1,5 +1,8 @@
 # saros 1.6.3
 
+## Bug Fixes
+-   `get_dep_label_prefix()` now returns `""` when the `dep_label_prefix` attribute is `NA_character_` or has more than one element, as its documentation promises. Previously it returned `NA` in that case, because `nzchar(NA)` is `TRUE` (#585)
+
 # saros 1.6.2
 
 ## Breaking Changes
