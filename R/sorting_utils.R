@@ -496,13 +496,20 @@ validate_sort_indep_by_int <- function(sort_by, call = rlang::caller_env()) {
   }
 
   unsupported <- setdiff(sort_by, keys)
+  # A vector is never usable here even when every element is a supported key,
+  # so report what was actually passed rather than an empty difference.
+  if (length(unsupported) == 0) {
+    unsupported <- sort_by
+  }
   cat_only <- intersect(unsupported, .saros.env$allowed_indep_sort_keys)
   cli::cli_abort(
     c(
       x = "Invalid {.arg sort_indep_by} for a numeric dependent variable: {.val {unsupported}}.",
       i = "Supported key{?s}: {.val {keys}}.",
-      i = if (length(cat_only) > 0) {
-        "{.val {cat_only}} order{?s/} by response categories, which a numeric dependent variable does not have."
+      i = if (length(sort_by) > 1) {
+        "Only a single key can be used; summing over several needs response categories, which a numeric dependent variable does not have."
+      } else if (length(cat_only) > 0) {
+        "{.val {cat_only}} orders by response categories, which a numeric dependent variable does not have."
       } else {
         "Category labels cannot be used, because a numeric dependent variable has no categories."
       }

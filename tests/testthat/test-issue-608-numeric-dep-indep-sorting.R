@@ -61,7 +61,10 @@ sigtest_order <- function(data, dep, ...) {
 testthat::test_that("a numeric dep honours sort_indep_by", {
   data <- make_int_data()
   by_size <- names(sort(table(data$sektor)))
+  # Derived separately, so that a `.median` that silently used the mean (or
+  # vice versa) would still be caught.
   by_mean <- names(sort(tapply(data$score, data$sektor, mean)))
+  by_median <- names(sort(tapply(data$score, data$sektor, stats::median)))
 
   testthat::expect_equal(
     sigtest_order(data, score, sort_indep_by = ".factor_order"),
@@ -81,7 +84,7 @@ testthat::test_that("a numeric dep honours sort_indep_by", {
   )
   testthat::expect_equal(
     sigtest_order(data, score, sort_indep_by = ".median"),
-    by_mean
+    by_median
   )
 })
 
@@ -156,6 +159,23 @@ testthat::test_that("keys a numeric dep cannot honour abort rather than being ig
   testthat::expect_error(
     sigtest_order(data, score, sort_indep_by = c("Low", "High")),
     regexp = "numeric dependent variable"
+  )
+})
+
+testthat::test_that("a vector of otherwise-supported keys is rejected by name", {
+  data <- make_int_data()
+
+  # setdiff() against the whitelist is empty here, so the message has to fall
+  # back to reporting what was actually passed rather than nothing.
+  testthat::expect_error(
+    sigtest_order(data, score, sort_indep_by = c(".mean", ".median")),
+    regexp = ".mean",
+    fixed = TRUE
+  )
+  testthat::expect_error(
+    sigtest_order(data, score, sort_indep_by = c(".mean", ".median")),
+    regexp = "single key",
+    fixed = TRUE
   )
 })
 
