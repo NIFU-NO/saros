@@ -51,11 +51,11 @@ testthat::test_that("sigtest_table_html keeps the indep grouping when it contain
   reference <- sigtest(make_sigtest_data(5L))
   with_na <- sigtest(make_sigtest_data(5L, n_na = 3L), showNA = "never")
 
-  # One row per dep, and the same set of columns as without the NAs. Only the
-  # *order* of the per-category columns may differ, since the wide pivot
-  # follows order of appearance in the data rather than factor level order.
+  # One row per dep, and exactly the same columns, in the same order, as
+  # without the NAs. The order became well-defined in #605; before that this
+  # could only assert set equality.
   testthat::expect_equal(nrow(with_na), 2L)
-  testthat::expect_setequal(names(with_na), names(reference))
+  testthat::expect_named(with_na, names(reference))
   testthat::expect_true(all(
     paste0("n_valid_", LETTERS[1:5]) %in% names(with_na)
   ))

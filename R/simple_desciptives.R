@@ -47,6 +47,7 @@ simple_descriptives <- function(
   na.rm = TRUE,
   table_wide = FALSE,
   n_categories_limit = Inf,
+  x_levels = NULL,
   label_separator = NULL
 ) {
   if (length(x_var) > 1) {
@@ -102,6 +103,27 @@ simple_descriptives <- function(
           x_var = group_var
         )
       }
+      # `.by` groups in order of appearance, so the summary has to be ordered
+      # for it -- and the wide pivot built from it below -- to come out in the
+      # intended category order. Done here, on one row per category, rather
+      # than by sorting the rows of `data` first: the result is the same and
+      # this stays cheap however large the dataset is.
+      if (
+        !is.null(x_levels) &&
+          rlang::is_string(group_var) &&
+          group_var %in% names(out)
+      ) {
+        observed <- as.character(out[[group_var]])
+        # Any category not accounted for keeps its place at the end rather
+        # than being silently turned into NA by factor().
+        all_levels <- c(
+          x_levels,
+          setdiff(unique(observed[!is.na(observed)]), x_levels)
+        )
+        out[[group_var]] <- factor(out[[group_var]], levels = all_levels)
+        out <- out[order(out[[group_var]]), , drop = FALSE]
+      }
+
       out$.variable_position <- yvar_variable_position
       out$.variable_label <- yvar_label
       out$.variable_label_prefix <- yvar_label_prefix

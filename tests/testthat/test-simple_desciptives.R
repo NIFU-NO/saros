@@ -228,3 +228,92 @@ testthat::test_that("simple_descriptives keeps variable labels when dropping NA 
     "A labelled variable"
   )
 })
+
+testthat::test_that("simple_descriptives orders groups by x_levels (#605)", {
+  data <- data.frame(
+    y_var = rep(c("a", "b"), each = 3),
+    x_var = c("c", "a", "b", "c", "a", "b")
+  )
+
+  # `.by` groups in order of appearance, so without x_levels the order is
+  # whatever the rows happened to be in.
+  long <- saros:::simple_descriptives(
+    data = data,
+    y_var = "y_var",
+    x_var = "x_var",
+    x_levels = c("a", "b", "c")
+  )
+  testthat::expect_equal(as.character(unique(long$x_var)), c("a", "b", "c"))
+
+  wide <- saros:::simple_descriptives(
+    data = data,
+    y_var = "y_var",
+    x_var = "x_var",
+    table_wide = TRUE,
+    x_levels = c("c", "b", "a")
+  )
+  testthat::expect_equal(
+    grep("^n_valid_", names(wide), value = TRUE),
+    c("n_valid_c", "n_valid_b", "n_valid_a")
+  )
+})
+
+testthat::test_that("simple_descriptives keeps categories x_levels does not mention (#605)", {
+  data <- data.frame(
+    y_var = rep(c("a", "b"), each = 3),
+    x_var = c("c", "a", "b", "c", "a", "b")
+  )
+
+  # An incomplete x_levels must not silently turn the rest into NA.
+  out <- saros:::simple_descriptives(
+    data = data,
+    y_var = "y_var",
+    x_var = "x_var",
+    x_levels = c("c")
+  )
+  testthat::expect_setequal(as.character(out$x_var), c("a", "b", "c"))
+  testthat::expect_equal(as.character(out$x_var)[1], "c")
+  testthat::expect_false(anyNA(out$x_var))
+})
+
+testthat::test_that("get_indep_level_order prefers .indep_order over factor levels", {
+  data <- data.frame(g = factor(c("a", "b", "c"), levels = c("a", "b", "c")))
+  data_summary <- data.frame(
+    g = c("c", "a", "b"),
+    .indep_order = c(1, 2, 3)
+  )
+
+  testthat::expect_equal(
+    saros:::get_indep_level_order(data_summary, data, "g"),
+    c("c", "a", "b")
+  )
+
+  # Falls back to the factor's levels when the summary carries no order,
+  # which is the case for numeric dependent variables.
+  testthat::expect_equal(
+    saros:::get_indep_level_order(data.frame(g = "a"), data, "g"),
+    c("a", "b", "c")
+  )
+})
+
+testthat::test_that("get_indep_level_order returns NULL without a usable indep", {
+  data <- data.frame(g = factor(c("a", "b")))
+
+  testthat::expect_null(saros:::get_indep_level_order(NULL, data, NULL))
+  testthat::expect_null(saros:::get_indep_level_order(NULL, data, character(0)))
+  testthat::expect_null(saros:::get_indep_level_order(NULL, data, "absent"))
+})
+
+testthat::test_that("get_indep_level_order drops NA from the level order", {
+  data <- data.frame(g = c("a", NA, "b"))
+  data_summary <- data.frame(g = c("b", NA, "a"), .indep_order = c(1, 2, 3))
+
+  testthat::expect_equal(
+    saros:::get_indep_level_order(data_summary, data, "g"),
+    c("b", "a")
+  )
+  testthat::expect_equal(
+    saros:::get_indep_level_order(NULL, data, "g"),
+    c("a", "b")
+  )
+})

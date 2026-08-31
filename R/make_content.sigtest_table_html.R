@@ -4,7 +4,6 @@ make_content.sigtest_table_html <-
     dots <- rlang::list2(...)
 
     data <- dots$data
-    # data_summary <- dots$data_summary
 
     if (!rlang::is_string(dots$translations$sigtest_variable_header_1)) {
       cli::cli_abort(
@@ -16,6 +15,22 @@ make_content.sigtest_table_html <-
         "{.arg translations$sigtest_variable_header_2} must be a string, not {.obj_type_friendly {dots$translations$sigtest_variable_header_2}}."
       )
     }
+
+    # Resolved once per indep rather than per dep/indep pair: the order does
+    # not vary with the dependent variable, and data_summary can be large.
+    indep_levels <- stats::setNames(
+      lapply(
+        dots$indep,
+        function(indep) {
+          get_indep_level_order(
+            data_summary = dots$data_summary,
+            data = data,
+            indep = indep
+          )
+        }
+      ),
+      dots$indep
+    )
 
     out <-
       tidyr::expand_grid(y = dots$dep, x = dots$indep) |>
@@ -71,7 +86,10 @@ make_content.sigtest_table_html <-
                   x_var = x_var,
                   na.rm = dots$showNA %in% c("never"),
                   table_wide = dots$table_wide,
-                  n_categories_limit = dots$n_categories_limit
+                  n_categories_limit = dots$n_categories_limit,
+                  x_levels = if (rlang::is_string(x_var)) {
+                    indep_levels[[x_var]]
+                  }
                 )
               )
             }
