@@ -74,28 +74,32 @@ simple_descriptives <- function(
         data[[yvar]] <- as.numeric(data[[yvar]])
       }
       # Grouping a variable by itself is degenerate; summarize it ungrouped.
-      if (rlang::is_string(x_var) && yvar == x_var) {
-        x_var <- NULL
-      }
+      # Kept iteration-local rather than reassigning `x_var`, so that it is
+      # plain this only concerns the y_var at hand.
+      group_var <- if (rlang::is_string(x_var) && yvar != x_var) x_var
 
       # Must stay below get_raw_labels() above: `[.data.frame` drops the plain
       # `label` attribute that labelled::var_label() sets on a bare vector.
-      if (isTRUE(na.rm) && rlang::is_string(x_var) && x_var %in% names(data)) {
-        data <- data[!is.na(data[[x_var]]), , drop = FALSE]
+      if (
+        isTRUE(na.rm) &&
+          rlang::is_string(group_var) &&
+          group_var %in% names(data)
+      ) {
+        data <- data[!is.na(data[[group_var]]), , drop = FALSE]
       }
 
       if (is_integerish) {
         out <- simple_descriptives_int_table(
           data,
           y_var = yvar,
-          x_var = x_var,
+          x_var = group_var,
           na.rm = na.rm
         )
       } else {
         out <- simplest_descriptives_table(
           data,
           y_var = yvar,
-          x_var = x_var
+          x_var = group_var
         )
       }
       out$.variable_position <- yvar_variable_position

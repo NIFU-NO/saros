@@ -19,9 +19,9 @@
 # int_plot_html (at draw time) and int_table_html.
 
 make_sigtest_data <- function(n_categories, n_na = 0L, seed = 603L) {
-  withr::with_seed(seed, {
-    n <- 200L
-    out <- data.frame(
+  n <- 200L
+  out <- withr::with_seed(seed, {
+    data.frame(
       sektor = factor(
         sample(LETTERS[seq_len(n_categories)], n, replace = TRUE),
         levels = LETTERS[seq_len(n_categories)]
