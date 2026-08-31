@@ -4,6 +4,17 @@
 
 ### Bug Fixes
 
+- `sigtest_table_*` now accepts several `indep` variables when the
+  dependent variable is numeric, as it already did for a categorical
+  one. `summarize_int_cat_data()` passed the whole `indep` vector to
+  `dplyr::bind_rows(.id = )`, which takes a single column name, and the
+  list it stacked was unnamed anyway, so the call aborted. The blocks
+  are now named and identified by a `.indep_name` column, with
+  `.indep_order` computed within each, so `sort_indep_by` resolves
+  separately per independent variable. `cat_*` and `int_*` continue to
+  reject several `indep` variables with their existing message; only
+  `sigtest_table_*` and `chr_table_html` support them
+  ([\#613](https://github.com/NIFU-NO/saros/issues/613))
 - `sort_indep_by` and `descend_indep` are no longer silently ignored
   when the dependent variable is numeric.
   [`generate_data_summary()`](https://nifu-no.github.io/saros/reference/generate_data_summary.md)
