@@ -429,13 +429,16 @@ add_indep_order <- function(
     ord <- descend_if_descending(ord, isTRUE(descend))
     ord
   } else if (length(sort_by) == 1 && sort_by == ".variable_label") {
-    # Alphabetical sorting by variable labels
-    indep_labels <- data[[indep_col]]
-    if (descend) {
-      order(-rank(indep_labels)) # Descending alphabetical
-    } else {
-      rank(indep_labels) # Ascending alphabetical
-    }
+    # `descend_if_descending()` rather than `order(-rank(x))`: `.indep_order`
+    # is consumed as a per-row rank, but `order()` returns a permutation. The
+    # two only coincide when every category contributes the same number of
+    # rows, so the old expression scrambled the order whenever they did not --
+    # a group missing a category, or NA in only some groups (#614).
+    #
+    # Note that `rank()` on a factor ranks by level code, so this currently
+    # orders by factor level rather than alphabetically as documented. That
+    # discrepancy is deliberately left alone here; see #617.
+    descend_if_descending(rank(data[[indep_col]]), isTRUE(descend))
   } else if (length(sort_by) == 1 && startsWith(sort_by, ".")) {
     # Handle special sorting methods (.top, .bottom, .upper, .lower, .count, etc.)
     if (
