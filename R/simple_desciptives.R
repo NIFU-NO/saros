@@ -45,8 +45,8 @@ simple_descriptives <- function(
   y_var,
   x_var = NULL,
   na.rm = TRUE,
-  max_k = 5,
   table_wide = FALSE,
+  n_categories_limit = Inf,
   label_separator = NULL
 ) {
   if (length(x_var) > 1) {
@@ -73,29 +73,33 @@ simple_descriptives <- function(
       if (is.ordered(data[[yvar]])) {
         data[[yvar]] <- as.numeric(data[[yvar]])
       }
-      if (
-        rlang::is_string(x_var) &&
-          (length(unique(data[[x_var]])) > max_k || yvar == x_var)
-      ) {
-        x_var <- NULL
-      }
+      # Grouping a variable by itself is degenerate; summarize it ungrouped.
+      # Kept iteration-local rather than reassigning `x_var`, so that it is
+      # plain this only concerns the y_var at hand.
+      group_var <- if (rlang::is_string(x_var) && yvar != x_var) x_var
 
-      if (isTRUE(na.rm) && rlang::is_string(x_var) && x_var %in% names(data)) {
-        data <- data[!is.na(data[[x_var]]), , drop = FALSE]
+      # Must stay below get_raw_labels() above: `[.data.frame` drops the plain
+      # `label` attribute that labelled::var_label() sets on a bare vector.
+      if (
+        isTRUE(na.rm) &&
+          rlang::is_string(group_var) &&
+          group_var %in% names(data)
+      ) {
+        data <- data[!is.na(data[[group_var]]), , drop = FALSE]
       }
 
       if (is_integerish) {
         out <- simple_descriptives_int_table(
           data,
           y_var = yvar,
-          x_var = x_var,
+          x_var = group_var,
           na.rm = na.rm
         )
       } else {
         out <- simplest_descriptives_table(
           data,
           y_var = yvar,
-          x_var = x_var
+          x_var = group_var
         )
       }
       out$.variable_position <- yvar_variable_position
@@ -105,14 +109,19 @@ simple_descriptives <- function(
     }) |>
     dplyr::bind_rows(.id = ".variable_name")
 
-  if (!rlang::is_string(x_var) || isFALSE(table_wide)) {
+  # Long format, either because it was asked for, because there is nothing to
+  # pivot on, or because the wide table would have too many columns.
+  if (
+    !rlang::is_string(x_var) ||
+      isFALSE(table_wide) ||
+      !x_var %in% names(out) ||
+      dplyr::n_distinct(out[[x_var]]) > n_categories_limit
+  ) {
     return(out)
   }
-  return(
-    tidyr::pivot_wider(
-      out,
-      names_from = tidyselect::all_of(x_var),
-      values_from = -tidyselect::all_of(x_var)
-    )
+  tidyr::pivot_wider(
+    out,
+    names_from = tidyselect::all_of(x_var),
+    values_from = -tidyselect::all_of(x_var)
   )
 }

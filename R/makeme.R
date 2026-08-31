@@ -406,12 +406,14 @@
 #'
 #'   Whether to pivot table wider.
 #'
-#' @param n_categories_limit *Limit for cat_table_ wide format*
+#' @param n_categories_limit *Limit for table wide format*
 #'
 #'   `scalar<integer>` // *default:* `12` (`optional`)
 #'
 #'   If there are more than this number of categories in the categorical variable,
-#'   cat_table_* will have a long format instead of wide format.
+#'   cat_table_* will have a long format instead of wide format. The same limit
+#'   applies to the categories of the independent variable in `sigtest_table_*`,
+#'   which otherwise gains a set of columns per category of `indep`.
 #'
 #' @param plot_height *DOCX-setting*
 #'
