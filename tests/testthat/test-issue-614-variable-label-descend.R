@@ -105,7 +105,7 @@ testthat::test_that("descend_indep reverses .variable_label when NA is confined 
 testthat::test_that("the order column is a rank, with ties within a category", {
   data <- make_label_data()
 
-  summary <- summarize_cat_cat_data(
+  summary <- saros:::summarize_cat_cat_data(
     data = data,
     dep = "dep_1",
     indep = "grp",
