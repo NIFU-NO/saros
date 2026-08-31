@@ -707,13 +707,15 @@ makeme(
 
 - n_categories_limit:
 
-  *Limit for cat_table\_ wide format*
+  *Limit for table wide format*
 
   `scalar<integer>` // *default:* `12` (`optional`)
 
   If there are more than this number of categories in the categorical
   variable, cat_table\_\* will have a long format instead of wide
-  format.
+  format. The same limit applies to the categories of the independent
+  variable in `sigtest_table_*`, which otherwise gains a set of columns
+  per category of `indep`.
 
 - translations:
 

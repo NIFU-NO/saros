@@ -588,10 +588,12 @@ See <code>arrange_section_by</code> for sorting of report sections.</p></dd>
 
 
 <dt id="arg-n-categories-limit">n_categories_limit<a class="anchor" aria-label="anchor" href="#arg-n-categories-limit"></a></dt>
-<dd><p><em>Limit for cat_table_ wide format</em></p>
+<dd><p><em>Limit for table wide format</em></p>
 <p><code>scalar&lt;integer&gt;</code> // <em>default:</em> <code>12</code> (<code>optional</code>)</p>
 <p>If there are more than this number of categories in the categorical variable,
-cat_table_* will have a long format instead of wide format.</p></dd>
+cat_table_* will have a long format instead of wide format. The same limit
+applies to the categories of the independent variable in <code>sigtest_table_*</code>,
+which otherwise gains a set of columns per category of <code>indep</code>.</p></dd>
 
 
 <dt id="arg-translations">translations<a class="anchor" aria-label="anchor" href="#arg-translations"></a></dt>
