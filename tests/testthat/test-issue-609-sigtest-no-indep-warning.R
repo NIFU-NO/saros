@@ -26,16 +26,28 @@ make_no_indep_data <- function(n_dep = 3L) {
   })
 }
 
+# Collects only the uninitialised-column warnings this file is about. Any
+# other warning is deliberately left to propagate, so an unexpected warning
+# stays visible in the test output instead of being silently swallowed --
+# the pattern established in test-issue-457-ggiraph-na-warning.R.
 uninitialised_warnings <- function(expr) {
   warnings_seen <- character(0)
   withCallingHandlers(
     expr,
     warning = function(w) {
-      warnings_seen <<- c(warnings_seen, conditionMessage(w))
-      invokeRestart("muffleWarning")
+      if (
+        grepl(
+          "Unknown or uninitialised column",
+          conditionMessage(w),
+          fixed = TRUE
+        )
+      ) {
+        warnings_seen <<- c(warnings_seen, conditionMessage(w))
+        invokeRestart("muffleWarning")
+      }
     }
   )
-  grep("uninitialised", warnings_seen, value = TRUE)
+  warnings_seen
 }
 
 testthat::test_that("sigtest_table_html does not warn about `x` when there is no indep", {
