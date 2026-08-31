@@ -868,35 +868,49 @@ makeme(
 #> 4                                      <NA>
 #> 5 How much do you like living in - Budapest
 #> 6                                      <NA>
-#>              .variable_label_prefix_Females .variable_name_Definitely humanoid
-#> 1   How much do you like living in - Bejing                               <NA>
-#> 2                                      <NA>                                b_1
-#> 3 How much do you like living in - Brussels                               <NA>
-#> 4                                      <NA>                                b_2
-#> 5 How much do you like living in - Budapest                               <NA>
-#> 6                                      <NA>                                b_3
-#>   .variable_name_Robot? n_valid_Definitely humanoid n_valid_Robot?
-#> 1                  <NA>                          NA             NA
-#> 2                   b_1                         144            156
-#> 3                  <NA>                          NA             NA
-#> 4                   b_2                         144            156
-#> 5                  <NA>                          NA             NA
-#> 6                   b_3                         144            156
-#>   n_Definitely humanoid n_Robot? .variable_position_Definitely humanoid
-#> 1                    NA       NA                                     NA
-#> 2                   144      156                                     13
-#> 3                    NA       NA                                     NA
-#> 4                   144      156                                     14
-#> 5                    NA       NA                                     NA
-#> 6                   144      156                                     15
-#>   .variable_position_Robot?       .variable_label_Definitely humanoid
-#> 1                        NA                                      <NA>
-#> 2                        13   How much do you like living in - Bejing
-#> 3                        NA                                      <NA>
-#> 4                        14 How much do you like living in - Brussels
-#> 5                        NA                                      <NA>
-#> 6                        15 How much do you like living in - Budapest
+#>              .variable_label_prefix_Females .variable_name_Robot?
+#> 1   How much do you like living in - Bejing                  <NA>
+#> 2                                      <NA>                   b_1
+#> 3 How much do you like living in - Brussels                  <NA>
+#> 4                                      <NA>                   b_2
+#> 5 How much do you like living in - Budapest                  <NA>
+#> 6                                      <NA>                   b_3
+#>   .variable_name_Definitely humanoid n_valid_Robot? n_valid_Definitely humanoid
+#> 1                               <NA>             NA                          NA
+#> 2                                b_1            156                         144
+#> 3                               <NA>             NA                          NA
+#> 4                                b_2            156                         144
+#> 5                               <NA>             NA                          NA
+#> 6                                b_3            156                         144
+#>   n_Robot? n_Definitely humanoid .variable_position_Robot?
+#> 1       NA                    NA                        NA
+#> 2      156                   144                        13
+#> 3       NA                    NA                        NA
+#> 4      156                   144                        14
+#> 5       NA                    NA                        NA
+#> 6      156                   144                        15
+#>   .variable_position_Definitely humanoid
+#> 1                                     NA
+#> 2                                     13
+#> 3                                     NA
+#> 4                                     14
+#> 5                                     NA
+#> 6                                     15
 #>                      .variable_label_Robot?
+#> 1                                      <NA>
+#> 2   How much do you like living in - Bejing
+#> 3                                      <NA>
+#> 4 How much do you like living in - Brussels
+#> 5                                      <NA>
+#> 6 How much do you like living in - Budapest
+#>         .variable_label_Definitely humanoid
+#> 1                                      <NA>
+#> 2   How much do you like living in - Bejing
+#> 3                                      <NA>
+#> 4 How much do you like living in - Brussels
+#> 5                                      <NA>
+#> 6 How much do you like living in - Budapest
+#>               .variable_label_prefix_Robot?
 #> 1                                      <NA>
 #> 2   How much do you like living in - Bejing
 #> 3                                      <NA>
@@ -910,13 +924,6 @@ makeme(
 #> 4  How much do you like living in - Brussels
 #> 5                                       <NA>
 #> 6  How much do you like living in - Budapest
-#>               .variable_label_prefix_Robot?
-#> 1                                      <NA>
-#> 2   How much do you like living in - Bejing
-#> 3                                      <NA>
-#> 4 How much do you like living in - Brussels
-#> 5                                      <NA>
-#> 6 How much do you like living in - Budapest
 makeme(
   data = ex_survey,
   dep = p_1:p_4, indep = x2_human,

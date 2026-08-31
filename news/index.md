@@ -4,6 +4,26 @@
 
 ### Bug Fixes
 
+- `sigtest_table_*` now orders the categories of the independent
+  variable the way every other content type does, and respects
+  `sort_indep_by` and `descend_indep`. Previously its per-category
+  columns came out in order of appearance in the data and
+  `sort_indep_by` was ignored entirely – not even its documented default
+  `".factor_order"` had any effect – so the same variable produced a
+  different column order depending on how the input rows happened to be
+  arranged, and merely introducing an `NA` could reshuffle the table.
+  `simple_descriptives()` summarizes with `.by`, which groups in order
+  of first appearance, and nothing re-sorted the result before the wide
+  pivot took its column order from it. The order now comes from the same
+  `.indep_order` that
+  [`add_indep_order()`](https://nifu-no.github.io/saros/reference/add_indep_order.md)
+  computes for the other content types, so an ordered factor still takes
+  precedence over `sort_indep_by`, an `NA` category still sorts last,
+  and the long-format fallback is ordered on the same basis. A numeric
+  dependent variable falls back to the factor’s own levels, since
+  `summarize_int_cat_data()` does no sorting – the same fallback
+  [`arrange_table_data()`](https://nifu-no.github.io/saros/reference/arrange_table_data.md)
+  uses ([\#605](https://github.com/NIFU-NO/saros/issues/605))
 - `sigtest_table_html` no longer aborts with
   `` Element `<indep>` doesn't exist `` when the independent variable
   contains `NA`. `simple_descriptives()` silently dropped the grouping
