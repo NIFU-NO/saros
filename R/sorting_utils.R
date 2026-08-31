@@ -472,6 +472,132 @@ add_indep_order <- function(
   data
 }
 
+#' Validate a `sort_indep_by` key against what an integer summary can honor
+#'
+#' `summarize_int_cat_data()` produces one row per dependent variable and
+#' independent category, with no `.category` or `.proportion` column. The
+#' proportion-based keys, `.sum_value` and category vectors therefore have no
+#' meaning here. They used to be accepted and then silently discarded, along
+#' with `descend_indep`; they now abort, in the spirit of #600 (#608).
+#'
+#' @param sort_by The `sort_indep_by` value supplied by the user.
+#' @param call Calling environment for the error message.
+#' @return `invisible(TRUE)`, or aborts.
+#'
+#' @keywords internal
+validate_sort_indep_by_int <- function(sort_by, call = rlang::caller_env()) {
+  if (is.null(sort_by) || length(sort_by) == 0) {
+    return(invisible(TRUE))
+  }
+
+  keys <- .saros.env$allowed_indep_sort_keys_int
+  if (length(sort_by) == 1 && sort_by %in% keys) {
+    return(invisible(TRUE))
+  }
+
+  unsupported <- setdiff(sort_by, keys)
+  cat_only <- intersect(unsupported, .saros.env$allowed_indep_sort_keys)
+  cli::cli_abort(
+    c(
+      x = "Invalid {.arg sort_indep_by} for a numeric dependent variable: {.val {unsupported}}.",
+      i = "Supported key{?s}: {.val {keys}}.",
+      i = if (length(cat_only) > 0) {
+        "{.val {cat_only}} order{?s/} by response categories, which a numeric dependent variable does not have."
+      } else {
+        "Category labels cannot be used, because a numeric dependent variable has no categories."
+      }
+    ),
+    call = call
+  )
+}
+
+#' Add independent variable ordering to an integer summary
+#'
+#' The counterpart to `add_indep_order()` for `summarize_int_cat_data()`
+#' output, which has one row per dependent variable and independent category
+#' rather than one per response category. Sets `.indep_order`, so that
+#' `arrange_table_data()` and `get_indep_level_order()` pick the order up the
+#' same way they do for a categorical dependent variable (#608).
+#'
+#' @param data An integer summary
+#' @param indep Name of the independent variable, or `NULL`
+#' @param sort_by How to sort the independent variable categories
+#' @param descend Whether to reverse the resulting order
+#' @param call Calling environment for error reporting
+#' @return `data` with an `.indep_order` column
+#'
+#' @keywords internal
+add_indep_order_int <- function(
+  data,
+  indep,
+  sort_by = ".factor_order",
+  descend = FALSE,
+  call = rlang::caller_env()
+) {
+  if (is.null(sort_by) || length(sort_by) == 0) {
+    sort_by <- ".factor_order"
+  }
+  # Validated even when there is nothing to sort, so that an unusable key is
+  # reported rather than passing unnoticed whenever `indep` happens to be absent.
+  validate_sort_indep_by_int(sort_by, call = call)
+
+  if (!rlang::is_string(indep) || !indep %in% names(data)) {
+    data$.indep_order <- 1
+    return(data)
+  }
+
+  indep_values <- data[[indep]]
+
+  # An ordered factor keeps its level order regardless of `sort_by`, the same
+  # precedence rule `add_indep_order()` applies.
+  if (is.ordered(indep_values)) {
+    data$.indep_order <- descend_if_descending(
+      as.integer(indep_values),
+      isTRUE(descend)
+    )
+    return(data)
+  }
+
+  data$.indep_order <- if (sort_by == ".factor_order") {
+    if (!is.factor(indep_values)) {
+      indep_values <- factor(indep_values, levels = unique(indep_values))
+    }
+    descend_if_descending(as.integer(indep_values), isTRUE(descend))
+  } else if (sort_by == ".variable_label") {
+    # `descend_if_descending()` rather than `order(-rank(x))`: the latter mixes
+    # rank and permutation semantics and gives a different answer depending on
+    # how many rows share a category, which is not a reversal.
+    descend_if_descending(rank(indep_values), isTRUE(descend))
+  } else {
+    # There is exactly one row per dependent variable and category, so the
+    # summary column itself is the ordering value.
+    column <- switch(
+      sort_by,
+      ".count" = "n_valid",
+      ".count_per_indep_group" = "n_valid",
+      ".mean" = "mean",
+      ".median" = "median"
+    )
+    if (!column %in% names(data)) {
+      cli::cli_abort(
+        c(
+          x = "Cannot sort by {.val {sort_by}}: column {.var {column}} is missing from the summary.",
+          i = "This is a bug in saros; please report it."
+        ),
+        call = call
+      )
+    }
+    calculate_indep_column_order(
+      data,
+      column_name = column,
+      indep_col = indep,
+      descend_indep = isTRUE(descend)
+    )
+  }
+
+  data
+}
+
 #' Read the intended order of the independent variable's categories
 #'
 #' Content types that build their own tables rather than arranging

@@ -95,6 +95,24 @@ make_content.int_plot_html <-
       dep_labels[[".variable_label"]] <- ""
     }
 
+    # `sort_indep_by` reaches the plot by reordering the levels the axis or
+    # facet is drawn from, taking the order from the same summary column the
+    # table types read (#608). strip_wrap_var() only renames levels, so the
+    # order set here survives the wrapping below.
+    if (length(dots$indep) == 1) {
+      indep_levels <- get_indep_level_order(
+        data_summary = dots$data_summary,
+        data = dots$data,
+        indep = dots$indep
+      )
+      if (length(indep_levels) > 0) {
+        dots$data[[dots$indep]] <- relevel_preserving_attributes(
+          dots$data[[dots$indep]],
+          levels = indep_levels
+        )
+      }
+    }
+
     x_axis_var <- dep_axis_text_var
     facet_var <- character()
     if (length(dots$indep) == 1 && isFALSE(dots$inverse)) {

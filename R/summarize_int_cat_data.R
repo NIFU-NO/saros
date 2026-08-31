@@ -3,6 +3,8 @@ summarize_int_cat_data <-
     data,
     dep = colnames(data),
     indep = NULL,
+    sort_indep_by = ".factor_order",
+    descend_indep = FALSE,
     ...,
     call = rlang::caller_env()
   ) {
@@ -30,7 +32,7 @@ summarize_int_cat_data <-
       )
     }
 
-    if (length(indep) <= 1) {
+    out <- if (length(indep) <= 1) {
       simple_descriptives(
         data = data,
         y_var = dep,
@@ -46,4 +48,15 @@ summarize_int_cat_data <-
       }) |>
         dplyr::bind_rows(.id = indep)
     }
+
+    # `.indep_order` is what makes `sort_indep_by` and `descend_indep` reach
+    # the table and plot types; without it they were accepted and discarded
+    # (#608).
+    add_indep_order_int(
+      out,
+      indep = if (length(indep) == 1) indep,
+      sort_by = sort_indep_by,
+      descend = descend_indep,
+      call = call
+    )
   }

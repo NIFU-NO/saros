@@ -397,6 +397,8 @@ generate_data_summary <- function(
       data = subset_data,
       dep = dep_crwd,
       indep = indep_crwd,
+      sort_indep_by = args$sort_indep_by,
+      descend_indep = args$descend_indep,
       ...
     )
   } else if (all(variable_types$dep %in% c("factor", "ordered", "character"))) {
