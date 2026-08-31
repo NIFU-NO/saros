@@ -1,5 +1,3 @@
-#' Validate that a column-based sort references an existing column
-
 #' Validate a `sort_indep_by` key against what `add_indep_order()` implements
 #'
 #' `add_indep_order()` previously fell back to an unsorted `seq_len(nrow(data))`
@@ -41,6 +39,7 @@ validate_sort_indep_by <- function(sort_by, data, call = rlang::caller_env()) {
   )
 }
 
+#' Validate that a column-based sort references an existing column
 #'
 #' Fails fast with an informative error when `sort_by` names a column
 #' (from the allowed whitelist) that is not present in `data`.
