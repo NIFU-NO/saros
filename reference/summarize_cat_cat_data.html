@@ -237,7 +237,14 @@ order the same data differently.</p></dd>
 
 
 </dl><p>Supplying a key outside this set raises an error listing the valid
-alternatives. See <code><a href="../articles/sorting.html">vignette("sorting", package = "saros")</a></code>.</p></dd>
+alternatives. See <code><a href="../articles/sorting.html">vignette("sorting", package = "saros")</a></code>.</p>
+<p>For a <strong>numeric</strong> dependent variable the summary has no response categories,
+so only <code>".factor_order"</code>, <code>".variable_label"</code>, <code>".count"</code>,
+<code>".count_per_indep_group"</code>, <code>".mean"</code> and <code>".median"</code> can be honored –
+<code>".mean"</code> and <code>".median"</code> then refer to the dependent variable's own values
+within each independent group, rather than to ordinal category codes. The
+category-based keys and a vector of category labels raise an error there
+rather than being silently ignored.</p></dd>
 
 
 <dt id="arg-sort-indep-by">sort_indep_by<a class="anchor" aria-label="anchor" href="#arg-sort-indep-by"></a></dt>

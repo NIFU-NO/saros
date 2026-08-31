@@ -17,6 +17,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/add_category_order.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/add_dep_order.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/add_indep_order.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/add_indep_order_int.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/add_sorting_order_vars.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/apply_final_arrangement.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/apply_label_wrapping.html</loc></url>
@@ -117,6 +118,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/process_table_data.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/quarto_pdf_post_render.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/read_quarto_post_render_input.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/relevel_preserving_attributes.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/rename_crowd_outputs.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/reorder_crowd_array.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/reorder_within.html</loc></url>
@@ -148,6 +150,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/validate_sort_category.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_sort_column.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_sort_indep_by.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/validate_sort_indep_by_int.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_string.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_string_rule.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/validate_type_specific_constraints.html</loc></url>

@@ -243,6 +243,15 @@ summarize_cat_cat_data(
   alternatives. See
   [`vignette("sorting", package = "saros")`](https://nifu-no.github.io/saros/articles/sorting.md).
 
+  For a **numeric** dependent variable the summary has no response
+  categories, so only `".factor_order"`, `".variable_label"`,
+  `".count"`, `".count_per_indep_group"`, `".mean"` and `".median"` can
+  be honored – `".mean"` and `".median"` then refer to the dependent
+  variable's own values within each independent group, rather than to
+  ordinal category codes. The category-based keys and a vector of
+  category labels raise an error there rather than being silently
+  ignored.
+
 - sort_indep_by:
 
   *What to sort independent variable categories by*

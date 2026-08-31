@@ -4,6 +4,36 @@
 
 ### Bug Fixes
 
+- `sort_indep_by` and `descend_indep` are no longer silently ignored
+  when the dependent variable is numeric.
+  [`generate_data_summary()`](https://nifu-no.github.io/saros/reference/generate_data_summary.md)
+  passed them to
+  [`summarize_cat_cat_data()`](https://nifu-no.github.io/saros/reference/summarize_cat_cat_data.md)
+  but not to `summarize_int_cat_data()`, which never called the sorting
+  machinery, so the summary carried no `.indep_order` and
+  `int_table_html`, `int_plot_html` and `sigtest_table_html` all fell
+  back to the independent variable’s factor levels – even for
+  `descend_indep`, which is not a sort key at all. Ordering by
+  `".count"`, `".count_per_indep_group"`, `".mean"` or `".median"` now
+  works there, and matches the categorical path for every key whose
+  meaning does not depend on the type of the dependent variable. The
+  keys that need response categories (`".top"`, `".bottom"`, `".upper"`,
+  `".lower"`, `".mid_upper"`, `".mid_lower"`, `".sum_value"`, and a
+  vector of category labels) now raise an error naming the offending key
+  and the supported alternatives, instead of being accepted and
+  discarded ([\#608](https://github.com/NIFU-NO/saros/issues/608))
+- Reordering the categories of an independent variable no longer drops
+  its variable label. [`factor()`](https://rdrr.io/r/base/factor.html)
+  returns a value carrying only `levels` and `class`, so the naive
+  reorder discarded the `label` attribute that the plot titles read –
+  the same attribute loss behind
+  [\#603](https://github.com/NIFU-NO/saros/issues/603). New internal
+  [`relevel_preserving_attributes()`](https://nifu-no.github.io/saros/reference/relevel_preserving_attributes.md)
+  copies back everything
+  [`factor()`](https://rdrr.io/r/base/factor.html) does not set itself;
+  it also fixes the same latent loss in the `sigtest_table_*` ordering
+  added in [\#605](https://github.com/NIFU-NO/saros/issues/605)
+  ([\#608](https://github.com/NIFU-NO/saros/issues/608))
 - `sigtest_table_*` no longer emits
   `` Unknown or uninitialised column: `x` `` warnings when called
   without an `indep`. With no independent variable
@@ -29,11 +59,11 @@
   [`add_indep_order()`](https://nifu-no.github.io/saros/reference/add_indep_order.md)
   computes for the other content types, so an ordered factor still takes
   precedence over `sort_indep_by`, an `NA` category still sorts last,
-  and the long-format fallback is ordered on the same basis. A numeric
-  dependent variable falls back to the factor’s own levels, since
-  `summarize_int_cat_data()` does no sorting – the same fallback
-  [`arrange_table_data()`](https://nifu-no.github.io/saros/reference/arrange_table_data.md)
-  uses ([\#605](https://github.com/NIFU-NO/saros/issues/605))
+  and the long-format fallback is ordered on the same basis. Numeric
+  dependent variables initially still fell back to the factor’s own
+  levels here; that was lifted in
+  [\#608](https://github.com/NIFU-NO/saros/issues/608), below
+  ([\#605](https://github.com/NIFU-NO/saros/issues/605))
 - `sigtest_table_html` no longer aborts with
   `` Element `<indep>` doesn't exist `` when the independent variable
   contains `NA`. `simple_descriptives()` silently dropped the grouping

@@ -211,6 +211,31 @@ makeme(
 Independent ordering is computed *per dependent variable*, so the group
 order may legitimately differ between the rows of a single figure.
 
+### When the dependent variable is numeric
+
+An `int_*` or `sigtest_*` output built on a numeric dependent variable
+has no response categories, so the keys that aggregate over them cannot
+be honored. Only `".factor_order"`, `".variable_label"`, `".count"`,
+`".count_per_indep_group"`, `".mean"` and `".median"` apply there.
+`".mean"` and `".median"` are the most useful of these: they order the
+groups by the dependent variable’s own values, putting the
+lowest-scoring group first.
+
+``` r
+
+makeme(
+  data = ex_survey,
+  dep = c_1,
+  indep = x1_sex,
+  type = "int_table_html",
+  sort_indep_by = ".mean",
+  descend_indep = TRUE
+)
+```
+
+The remaining keys raise an error naming what is supported, rather than
+being accepted and quietly dropped.
+
 ## Direction
 
 `descend` reverses `sort_dep_by`; `descend_indep` reverses
@@ -250,9 +275,11 @@ Two caveats are worth knowing:
 - A key that *is* whitelisted but whose column the output type never
   computed reports that separately, naming the columns that can be
   sorted on.
-- Keys that do not apply to an output type at all (for instance a
-  proportion-based key on an `int_*` type) are ignored rather than
-  rejected, so check the result if a sort appears to have had no effect.
+- A key that cannot apply to the output at all — a proportion-based key
+  on a numeric dependent variable, say — is rejected the same way,
+  naming the keys that do apply. Earlier versions accepted and silently
+  ignored these, so a sort could appear to have had no effect; they now
+  fail loudly instead.
 
 ## Setting a sort order once for the whole report
 
