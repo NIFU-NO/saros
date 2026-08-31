@@ -631,6 +631,16 @@ get_indep_level_order <- function(data_summary, data, indep) {
     is.data.frame(data_summary) &&
       all(c(indep, ".indep_order") %in% names(data_summary))
   ) {
+    # A summary stacking several independent variables repeats `.indep_order`
+    # across its blocks, so narrow to the one being asked about (#613).
+    if (".indep_name" %in% names(data_summary)) {
+      data_summary <- data_summary[
+        !is.na(data_summary[[".indep_name"]]) &
+          data_summary[[".indep_name"]] == indep,
+        ,
+        drop = FALSE
+      ]
+    }
     ordered <- data_summary[
       order(data_summary[[".indep_order"]]),
       ,

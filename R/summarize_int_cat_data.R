@@ -32,31 +32,31 @@ summarize_int_cat_data <-
       )
     }
 
-    out <- if (length(indep) <= 1) {
-      simple_descriptives(
-        data = data,
-        y_var = dep,
-        x_var = indep
-      )
-    } else {
-      lapply(indep, function(i) {
+    # `.indep_order` is what makes `sort_indep_by` and `descend_indep` reach
+    # the table and plot types; without it they were accepted and discarded
+    # (#608). It is added per independent variable, before the blocks are
+    # stacked, so each carries its own ordering.
+    summarize_one <- function(i) {
+      add_indep_order_int(
         simple_descriptives(
           data = data,
           y_var = dep,
           x_var = i
-        )
-      }) |>
-        dplyr::bind_rows(.id = indep)
+        ),
+        indep = i,
+        sort_by = sort_indep_by,
+        descend = descend_indep,
+        call = call
+      )
     }
 
-    # `.indep_order` is what makes `sort_indep_by` and `descend_indep` reach
-    # the table and plot types; without it they were accepted and discarded
-    # (#608).
-    add_indep_order_int(
-      out,
-      indep = if (length(indep) == 1) indep,
-      sort_by = sort_indep_by,
-      descend = descend_indep,
-      call = call
-    )
+    if (length(indep) <= 1) {
+      return(summarize_one(if (length(indep) == 1) indep))
+    }
+
+    # One block per independent variable, identified by `.indep_name`. `.id`
+    # takes a single column name and the list has to be named for it to record
+    # anything useful; passing the whole `indep` vector was invalid (#613).
+    lapply(rlang::set_names(indep), summarize_one) |>
+      dplyr::bind_rows(.id = ".indep_name")
   }
