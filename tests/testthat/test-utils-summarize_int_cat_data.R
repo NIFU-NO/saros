@@ -68,7 +68,8 @@ test_that("summarize_int_cat_data works with no indep variable", {
 })
 
 test_that("summarize_int_cat_data works with multiple indep variables", {
-  # The function has a bug with multiple indep - it passes the vector to .id parameter
+  # This used to abort: the whole `indep` vector was passed as `.id`, which
+  # takes a single column name, and the list was unnamed anyway (#613).
   data <- data.frame(
     x = 1:8,
     y = c(10, 20, 30, 40, 50, 60, 70, 80),
@@ -76,11 +77,17 @@ test_that("summarize_int_cat_data works with multiple indep variables", {
     w = factor(c("X", "X", "Y", "Y", "X", "X", "Y", "Y"))
   )
 
-  # This reveals a bug in the function - .id must be a single string
-  expect_error(
-    summarize_int_cat_data(data, dep = "x", indep = c("z", "w")),
-    ".id.*must be a single string"
-  )
+  result <- summarize_int_cat_data(data, dep = "x", indep = c("z", "w"))
+
+  # One block per independent variable, identified by `.indep_name`, each
+  # holding one row per category of its own variable.
+  expect_true(is.data.frame(result))
+  expect_equal(result$.indep_name, c("z", "z", "w", "w"))
+  expect_equal(as.character(result$z), c("A", "B", NA, NA))
+  expect_equal(as.character(result$w), c(NA, NA, "X", "Y"))
+  expect_equal(result$n_valid, c(4L, 4L, 4L, 4L))
+  # `.indep_order` restarts within each block.
+  expect_equal(result$.indep_order, c(1L, 2L, 1L, 2L))
 })
 
 test_that("summarize_int_cat_data handles multiple dep variables", {
