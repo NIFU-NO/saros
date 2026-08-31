@@ -455,12 +455,14 @@ Whether to pivot table wider.}
 
 Whether to include the main question as a header in the table.}
 
-\item{n_categories_limit}{\emph{Limit for cat_table_ wide format}
+\item{n_categories_limit}{\emph{Limit for table wide format}
 
 \verb{scalar<integer>} // \emph{default:} \code{12} (\code{optional})
 
 If there are more than this number of categories in the categorical variable,
-cat_table_* will have a long format instead of wide format.}
+cat_table_* will have a long format instead of wide format. The same limit
+applies to the categories of the independent variable in \verb{sigtest_table_*},
+which otherwise gains a set of columns per category of \code{indep}.}
 
 \item{translations}{\emph{Localize your output}
 
