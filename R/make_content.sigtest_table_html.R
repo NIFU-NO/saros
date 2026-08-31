@@ -38,13 +38,17 @@ make_content.sigtest_table_html <-
       dplyr::group_map(
         .keep = TRUE,
         .f = ~ {
-          if (
-            rlang::is_string(.x$y) &&
-              (!rlang::is_string(.x$x) || .x$y != .x$x)
-          ) {
-            y_var <- .x$y
-            x_var <- if (rlang::is_string(.x$x)) .x$x
+          # `[[` rather than `$`: with no `indep` there is no `x` column at
+          # all, and `$` warns once per access for a column a tibble does not
+          # have (#609). Both are read once, up front, so the checks below
+          # cannot reintroduce that.
+          y_var <- .x[["y"]]
+          x_var <- .x[["x"]]
+          if (!rlang::is_string(x_var)) {
+            x_var <- NULL
+          }
 
+          if (rlang::is_string(y_var) && (is.null(x_var) || y_var != x_var)) {
             if (rlang::is_string(x_var)) {
               # Filter out NAs
               data2 <- data[
