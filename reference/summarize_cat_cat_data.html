@@ -227,12 +227,13 @@ about which category dominates – use <code>.top</code> or <code>.bottom</code>
 <dd><p>Sort by the summed value column.</p></dd>
 
 <dt>character()</dt>
-<dd><p>Character vector of category labels. Sorting uses the
-<em>counts</em> in those categories, not their proportions: a single label orders
-by that category's <code>.count</code>, and several labels order by the summed
-<code>.sum_value</code> when that column is present, otherwise by the summed <code>.count</code>.
-Across variables with unequal numbers of respondents this differs from
-ordering by proportion.</p></dd>
+<dd><p>Character vector of category labels. Note that the two
+forms use different bases. A <strong>single</strong> label orders by that category's
+<code>.count</code>. <strong>Several</strong> labels order by the summed <code>.sum_value</code>, which sums
+the proportions – or the counts when <code>data_label = "count"</code>. Across
+variables with unequal numbers of respondents the count and proportion
+orderings differ, so a single label and a one-element-longer vector can
+order the same data differently.</p></dd>
 
 
 </dl><p>Supplying a key outside this set raises an error listing the valid
