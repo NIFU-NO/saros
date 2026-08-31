@@ -47,7 +47,9 @@
   `".lower"`, `".mid_upper"`, `".mid_lower"`, `".sum_value"`, and a
   vector of category labels) now raise an error naming the offending key
   and the supported alternatives, instead of being accepted and
-  discarded ([\#608](https://github.com/NIFU-NO/saros/issues/608))
+  discarded. **Code that passed one of those keys with a numeric
+  dependent variable will now stop rather than silently ignore it**
+  ([\#608](https://github.com/NIFU-NO/saros/issues/608))
 - Reordering the categories of an independent variable no longer drops
   its variable label. [`factor()`](https://rdrr.io/r/base/factor.html)
   returns a value carrying only `levels` and `class`, so the naive
@@ -88,7 +90,10 @@
   and the long-format fallback is ordered on the same basis. Numeric
   dependent variables initially still fell back to the factor’s own
   levels here; that was lifted in
-  [\#608](https://github.com/NIFU-NO/saros/issues/608), below
+  [\#608](https://github.com/NIFU-NO/saros/issues/608), above. **This
+  changes the column order of existing `sigtest_table_*` output**, which
+  cannot be avoided while fixing the bug – the previous order was
+  whatever `.by` happened to emit rather than a deliberate layout
   ([\#605](https://github.com/NIFU-NO/saros/issues/605))
 - `sigtest_table_html` no longer aborts with
   `` Element `<indep>` doesn't exist `` when the independent variable
@@ -166,6 +171,20 @@
 
 ### Documentation
 
+- `devtools::document()` no longer rewrites files no source change had
+  touched. A title line left stranded above
+  [`validate_sort_indep_by()`](https://nifu-no.github.io/saros/reference/validate_sort_indep_by.md)
+  when it was added in
+  [\#600](https://github.com/NIFU-NO/saros/issues/600) meant
+  [`validate_sort_column()`](https://nifu-no.github.io/saros/reference/validate_sort_column.md)’s
+  block had no title of its own, so roxygen promoted its description
+  into a four-line `\title{}`. Reattaching the line restores the title,
+  and the two `.Rd` files that had simply never been resynced –
+  `man/validate_sort_indep_by.Rd`, never generated, and
+  `man/summarize_cat_cat_data.Rd`, still carrying the `sort_dep_by`
+  wording [\#601](https://github.com/NIFU-NO/saros/issues/601) replaced
+  – are now in step with their sources
+  ([\#606](https://github.com/NIFU-NO/saros/issues/606))
 - `_pkgdown.yml` now has an `articles:` section, grouping the vignettes
   into “Using saros” and “Background” so they appear in the site
   navigation. The group description cross-links to saros.base, which
