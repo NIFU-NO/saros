@@ -4,6 +4,16 @@
 
 ### Bug Fixes
 
+- `sigtest_table_*` no longer emits
+  `` Unknown or uninitialised column: `x` `` warnings when called
+  without an `indep`. With no independent variable
+  [`tidyr::expand_grid()`](https://tidyr.tidyverse.org/reference/expand_grid.html)
+  produces no `x` column at all, and `$` warns once per access for a
+  column a tibble does not have, where `[[` returns `NULL` silently.
+  Both call sites already handled `NULL` correctly, so the output was
+  never affected – but the noise scaled with the number of dependent
+  variables, two warnings apiece
+  ([\#609](https://github.com/NIFU-NO/saros/issues/609))
 - `sigtest_table_*` now orders the categories of the independent
   variable the way every other content type does, and respects
   `sort_indep_by` and `descend_indep`. Previously its per-category
