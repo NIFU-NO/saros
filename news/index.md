@@ -4,6 +4,21 @@
 
 ### Bug Fixes
 
+- `sort_indep_by = ".variable_label"` combined with
+  `descend_indep = TRUE` no longer returns a scrambled order instead of
+  a reversed one.
+  [`add_indep_order()`](https://nifu-no.github.io/saros/reference/add_indep_order.md)
+  built the order column with `order(-rank(x))`, but `.indep_order` is
+  consumed as a per-row rank while
+  [`order()`](https://rdrr.io/r/base/order.html) returns a permutation.
+  The two coincide only when every category contributes the same number
+  of rows to the summary, so the mistake cancelled out in the common
+  case and surfaced whenever they did not – a group where nobody chose a
+  given response, or `showNA = "ifany"` with missing values in only some
+  groups. Ascending order was unaffected. Note that it orders by factor
+  level rather than alphabetically as documented; that separate
+  discrepancy is [\#617](https://github.com/NIFU-NO/saros/issues/617)
+  ([\#614](https://github.com/NIFU-NO/saros/issues/614))
 - `sigtest_table_*` now accepts several `indep` variables when the
   dependent variable is numeric, as it already did for a categorical
   one. `summarize_int_cat_data()` passed the whole `indep` vector to
