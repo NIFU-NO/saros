@@ -118,6 +118,30 @@ get_dep_label_prefix <- function(obj) {
   if (is_valid(val)) val else ""
 }
 
+#' Reorder a factor's levels without losing its other attributes
+#'
+#' `factor()` returns a value carrying only `levels` and `class`, so it
+#' silently drops the variable `label` that `get_raw_labels()` and the plot
+#' titles read. Everything `factor()` does not set itself is copied back.
+#'
+#' @param x A factor or vector to reorder
+#' @param levels Desired level order. Observed values it does not mention keep
+#'   their place at the end rather than becoming `NA`.
+#' @return `x` with its levels reordered and its attributes intact
+#'
+#' @keywords internal
+relevel_preserving_attributes <- function(x, levels) {
+  observed <- unique(as.character(x))
+  out <- factor(
+    x,
+    levels = union(levels, observed[!is.na(observed)]),
+    ordered = is.ordered(x)
+  )
+  restore <- setdiff(names(attributes(x)), names(attributes(out)))
+  attributes(out)[restore] <- attributes(x)[restore]
+  out
+}
+
 #' Apply string wrapping to variables (character or factor)
 #'
 #' A utility function that applies string wrapping to both character and factor

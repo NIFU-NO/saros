@@ -113,14 +113,10 @@ simple_descriptives <- function(
           rlang::is_string(group_var) &&
           group_var %in% names(out)
       ) {
-        observed <- as.character(out[[group_var]])
-        # Any category not accounted for keeps its place at the end rather
-        # than being silently turned into NA by factor().
-        all_levels <- c(
-          x_levels,
-          setdiff(unique(observed[!is.na(observed)]), x_levels)
+        out[[group_var]] <- relevel_preserving_attributes(
+          out[[group_var]],
+          levels = x_levels
         )
-        out[[group_var]] <- factor(out[[group_var]], levels = all_levels)
         out <- out[order(out[[group_var]]), , drop = FALSE]
       }
 

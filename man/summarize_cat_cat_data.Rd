@@ -129,7 +129,15 @@ order the same data differently.}
 }
 
 Supplying a key outside this set raises an error listing the valid
-alternatives. See \code{vignette("sorting", package = "saros")}.}
+alternatives. See \code{vignette("sorting", package = "saros")}.
+
+For a \strong{numeric} dependent variable the summary has no response categories,
+so only \code{".factor_order"}, \code{".variable_label"}, \code{".count"},
+\code{".count_per_indep_group"}, \code{".mean"} and \code{".median"} can be honored --
+\code{".mean"} and \code{".median"} then refer to the dependent variable's own values
+within each independent group, rather than to ordinal category codes. The
+category-based keys and a vector of category labels raise an error there
+rather than being silently ignored.}
 
 \item{sort_indep_by}{\emph{What to sort independent variable categories by}
 

@@ -77,6 +77,19 @@ if (!exists(".saros.env")) {
       ".median",
       ".sum_value"
     )
+  # The subset of those keys an integer summary can honor. The proportion-based
+  # keys, `.sum_value` and category vectors all need a `.category`/`.proportion`
+  # column, which `summarize_int_cat_data()` has no equivalent of, so they are
+  # rejected rather than silently ignored (#608).
+  .saros.env$allowed_indep_sort_keys_int <<-
+    c(
+      ".factor_order",
+      ".variable_label",
+      ".count",
+      ".count_per_indep_group",
+      ".mean",
+      ".median"
+    )
   .saros.env$data_label_opts <<-
     c(
       "proportion",

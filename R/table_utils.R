@@ -256,33 +256,34 @@ round_numeric_stats <- function(data, digits) {
 arrange_table_data <- function(data, col_basis, indep_vars = NULL) {
   # Use explicit order columns if available (new centralized sorting)
   if (".dep_order" %in% names(data)) {
-    # Primary sort by dependent variable order, then category order
-    # Include independent variable order if available
-    data |>
-      dplyr::arrange(
-        .data$.dep_order,
-        .data$.indep_order,
-        .data$.category_order
-      )
-  } else {
-    # Fallback to original logic for backward compatibility
-    # Preserve factor level order for the primary sort column
-    if (is.factor(data[[col_basis]])) {
-      # For factors, arrange by factor levels (preserves the order set by sorting functions)
-      data |>
-        dplyr::arrange(
-          as.integer(.data[[col_basis]]),
-          if (length(indep_vars) > 0) .data[[indep_vars[1]]]
-        )
-    } else {
-      # For non-factors, use standard sorting
-      data |>
-        dplyr::arrange(
-          .data[[col_basis]],
-          if (length(indep_vars) > 0) .data[[indep_vars[1]]]
-        )
-    }
+    # Primary sort by dependent variable order, then indep and category order
+    return(dplyr::arrange(
+      data,
+      .data$.dep_order,
+      .data$.indep_order,
+      .data$.category_order
+    ))
   }
+
+  # Preserve factor level order for the primary sort column, which is the
+  # order the sorting functions set.
+  primary <- if (is.factor(data[[col_basis]])) {
+    rlang::expr(as.integer(.data[[!!col_basis]]))
+  } else {
+    rlang::expr(.data[[!!col_basis]])
+  }
+
+  # An integer summary carries `.indep_order` but no `.dep_order`, so the
+  # dependent variables keep the order they already have while the independent
+  # categories follow `sort_indep_by` (#608). Without it, fall back to the raw
+  # indep values as before.
+  secondary <- if (".indep_order" %in% names(data)) {
+    rlang::expr(.data$.indep_order)
+  } else if (length(indep_vars) > 0) {
+    rlang::expr(.data[[!!indep_vars[1]]])
+  }
+
+  dplyr::arrange(data, !!!Filter(Negate(is.null), list(primary, secondary)))
 }
 
 #' Process data with standard table operations
