@@ -47,6 +47,7 @@ simple_descriptives <- function(
   na.rm = TRUE,
   table_wide = FALSE,
   n_categories_limit = Inf,
+  x_levels = NULL,
   label_separator = NULL
 ) {
   if (length(x_var) > 1) {
@@ -78,14 +79,34 @@ simple_descriptives <- function(
       # plain this only concerns the y_var at hand.
       group_var <- if (rlang::is_string(x_var) && yvar != x_var) x_var
 
-      # Must stay below get_raw_labels() above: `[.data.frame` drops the plain
-      # `label` attribute that labelled::var_label() sets on a bare vector.
+      # Both of these must stay below get_raw_labels() above: `[.data.frame`
+      # drops the plain `label` attribute that labelled::var_label() sets on a
+      # bare vector.
       if (
         isTRUE(na.rm) &&
           rlang::is_string(group_var) &&
           group_var %in% names(data)
       ) {
         data <- data[!is.na(data[[group_var]]), , drop = FALSE]
+      }
+
+      # `.by` groups in order of appearance, so the rows have to be ordered
+      # for the summary -- and the wide pivot built from it -- to come out in
+      # the intended category order.
+      if (
+        !is.null(x_levels) &&
+          rlang::is_string(group_var) &&
+          group_var %in% names(data)
+      ) {
+        values <- as.character(data[[group_var]])
+        # Any category not accounted for keeps its place at the end rather
+        # than being silently turned into NA by factor().
+        all_levels <- c(
+          x_levels,
+          setdiff(unique(values[!is.na(values)]), x_levels)
+        )
+        data[[group_var]] <- factor(data[[group_var]], levels = all_levels)
+        data <- data[order(data[[group_var]]), , drop = FALSE]
       }
 
       if (is_integerish) {
