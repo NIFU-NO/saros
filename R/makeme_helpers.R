@@ -512,7 +512,6 @@ initialize_crowd_filtering <- function(crowd, args) {
         crowd = crwd,
         mesos_var = args$mesos_var,
         mesos_group = args$mesos_group,
-        hide_for_crowd_if_all_na = args$hide_for_crowd_if_all_na,
         hide_for_crowd_if_valid_n_below = args$hide_for_crowd_if_valid_n_below,
         hide_for_crowd_if_category_k_below = args$hide_for_crowd_if_category_k_below,
         hide_for_crowd_if_category_n_below = args$hide_for_crowd_if_category_n_below,

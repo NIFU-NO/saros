@@ -101,18 +101,23 @@
 #'   all `crowd`-outputs if it for some reason is not displayed for that crowd.
 #'   For instance, say:
 #'
-#'   `crowd = c("target", "others", "all"), hide_for_crowd_if_all_na = TRUE,`
+#'   `crowd = c("target", "others", "all"), hide_for_crowd_if_valid_n_below = 10,`
 #'   `hide_for_all_crowds_if_hidden_for_crowd = "target"`
 #'
-#'   will hide variables from the others- and all-outputs if all are NA in
-#'   the target-group. The others-output follows the target-output in this
-#'   respect even when this argument is `NULL`; see `crowd`.
+#'   will hide variables from the others- and all-outputs if fewer than 10 in
+#'   the target-group answered them. The others-output follows the
+#'   target-output in this respect even when this argument is `NULL`; see
+#'   `crowd`.
 #'
-#' @param hide_for_crowd_if_all_na *Hide variable from output if containing all NA*
+#' @param hide_for_crowd_if_all_na *Deprecated*
 #'
 #'   `scalar<boolean>` // *default:* `TRUE`
 #'
-#'   Whether to remove all variables (in particular useful for mesos) if all values are NA
+#'   No longer has any effect, and never reliably had one: a variable that is
+#'   all `NA` for a crowd has nothing to show and is always hidden for that
+#'   crowd. Supplying the argument, or setting it to `FALSE` through
+#'   [global_settings_set()], gives a deprecation warning. It will be removed in
+#'   a future version.
 #'
 #' @param hide_for_crowd_if_valid_n_below *Hide variable if variable has < n observations*
 #'
@@ -634,6 +639,23 @@ makeme <-
       cli::cli_warn(
         "The 'sort_by' parameter is deprecated. Use 'sort_dep_by' and 'sort_indep_by' instead for clearer control.",
         call. = FALSE
+      )
+    }
+
+    # A variable that is all NA for a crowd has nothing to show and is always
+    # hidden, so `hide_for_crowd_if_all_na = FALSE` could never take effect
+    # (#626).
+    if (
+      is_arg_explicit("hide_for_crowd_if_all_na", match.call()) ||
+        !isTRUE(args$hide_for_crowd_if_all_na)
+    ) {
+      cli::cli_warn(
+        c(
+          "!" = "{.arg hide_for_crowd_if_all_na} is deprecated and has no effect.",
+          "i" = "A variable that is all {.val {NA}} for a crowd is always hidden for it."
+        ),
+        .frequency = "regularly",
+        .frequency_id = "saros_hide_for_crowd_if_all_na"
       )
     }
 

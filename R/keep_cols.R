@@ -5,7 +5,6 @@ keep_cols <- function(
   mesos_var = NULL,
   mesos_group = NULL,
   crowd = "all",
-  hide_for_crowd_if_all_na = FALSE, # 1
   hide_for_crowd_if_valid_n_below = 0, # 2
   hide_for_crowd_if_category_k_below = 0, # 3
   hide_for_crowd_if_category_n_below = 0, # 4
@@ -27,9 +26,9 @@ keep_cols <- function(
 
   for (d in dep) {
     d_char <- as.character(out[[d]])
-    keep_1 <-
-      isFALSE(hide_for_crowd_if_all_na) ||
-      !all(is.na(d_char))
+    # A variable that is all NA has nothing to show, so it is always hidden;
+    # `hide_for_crowd_if_all_na` is deprecated (#626).
+    keep_1 <- !all(is.na(d_char))
     keep_2 <-
       sum(!is.na(d_char)) >= hide_for_crowd_if_valid_n_below
     x <- unique(d_char)

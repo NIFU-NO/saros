@@ -183,39 +183,25 @@ test_that("makeme handles combination of valid and all-NA variables correctly", 
   expect_equal(result$`Total (N)`, 300) # Should have all observations from a_1
 })
 
-test_that("makeme with all-NA variable works when hiding is disabled", {
+test_that("makeme hides an all-NA variable even with every hiding rule off", {
   data("ex_survey", package = "saros")
 
   test_data <- ex_survey[1:50, ] # Smaller dataset for testing
   test_data$all_na_var <- factor(NA, levels = c("No", "Yes"))
   attr(test_data$all_na_var, "label") <- "All NA Test Variable"
 
-  # When explicitly allowing all-NA variables, this should work without error
-  # Note: The all-NA variable might still be filtered by other criteria
-  expect_no_error({
-    result <- makeme(
-      data = test_data,
-      dep = c(a_1, all_na_var),
-      type = "cat_table_html",
-      hide_for_crowd_if_all_na = FALSE,
-      hide_for_crowd_if_category_k_below = 0, # Disable category count filtering
-      hide_for_crowd_if_valid_n_below = 0 # Disable valid count filtering
-    )
-  })
-
+  # hide_for_crowd_if_all_na is deprecated (#626): an all-NA variable has
+  # nothing to show and is hidden regardless.
   result <- makeme(
     data = test_data,
     dep = c(a_1, all_na_var),
     type = "cat_table_html",
-    hide_for_crowd_if_all_na = FALSE,
     hide_for_crowd_if_category_k_below = 0,
     hide_for_crowd_if_valid_n_below = 0
   )
 
   expect_true(is.data.frame(result))
-  # The key test is that it doesn't error - the exact number of rows may vary
-  # based on other filtering criteria
-  expect_true(nrow(result) >= 1) # At least a_1 should be present
+  expect_equal(nrow(result), 1) # Only a_1 remains
 })
 
 test_that("makeme mixed type error still works for truly mixed types", {
