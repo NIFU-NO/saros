@@ -16,9 +16,18 @@ crosstable_validate_columns <- function(data, dep, indep) {
 }
 
 # Helper function: Add totals for independent variables
+#
+# Every row is copied into the total group, once per independent variable.
+# The copies are marked in `.saros_total_copy`, so that counts of respondents
+# can leave them out: they add a bar, not respondents (#625). The marker never
+# reaches the output, which selects its columns by name.
 crosstable_add_totals <- function(data, indep, translations) {
+  if (!".saros_total_copy" %in% names(data)) {
+    data$.saros_total_copy <- FALSE
+  }
   for (indep_var in indep) {
     data_duplicate <- data
+    data_duplicate$.saros_total_copy <- TRUE
     data_duplicate[[indep_var]] <- forcats::fct_na_value_to_level(
       data_duplicate[[indep_var]],
       level = translations$by_total
@@ -148,8 +157,17 @@ crosstable_calculate_proportions <- function(
   )
   names(summary_prop)[ncol(summary_prop)] <- ".count"
 
-  # Summaries per dep variable (e.g. b_1, b_2)
-  summary_prop[[".count_per_dep"]] <- sum(summary_prop$.count, na.rm = TRUE)
+  # Summaries per dep variable (e.g. b_1, b_2): the respondents behind it.
+  # Summing `.count` would count each of them again in the total group when
+  # `totals = TRUE` -- once per independent variable (#625).
+  originals <- if (".saros_total_copy" %in% names(data)) {
+    !data$.saros_total_copy
+  } else {
+    rep(TRUE, nrow(data))
+  }
+  summary_prop[[".count_per_dep"]] <- sum(stats::complete.cases(
+    data[originals, c(indep, ".category"), drop = FALSE]
+  ))
 
   # Summaries per indep group (e.g. males, females)
   grouped_count <- tryCatch(
