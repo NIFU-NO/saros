@@ -44,7 +44,15 @@ validate_makeme_options <- function(params) {
       # String parameters (possibly NULL)
       mesos_var = list(fun = validate_string_rule(null_allowed = TRUE)),
       mesos_group = list(fun = validate_string_rule(null_allowed = TRUE)),
-      hide_for_all_if_hidden_for_crowd = list(fun = validate_string_rule(null_allowed = TRUE)),
+      # Keyed on a misspelling, `hide_for_all_if_hidden_for_crowd`, until
+      # #627, so the argument was never checked and a typo silently turned
+      # the rule off.
+      hide_for_all_crowds_if_hidden_for_crowd = list(fun = function(x) {
+        is.null(x) ||
+          (is.character(x) &&
+            length(x) > 0 &&
+            all(x %in% c("target", "others", "all")))
+      }),
       path = list(fun = validate_string_rule(null_allowed = TRUE)),
       label_separator = list(fun = validate_character_vector_rule(null_allowed = TRUE)),
       labels_always_at_top = list(fun = validate_character_vector_rule(null_allowed = TRUE)),
