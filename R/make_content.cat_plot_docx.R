@@ -44,10 +44,21 @@ make_content.cat_plot_docx <-
       dplyr::n_distinct(data[[".variable_label"]]) == 1
 
     if (isTRUE(hide_axis_text)) {
-      # Store original label before hiding for later retrieval
-      data[[".variable_label_original"]] <- data[[".variable_label"]]
+      # Keep the label for later retrieval; see make_content.cat_plot_html()
+      # for why a label add_n_to_label() already stored is kept (#624).
+      if (!".variable_label_original" %in% colnames(data)) {
+        data[[".variable_label_original"]] <- data[[".variable_label"]]
+      }
       data[[".variable_label"]] <- ""
     }
+
+    # An mschart has no facets: with the independent variable on the axis, a
+    # single dependent variable's label is not drawn at all.
+    dep_label_is_hidden <-
+      isTRUE(hide_axis_text) ||
+      (length(indep_vars) == 1 &&
+        isFALSE(dots$inverse) &&
+        dplyr::n_distinct(data$.variable_name) == 1)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in%
@@ -141,6 +152,7 @@ make_content.cat_plot_docx <-
 
     # Return mschart object directly if requested
     if (isTRUE(dots$docx_return_object)) {
+      m <- attach_dep_label_hidden(m, dep_label_is_hidden)
       return(attach_dep_label_prefix(m, dots$main_question))
     }
 
