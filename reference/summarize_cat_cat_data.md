@@ -302,7 +302,8 @@ summarize_cat_cat_data(
 
   ".variable_label"
 
-  :   Sort alphabetically by the independent category labels.
+  :   Sort alphabetically by the independent category labels. An `NA`
+      category stays last.
 
   ".count"
 

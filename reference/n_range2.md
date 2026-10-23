@@ -2,8 +2,14 @@
 
 Takes a plot object from
 [`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) and
-returns the sample size (N) range as a formatted string. Works with both
-`ggplot2` objects and `mschart` objects.
+returns the sample size (N) as a formatted string: the number of
+respondents behind each dependent variable, given as a range when the
+dependent variables differ. With an independent variable this is still
+the whole sample, not the sizes of the smallest and largest group; use
+`add_n_to_indep_label = TRUE` in
+[`makeme()`](https://nifu-no.github.io/saros/reference/makeme.md) to
+show the N of each group in its label. Works with both `ggplot2` objects
+and `mschart` objects.
 
 ## Usage
 

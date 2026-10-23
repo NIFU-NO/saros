@@ -120,7 +120,8 @@ for a single crowd, from data filtering to final output generation.</p>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Complete processing pipeline:</p><ul><li><p>Calculates omitted variables for the crowd</p></li>
+    <p>Complete processing pipeline:</p><ul><li><p>Calculates omitted variables for the crowd; the others crowd also omits
+whatever the target crowd omits (#622)</p></li>
 <li><p>Filters data by crowd membership and variable exclusions</p></li>
 <li><p>Applies independent category filtering if enabled</p></li>
 <li><p>Detects variable types and generates data summary</p></li>

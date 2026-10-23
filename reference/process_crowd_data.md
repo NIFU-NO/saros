@@ -69,7 +69,8 @@ Final output object for the crowd, or NULL if no data remains:
 
 Complete processing pipeline:
 
-- Calculates omitted variables for the crowd
+- Calculates omitted variables for the crowd; the others crowd also
+  omits whatever the target crowd omits (#622)
 
 - Filters data by crowd membership and variable exclusions
 

@@ -11,7 +11,6 @@
 <url><loc>https://nifu-no.github.io/saros/articles/saros_name.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/articles/sorting.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/authors.html</loc></url>
-<url><loc>https://nifu-no.github.io/saros/copilot-analysis-sorting-problems.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/index.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/news/index.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/add_category_order.html</loc></url>
@@ -71,6 +70,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/get_fig_title_suffix_from_ggplot.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_fill_levels.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_indep_col_name.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/get_indep_col_names.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_indep_labels.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_indep_level_order.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/get_makeme_types.html</loc></url>
@@ -117,6 +117,7 @@
 <url><loc>https://nifu-no.github.io/saros/reference/process_single_pdf_post_render.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/process_table_data.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/quarto_pdf_post_render.html</loc></url>
+<url><loc>https://nifu-no.github.io/saros/reference/rank_labels_alphabetically.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/read_quarto_post_render_input.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/relevel_preserving_attributes.html</loc></url>
 <url><loc>https://nifu-no.github.io/saros/reference/rename_crowd_outputs.html</loc></url>

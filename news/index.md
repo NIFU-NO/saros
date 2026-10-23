@@ -4,6 +4,69 @@
 
 ### Bug Fixes
 
+- `crowd = c("target", "others")` no longer shows a variable for the
+  others when it is hidden for the target. Each crowd was filtered on
+  its own, so a variable the `hide_for_crowd_if_*` rules removed for a
+  small target group – too few respondents, a single category used –
+  still appeared under the others: a comparison with nothing to compare
+  against, and one that, next to an `all` output, lets a reader recover
+  the target’s hidden result by subtraction. The others-output now
+  follows the target-output by itself, whether or not
+  `hide_for_all_crowds_if_hidden_for_crowd = "target"` is set; that
+  argument is still what extends the rule to `all`. **This hides output
+  that was previously shown**: in a target-and-others report, a variable
+  the target could not show no longer appears for the others either
+  ([\#622](https://github.com/NIFU-NO/saros/issues/622))
+- [`n_range2()`](https://nifu-no.github.io/saros/reference/n_range2.md),
+  and with it the captions that
+  [`get_fig_title_suffix_from_ggplot()`](https://nifu-no.github.io/saros/reference/get_fig_title_suffix_from_ggplot.md)
+  and
+  [`crowd_plots_as_tabset()`](https://nifu-no.github.io/saros/reference/crowd_plots_as_tabset.md)
+  build, now report the number of respondents behind each dependent
+  variable (`.count_per_dep`) rather than the range of the bar-group
+  sizes (`.count_per_indep_group`). With an independent variable the
+  caption read e.g. `N = [149-151]` for a figure of 300 respondents, as
+  though half the sample were missing; it now reads `N = 300`, which is
+  what the data-based
+  [`n_range()`](https://nifu-no.github.io/saros/reference/n_range.md)
+  has always returned for the same variables. Without an independent
+  variable the two columns coincide, so nothing changes there. The N of
+  each group belongs in the group’s label, via
+  `add_n_to_indep_label = TRUE`, usable again now that
+  [\#620](https://github.com/NIFU-NO/saros/issues/620) is fixed
+  ([\#621](https://github.com/NIFU-NO/saros/issues/621))
+- `add_n_to_indep_label = TRUE` no longer drops the independent variable
+  out of `cat_plot_html` and `cat_plot_docx`. `add_n_to_label()` keeps
+  the pre-suffix labels in a `<indep>_original` companion column, and
+  the independent variable was identified by excluding the standard
+  summary columns from the data, so the companion passed for a second
+  independent variable and the plot fell back to the layout for no
+  `indep`: the item label on the axis and again in the strip, with no
+  split by group. The same miscount made
+  [`fig_height_h_barchart2()`](https://nifu-no.github.io/saros/reference/fig_height_h_barchart2.md)
+  abort with “only supports a single indep variable”. New internal
+  [`get_indep_col_names()`](https://nifu-no.github.io/saros/reference/get_indep_col_names.md)
+  is now the one place that identifies the independent variable, and it
+  leaves out the `_original` companions and `.value`
+  ([\#620](https://github.com/NIFU-NO/saros/issues/620))
+- `sort_indep_by = ".variable_label"` now orders the categories of the
+  independent variable alphabetically, as
+  [`?makeme`](https://nifu-no.github.io/saros/reference/makeme.md) and
+  [`vignette("sorting")`](https://nifu-no.github.io/saros/articles/sorting.md)
+  have always said and as `sort_dep_by = ".variable_label"` does for the
+  dependent variables. [`rank()`](https://rdrr.io/r/base/rank.html) on a
+  factor ranks by level code, so the key had been a silent duplicate of
+  `".factor_order"`. The labels are compared as text, in the same
+  C-locale collation the dependent side gets from
+  [`dplyr::arrange()`](https://dplyr.tidyverse.org/reference/arrange.html),
+  and an `NA` category stays last as it does under every other key;
+  [`add_indep_order_int()`](https://nifu-no.github.io/saros/reference/add_indep_order_int.md)
+  uses the same helper, so the categorical and numeric paths still
+  agree. **This changes the output order for anyone passing
+  `sort_indep_by = ".variable_label"` with an independent variable whose
+  levels are not already alphabetical**; `".factor_order"`, the default,
+  is unchanged and gives what that key used to
+  ([\#617](https://github.com/NIFU-NO/saros/issues/617))
 - `sort_indep_by = ".variable_label"` combined with
   `descend_indep = TRUE` no longer returns a scrambled order instead of
   a reversed one.
@@ -15,9 +78,10 @@
   of rows to the summary, so the mistake cancelled out in the common
   case and surfaced whenever they did not – a group where nobody chose a
   given response, or `showNA = "ifany"` with missing values in only some
-  groups. Ascending order was unaffected. Note that it orders by factor
-  level rather than alphabetically as documented; that separate
-  discrepancy is [\#617](https://github.com/NIFU-NO/saros/issues/617)
+  groups. Ascending order was unaffected. That the same key ordered by
+  factor level rather than alphabetically was a separate problem, fixed
+  in this version; see the
+  [\#617](https://github.com/NIFU-NO/saros/issues/617) entry above
   ([\#614](https://github.com/NIFU-NO/saros/issues/614))
 - `sigtest_table_*` now accepts several `indep` variables when the
   dependent variable is numeric, as it already did for a categorical
@@ -171,6 +235,13 @@
 
 ### Documentation
 
+- Corrected the documented default of `crowd` in
+  [`?makeme`](https://nifu-no.github.io/saros/reference/makeme.md),
+  which is `"all"` rather than `c("target", "others", "all")`, and the
+  argument names in the `hide_for_all_crowds_if_hidden_for_crowd`
+  example, which referred to `hide_variable_if_all_na` and
+  `hide_for_all_if_hidden_for_crowd` – neither of which exists
+  ([\#622](https://github.com/NIFU-NO/saros/issues/622))
 - `devtools::document()` no longer rewrites files no source change had
   touched. A title line left stranded above
   [`validate_sort_indep_by()`](https://nifu-no.github.io/saros/reference/validate_sort_indep_by.md)
@@ -201,6 +272,14 @@
 
 ### Internal Improvements
 
+- Removed files that did not belong in the package repository: an
+  AI-assistant workflow note (`.copilot-instructions.md`), a dated
+  analysis of the sorting code (`copilot-analysis-sorting-problems.md`),
+  a generated coverage report (`coverage_report.html`) and the HTML
+  widget libraries it pulled in (`lib/`), together with their
+  `.Rbuildignore` and `.gitignore` entries. The bare `lib` pattern in
+  `.Rbuildignore` would also have kept any future file whose path
+  contains those three letters out of the built package
 - Documented, at all four call sites and with tests, that `crosstable()`
   computes `.mean` and `.median` over the *factor level codes* of
   ordinal scales rather than over the category labels. This is

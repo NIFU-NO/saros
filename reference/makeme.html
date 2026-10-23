@@ -171,9 +171,13 @@ detect the appropriate type based on your dependent variables:</p><ul><li><p>Num
 
 <dt id="arg-crowd">crowd<a class="anchor" aria-label="anchor" href="#arg-crowd"></a></dt>
 <dd><p><em>Which group(s) to display results for</em></p>
-<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>c("target", "others", "all")</code> (<code>optional</code>)</p>
+<p><code>vector&lt;character&gt;</code> // <em>default:</em> <code>"all"</code> (<code>optional</code>)</p>
 <p>Choose whether to produce results for target (mesos) group, others, all, or
-combinations of these.</p></dd>
+combinations of these. <code>"others"</code> is the complement of <code>"target"</code>, so a
+variable hidden for the target by any of the <code>hide_for_crowd_if_*</code> rules
+is hidden for the others as well: a comparison group is of no use without
+the group it is compared with. <code>hide_for_all_crowds_if_hidden_for_crowd</code>
+extends that to the remaining crowds.</p></dd>
 
 
 <dt id="arg-mesos-var">mesos_var<a class="anchor" aria-label="anchor" href="#arg-mesos-var"></a></dt>
@@ -230,12 +234,13 @@ Cells with a 0 count is not considered as these are usually not a problem for an
 <dd><p><em>Conditional hiding</em></p>
 <p><code>scalar&lt;character&gt;</code> // <em>default:</em> <code>NULL</code> (<code>optional</code>)</p>
 <p>Select one of the <code>crowd</code> output groups. If selected, will hide a variable across
-all <code>crowd</code>-outputs if it for some reason is not displayed for
-<code>hide_for_all_if_hidden_for_crowd</code>. For instance, say:</p>
-<p><code>crowd = c("target", "others"), hide_variable_if_all_na = TRUE,</code>
-<code>hide_for_all_if_hidden_for_crowd = "target"</code></p>
-<p>will hide variables from both target and others-outputs if all are NA in
-the target-group.</p></dd>
+all <code>crowd</code>-outputs if it for some reason is not displayed for that crowd.
+For instance, say:</p>
+<p><code>crowd = c("target", "others", "all"), hide_for_crowd_if_all_na = TRUE,</code>
+<code>hide_for_all_crowds_if_hidden_for_crowd = "target"</code></p>
+<p>will hide variables from the others- and all-outputs if all are NA in
+the target-group. The others-output follows the target-output in this
+respect even when this argument is <code>NULL</code>; see <code>crowd</code>.</p></dd>
 
 
 <dt id="arg-hide-indep-cat-for-all-crowds-if-hidden-for-crowd">hide_indep_cat_for_all_crowds_if_hidden_for_crowd<a class="anchor" aria-label="anchor" href="#arg-hide-indep-cat-for-all-crowds-if-hidden-for-crowd"></a></dt>
@@ -484,7 +489,8 @@ Passing <code>NULL</code> is accepted and treated as <code>".factor_order"</code
 (default). Equivalent to passing <code>NULL</code>.</p></dd>
 
 <dt>".variable_label"</dt>
-<dd><p>Sort alphabetically by the independent category labels.</p></dd>
+<dd><p>Sort alphabetically by the independent category labels.
+An <code>NA</code> category stays last.</p></dd>
 
 <dt>".count"</dt>
 <dd><p>Sort by cell count.</p></dd>
