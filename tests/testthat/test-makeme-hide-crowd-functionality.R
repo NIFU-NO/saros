@@ -1,4 +1,4 @@
-test_that("makeme respects hide_for_crowd_if_all_na argument", {
+test_that("makeme always hides a variable that is all NA", {
   data("ex_survey", package = "saros")
 
   # Test with individual variables to avoid mixing variable types
@@ -6,26 +6,24 @@ test_that("makeme respects hide_for_crowd_if_all_na argument", {
   test_data$all_na_var <- factor(NA, levels = c("No", "Yes"))
   attr(test_data$all_na_var, "label") <- "All NA Variable"
 
-  # Test all_na_var individually with hide_for_crowd_if_all_na = TRUE (default)
+  # all_na_var on its own
   result_hide_true <- makeme(
     data = test_data,
     dep = all_na_var,
     type = "cat_table_html",
-    label_separator = " - ",
-    hide_for_crowd_if_all_na = TRUE
+    label_separator = " - "
   )
 
   # all_na_var should be hidden (empty result)
   expect_true(is.data.frame(result_hide_true))
   expect_equal(nrow(result_hide_true), 0) # Variable should be hidden
 
-  # Test all_na_var individually with hide_for_crowd_if_all_na = TRUE (default)
+  # all_na_var on its own
   result_hide_true <- makeme(
     data = test_data,
     dep = c(all_na_var),
     type = "cat_table_html",
-    label_separator = " - ",
-    hide_for_crowd_if_all_na = TRUE
+    label_separator = " - "
   )
 
   # all_na_var should be hidden (empty result)
@@ -40,12 +38,11 @@ test_that("makeme respects hide_for_crowd_if_all_na argument", {
   )
   attr(test_data$mostly_na_var, "label") <- "Mostly NA Variable"
 
-  # Test with hide_for_crowd_if_all_na = TRUE (should be included as it's not ALL NA)
+  # Mostly NA is not all NA, so the variable is included
   result_mostly_na_true <- makeme(
     data = test_data,
     dep = mostly_na_var,
     type = "cat_table_html",
-    hide_for_crowd_if_all_na = TRUE,
     hide_for_crowd_if_valid_n_below = 1,
     hide_for_crowd_if_category_k_below = 1
   )
@@ -58,8 +55,7 @@ test_that("makeme respects hide_for_crowd_if_all_na argument", {
   result_normal <- makeme(
     data = test_data,
     dep = a_1,
-    type = "cat_table_html",
-    hide_for_crowd_if_all_na = TRUE
+    type = "cat_table_html"
   )
 
   # a_1 should be included as it has valid data
@@ -240,8 +236,7 @@ test_that("makeme hide arguments work with integer variables", {
   result_all_na <- makeme(
     data = test_data,
     dep = all_na_int,
-    type = "int_table_html",
-    hide_for_crowd_if_all_na = TRUE
+    type = "int_table_html"
   )
 
   # all_na_int should be hidden (all NA)
@@ -265,7 +260,6 @@ test_that("makeme hide arguments work with integer variables", {
     data = test_data,
     dep = c_1,
     type = "int_table_html",
-    hide_for_crowd_if_all_na = TRUE,
     hide_for_crowd_if_valid_n_below = 5
   )
 
@@ -285,7 +279,6 @@ test_that("makeme hide arguments work correctly with mesos functionality", {
     mesos_var = "f_uni",
     mesos_group = "Uni of A",
     type = "cat_table_html",
-    hide_for_crowd_if_all_na = TRUE,
     hide_for_crowd_if_valid_n_below = 5
   )
 
@@ -304,8 +297,7 @@ test_that("makeme hide arguments preserve expected output structure when hiding 
   result_keep <- makeme(
     data = test_data,
     dep = c(a_1, a_2),
-    type = "cat_table_html",
-    hide_for_crowd_if_all_na = TRUE
+    type = "cat_table_html"
   )
 
   # Should include both a_1 and a_2
@@ -342,7 +334,6 @@ test_that("makeme hide arguments work with combinations of hiding conditions", {
     data = test_data,
     dep = a_1,
     type = "cat_table_html",
-    hide_for_crowd_if_all_na = TRUE,
     hide_for_crowd_if_category_k_below = 2,
     hide_for_crowd_if_valid_n_below = 5
   )

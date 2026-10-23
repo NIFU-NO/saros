@@ -142,11 +142,15 @@ String, target group.}
 If TRUE, a list output with a single output element will return the element
 itself, whereas list with multiple elements will return the list.}
 
-\item{hide_for_crowd_if_all_na}{\emph{Hide variable from output if containing all NA}
+\item{hide_for_crowd_if_all_na}{\emph{Deprecated}
 
 \verb{scalar<boolean>} // \emph{default:} \code{TRUE}
 
-Whether to remove all variables (in particular useful for mesos) if all values are NA}
+No longer has any effect, and never reliably had one: a variable that is
+all \code{NA} for a crowd has nothing to show and is always hidden for that
+crowd. Supplying the argument, or setting it to \code{FALSE} through
+\code{\link[=global_settings_set]{global_settings_set()}}, gives a deprecation warning. It will be removed in
+a future version.}
 
 \item{hide_for_crowd_if_valid_n_below}{\emph{Hide variable if variable has < n observations}
 
@@ -183,12 +187,13 @@ Select one of the \code{crowd} output groups. If selected, will hide a variable 
 all \code{crowd}-outputs if it for some reason is not displayed for that crowd.
 For instance, say:
 
-\verb{crowd = c("target", "others", "all"), hide_for_crowd_if_all_na = TRUE,}
+\verb{crowd = c("target", "others", "all"), hide_for_crowd_if_valid_n_below = 10,}
 \code{hide_for_all_crowds_if_hidden_for_crowd = "target"}
 
-will hide variables from the others- and all-outputs if all are NA in
-the target-group. The others-output follows the target-output in this
-respect even when this argument is \code{NULL}; see \code{crowd}.}
+will hide variables from the others- and all-outputs if fewer than 10 in
+the target-group answered them. The others-output follows the
+target-output in this respect even when this argument is \code{NULL}; see
+\code{crowd}.}
 
 \item{hide_indep_cat_for_all_crowds_if_hidden_for_crowd}{\emph{Conditionally hide independent categories}
 

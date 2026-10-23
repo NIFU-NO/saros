@@ -22,6 +22,9 @@
 -   `ggiraph` is now required at `>= 0.9.2`, the version that fixed the upstream "Failed setting attribute 'data-id'/'onclick', mismatched lengths of ids and values" warnings when plot data contain `NA` (#457)
 -   `get_dep_label_prefix()` now returns `""` when the `dep_label_prefix` attribute is `NA_character_` or has more than one element, as its documentation promises. Previously it returned `NA` in that case, because `nzchar(NA)` is `TRUE` (#585)
 
+## Deprecations
+-   `makeme(hide_for_crowd_if_all_na = )` is deprecated. `FALSE` never took effect: a variable that is all `NA` for a crowd has nothing to show, and it was dropped regardless -- once by `keep_cols()`, which required at least one non-empty category whatever the argument said, and again by the per-crowd processing, which drops every all-`NA` dependent variable with a warning. Passing the argument, or setting it to `FALSE` through `global_settings_set()`, now warns that it is deprecated and has no effect. Output is unchanged. It will be removed in a future version (#626)
+
 ## Documentation
 -   Corrected the documented default of `crowd` in `?makeme`, which is `"all"` rather than `c("target", "others", "all")`, and the argument names in the `hide_for_all_crowds_if_hidden_for_crowd` example, which referred to `hide_variable_if_all_na` and `hide_for_all_if_hidden_for_crowd` -- neither of which exists (#622)
 -   `devtools::document()` no longer rewrites files no source change had touched. A title line left stranded above `validate_sort_indep_by()` when it was added in #600 meant `validate_sort_column()`'s block had no title of its own, so roxygen promoted its description into a four-line `\title{}`. Reattaching the line restores the title, and the two `.Rd` files that had simply never been resynced -- `man/validate_sort_indep_by.Rd`, never generated, and `man/summarize_cat_cat_data.Rd`, still carrying the `sort_dep_by` wording #601 replaced -- are now in step with their sources (#606)

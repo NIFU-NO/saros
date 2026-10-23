@@ -34,29 +34,27 @@ testthat::test_that("keep_cols returns all data for 'all' group", {
   testthat::expect_equal(result$data, data)
 })
 
-testthat::test_that("keep_cols retains columns if hide_for_crowd_if_all_na is FALSE", {
+testthat::test_that("keep_cols retains a column that is not all NA for the crowd", {
   data <- data.frame(dep1 = c(NA, NA, 1), mesos_var = c("A", "B", "A"))
   result <- saros:::keep_cols(
     data,
     dep = "dep1",
     mesos_var = "mesos_var",
     mesos_group = "A",
-    crowd = "target",
-    hide_for_crowd_if_all_na = FALSE
+    crowd = "target"
   )
   testthat::expect_equal(result$omitted_vars, character(0))
 })
 
 
-testthat::test_that("keep_cols omits all NA columns if hide_for_crowd_if_all_na is TRUE", {
+testthat::test_that("keep_cols always omits a column that is all NA for the crowd", {
   data <- data.frame(dep1 = c(NA, NA, NA), mesos_var = c("A", "B", "A"))
   result <- saros:::keep_cols(
     data,
     dep = "dep1",
     mesos_var = "mesos_var",
     mesos_group = "A",
-    crowd = "target",
-    hide_for_crowd_if_all_na = TRUE
+    crowd = "target"
   )
   testthat::expect_equal(result$omitted_vars, "dep1")
 })
