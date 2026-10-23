@@ -35,8 +35,13 @@ value (1) or a range with minimum-maximum of values (2).}
 String.
 }
 \description{
-Takes a plot object from \code{makeme()} and returns the sample size (N) range as a
-formatted string. Works with both \code{ggplot2} objects and \code{mschart} objects.
+Takes a plot object from \code{makeme()} and returns the sample size (N) as a
+formatted string: the number of respondents behind each dependent variable,
+given as a range when the dependent variables differ. With an independent
+variable this is still the whole sample, not the sizes of the smallest and
+largest group; use \code{add_n_to_indep_label = TRUE} in \code{\link[=makeme]{makeme()}} to show the
+N of each group in its label. Works with both \code{ggplot2} objects and
+\code{mschart} objects.
 }
 \examples{
 # With ggplot2 (cat_plot_html)

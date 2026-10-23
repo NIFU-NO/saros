@@ -118,10 +118,14 @@ Whether to check if all items share common categories.}
 
 \item{crowd}{\emph{Which group(s) to display results for}
 
-\verb{vector<character>} // \emph{default:} \code{c("target", "others", "all")} (\code{optional})
+\verb{vector<character>} // \emph{default:} \code{"all"} (\code{optional})
 
 Choose whether to produce results for target (mesos) group, others, all, or
-combinations of these.}
+combinations of these. \code{"others"} is the complement of \code{"target"}, so a
+variable hidden for the target by any of the \verb{hide_for_crowd_if_*} rules
+is hidden for the others as well: a comparison group is of no use without
+the group it is compared with. \code{hide_for_all_crowds_if_hidden_for_crowd}
+extends that to the remaining crowds.}
 
 \item{mesos_var}{\emph{Variable in \code{data} indicating groups to tailor reports for}
 
@@ -176,14 +180,15 @@ Cells with a 0 count is not considered as these are usually not a problem for an
 \verb{scalar<character>} // \emph{default:} \code{NULL} (\code{optional})
 
 Select one of the \code{crowd} output groups. If selected, will hide a variable across
-all \code{crowd}-outputs if it for some reason is not displayed for
-\code{hide_for_all_if_hidden_for_crowd}. For instance, say:
+all \code{crowd}-outputs if it for some reason is not displayed for that crowd.
+For instance, say:
 
-\verb{crowd = c("target", "others"), hide_variable_if_all_na = TRUE,}
-\code{hide_for_all_if_hidden_for_crowd = "target"}
+\verb{crowd = c("target", "others", "all"), hide_for_crowd_if_all_na = TRUE,}
+\code{hide_for_all_crowds_if_hidden_for_crowd = "target"}
 
-will hide variables from both target and others-outputs if all are NA in
-the target-group.}
+will hide variables from the others- and all-outputs if all are NA in
+the target-group. The others-output follows the target-output in this
+respect even when this argument is \code{NULL}; see \code{crowd}.}
 
 \item{hide_indep_cat_for_all_crowds_if_hidden_for_crowd}{\emph{Conditionally hide independent categories}
 
@@ -389,7 +394,8 @@ Passing \code{NULL} is accepted and treated as \code{".factor_order"}.
 \item{".bottom"}{The proportions for the lowest category available.}
 \item{".factor_order"}{Preserve the independent variable's factor level order
 (default). Equivalent to passing \code{NULL}.}
-\item{".variable_label"}{Sort alphabetically by the independent category labels.}
+\item{".variable_label"}{Sort alphabetically by the independent category labels.
+An \code{NA} category stays last.}
 \item{".count"}{Sort by cell count.}
 \item{".count_per_indep_group"}{Sort by the total number of valid responses in
 each independent group, so the largest groups come first. Useful for ordering

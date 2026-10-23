@@ -615,11 +615,7 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
       min_value <- min(c(min_value, 1), na.rm = TRUE)
     }
 
-    # Identify indep variable, excluding .value (int_plot_html data column) which
-    # is absent from summary_data_sort2 and would otherwise be falsely detected.
-    indep_vars <- colnames(data)[
-      !colnames(data) %in% c(.saros.env$summary_data_sort2, ".value")
-    ]
+    indep_vars <- get_indep_col_names(data)
 
     if (length(indep_vars) > 1) {
       cli::cli_abort(
@@ -800,10 +796,7 @@ fig_height_h_barchart2.ms_chart <- # mschart method
     # The mschart data has the same structure as ggplot data from makeme
     # So we can use the same processing logic
 
-    # TODO: Should find a more robust way to identify the indep variable
-    indep_vars <- colnames(data)[
-      !colnames(data) %in% .saros.env$summary_data_sort2
-    ]
+    indep_vars <- get_indep_col_names(data)
 
     if (length(indep_vars) > 1) {
       cli::cli_abort(

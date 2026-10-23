@@ -180,7 +180,7 @@ makeme(
 | Key | Orders by |
 |---|---|
 | `".factor_order"` (or `NULL`) | The indep factor's own level order (the default) |
-| `".variable_label"` | The category labels, alphabetically |
+| `".variable_label"` | The category labels, alphabetically (an `NA` category stays last) |
 | `".top"`, `".upper"`, `".mid_upper"`, `".mid_lower"`, `".lower"`, `".bottom"` | The same response-pattern aggregates as for `sort_dep_by` |
 | `".count"` | Cell count |
 | `".count_per_indep_group"` | Total valid responses in each independent group |

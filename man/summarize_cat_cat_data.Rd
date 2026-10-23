@@ -157,7 +157,8 @@ Passing \code{NULL} is accepted and treated as \code{".factor_order"}.
 \item{".bottom"}{The proportions for the lowest category available.}
 \item{".factor_order"}{Preserve the independent variable's factor level order
 (default). Equivalent to passing \code{NULL}.}
-\item{".variable_label"}{Sort alphabetically by the independent category labels.}
+\item{".variable_label"}{Sort alphabetically by the independent category labels.
+An \code{NA} category stays last.}
 \item{".count"}{Sort by cell count.}
 \item{".count_per_indep_group"}{Sort by the total number of valid responses in
 each independent group, so the largest groups come first. Useful for ordering

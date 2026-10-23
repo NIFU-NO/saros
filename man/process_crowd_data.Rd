@@ -49,7 +49,8 @@ for a single crowd, from data filtering to final output generation.
 \details{
 Complete processing pipeline:
 \itemize{
-\item Calculates omitted variables for the crowd
+\item Calculates omitted variables for the crowd; the others crowd also omits
+whatever the target crowd omits (#622)
 \item Filters data by crowd membership and variable exclusions
 \item Applies independent category filtering if enabled
 \item Detects variable types and generates data summary

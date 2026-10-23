@@ -20,10 +20,12 @@
 # contributes fewer rows, and `showNA = "ifany"` adds a row only to the groups
 # that have missing values.
 #
-# Note this covers the *reversal* only. That ascending order follows factor
-# levels rather than the documented alphabetical order is #617.
+# The levels are deliberately not in alphabetical order: `.variable_label`
+# orders alphabetically (#617), so the expected orders below are the sorted
+# labels and cannot be mistaken for the factor order.
 
 group_levels <- c("Alpha", "Beta", "Gamma", "Delta")
+alphabetical <- sort(group_levels)
 
 make_label_data <- function(seed = 614L) {
   withr::with_seed(seed, {
@@ -56,11 +58,11 @@ testthat::test_that("descend_indep reverses .variable_label with even blocks", {
 
   testthat::expect_equal(
     indep_order(data, sort_indep_by = ".variable_label"),
-    group_levels
+    alphabetical
   )
   testthat::expect_equal(
     indep_order(data, sort_indep_by = ".variable_label", descend_indep = TRUE),
-    rev(group_levels)
+    rev(alphabetical)
   )
 })
 
@@ -72,12 +74,12 @@ testthat::test_that("descend_indep reverses .variable_label when a group is miss
 
   testthat::expect_equal(
     indep_order(data, sort_indep_by = ".variable_label"),
-    group_levels
+    alphabetical
   )
-  # This returned Delta | Gamma | Alpha | Beta before the fix.
+  # Before #614 this returned a scrambled order rather than a reversal.
   testthat::expect_equal(
     indep_order(data, sort_indep_by = ".variable_label", descend_indep = TRUE),
-    rev(group_levels)
+    rev(alphabetical)
   )
 })
 
@@ -89,7 +91,7 @@ testthat::test_that("descend_indep reverses .variable_label when NA is confined 
 
   testthat::expect_equal(
     indep_order(data, sort_indep_by = ".variable_label", showNA = "ifany"),
-    group_levels
+    alphabetical
   )
   testthat::expect_equal(
     indep_order(
@@ -98,7 +100,7 @@ testthat::test_that("descend_indep reverses .variable_label when NA is confined 
       showNA = "ifany",
       descend_indep = TRUE
     ),
-    rev(group_levels)
+    rev(alphabetical)
   )
 })
 

@@ -182,9 +182,7 @@ add_n_to_label <- function(
       )
   }
   if (isTRUE(add_n_to_indep_label)) {
-    add_to_var <- names(data_summary)[
-      !names(data_summary) %in% .saros.env$summary_data_sort2
-    ]
+    add_to_var <- get_indep_col_names(data_summary)
     count_var <- ".count_per_indep_group"
     if (length(add_to_var)) {
       # Save original indep label before appending N suffix for future-proof
