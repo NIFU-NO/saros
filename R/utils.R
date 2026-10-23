@@ -78,6 +78,64 @@ attach_dep_label_prefix <- function(obj, main_question) {
   obj
 }
 
+#' Record whether a plot leaves out the dependent variable's label
+#'
+#' `fig_height_h_barchart2()` sizes a single-variable figure differently when
+#' the dependent variable's label is not drawn. Only the `make_content.*()`
+#' method knows whether it is: without an independent variable the label is
+#' blanked, but with one the facet strip that would carry it is simply left
+#' out, which leaves no trace in the data. The answer is therefore stored on
+#' the plot data, where `attach_dep_label_prefix()` stores the main question.
+#'
+#' It used to be inferred from the presence of a `.variable_label_original`
+#' column, which `add_n_to_label()` also creates, so a figure whose label was
+#' drawn could be sized as though it were not (#624).
+#'
+#' @param obj A ggplot or mschart object from a `make_content.*()` method
+#' @param hidden Logical; `TRUE` when the dependent variable's label is not
+#'   drawn
+#' @return `obj`, with a `"dep_label_hidden"` attribute on `obj$data` when that
+#'   is a data frame
+#'
+#' @keywords internal
+attach_dep_label_hidden <- function(obj, hidden) {
+  if (
+    (inherits(obj, "gg") || inherits(obj, "ms_barchart")) &&
+      is.data.frame(obj$data)
+  ) {
+    attr(obj$data, "dep_label_hidden") <- isTRUE(hidden)
+  }
+  obj
+}
+
+#' Read whether a plot leaves out the dependent variable's label
+#'
+#' The counterpart to `attach_dep_label_hidden()`. Plots that do not record
+#' it, such as those built by an older version of saros, fall back to the
+#' state of the data: a label blanked to `""` is unambiguous. Anything else is
+#' left to `default`, the caller's own setting.
+#'
+#' @param data The data of a plot from `makeme()`
+#' @param default Logical; returned when the plot records nothing and its
+#'   labels are not blank
+#' @return Logical scalar
+#'
+#' @keywords internal
+dep_label_hidden <- function(data, default = FALSE) {
+  recorded <- attr(data, "dep_label_hidden", exact = TRUE)
+  if (!is.null(recorded)) {
+    return(isTRUE(recorded))
+  }
+  labels <- data[[".variable_label"]]
+  if (
+    length(labels) > 0 &&
+      all(!is.na(labels) & as.character(labels) == "")
+  ) {
+    return(TRUE)
+  }
+  isTRUE(default)
+}
+
 #' Retrieve the dep label prefix from a saros output object
 #'
 #' Retrieves the `"dep_label_prefix"` attribute that saros attaches to every

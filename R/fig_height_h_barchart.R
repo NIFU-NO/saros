@@ -482,6 +482,11 @@ fig_height_h_barchart <- # Returns a numeric value
 #' Taking an object from `makeme()`, this function estimates the height of a
 #' figure for a horizontal bar chart. Works with both ggplot2 and mschart objects.
 #'
+#' Whether the dependent variable's label is drawn is read from the plot
+#' itself, which records what `makeme()` did with
+#' `hide_axis_text_if_single_variable`. The argument of the same name is used
+#' only for plots that carry no such record.
+#'
 #' @param plot_obj A plot object from `makeme()` - either a `ggplot2` object or an `ms_chart` object
 #' @param ... Additional parameters passed to the specific method (`fig_height_h_barchart2.ggplot` or `fig_height_h_barchart2.ms_chart`)
 #' @inheritParams fig_height_h_barchart
@@ -598,11 +603,14 @@ fig_height_h_barchart2.ggplot <- # ggplot2 method
       n_legend_lines <- 0L
     }
 
-    # Detect if axis text was actually hidden by makeme()
-    # If .variable_label_original exists, the labels were hidden
-    if (".variable_label_original" %in% colnames(data)) {
-      hide_axis_text_if_single_variable <- TRUE
-    }
+    # Whether the label is drawn is recorded on the plot by makeme(), and
+    # takes precedence over the setting, which need not be the one the plot
+    # was made with. It used to be inferred from `.variable_label_original`,
+    # which add_n_to_dep_label also creates (#624).
+    hide_axis_text_if_single_variable <- dep_label_hidden(
+      data,
+      default = hide_axis_text_if_single_variable
+    )
 
     n_y <- dplyr::n_distinct(data$.variable_name)
     max_chars_labels_y <- max(
@@ -844,11 +852,14 @@ fig_height_h_barchart2.ms_chart <- # mschart method
     multiplier_hide_axis_single_var <- args$multiplier_hide_axis_single_var
     showNA <- args$showNA[[1]]
 
-    # Detect if axis text was actually hidden by makeme()
-    # If .variable_label_original exists, the labels were hidden
-    if (".variable_label_original" %in% colnames(data)) {
-      hide_axis_text_if_single_variable <- TRUE
-    }
+    # Whether the label is drawn is recorded on the plot by makeme(), and
+    # takes precedence over the setting, which need not be the one the plot
+    # was made with. It used to be inferred from `.variable_label_original`,
+    # which add_n_to_dep_label also creates (#624).
+    hide_axis_text_if_single_variable <- dep_label_hidden(
+      data,
+      default = hide_axis_text_if_single_variable
+    )
 
     n_y <- dplyr::n_distinct(data$.variable_name)
     n_cats_y <- dplyr::n_distinct(data$.category)

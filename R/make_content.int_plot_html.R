@@ -221,6 +221,9 @@ make_content.int_plot_html <-
         )
     }
     out <- attach_dep_label_prefix(out, dots$main_question)
+    # With an independent variable the label is always drawn, in the facet
+    # strip, so only blanking hides it.
+    out <- attach_dep_label_hidden(out, hide_axis_text)
     if (isFALSE(dots$vertical)) {
       out <- out + ggplot2::coord_flip()
     }

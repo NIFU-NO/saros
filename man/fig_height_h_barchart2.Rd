@@ -105,6 +105,12 @@ Numeric value representing the estimated height of the figure.
 Taking an object from \code{makeme()}, this function estimates the height of a
 figure for a horizontal bar chart. Works with both ggplot2 and mschart objects.
 }
+\details{
+Whether the dependent variable's label is drawn is read from the plot
+itself, which records what \code{makeme()} did with
+\code{hide_axis_text_if_single_variable}. The argument of the same name is used
+only for plots that carry no such record.
+}
 \examples{
 # With ggplot2 (cat_plot_html)
 fig_height_h_barchart2(makeme(data = ex_survey, dep = b_1:b_2, indep = x1_sex))

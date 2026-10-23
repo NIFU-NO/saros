@@ -37,10 +37,24 @@ make_content.cat_plot_html <-
       dplyr::n_distinct(data[[dep_var]], na.rm = TRUE) == 1
 
     if (isTRUE(hide_axis_text)) {
-      # Store original label before hiding for later retrieval
-      data[[".variable_label_original"]] <- data[[dep_var]]
+      # Keep the label for later retrieval: txt_from_cat_mesos_plots() joins
+      # crowds on it. When add_n_to_label() has already stored the label
+      # without its "(N = ...)" suffix, keep that one instead, because the
+      # suffix differs between crowds and would match nothing (#554, #624).
+      if (!".variable_label_original" %in% colnames(data)) {
+        data[[".variable_label_original"]] <- data[[dep_var]]
+      }
       data[[dep_var]] <- ""
     }
+
+    # With a single dependent variable and one independent variable on the
+    # axis, the facet strip that would carry the label is left out below.
+    dep_label_is_hidden <-
+      isTRUE(hide_axis_text) ||
+      (isTRUE(dots$hide_axis_text_if_single_variable) &&
+        length(indep_vars) == 1 &&
+        isFALSE(dots$inverse) &&
+        dplyr::n_distinct(data$.variable_name) == 1)
 
     percentage <- dots$data_label %in% c("percentage", "percentage_bare")
     prop_family <- dots$data_label %in%
@@ -322,6 +336,7 @@ make_content.cat_plot_html <-
     }
 
     p <- attach_dep_label_prefix(p, dots$main_question)
+    p <- attach_dep_label_hidden(p, dep_label_is_hidden)
     if (isFALSE(dots$vertical) && length(levels(p$data[[".category"]])) > 0) {
       p + ggplot2::coord_flip()
     } else {
