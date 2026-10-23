@@ -171,9 +171,17 @@ n_range <- function(
   glue_template_1 = "{n}",
   glue_template_2 = "[{n[1]}-{n[2]}]"
 ) {
-  # Check if the plot has the .count_per_indep_group column
-  # (added by makeme() for categorical plots)
-  if (!".count_per_indep_group" %in% colnames(data)) {
+  # A categorical summary from makeme() carries `.count_per_dep`: the number
+  # of respondents behind each dependent variable, however the independent
+  # variable splits them. The range across the dependent variables is the
+  # figure's N. `.count_per_indep_group` is the N of a single bar group, and
+  # ranging over it reported the smallest and largest group rather than the
+  # sample (#621); `add_n_to_indep_label` is where the per-group N belongs.
+  n_col <- intersect(
+    c(".count_per_dep", ".count_per_indep_group"),
+    colnames(data)
+  )[1]
+  if (is.na(n_col)) {
     # Fallback: calculate N from the number of non-NA rows in the data
     # For int_plot_html plots, check .value (and indep if present)
     if (is_int_plot_html(data)) {
@@ -214,14 +222,14 @@ n_range <- function(
   }
 
   n <- suppressWarnings(unique(range(
-    data$.count_per_indep_group,
+    data[[n_col]],
     na.rm = TRUE
   )))
 
   # Check for infinite values (happens when all values are NA or vector is empty)
   if (any(is.infinite(n))) {
     cli::cli_warn(c(
-      "No valid sample sizes found in {.code .count_per_indep_group}.",
+      "No valid sample sizes found in {.code {n_col}}.",
       "i" = "All values are NA or the vector is empty.",
       "i" = "Returning 0 for N range."
     ))
@@ -238,8 +246,13 @@ n_range <- function(
 #' Provides a range (or single value) for N in a plot object from `makeme()`
 #'
 #' @description
-#' Takes a plot object from `makeme()` and returns the sample size (N) range as a
-#' formatted string. Works with both `ggplot2` objects and `mschart` objects.
+#' Takes a plot object from `makeme()` and returns the sample size (N) as a
+#' formatted string: the number of respondents behind each dependent variable,
+#' given as a range when the dependent variables differ. With an independent
+#' variable this is still the whole sample, not the sizes of the smallest and
+#' largest group; use `add_n_to_indep_label = TRUE` in [makeme()] to show the
+#' N of each group in its label. Works with both `ggplot2` objects and
+#' `mschart` objects.
 #'
 #' @param plot_obj A plot object from `makeme()` - either a `ggplot2` object or an `ms_chart` object
 #' @param ... Additional parameters passed to the specific method

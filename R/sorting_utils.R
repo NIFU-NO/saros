@@ -162,6 +162,31 @@ descend_if_descending <- function(x, descend) {
   x
 }
 
+#' Rank category labels alphabetically
+#'
+#' The ordering value behind `sort_indep_by = ".variable_label"`. `rank()` on
+#' a factor ranks by level code, which made the key indistinguishable from
+#' `".factor_order"` (#617). The labels are compared as text instead, in the
+#' C-locale collation `add_dep_order()` gets from `dplyr::arrange()`, so the
+#' key means the same thing on both sides. An `"NA"` category -- which is how
+#' the summaries carry missing values when `showNA` keeps them -- stays last,
+#' as it does under every other key, rather than being filed under N.
+#'
+#' @param x Factor or character vector of category labels
+#' @return Integer vector with one rank per element, tied within a category;
+#'   `NA` where `x` is `NA`
+#'
+#' @keywords internal
+rank_labels_alphabetically <- function(x) {
+  labels <- as.character(x)
+  present <- unique(labels[!is.na(labels)])
+  ordered <- c(
+    sort(present[present != "NA"], method = "radix"),
+    present[present == "NA"]
+  )
+  match(labels, ordered)
+}
+
 
 #' Apply sorting with optional descending order
 #'
@@ -434,11 +459,10 @@ add_indep_order <- function(
     # two only coincide when every category contributes the same number of
     # rows, so the old expression scrambled the order whenever they did not --
     # a group missing a category, or NA in only some groups (#614).
-    #
-    # Note that `rank()` on a factor ranks by level code, so this currently
-    # orders by factor level rather than alphabetically as documented. That
-    # discrepancy is deliberately left alone here; see #617.
-    descend_if_descending(rank(data[[indep_col]]), isTRUE(descend))
+    descend_if_descending(
+      rank_labels_alphabetically(indep_vals),
+      isTRUE(descend)
+    )
   } else if (length(sort_by) == 1 && startsWith(sort_by, ".")) {
     # Handle special sorting methods (.top, .bottom, .upper, .lower, .count, etc.)
     if (
@@ -577,7 +601,10 @@ add_indep_order_int <- function(
     # `descend_if_descending()` rather than `order(-rank(x))`: the latter mixes
     # rank and permutation semantics and gives a different answer depending on
     # how many rows share a category, which is not a reversal.
-    descend_if_descending(rank(indep_values), isTRUE(descend))
+    descend_if_descending(
+      rank_labels_alphabetically(indep_values),
+      isTRUE(descend)
+    )
   } else {
     # There is exactly one row per dependent variable and category, so the
     # summary column itself is the ordering value.
@@ -665,6 +692,30 @@ get_indep_level_order <- function(data_summary, data, indep) {
   levels_out[!is.na(levels_out)]
 }
 
+#' Identify the independent variable column(s) of a summary
+#'
+#' A summary carries no marker for its independent variable: it is whatever
+#' column is not one of the standard summary columns. Two companion columns
+#' have to be left out of that by-exclusion test, since each sits next to the
+#' column it derives from and would otherwise pass for a second independent
+#' variable: `.value`, the `int_plot_html` data column, and `<indep>_original`,
+#' which `add_n_to_label()` adds to hold the labels before their `(N = ...)`
+#' suffix (#620).
+#'
+#' @param data A summary, or the data of a plot built from one
+#' @return Character vector of column names, empty when there is none
+#'
+#' @keywords internal
+get_indep_col_names <- function(data) {
+  cols <- names(data)
+  candidates <- as.character(
+    cols[!cols %in% c(.saros.env$summary_data_sort2, ".value")]
+  )
+  companion <- endsWith(candidates, "_original") &
+    sub("_original$", "", candidates) %in% cols
+  candidates[!companion]
+}
+
 #' Get the name of the independent variable column
 #'
 #' @param data Dataset
@@ -672,8 +723,7 @@ get_indep_level_order <- function(data_summary, data, indep) {
 #'
 #' @keywords internal
 get_indep_col_name <- function(data) {
-  # Get independent variable column names (excluding standard columns)
-  indep_cols <- names(data)[!names(data) %in% .saros.env$summary_data_sort2]
+  indep_cols <- get_indep_col_names(data)
 
   if (length(indep_cols) > 0) {
     return(indep_cols[1]) # Return first independent column

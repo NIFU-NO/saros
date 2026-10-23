@@ -29,10 +29,7 @@ make_content.cat_plot_html <-
       ignore_null = TRUE
     )
 
-    indep_vars <- colnames(data)[
-      !colnames(data) %in%
-        .saros.env$summary_data_sort2
-    ]
+    indep_vars <- get_indep_col_names(data)
 
     hide_axis_text <-
       isTRUE(dots$hide_axis_text_if_single_variable) &&

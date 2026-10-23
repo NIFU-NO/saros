@@ -656,7 +656,8 @@ process_crowd_settings <- function(args) {
 #'
 #' @details
 #' Complete processing pipeline:
-#' - Calculates omitted variables for the crowd
+#' - Calculates omitted variables for the crowd; the others crowd also omits
+#'   whatever the target crowd omits (#622)
 #' - Filters data by crowd membership and variable exclusions
 #' - Applies independent category filtering if enabled
 #' - Detects variable types and generates data summary
@@ -675,11 +676,16 @@ process_crowd_data <- function(
   full_category_levels = NULL,
   ...
 ) {
-  # Calculate omitted variables for this crowd
-  omitted_vars_crwd <- omitted_cols_list[
-    c(crwd, args$hide_for_all_crowds_if_hidden_for_crowd)
-  ] |>
-    lapply(FUN = function(x) x) |>
+  # A variable hidden for a crowd named in
+  # `hide_for_all_crowds_if_hidden_for_crowd` is hidden for this one too. The
+  # others crowd is tied to the target regardless: it is the target's
+  # complement, so without the target's result there is nothing for it to be
+  # compared with (#622).
+  linked_crowds <- args$hide_for_all_crowds_if_hidden_for_crowd
+  if (crwd == "others" && "target" %in% names(omitted_cols_list)) {
+    linked_crowds <- c(linked_crowds, "target")
+  }
+  omitted_vars_crwd <- omitted_cols_list[c(crwd, linked_crowds)] |>
     unlist() |>
     unique()
 
@@ -890,19 +896,31 @@ process_all_crowds <- function(
     showNA = args$showNA
   )
 
-  # Process each crowd
-  for (crwd in names(out)) {
-    out[[crwd]] <- process_crowd_data(
-      crwd,
-      args,
-      omitted_cols_list,
-      kept_indep_cats_list,
-      data,
-      mesos_var,
-      mesos_group,
-      full_category_levels = full_category_levels,
-      ...
-    )
+  # The target is processed before the others, whose output is dropped
+  # altogether when the target produced none (#622). `out` keeps the order
+  # of `crowd`.
+  target_requested <- "target" %in% names(out)
+  target_empty <- FALSE
+  for (crwd in unique(c(intersect("target", names(out)), names(out)))) {
+    result <- if (crwd == "others" && target_requested && target_empty) {
+      NULL
+    } else {
+      process_crowd_data(
+        crwd,
+        args,
+        omitted_cols_list,
+        kept_indep_cats_list,
+        data,
+        mesos_var,
+        mesos_group,
+        full_category_levels = full_category_levels,
+        ...
+      )
+    }
+    if (crwd == "target") {
+      target_empty <- is.null(result)
+    }
+    out[[crwd]] <- result
   }
 
   out

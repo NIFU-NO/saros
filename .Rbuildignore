@@ -21,8 +21,4 @@ data-raw/goodpractice
 ^vignettes/*_files$
 ^\.vscode$
 ^[.]?air[.]toml$
-\.copilot-instructions\.md
-coverage_report\.html
-lib
-copilot-.*\.md
 ^\.claude$

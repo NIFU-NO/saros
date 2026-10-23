@@ -66,10 +66,14 @@
 #'
 #' @param crowd *Which group(s) to display results for*
 #'
-#'   `vector<character>` // *default:* `c("target", "others", "all")` (`optional`)
+#'   `vector<character>` // *default:* `"all"` (`optional`)
 #'
 #'   Choose whether to produce results for target (mesos) group, others, all, or
-#'   combinations of these.
+#'   combinations of these. `"others"` is the complement of `"target"`, so a
+#'   variable hidden for the target by any of the `hide_for_crowd_if_*` rules
+#'   is hidden for the others as well: a comparison group is of no use without
+#'   the group it is compared with. `hide_for_all_crowds_if_hidden_for_crowd`
+#'   extends that to the remaining crowds.
 #'
 #' @param showNA *Show NA categories*
 #'
@@ -94,14 +98,15 @@
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'
 #'   Select one of the `crowd` output groups. If selected, will hide a variable across
-#'   all `crowd`-outputs if it for some reason is not displayed for
-#'   `hide_for_all_if_hidden_for_crowd`. For instance, say:
+#'   all `crowd`-outputs if it for some reason is not displayed for that crowd.
+#'   For instance, say:
 #'
-#'   `crowd = c("target", "others"), hide_variable_if_all_na = TRUE,`
-#'   `hide_for_all_if_hidden_for_crowd = "target"`
+#'   `crowd = c("target", "others", "all"), hide_for_crowd_if_all_na = TRUE,`
+#'   `hide_for_all_crowds_if_hidden_for_crowd = "target"`
 #'
-#'   will hide variables from both target and others-outputs if all are NA in
-#'   the target-group.
+#'   will hide variables from the others- and all-outputs if all are NA in
+#'   the target-group. The others-output follows the target-output in this
+#'   respect even when this argument is `NULL`; see `crowd`.
 #'
 #' @param hide_for_crowd_if_all_na *Hide variable from output if containing all NA*
 #'
@@ -346,7 +351,8 @@
 #' \item{".bottom"}{The proportions for the lowest category available.}
 #' \item{".factor_order"}{Preserve the independent variable's factor level order
 #'   (default). Equivalent to passing `NULL`.}
-#' \item{".variable_label"}{Sort alphabetically by the independent category labels.}
+#' \item{".variable_label"}{Sort alphabetically by the independent category labels.
+#'   An `NA` category stays last.}
 #' \item{".count"}{Sort by cell count.}
 #' \item{".count_per_indep_group"}{Sort by the total number of valid responses in
 #'   each independent group, so the largest groups come first. Useful for ordering

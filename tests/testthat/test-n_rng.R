@@ -80,12 +80,12 @@ testthat::test_that("n_range2 works with valid makeme plot", {
   testthat::expect_true(nchar(result) > 0)
 })
 
-testthat::test_that("n_range2 handles all-NA .count_per_indep_group", {
+testthat::test_that("n_range2 handles all-NA .count_per_dep", {
   # Create a makeme plot and manually corrupt the data
   plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
 
-  # Set all .count_per_indep_group values to NA
-  plot$data$.count_per_indep_group <- NA_real_
+  # Set all .count_per_dep values to NA
+  plot$data$.count_per_dep <- NA_real_
 
   # Should warn about no valid sample sizes
   testthat::expect_warning(
@@ -156,7 +156,7 @@ testthat::test_that("n_range2 returns single value for single variable int_plot_
   testthat::expect_equal(result, "250")
 })
 
-testthat::test_that("n_range2 handles empty .count_per_indep_group", {
+testthat::test_that("n_range2 handles empty .count_per_dep", {
   # Create a makeme plot and manually set empty vector
   plot <- saros::makeme(data = saros::ex_survey, dep = b_1:b_3)
 
