@@ -607,6 +607,15 @@ makeme <-
   ) {
     ##
 
+    # Until #623 the ?makeme example spelled this argument without "crowds_".
+    # That name lands in `...`, where it was silently ignored (#627).
+    if ("hide_for_all_if_hidden_for_crowd" %in% ...names()) {
+      cli::cli_warn(c(
+        "!" = "{.arg hide_for_all_if_hidden_for_crowd} is not an argument of {.fn makeme} and is ignored.",
+        "i" = "Did you mean {.arg hide_for_all_crowds_if_hidden_for_crowd}?"
+      ))
+    }
+
     dep_enq <- rlang::enquo(arg = dep)
     dep_pos <- tidyselect::eval_select(dep_enq, data = data)
     indep_enq <- rlang::enquo(arg = indep)
