@@ -541,30 +541,35 @@ initialize_crowd_filtering <- function(crowd, args) {
 #'
 #' @param kept_indep_cats_list Named list of kept independent categories for each crowd
 #' @param hide_for_all_crowds_if_hidden_for_crowd Character vector of crowd identifiers
-#'   that determine global category exclusions
+#'   that determine global category exclusions. Only those that are also among
+#'   the computed crowds, the names of `kept_indep_cats_list`, take part (#628).
 #'
 #' @return Modified kept_indep_cats_list with global hiding logic applied:
 #'   - For crowds not in hide_for_all_crowds_if_hidden_for_crowd: only categories
 #'     that were kept in the priority crowds are retained
 #'   - For priority crowds: original category lists are preserved
+#'   - When none of the named crowds was computed, every list is preserved
 #'
 #' @keywords internal
 process_global_indep_categories <- function(
   kept_indep_cats_list,
   hide_for_all_crowds_if_hidden_for_crowd
 ) {
+  # Only a crowd that was computed has kept categories to go by. One that is
+  # not in `crowd` -- typically "target" set globally, in a chunk that uses
+  # the default crowd = "all" -- contributed nothing, which hid every category
+  # from every other crowd and left the output empty (#628).
+  deciding_crowds <- intersect(
+    as.character(hide_for_all_crowds_if_hidden_for_crowd),
+    names(kept_indep_cats_list)
+  )
   lapply(rlang::set_names(names(kept_indep_cats_list)), function(crwd) {
     lapply(
       rlang::set_names(names(kept_indep_cats_list[[crwd]])),
       function(x) {
-        if (
-          is.character(hide_for_all_crowds_if_hidden_for_crowd) &&
-            !crwd %in% hide_for_all_crowds_if_hidden_for_crowd
-        ) {
+        if (length(deciding_crowds) > 0 && !crwd %in% deciding_crowds) {
           kept_globally <-
-            kept_indep_cats_list[
-              hide_for_all_crowds_if_hidden_for_crowd
-            ] |>
+            kept_indep_cats_list[deciding_crowds] |>
             unlist() |>
             unique()
 
