@@ -13,7 +13,8 @@ process_global_indep_categories(
 \item{kept_indep_cats_list}{Named list of kept independent categories for each crowd}
 
 \item{hide_for_all_crowds_if_hidden_for_crowd}{Character vector of crowd identifiers
-that determine global category exclusions}
+that determine global category exclusions. Only those that are also among
+the computed crowds, the names of \code{kept_indep_cats_list}, take part (#628).}
 }
 \value{
 Modified kept_indep_cats_list with global hiding logic applied:
@@ -21,6 +22,7 @@ Modified kept_indep_cats_list with global hiding logic applied:
 \item For crowds not in hide_for_all_crowds_if_hidden_for_crowd: only categories
 that were kept in the priority crowds are retained
 \item For priority crowds: original category lists are preserved
+\item When none of the named crowds was computed, every list is preserved
 }
 }
 \description{
